@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NGX Transform — Visual fitness premium
 
-## Getting Started
+Aplicación Next.js con Tailwind v4, shadcn/ui v4, Firebase y Gemini (texto + imagen), orientada a generar análisis visual realista 0/4/8/12 meses.
 
-First, run the development server:
+## Resumen técnico
+- Framework: Next.js 15 (App Router), React 19, TypeScript 5
+- Estilos: Tailwind CSS v4 (tokens/vars), shadcn/ui v4 (Radix)
+- IA:
+  - Gemini (texto): `@google/generative-ai` con validación zod estricto
+  - Gemini (imagen): alias “NanoBanana” en `lib/nanobanana.ts`
+- Datos: Firebase Admin (Firestore + Storage) en server; Firebase client (auth anónima, storage) en wizard
+- Emails: Resend + @react-email/components
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Scripts
+- `npm run dev`: dev server
+- `npm run build`: build prod
+- `npm start`: server prod
+- `npm run lint`: lint con eslint-config-next
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Variables de entorno (app/.env.local)
+- Cliente Firebase (NEXT_PUBLIC_*): API_KEY, AUTH_DOMAIN, PROJECT_ID, STORAGE_BUCKET, MESSAGING_SENDER_ID, APP_ID
+- Admin Firebase: FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY
+- Gemini: GEMINI_API_KEY, GEMINI_IMAGE_MODEL (opcional)
+- App: NEXT_PUBLIC_BASE_URL, NEXT_PUBLIC_BOOKING_URL (opcional), NEXT_PUBLIC_DEMO_MODE
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Consejos:
+- Demo: `NEXT_PUBLIC_DEMO_MODE=1` (sin llamadas reales; flujo simulado para demos)
+- Storage bucket: usa el mostrado en Firebase Storage (p.ej. `<project-id>.appspot.com`)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Arquitectura
+- App Router (`src/app`):
+  - `/wizard`: flujo de generación (lead → upload → session → analyze → images)
+  - `/s/[shareId]`: resultados reales (sticky 3 columnas)
+  - `/demo/result`: preview con datos mock para validar UI
 
-## Learn More
+- Librerías clave (`src/lib`):
+  - `firebaseAdmin.ts`, `storage.ts`: Admin SDK (signed URLs, uploads)
+  - `firebaseClient.ts`: client SDK (auth + storage)
+  - `gemini.ts`: prompt/parse estricto JSON para análisis
+  - `nanobanana.ts`: imagen Gemini (image-to-image)
+  - `validators.ts`: zod schemas de entrada
 
-To learn more about Next.js, take a look at the following resources:
+- UI:
+  - `src/components/shadcn/ui/*`: base shadcn (button/input/textarea/card/progress/separator/tabs/select/tooltip/dialog)
+  - `src/components/results/*`: layout modular de Resultados (ImageViewer, InsightsCard, ActionsCard, ProfileSummaryCard)
+  - `src/components/TimelineViewer.tsx`: tabs 0/4/8/12 con overlay/minimap
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Estilo NGX (dark premium)
+- Tipografía: Inter (texto y títulos: minimal tech)
+- Colores tokens (globals.css):
+  - `--primary: #6D00FF` (Electric Violet)
+  - `--accent: #5B21B6` (Deep Purple)
+  - Superficies/border/ring definidos en :root y mapeados a @theme inline
+- Componentes pills (rounded-full), focus ring violeta, Cards rounded-2xl
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Flujo de datos (resumen)
+1) Wizard: sube foto (storage) + crea sesión (Firestore)
+2) Analyze: Gemini texto (JSON validado) → guarda en Firestore
+3) Generate Images: Gemini imagen (image-to-image) → storage generado (m4/m8/m12)
+4) Resultados: signed URLs, overlay, insights/timeline/acciones
 
-## Deploy on Vercel
+## Buenas prácticas y organización
+- Commit semántico (conventional commits):
+  - `feat(ui): ...`, `chore(docs): ...`, `fix(results): ...`
+- Lint/format antes de commit (opcional añadir pre-commit hook)
+- Archivos grandes y secretos: nunca en repo (usa .env.local y .gitignore)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Desarrollo local
+1) Configura `.env.local` en `app/` con tus claves
+2) Instala deps: `npm install`
+3) Dev: `npm run dev` → http://localhost:3000
+4) Demo UI: `/demo/result` (sin backends)
+5) Flujo real: `/wizard` → `/s/[id]`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Roadmap inmediato
+- Fase 2: sincronizar tabs Visor/Timeline + deep-link (#m4)
+- Pulidos: animaciones sutiles (framer-motion), gaps/paddings uniformes
+- QA de accesibilidad (roles, aria, focus-visible)
