@@ -72,6 +72,11 @@ Consejos:
 4) Demo UI: `/demo/result` (sin backends)
 5) Flujo real: `/wizard` → `/s/[id]`
 
+### Visualizar el front-end rápidamente
+- Ejecuta `npm run dev` y espera a que Turbopack muestre `✓ Ready` en la terminal.
+- Abre `http://localhost:3000` en tu navegador para cargar el layout principal.
+- Navega a `/wizard` para probar el flujo guiado o a `/demo/result` para revisar el estado mock sin depender de Firebase/Gemini.
+
 ## Roadmap inmediato
 - Fase 2: sincronizar tabs Visor/Timeline + deep-link (#m4)
 - Pulidos: animaciones sutiles (framer-motion), gaps/paddings uniformes
