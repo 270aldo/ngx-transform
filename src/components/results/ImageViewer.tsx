@@ -50,16 +50,18 @@ export function ImageViewer({
         </div>
 
         <div className="flex items-center gap-2">
-<Button variant="ghost" onClick={() => setShowOverlay((v) => !v)}>
+          <Button variant="ghost" onClick={() => setShowOverlay((v) => !v)}>
             {showOverlay ? "Ocultar anotaciones" : "Mostrar anotaciones"}
           </Button>
-<Button variant="ghost" onClick={() => setShowGrid((v) => !v)}>
+          <Button variant="ghost" onClick={() => setShowGrid((v) => !v)}>
             {showGrid ? "Ocultar guía" : "Mostrar guía"}
           </Button>
           {currentSrc && (
-            <a href={currentSrc} download className="ml-auto">
-<Button variant="outline">Descargar</Button>
-            </a>
+            <Button asChild variant="outline" className="ml-auto">
+              <a href={currentSrc} download>
+                Descargar
+              </a>
+            </Button>
           )}
         </div>
 

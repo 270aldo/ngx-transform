@@ -10,6 +10,7 @@ import { ImageViewer } from "@/components/results/ImageViewer";
 import { InsightsCard } from "@/components/results/InsightsCard";
 import { ActionsCard } from "@/components/results/ActionsCard";
 import { ProfileSummaryCard } from "@/components/results/ProfileSummaryCard";
+import { Button } from "@/components/shadcn/ui/button";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +33,17 @@ interface SessionDoc {
   status: "processing" | "ready" | "failed";
 }
 
+const EMPTY_INSIGHTS: InsightsResult = {
+  insightsText: undefined,
+  timeline: {
+    m0: { month: 0 },
+    m4: { month: 4 },
+    m8: { month: 8 },
+    m12: { month: 12 },
+  },
+  overlays: {},
+};
+
 async function getUrls(shareId: string) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL ? process.env.NEXT_PUBLIC_BASE_URL : ""}/api/sessions/${shareId}/urls`, { cache: "no-store" });
   if (!res.ok) return {} as { originalUrl?: string; images?: Record<string, string> };
@@ -40,7 +52,22 @@ async function getUrls(shareId: string) {
 
 export default async function Page({ params }: { params: Promise<{ shareId: string }> }) {
   const { shareId } = await params;
-  const db = getDb();
+  let db;
+  try {
+    db = getDb();
+  } catch (err) {
+    console.error("Firebase Admin no configurado", err);
+    return (
+      <div className="min-h-screen bg-neutral-950 text-neutral-100 p-6">
+        <div className="mx-auto max-w-3xl space-y-4">
+          <h1 className="text-xl font-semibold">Configuración incompleta</h1>
+          <p className="text-neutral-400 text-sm">
+            Para consultar sesiones reales debes configurar las credenciales de Firebase Admin y reiniciar el servidor.
+          </p>
+        </div>
+      </div>
+    );
+  }
   const snap = await db.collection("sessions").doc(shareId).get();
   if (!snap.exists) {
     return (
@@ -90,7 +117,7 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
           {/* Izquierda: Visor (sticky) */}
           <div className="md:col-span-4 md:sticky md:top-20 space-y-4">
-            <ImageViewer ai={ai || ({} as any)} imageUrls={urls} />
+            <ImageViewer ai={ai ?? EMPTY_INSIGHTS} imageUrls={urls} />
           </div>
 
           {/* Centro: Contenido principal */}

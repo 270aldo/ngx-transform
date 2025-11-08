@@ -35,21 +35,6 @@ export default function DemoResultPage() {
   // En demo: usamos placeholder (sin URLs firmadas)
   const imageUrls = { } as const;
   const profile = { age: 28, sex: "male", heightCm: 178, weightKg: 78, level: "intermedio", goal: "definicion", weeklyTime: 4 } as const;
-  const kpis = [
-    { title: "Fuerza", value: 70, desc: "+20–40% a 12m" },
-    { title: "Consistencia", value: 80, desc: "≥3 días/sem" },
-    { title: "Energía diaria", value: 65, desc: "Mejoría sostenida" },
-  ];
-  const recomendaciones = [
-    "Prioriza técnica en movimientos base (sentadilla, empuje, tracción)",
-    "Bloques de 6–8 semanas con deload ligero",
-    "Monitorea horas de sueño y proteína diaria",
-  ];
-  const pasos = [
-    "Sube una foto clara (frontal) y valida datos",
-    "Recibe análisis + plan visual 0/4/8/12",
-    "Agenda asesoría si buscas plan personalizado",
-  ];
   const [loading, setLoading] = useState(true);
   // Loading breve para skeletons y animaciones suaves
   useEffect(() => {
@@ -146,51 +131,11 @@ export default function DemoResultPage() {
           <div className="md:col-span-3 md:sticky md:top-20 space-y-4">
             {/* En demo, las acciones pueden apuntar a /s/demo, sólo para visual */}
             <ActionsCard shareId="demo" />
-            <ProfileSummaryCard profile={profile as any} />
+            <ProfileSummaryCard profile={profile} />
           </div>
         </div>
       </div>
     </div>
-  );
-}
-
-function TrendChart() {
-  // Valores demo en % para 0/4/8/12
-  const points = [40, 58, 70, 85];
-  const months = [0, 4, 8, 12];
-  const w = 640; const h = 180; const pad = 28;
-  const xs = (i: number) => pad + (i * (w - pad * 2)) / (points.length - 1);
-  const ys = (v: number) => h - pad - (v / 100) * (h - pad * 2);
-  const d = points.map((v, i) => `${i === 0 ? 'M' : 'L'} ${xs(i)} ${ys(v)}`).join(' ');
-  return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-44">
-      <defs>
-        <linearGradient id="gline" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="#B98CFF"/>
-          <stop offset="100%" stopColor="#6D00FF"/>
-        </linearGradient>
-      </defs>
-      {/* Ejes mínimos */}
-      <g stroke="#262626" strokeWidth="1">
-        <line x1={pad} y1={h-pad} x2={w-pad} y2={h-pad} />
-        <line x1={pad} y1={pad} x2={pad} y2={h-pad} />
-      </g>
-      {/* Línea */}
-      <path d={d} fill="none" stroke="url(#gline)" strokeWidth={3}
-            style={{ filter: "drop-shadow(0 0 6px rgba(109,0,255,0.6))" }} />
-      {/* Puntos */}
-      {points.map((v, i) => (
-        <g key={i}>
-          <circle cx={xs(i)} cy={ys(v)} r={4} fill="#6D00FF" />
-          <text x={xs(i)} y={h-8} textAnchor="middle" className="fill-neutral-400 text-[10px]">
-            {months[i]}m
-          </text>
-          <text x={xs(i)} y={ys(v)-8} textAnchor="middle" className="fill-neutral-300 text-[10px]">
-            {v}%
-          </text>
-        </g>
-      ))}
-    </svg>
   );
 }
 

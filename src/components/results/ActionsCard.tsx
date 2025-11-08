@@ -15,9 +15,11 @@ export function ActionsCard({ shareId, bookingUrl }: { shareId: string; bookingU
           <CopyLinkClient shareId={shareId} />
         </div>
         {bookingUrl && (
-          <a href={bookingUrl} target="_blank" rel="noreferrer">
-            <Button className="w-full" variant="secondary">Reservar asesoría</Button>
-          </a>
+          <Button asChild className="w-full" variant="secondary">
+            <a href={bookingUrl} target="_blank" rel="noreferrer">
+              Reservar asesoría
+            </a>
+          </Button>
         )}
         <DeleteClient shareId={shareId} />
       </CardContent>

@@ -1,15 +1,7 @@
 import { Card, CardContent } from "@/components/shadcn/ui/card"
+import type { ProfileInput } from "@/types/ai"
 
-export function ProfileSummaryCard({ profile }: { profile: {
-  age: number
-  sex: "male" | "female" | "other"
-  heightCm: number
-  weightKg: number
-  level: "novato" | "intermedio" | "avanzado"
-  goal: "definicion" | "masa" | "mixto"
-  weeklyTime: number
-  notes?: string
-} }) {
+export function ProfileSummaryCard({ profile }: { profile: ProfileInput }) {
   const items = [
     { k: "Edad", v: profile.age },
     { k: "Sexo", v: profile.sex },
