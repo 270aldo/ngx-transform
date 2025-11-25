@@ -13,14 +13,19 @@ async function fetchImageAsInlineData(url: string): Promise<{ mimeType: string; 
 export async function generateInsightsFromImage(params: {
   imageUrl: string;
   profile: {
-    age: number;
-    sex: "male" | "female" | "other";
-    heightCm: number;
-    weightKg: number;
-    level: "novato" | "intermedio" | "avanzado";
-    goal: "definicion" | "masa" | "mixto";
-    weeklyTime: number;
-    notes?: string;
+    age?: string;
+    sex?: string;
+    height?: string;
+    weight?: string;
+    goals?: string;
+    level?: string;
+    weeklyTime?: string;
+    stressLevel?: number;
+    sleepQuality?: number;
+    disciplineRating?: number;
+    bodyType?: string;
+    bodyType?: string;
+    focusZone?: string; // New field
   };
 }): Promise<InsightsResult> {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -32,28 +37,69 @@ export async function generateInsightsFromImage(params: {
 
   const { mimeType, data } = await fetchImageAsInlineData(params.imageUrl);
 
-  const systemPrompt = `
-Eres un asesor de fitness NGX. Analiza la foto y el perfil y devuelve SOLO JSON válido.
-Debes ser realista, conservador y evitar promesas. Incluye un recordatorio de que no es consejo médico.
-Formato JSON (campos y tipos exactos):
-{
-  "insightsText": string,
-  "timeline": {
-    "m0": { "month": 0, "focus": string, "expectations": string[], "risks": string[] },
-    "m4": { "month": 4, "focus": string, "expectations": string[], "risks": string[] },
-    "m8": { "month": 8, "focus": string, "expectations": string[], "risks": string[] },
-    "m12": { "month": 12, "focus": string, "expectations": string[], "risks": string[] }
-  },
-  "overlays": {
-    "m0"?: { "x": number, "y": number, "label": string }[],
-    "m4"?: { "x": number, "y": number, "label": string }[],
-    "m8"?: { "x": number, "y": number, "label": string }[],
-    "m12"?: { "x": number, "y": number, "label": string }[]
-  }
-}
-Las coordenadas x,y deben ser relativas [0,1].`;
+  const { profile } = params;
 
-  const userContext = `Perfil: ${JSON.stringify(params.profile)}`;
+  const systemPrompt = `
+    You are an Elite High-Performance Coach & Futurist (Stoic, Clinical, Motivational).
+    Your goal is to analyze the user's current photo and data to project their physical and mental evolution over 12 months.
+
+    USER DATA:
+    - Age: ${profile.age}, Sex: ${profile.sex}
+    - Height: ${profile.height}cm, Weight: ${profile.weight}kg
+    - Body Type: ${profile.bodyType}
+    - Current Level: ${profile.level}
+    - Main Goal: ${profile.goals}
+    - Weekly Dedication: ${profile.weeklyTime} hours
+    - Stress: ${profile.stressLevel}/10, Sleep: ${profile.sleepQuality}/10, Discipline: ${profile.disciplineRating}/10
+    
+    FOCUS ZONE (PRIORITY): ${profile.focusZone?.toUpperCase() || "FULL BODY"}
+    (Tailor the training and aesthetic focus to this area).
+
+    You must generate a JSON response with a timeline of 4 stages:
+    - "m0" (Current): Analysis of starting point.
+    - "m4" (Foundation): Early visible changes.
+    - "m8" (Expansion): Significant muscle/definition gains.
+    - "m12" (Peak): The final transformed state.
+
+    For each stage, provide:
+    1. "title": A powerful, 1-2 word phase name (e.g., "GÉNESIS", "METAMORFOSIS").
+    2. "description": A clinical but motivating summary of changes.
+    3. "stats": Numerical attributes (0-100) for Strength, Aesthetics, Endurance, Mental.
+    4. "image_prompt": A highly detailed, photorealistic prompt for generating the user's photo at this stage.
+       - MUST incorporate the user's "Visual Vision" for this specific month.
+       - Keep the face consistent but evolve the body.
+       - Style: Cinematic, 8k, dramatic lighting, Nike commercial aesthetic.
+    5. "mental": A short, stoic mindset shift required for this stage.
+    6. "risks" (m0 only): Potential pitfalls based on their stress/sleep data.
+    7. "expectations" (m0 only): Realistic physical outcomes.
+
+    TONE:
+    - Clinical yet inspiring.
+    - Use "Deep Data" (stress, sleep) to customize advice.
+    - If stress is high, emphasize recovery. If discipline is low, emphasize consistency.
+
+    OUTPUT FORMAT:
+    Return ONLY valid JSON matching this exact Schema:
+    {
+      "insightsText": "string (Main analysis summary)",
+      "timeline": {
+        "m0": { "month": 0, "title": "string", "description": "string", "stats": { "strength": number, "aesthetics": number, "endurance": number, "mental": number }, "image_prompt": "string", "mental": "string", "risks": ["string"], "expectations": ["string"] },
+        "m4": { "month": 4, "title": "string", "description": "string", "stats": { "strength": number, "aesthetics": number, "endurance": number, "mental": number }, "image_prompt": "string", "mental": "string" },
+        "m8": { "month": 8, "title": "string", "description": "string", "stats": { "strength": number, "aesthetics": number, "endurance": number, "mental": number }, "image_prompt": "string", "mental": "string" },
+        "m12": { "month": 12, "title": "string", "description": "string", "stats": { "strength": number, "aesthetics": number, "endurance": number, "mental": number }, "image_prompt": "string", "mental": "string" }
+      },
+      "overlays": {
+        "m0": [{ "x": number, "y": number, "label": "string" }]
+      }
+    }
+    
+    IMPORTANT: 
+    - "stats" values must be integers 0-100.
+    - "overlays" coordinates x,y must be 0.0-1.0 (relative).
+    - "image_prompt" must be English, highly detailed, photorealistic.
+  `;
+
+  const userContext = `Perfil: ${JSON.stringify(params.profile)} `;
 
   const result = await model.generateContent([
     { text: systemPrompt },
