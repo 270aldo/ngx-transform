@@ -9,9 +9,19 @@ export type OverlayPoint = z.infer<typeof OverlayPointZ>;
 
 export const TimelineEntryZ = z.object({
   month: z.union([z.literal(0), z.literal(4), z.literal(8), z.literal(12)]),
-  focus: z.string(),
-  expectations: z.array(z.string()).min(1),
-  risks: z.array(z.string()).min(1),
+  title: z.string().optional(), // New
+  description: z.string().optional(), // New
+  focus: z.string().optional(), // Made optional as we might use description/title instead
+  mental: z.string(),
+  stats: z.object({
+    strength: z.number().min(0).max(100),
+    aesthetics: z.number().min(0).max(100),
+    endurance: z.number().min(0).max(100),
+    mental: z.number().min(0).max(100),
+  }).optional(), // New
+  image_prompt: z.string().optional(), // New
+  expectations: z.array(z.string()).default([]),
+  risks: z.array(z.string()).default([]),
 });
 export type TimelineEntry = z.infer<typeof TimelineEntryZ>;
 

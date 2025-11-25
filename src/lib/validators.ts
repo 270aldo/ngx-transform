@@ -14,6 +14,15 @@ export const ProfileSchema = z.object({
   level: z.enum(["novato", "intermedio", "avanzado"]),
   goal: z.enum(["definicion", "masa", "mixto"]),
   weeklyTime: z.number().min(1).max(14),
+  // Mental Logs
+  stressLevel: z.number().min(1).max(10).default(5).optional(),
+  sleepQuality: z.number().min(1).max(10).default(5).optional(),
+  disciplineRating: z.number().min(1).max(10).default(5).optional(),
+  // Visual Selectors
+  bodyType: z.enum(["ectomorph", "mesomorph", "endomorph"]).default("mesomorph").optional(),
+  specificGoals: z.array(z.string()).default([]).optional(),
+  visualTimeline: z.string().optional(), // Deprecated, keeping for compatibility or removing? User said remove.
+  focusZone: z.enum(["upper", "lower", "abs", "full"]).default("full").optional(), // New replacement
   notes: z.string().optional(),
 });
 
