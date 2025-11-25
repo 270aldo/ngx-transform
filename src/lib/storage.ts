@@ -20,7 +20,7 @@ export async function uploadBuffer(storagePath: string, buffer: Buffer, contentT
     contentType,
     resumable: false,
     public: false,
-    metadata: { cacheControl: "public, max-age=31536000" },
+    metadata: { cacheControl: "no-cache, no-store, must-revalidate" },
   });
   return storagePath;
 }

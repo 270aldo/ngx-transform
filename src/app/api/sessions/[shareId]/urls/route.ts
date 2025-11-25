@@ -25,9 +25,11 @@ export async function GET(_: Request, context: { params: Promise<{ shareId: stri
 
     if (images) {
       const out: Record<string, string> = {};
+      const timestamp = Date.now();
       await Promise.all(
         Object.entries(images).map(async ([k, p]) => {
-          out[k] = await getSignedUrl(p, { expiresInSeconds: 3600 });
+          const url = await getSignedUrl(p, { expiresInSeconds: 3600 });
+          out[k] = `${url}&t=${timestamp}`;
         })
       );
       result.images = out;
