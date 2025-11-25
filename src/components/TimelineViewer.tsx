@@ -40,26 +40,48 @@ export function TimelineViewer({
         </div>
       </div>
       <div className="space-y-3">
-        <div className="grid gap-3">
-          <div className="p-4 rounded-xl border border-border bg-card">
-            <h3 className="font-semibold">Foco</h3>
-            <p className="text-muted-foreground text-sm mt-1">{entry?.focus}</p>
-          </div>
-          <div className="p-4 rounded-xl border border-border bg-card">
-            <h3 className="font-semibold">Expectativas</h3>
-            <ul className="list-disc list-inside text-muted-foreground text-sm mt-1">
-              {entry?.expectations?.map((e, i) => (
-                <li key={i}>{e}</li>
-              ))}
-            </ul>
-          </div>
-          <div className="p-4 rounded-xl border border-border bg-card">
-            <h3 className="font-semibold">Riesgos</h3>
-            <ul className="list-disc list-inside text-muted-foreground text-sm mt-1">
-              {entry?.risks?.map((e, i) => (
-                <li key={i}>{e}</li>
-              ))}
-            </ul>
+        <div className="grid gap-4">
+          {/* Split View: Physical vs Mental */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Physical Column */}
+            <div className="space-y-3">
+              <div className="p-3 rounded-lg bg-neutral-900/50 border border-neutral-800">
+                <h3 className="text-xs font-medium text-neutral-400 uppercase tracking-wider mb-2">Físico</h3>
+                <p className="text-sm text-neutral-200">{entry?.focus}</p>
+              </div>
+              <div className="p-3 rounded-lg bg-neutral-900/50 border border-neutral-800">
+                <h3 className="text-xs font-medium text-neutral-400 uppercase tracking-wider mb-2">Expectativas</h3>
+                <ul className="space-y-1.5">
+                  {entry?.expectations?.map((e, i) => (
+                    <li key={i} className="text-xs text-neutral-300 flex items-start gap-2">
+                      <span className="text-[#6D00FF] mt-0.5">→</span>
+                      {e}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Mental Column - The "Soul" (Subtle but distinct) */}
+            <div className="space-y-3">
+              <div className="p-3 rounded-lg bg-[#6D00FF]/5 border border-[#6D00FF]/20">
+                <h3 className="text-xs font-medium text-[#6D00FF] uppercase tracking-wider mb-2">Mentalidad</h3>
+                <p className="text-sm text-neutral-200 leading-relaxed">
+                  {entry?.mental || "Enfoque en la constancia y la resiliencia mental."}
+                </p>
+              </div>
+              <div className="p-3 rounded-lg bg-neutral-900/50 border border-neutral-800">
+                <h3 className="text-xs font-medium text-neutral-400 uppercase tracking-wider mb-2">Riesgos</h3>
+                <ul className="space-y-1.5">
+                  {entry?.risks?.map((e, i) => (
+                    <li key={i} className="text-xs text-neutral-300 flex items-start gap-2">
+                      <span className="text-red-500/50 mt-0.5">⚠</span>
+                      {e}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
