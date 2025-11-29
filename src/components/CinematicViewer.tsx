@@ -238,7 +238,7 @@ export function CinematicViewer({
                         <h3 className="text-xs font-bold text-[#6D00FF] tracking-widest mb-4 uppercase">Protocolo Mental</h3>
 
                         <blockquote className="text-xl font-medium text-white italic mb-6 relative z-10">
-                            "{entry.mental || "La disciplina es el puente entre metas y logros."}"
+                            &ldquo;{entry.mental || "La disciplina es el puente entre metas y logros."}&rdquo;
                         </blockquote>
 
                         <div className="space-y-3 relative z-10">

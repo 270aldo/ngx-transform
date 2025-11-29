@@ -3,10 +3,11 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { InsightsResult } from "@/types/ai";
+import { InsightsResult, TimelineEntry } from "@/types/ai";
 
 interface HolodeckViewerProps {
     data: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         input: any;
         ai: InsightsResult;
         assets?: { images?: Record<string, string> };
@@ -77,10 +78,10 @@ export default function HolodeckViewer({ data }: HolodeckViewerProps) {
                 <div className="px-6 pb-8 h-full overflow-y-auto no-scrollbar">
                     {/* Tabs */}
                     <div className="flex items-center gap-6 mb-6 border-b border-white/5 pb-2">
-                        {["stats", "timeline", "mind"].map((tab) => (
+                        {(["stats", "timeline", "mind"] as const).map((tab) => (
                             <button
                                 key={tab}
-                                onClick={() => setActiveTab(tab as any)}
+                                onClick={() => setActiveTab(tab)}
                                 className={`text-xs font-bold tracking-widest uppercase pb-2 transition-all ${activeTab === tab
                                     ? "text-[#6D00FF] border-b-2 border-[#6D00FF]"
                                     : "text-neutral-500 hover:text-white"
@@ -143,7 +144,7 @@ export default function HolodeckViewer({ data }: HolodeckViewerProps) {
                                 <div className="text-center py-8">
                                     <span className="text-4xl">🧠</span>
                                     <h2 className="text-xl font-bold mt-4 mb-2">Mentalidad Estoica</h2>
-                                    <p className="text-neutral-400 text-sm italic">"No es lo que te pasa, sino cómo reaccionas a lo que te pasa."</p>
+                                    <p className="text-neutral-400 text-sm italic">&ldquo;No es lo que te pasa, sino cómo reaccionas a lo que te pasa.&rdquo;</p>
                                 </div>
 
                                 <div className="space-y-4">
@@ -182,7 +183,7 @@ function PowerBar({ label, value, color }: { label: string; value: number; color
     );
 }
 
-function TimelineCard({ step, data, isFinal }: { step: string; data: any; isFinal?: boolean }) {
+function TimelineCard({ step, data, isFinal }: { step: string; data: TimelineEntry; isFinal?: boolean }) {
     return (
         <div className={`p-4 rounded-xl border ${isFinal ? "bg-[#6D00FF]/10 border-[#6D00FF]/50" : "bg-white/5 border-white/5"}`}>
             <div className="flex justify-between items-center mb-2">

@@ -18,10 +18,10 @@ const mock: InsightsResult = {
 - Enfoque en técnica, fuerza base y hábitos.
 - Recordatorio: no es consejo médico.`,
   timeline: {
-    m0: { month: 0, focus: "Evaluación inicial, técnica y hábitos", expectations: ["Aprender patrones básicos", "Rutina sostenible"], risks: ["Sobrecarga inicial", "Falta de adherencia"] },
-    m4: { month: 4, focus: "Fuerza base y composición", expectations: ["Mejoras de fuerza 10-20%", "Energía diaria"], risks: ["Saltarse recuperación", "Estancamiento"] },
-    m8: { month: 8, focus: "Volumen inteligente y consistencia", expectations: ["Mayor tolerancia a volumen", "Postura/mejores patrones"], risks: ["Sobrentrenamiento"] },
-    m12: { month: 12, focus: "Consolidación y métricas claras", expectations: ["Fuerza +20-40% (variabilidad)", "Hábitos consolidados"], risks: ["Desmotivación por comparaciones"] },
+    m0: { month: 0, focus: "Evaluación inicial, técnica y hábitos", mental: "Establece las bases con disciplina y paciencia.", expectations: ["Aprender patrones básicos", "Rutina sostenible"], risks: ["Sobrecarga inicial", "Falta de adherencia"] },
+    m4: { month: 4, focus: "Fuerza base y composición", mental: "La consistencia vence al talento. Confía en el proceso.", expectations: ["Mejoras de fuerza 10-20%", "Energía diaria"], risks: ["Saltarse recuperación", "Estancamiento"] },
+    m8: { month: 8, focus: "Volumen inteligente y consistencia", mental: "Rompe tus propios límites. La incomodidad es crecimiento.", expectations: ["Mayor tolerancia a volumen", "Postura/mejores patrones"], risks: ["Sobrentrenamiento"] },
+    m12: { month: 12, focus: "Consolidación y métricas claras", mental: "Has construido un nuevo estándar. Esto es solo el comienzo.", expectations: ["Fuerza +20-40% (variabilidad)", "Hábitos consolidados"], risks: ["Desmotivación por comparaciones"] },
   },
   overlays: {
     m0: [ { x: 0.5, y: 0.2, label: "Postura" }, { x: 0.5, y: 0.55, label: "Core" } ],
@@ -145,7 +145,8 @@ export default function DemoResultPage() {
           {/* Derecha: Acciones + Perfil (demo) */}
           <div className="md:col-span-3 md:sticky md:top-20 space-y-4">
             {/* En demo, las acciones pueden apuntar a /s/demo, sólo para visual */}
-            <ActionsCard shareId="demo" />
+            <ActionsCard shareId="demo" goal={profile.goal} />
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             <ProfileSummaryCard profile={profile as any} />
           </div>
         </div>
@@ -193,4 +194,3 @@ function TrendChart() {
     </svg>
   );
 }
-

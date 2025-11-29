@@ -38,7 +38,7 @@ export const InsightsResultZ = z.object({
     m4: z.array(OverlayPointZ).optional(),
     m8: z.array(OverlayPointZ).optional(),
     m12: z.array(OverlayPointZ).optional(),
-  }),
+  }).catch({}),
 });
 export type InsightsResult = z.infer<typeof InsightsResultZ>;
 

@@ -119,11 +119,15 @@ export default function WizardPage() {
       // Flujo real (cuando desactivemos DEMO)
       // 1) Lead capture
       setStage("lead"); setProgress(10);
-      await fetch("/api/leads", {
+      const leadRes = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: values.email, consent: true, source: "wizard" }),
       });
+      if (!leadRes.ok) {
+        const j = await leadRes.json().catch(() => ({}));
+        throw new Error(j.error || "No se pudo registrar el lead");
+      }
 
       // 2) Upload photo
       const sessionSeed = (typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)).replace(/-/g, "").slice(0, 12);
@@ -296,10 +300,10 @@ export default function WizardPage() {
                   <div className="space-y-2">
                     <Label>Tipo de Cuerpo</Label>
                     <div className="grid grid-cols-3 gap-2">
-                      {["ectomorph", "mesomorph", "endomorph"].map((type) => (
+                      {(["ectomorph", "mesomorph", "endomorph"] as const).map((type) => (
                         <div
                           key={type}
-                          onClick={() => setValue("bodyType", type as any)}
+                          onClick={() => setValue("bodyType", type)}
                           className={`cursor-pointer rounded-lg border p-2 text-center transition-all ${watch("bodyType") === type
                             ? "bg-[#6D00FF]/20 border-[#6D00FF] text-white shadow-[0_0_15px_rgba(109,0,255,0.3)]"
                             : "bg-black/40 border-white/5 text-neutral-500 hover:border-white/20"
@@ -323,15 +327,15 @@ export default function WizardPage() {
                       Zona de Enfoque
                     </Label>
                     <div className="grid grid-cols-2 gap-2">
-                      {[
-                        { id: "upper", label: "Tren Superior", sub: "Pecho, Hombros, Brazos" },
-                        { id: "lower", label: "Tren Inferior", sub: "Piernas, Glúteos, Potencia" },
-                        { id: "abs", label: "Core & Abs", sub: "Definición, Cintura, V-Taper" },
-                        { id: "full", label: "Full Body", sub: "Proporción, Estética Total" }
-                      ].map((item) => (
+                      {([
+                        { id: "upper" as const, label: "Tren Superior", sub: "Pecho, Hombros, Brazos" },
+                        { id: "lower" as const, label: "Tren Inferior", sub: "Piernas, Glúteos, Potencia" },
+                        { id: "abs" as const, label: "Core & Abs", sub: "Definición, Cintura, V-Taper" },
+                        { id: "full" as const, label: "Full Body", sub: "Proporción, Estética Total" }
+                      ]).map((item) => (
                         <div
                           key={item.id}
-                          onClick={() => setValue("focusZone", item.id as any)}
+                          onClick={() => setValue("focusZone", item.id)}
                           className={`cursor-pointer rounded-lg border p-2 text-center transition-all ${watch("focusZone") === item.id
                             ? "bg-[#6D00FF]/20 border-[#6D00FF] text-white shadow-[0_0_15px_rgba(109,0,255,0.3)]"
                             : "bg-black/40 border-white/5 text-neutral-500 hover:border-white/20"

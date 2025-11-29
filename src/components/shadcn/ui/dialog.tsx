@@ -9,10 +9,8 @@ const Dialog = DialogPrimitive.Root
 const DialogTrigger = DialogPrimitive.Trigger
 const DialogClose = DialogPrimitive.Close
 
-function DialogPortal({ className, ...props }: DialogPrimitive.DialogPortalProps) {
-  return (
-    <DialogPrimitive.Portal className={cn(className)} {...props} />
-  )
+function DialogPortal(props: DialogPrimitive.DialogPortalProps) {
+  return <DialogPrimitive.Portal {...props} />
 }
 
 function DialogOverlay({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Overlay>) {

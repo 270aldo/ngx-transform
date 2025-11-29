@@ -3,29 +3,67 @@
 import React from "react";
 import { motion } from "framer-motion";
 
+type Size = "sm" | "md" | "lg";
+
 interface NeonRadarProps {
-    stats: {
+    // Support both object and individual props
+    stats?: {
         strength: number;
         aesthetics: number;
         endurance: number;
         mental: number;
     };
+    // Individual props (alternative API)
+    strength?: number;
+    aesthetics?: number;
+    endurance?: number;
+    mental?: number;
+    // Customization
     color?: string;
+    size?: Size;
+    showLabels?: boolean;
 }
 
-export function NeonRadar({ stats, color = "#6D00FF" }: NeonRadarProps) {
-    // Config
-    const size = 200;
-    const center = size / 2;
-    const radius = (size / 2) - 40; // Padding for labels
+const sizeConfig: Record<Size, { size: number; labelOffset: number; fontSize: number }> = {
+    sm: { size: 120, labelOffset: 110, fontSize: 7 },
+    md: { size: 180, labelOffset: 115, fontSize: 9 },
+    lg: { size: 240, labelOffset: 120, fontSize: 11 },
+};
+
+export function NeonRadar({
+    stats,
+    strength,
+    aesthetics,
+    endurance,
+    mental,
+    color,
+    size: sizeKey = "md",
+    showLabels = true,
+}: NeonRadarProps) {
+    // Resolve stats from either object or individual props
+    const resolvedStats = stats || {
+        strength: strength ?? 0,
+        aesthetics: aesthetics ?? 0,
+        endurance: endurance ?? 0,
+        mental: mental ?? 0,
+    };
+
+    // Use CSS variable if no color provided - default to primary color
+    const fillColor = color || "#6D00FF"; // --primary fallback
+
+    // Config based on size
+    const config = sizeConfig[sizeKey];
+    const svgSize = config.size;
+    const center = svgSize / 2;
+    const radius = (svgSize / 2) - (showLabels ? 35 : 15);
     const maxVal = 100;
 
     // Data Points
     const data = [
-        { label: "FUERZA", value: stats.strength, angle: 0 },       // Top
-        { label: "ESTÉTICA", value: stats.aesthetics, angle: 90 },  // Right
-        { label: "MENTAL", value: stats.mental, angle: 180 },       // Bottom
-        { label: "RESISTENCIA", value: stats.endurance, angle: 270 }, // Left
+        { label: "FUERZA", value: resolvedStats.strength, angle: 0 },       // Top
+        { label: "ESTÉTICA", value: resolvedStats.aesthetics, angle: 90 },  // Right
+        { label: "MENTAL", value: resolvedStats.mental, angle: 180 },       // Bottom
+        { label: "RESISTENCIA", value: resolvedStats.endurance, angle: 270 }, // Left
     ];
 
     // Helper to calculate coordinates
@@ -49,8 +87,8 @@ export function NeonRadar({ stats, color = "#6D00FF" }: NeonRadarProps) {
     });
 
     return (
-        <div className="relative flex items-center justify-center w-full h-full">
-            <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="overflow-visible">
+        <div className="relative flex items-center justify-center">
+            <svg width={svgSize} height={svgSize} viewBox={`0 0 ${svgSize} ${svgSize}`} className="overflow-visible">
                 {/* Background Grids */}
                 {grids.map((d, i) => (
                     <path
@@ -86,16 +124,16 @@ export function NeonRadar({ stats, color = "#6D00FF" }: NeonRadarProps) {
                     animate={{ pathLength: 1, opacity: 1 }}
                     transition={{ duration: 1.5, ease: "easeOut" }}
                     d={pathData}
-                    fill={color}
+                    fill={fillColor}
                     fillOpacity={0.2}
-                    stroke={color}
+                    stroke={fillColor}
                     strokeWidth={2}
                     filter="url(#glow)"
                 />
 
                 {/* Labels */}
-                {data.map((d, i) => {
-                    const p = getPoint(120, d.angle); // Push labels out slightly
+                {showLabels && data.map((d, i) => {
+                    const p = getPoint(config.labelOffset, d.angle);
                     return (
                         <text
                             key={i}
@@ -104,7 +142,7 @@ export function NeonRadar({ stats, color = "#6D00FF" }: NeonRadarProps) {
                             textAnchor="middle"
                             dominantBaseline="middle"
                             fill="white"
-                            fontSize="10"
+                            fontSize={config.fontSize}
                             fontWeight="bold"
                             className="tracking-widest"
                             style={{ textShadow: "0 0 10px rgba(0,0,0,0.8)" }}
