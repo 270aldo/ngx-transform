@@ -13,19 +13,22 @@ async function fetchImageAsInlineData(url: string): Promise<{ mimeType: string; 
 export async function generateInsightsFromImage(params: {
   imageUrl: string;
   profile: {
-    age?: string;
+    age?: string | number;
     sex?: string;
-    height?: string;
-    weight?: string;
+    height?: string | number;
+    heightCm?: number;
+    weight?: string | number;
+    weightKg?: number;
     goals?: string;
+    goal?: string;
     level?: string;
-    weeklyTime?: string;
+    weeklyTime?: string | number;
     stressLevel?: number;
     sleepQuality?: number;
     disciplineRating?: number;
     bodyType?: string;
-    bodyType?: string;
-    focusZone?: string; // New field
+    focusZone?: string;
+    notes?: string;
   };
 }): Promise<InsightsResult> {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -39,19 +42,24 @@ export async function generateInsightsFromImage(params: {
 
   const { profile } = params;
 
+  // Handle both field naming conventions (API vs Firestore)
+  const height = profile.height ?? profile.heightCm;
+  const weight = profile.weight ?? profile.weightKg;
+  const goals = profile.goals ?? profile.goal;
+
   const systemPrompt = `
     You are an Elite High-Performance Coach & Futurist (Stoic, Clinical, Motivational).
     Your goal is to analyze the user's current photo and data to project their physical and mental evolution over 12 months.
 
     USER DATA:
     - Age: ${profile.age}, Sex: ${profile.sex}
-    - Height: ${profile.height}cm, Weight: ${profile.weight}kg
+    - Height: ${height}cm, Weight: ${weight}kg
     - Body Type: ${profile.bodyType}
     - Current Level: ${profile.level}
-    - Main Goal: ${profile.goals}
+    - Main Goal: ${goals}
     - Weekly Dedication: ${profile.weeklyTime} hours
     - Stress: ${profile.stressLevel}/10, Sleep: ${profile.sleepQuality}/10, Discipline: ${profile.disciplineRating}/10
-    
+
     FOCUS ZONE (PRIORITY): ${profile.focusZone?.toUpperCase() || "FULL BODY"}
     (Tailor the training and aesthetic focus to this area).
 

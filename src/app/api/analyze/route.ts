@@ -21,10 +21,11 @@ interface SessionDoc {
   photo?: { originalStoragePath?: string };
   ai?: unknown;
   assets?: { images?: Record<string, string> };
-  status: "processing" | "ready" | "failed";
+  status: "processing" | "analyzed" | "generating" | "ready" | "failed";
 }
 
 export async function POST(req: Request) {
+  let parsedSessionId: string | undefined;
   try {
     const body = await req.json();
     const parsed = AnalyzeSchema.safeParse(body);
@@ -33,6 +34,7 @@ export async function POST(req: Request) {
     }
 
     const { sessionId } = parsed.data;
+    parsedSessionId = sessionId;
 
     if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json({ error: "GEMINI_API_KEY no está configurado" }, { status: 400 });
@@ -60,7 +62,8 @@ export async function POST(req: Request) {
     await ref.set(
       {
         ai,
-        status: "ready",
+        status: "analyzed",
+        analyzedAt: FieldValue.serverTimestamp(),
         updatedAt: FieldValue.serverTimestamp(),
       },
       { merge: true }
@@ -70,7 +73,11 @@ export async function POST(req: Request) {
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : "Unknown error";
     console.error(e);
+    try {
+      if (parsedSessionId) {
+        await getDb().collection("sessions").doc(parsedSessionId).set({ status: "failed" }, { merge: true });
+      }
+    } catch {}
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
-

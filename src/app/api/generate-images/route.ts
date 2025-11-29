@@ -4,6 +4,11 @@ import { GenerateImagesSchema } from "@/lib/validators";
 import { getSignedUrl, uploadBuffer } from "@/lib/storage";
 import { generateTransformedImage, type NanoStep } from "@/lib/nanobanana";
 import { FieldValue } from "firebase-admin/firestore";
+import sharp from "sharp";
+
+// Explicit Node.js runtime for sharp compatibility
+export const runtime = "nodejs";
+export const maxDuration = 120; // 2 minutos para generación de imágenes
 
 interface SessionDoc {
   shareId: string;
@@ -21,10 +26,47 @@ interface SessionDoc {
   photo?: { originalStoragePath?: string };
   ai?: unknown;
   assets?: { images?: Record<string, string> };
-  status: "processing" | "ready" | "failed";
+  status: "processing" | "analyzed" | "generating" | "ready" | "failed";
+}
+
+async function applyWatermark(buffer: Buffer, contentType: string): Promise<{ buffer: Buffer; contentType: string }> {
+  try {
+    const img = sharp(buffer);
+    const meta = await img.metadata();
+    const width = meta.width ?? 1200;
+    const height = meta.height ?? 1600;
+    const fontSize = Math.max(Math.floor(width / 18), 32);
+    const padding = Math.max(Math.floor(width / 28), 32);
+    const svg = `
+      <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+        <style>
+          .txt { fill: rgba(255,255,255,0.18); font-size:${fontSize}px; font-family:'Inter','Helvetica',Arial,sans-serif; font-weight:700; letter-spacing:3px; }
+        </style>
+        <text x="${width - padding}" y="${height - padding}" text-anchor="end" class="txt">NGX TRANSFORM</text>
+      </svg>
+    `;
+    const wmBuffer = Buffer.from(svg);
+    const composited = img.composite([{ input: wmBuffer }]);
+
+    // Apply format with quality settings
+    let out: Buffer;
+    let outType: string;
+    if (meta.format === "png") {
+      out = await composited.png().toBuffer();
+      outType = "image/png";
+    } else {
+      out = await composited.jpeg({ quality: 85 }).toBuffer();
+      outType = "image/jpeg";
+    }
+    return { buffer: out, contentType: outType };
+  } catch (err) {
+    console.error("Watermark failed, sending original", err);
+    return { buffer, contentType };
+  }
 }
 
 export async function POST(req: Request) {
+  let parsedSessionId: string | undefined;
   try {
     const body = await req.json();
     const parsed = GenerateImagesSchema.safeParse(body);
@@ -33,6 +75,7 @@ export async function POST(req: Request) {
     }
 
     const { sessionId } = parsed.data;
+    parsedSessionId = sessionId;
     const steps = (parsed.data.steps ?? ["m4", "m8", "m12"]) as NanoStep[];
 
     if (!process.env.GEMINI_API_KEY) {
@@ -46,12 +89,21 @@ export async function POST(req: Request) {
     const data = snap.data() as SessionDoc | undefined;
     if (!data) return NextResponse.json({ error: "Session data missing" }, { status: 500 });
 
+    // Avoid duplicate cost if already generated
+    const existingImages = data.assets?.images;
+    if (existingImages && steps.every((s) => existingImages[s])) {
+      return NextResponse.json({ ok: true, images: existingImages });
+    }
+
     const photoPath = data.photo?.originalStoragePath;
     if (!photoPath) return NextResponse.json({ error: "Missing photo" }, { status: 400 });
 
     const imageUrl = await getSignedUrl(photoPath, { expiresInSeconds: 3600 });
 
+    await ref.set({ status: "generating", updatedAt: FieldValue.serverTimestamp() }, { merge: true });
+
     const images: Record<string, string> = {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const aiData = data.ai as any; // Cast to any to access timeline safely
 
     for (const step of steps) {
@@ -64,14 +116,20 @@ export async function POST(req: Request) {
         step,
         aiPrompt, // Pass the extracted prompt
       });
-      const ext = contentType.includes("png") ? "png" : "jpg";
+      const { buffer: watermarkedBuffer, contentType: finalContentType } = await applyWatermark(buffer, contentType);
+      const ext = finalContentType.includes("png") ? "png" : "jpg";
       const storagePath = `sessions/${sessionId}/generated/${step}.${ext}`;
-      await uploadBuffer(storagePath, buffer, contentType);
+      await uploadBuffer(storagePath, watermarkedBuffer, finalContentType);
       images[step] = storagePath;
     }
 
     await ref.set(
-      { assets: { ...(data.assets || {}), images }, updatedAt: FieldValue.serverTimestamp() },
+      {
+        assets: { ...(data.assets || {}), images },
+        status: "ready",
+        generatedAt: FieldValue.serverTimestamp(),
+        updatedAt: FieldValue.serverTimestamp()
+      },
       { merge: true }
     );
 
@@ -79,7 +137,11 @@ export async function POST(req: Request) {
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : "Unknown error";
     console.error(e);
+    try {
+      if (parsedSessionId) {
+        await getDb().collection("sessions").doc(parsedSessionId).set({ status: "failed" }, { merge: true });
+      }
+    } catch {}
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
-
