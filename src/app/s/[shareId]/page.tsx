@@ -1,10 +1,9 @@
 import { getDb } from "@/lib/firebaseAdmin";
 import type { InsightsResult } from "@/types/ai";
-import { CinematicViewer } from "@/components/CinematicViewer"; // Reverted
+import { TransformationViewer } from "@/components/TransformationViewer";
 import { BiometricLoader } from "@/components/BiometricLoader";
 import RefreshClient from "./refresh-client";
 import { Metadata } from "next";
-import { getSignedUrl } from "@/lib/storage";
 
 export const dynamic = "force-dynamic";
 
@@ -25,30 +24,20 @@ interface SessionDoc {
   photo?: { originalStoragePath?: string };
   ai?: InsightsResult;
   assets?: { images?: Record<string, string> };
-  status: "processing" | "ready" | "failed";
+  status: "processing" | "analyzed" | "generating" | "ready" | "failed";
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ shareId: string }> }): Promise<Metadata> {
   const { shareId } = await params;
-  const db = getDb();
-  const snap = await db.collection("sessions").doc(shareId).get();
-  const data = snap.data() as SessionDoc | undefined;
-
-  if (!data || !data.assets?.images?.m12) {
-    return {
-      title: "NGX Transformation",
-      description: "Esculpiendo tu futuro...",
-    };
-  }
-
-  // Get signed URL for the transformed image (m12)
-  const imageUrl = await getSignedUrl(data.assets.images.m12, { expiresInSeconds: 3600 });
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL || "http://localhost:3000";
+  const absoluteBase = String(baseUrl).startsWith("http") ? baseUrl : `https://${baseUrl}`;
+  const ogUrl = `${absoluteBase}/api/og/${shareId}`;
 
   return {
     title: "Mi Transformación de 12 Meses - NGX",
     description: "He descubierto mi máximo potencial con NGX. Mira mi proyección física y mental.",
     openGraph: {
-      images: [imageUrl],
+      images: [ogUrl],
     },
   };
 }
@@ -75,7 +64,8 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
   const urls = await getUrls(shareId);
 
   // If processing or no AI, show simple loading
-  if (data.status !== "ready" || !ai) {
+  // If no AI yet, keep loading
+  if (!ai) {
     return (
       <>
         <BiometricLoader />
@@ -99,10 +89,12 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   delete (viewerData as any).createdAt;
 
-  // REVERT TO CINEMATIC VIEWER (User Request: "Lo que funcionó al principio")
+  const stillGenerating = data.status !== "ready";
+
   return (
-    <div className="min-h-screen bg-black">
-      <CinematicViewer ai={ai} imageUrls={urls} />
-    </div>
+    <>
+      <TransformationViewer ai={ai} imageUrls={urls} shareId={shareId} isReady={data.status === "ready"} />
+      <RefreshClient shareId={shareId} active={stillGenerating} />
+    </>
   );
 }
