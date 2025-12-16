@@ -4,10 +4,27 @@ import { CreateSessionSchema } from "@/lib/validators";
 import { FieldValue } from "firebase-admin/firestore";
 import { randomUUID } from "crypto";
 import { Resend } from "resend";
+import { telemetry, initSessionMetrics, startTimer } from "@/lib/telemetry";
+import { getOrCreateJob } from "@/lib/jobManager";
+
+/**
+ * Genera un token seguro para acciones destructivas
+ */
+function generateDeleteToken(): string {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let token = "";
+  for (let i = 0; i < 32; i++) {
+    token += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return token;
+}
 
 export async function POST(req: Request) {
+  const timer = startTimer();
   let ipDocId: string | null = null;
   let emailDocId: string | null = null;
+  let shareId: string | null = null;
+
   try {
     const body = await req.json();
     const parsed = CreateSessionSchema.safeParse(body);
@@ -52,8 +69,12 @@ export async function POST(req: Request) {
       );
     }
 
-    const shareId = randomUUID().replace(/-/g, "").slice(0, 12);
+    shareId = randomUUID().replace(/-/g, "").slice(0, 12);
+    const deleteToken = generateDeleteToken();
     const ref = db.collection("sessions").doc(shareId);
+
+    // Inicializar métricas de sesión
+    await initSessionMetrics(shareId);
 
     await ref.set({
       shareId,
@@ -63,9 +84,16 @@ export async function POST(req: Request) {
       ai: null,
       assets: {},
       status: "processing",
+      deleteToken, // Token para acciones destructivas
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     });
+
+    // Crear job para tracking
+    await getOrCreateJob(shareId, "analysis", { generateDeleteToken: false });
+
+    // Track evento de sesión creada
+    await telemetry.sessionCreated(shareId);
 
     // Fire webhook to n8n (non-blocking)
     (async () => {
@@ -109,10 +137,17 @@ export async function POST(req: Request) {
       }
     })();
 
-    return NextResponse.json({ sessionId: shareId });
+    const latency = timer.stop();
+    console.log(`[Sessions] Created ${shareId} in ${latency}ms`);
+
+    return NextResponse.json({
+      sessionId: shareId,
+      latency_ms: latency,
+    });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : "Unknown error";
-    console.error(e);
+    console.error("[Sessions] Error:", e);
+
     // Rollback rate-limit increment if session creation failed (safe decrement with min 0)
     try {
       const db = getDb();
@@ -136,7 +171,10 @@ export async function POST(req: Request) {
           }
         });
       }
-    } catch {}
+    } catch (rollbackError) {
+      console.error("[Sessions] Rollback error:", rollbackError);
+    }
+
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

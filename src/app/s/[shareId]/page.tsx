@@ -1,9 +1,13 @@
 import { getDb } from "@/lib/firebaseAdmin";
 import type { InsightsResult } from "@/types/ai";
 import { TransformationViewer } from "@/components/TransformationViewer";
+import { TransformationViewer2 } from "@/components/TransformationViewer2";
 import { BiometricLoader } from "@/components/BiometricLoader";
 import RefreshClient from "./refresh-client";
 import { Metadata } from "next";
+
+// Feature flag for Results 2.0 experience
+const FF_RESULTS_2 = process.env.NEXT_PUBLIC_FF_RESULTS_2 === "true";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +29,8 @@ interface SessionDoc {
   ai?: InsightsResult;
   assets?: { images?: Record<string, string> };
   status: "processing" | "analyzed" | "generating" | "ready" | "failed";
+  // v2.0 fields
+  letter_from_future?: string;
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ shareId: string }> }): Promise<Metadata> {
@@ -90,10 +96,28 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
   delete (viewerData as any).createdAt;
 
   const stillGenerating = data.status !== "ready";
+  const isReady = data.status === "ready";
 
+  // Use Results 2.0 experience if feature flag is enabled
+  if (FF_RESULTS_2) {
+    return (
+      <>
+        <TransformationViewer2
+          ai={ai}
+          imageUrls={urls}
+          shareId={shareId}
+          isReady={isReady}
+          letterFromFuture={data.letter_from_future}
+        />
+        <RefreshClient shareId={shareId} active={stillGenerating} />
+      </>
+    );
+  }
+
+  // Legacy experience
   return (
     <>
-      <TransformationViewer ai={ai} imageUrls={urls} shareId={shareId} isReady={data.status === "ready"} />
+      <TransformationViewer ai={ai} imageUrls={urls} shareId={shareId} isReady={isReady} />
       <RefreshClient shareId={shareId} active={stillGenerating} />
     </>
   );

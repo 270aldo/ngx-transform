@@ -4,7 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-NGX Transform is a fitness visualization MVP that creates realistic 12-month physical transformation projections. Users upload a photo, provide profile data, and receive AI-generated insights with visualized progress images at m0/m4/m8/m12 milestones.
+**Versión:** 2.0 (PRs 0-4 implementados)
+**Stack:** Next.js 16.0.7 + React 19 + TypeScript + Firebase + Tailwind CSS v4
+
+NGX Transform is a **premium viral lead magnet** that creates realistic 12-month physical transformation projections. Users upload a photo, provide profile data, and receive AI-generated insights with visualized progress images at m0/m4/m8/m12 milestones, plus a personalized 7-day fitness plan.
 
 ## Business Context
 
@@ -66,7 +69,7 @@ pnpm lint         # ESLint
 
 ## Architecture
 
-**Stack**: Next.js 15.5 (App Router) + React 19 + Firebase + Google Gemini + Tailwind CSS v4
+**Stack**: Next.js 16.0.7 (App Router) + React 19 + Firebase + Google Gemini + Tailwind CSS v4
 
 ### Data Flow
 
@@ -80,11 +83,19 @@ pnpm lint         # ESLint
 
 | Service | Location | Purpose |
 |---------|----------|---------|
-| `gemini.ts` | `src/lib/` | Gemini 2.5 Flash for profile analysis, returns structured `InsightsResult` |
-| `nanobanana.ts` | `src/lib/` | Gemini Image API wrapper for photo transformations |
+| `gemini.ts` | `src/lib/` | Gemini 2.5 Flash for profile analysis + user_visual_anchor + style_profile |
+| `nanobanana.ts` | `src/lib/` | Gemini Image API with Identity Chain for consistent transformations |
 | `firebaseAdmin.ts` | `src/lib/` | Server-side Firestore/Storage operations |
 | `storage.ts` | `src/lib/` | Signed URL generation, buffer uploads |
 | `validators.ts` | `src/lib/` | Zod schemas for all API inputs |
+| `telemetry.ts` | `src/lib/` | Funnel event tracking (wizard_start → cta_completed) |
+| `jobManager.ts` | `src/lib/` | Idempotent, resumable jobs for image generation |
+| `imageConfig.ts` | `src/lib/` | Centralized image config (model, aspect ratio, size) |
+| `promptBuilder.ts` | `src/lib/` | Robust prompt constructor with Identity Lock |
+| `qualityGates.ts` | `src/lib/` | Output validation (face visible, single subject, no artifacts) |
+| `viral/*` | `src/lib/viral/` | Share-to-unlock, referral tracking, social pack generator |
+| `plan/*` | `src/lib/plan/` | 7-day plan generation with AI + templates |
+| `schemas/*` | `src/lib/schemas/` | Strict Zod schemas for analysis output |
 
 ### API Routes
 
@@ -97,6 +108,11 @@ pnpm lint         # ESLint
 | `/api/generate-images` | POST | Generate m4/m8/m12 transformation images |
 | `/api/email` | POST | Send results via Resend |
 | `/api/leads` | POST | Capture email leads |
+| `/api/unlock` | POST | Share-to-unlock flow (share_intent, request_unlock) |
+| `/api/referral` | POST | Referral tracking (visit, complete, claim, stats) |
+| `/api/social-pack/[shareId]` | GET | Download social pack (story, post, square) |
+| `/api/plan` | POST/GET | Generate or fetch 7-day personalized plan |
+| `/api/og/[shareId]` | GET | OG image (split-screen HOY vs 12 MESES) |
 
 ### Type Definitions
 
@@ -104,6 +120,14 @@ Core AI types in `src/types/ai.ts`:
 - `InsightsResult` - Full analysis output with timeline
 - `TimelineEntry` - Single milestone (m0/m4/m8/m12) with stats, prompts, mental notes
 - `OverlayPoint` - Hotspot coordinates for image annotations
+- `UserVisualAnchor` - Immutable description of facial/physical traits for identity preservation
+- `StyleProfile` - Visual style parameters (lighting, wardrobe, background, color_grade)
+- `LetterFromFuture` - m12 motivational letter content
+
+Plan types in `src/lib/plan/planTypes.ts`:
+- `SevenDayPlan` - Complete 7-day plan structure
+- `DayPlan` - Single day with workout, habits, nutrition, mindset
+- `Exercise` - Exercise definition with sets, reps, rest, notes
 
 ### Profile Schema (Mental Logs)
 
@@ -142,6 +166,20 @@ The **Mental Logs** are fed to Gemini's "Elite Coach" prompt to personalize reco
 | `TimelineViewer` | `src/components/` | Timeline navigation with milestone details |
 | `OverlayImage` | `src/components/` | Interactive image with clickable hotspots |
 
+### Results 2.0 Components (v2.0)
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `CinematicAutoplay` | `src/components/results/` | Animated reveal sequence m0→m4→m8→m12 |
+| `CompareSlider` | `src/components/results/` | Touch-friendly before/after slider |
+| `LetterFromFuture` | `src/components/results/` | Modal with typewriter animation for m12 letter |
+| `StatsDelta` | `src/components/results/` | Animated stats progression with delta indicators |
+| `ChapterView` | `src/components/results/` | Detailed milestone view with hero, narrative, stats |
+| `TransformationViewer2` | `src/components/` | Orchestrator for Results 2.0 experience |
+| `ShareToUnlock` | `src/components/viral/` | Share-to-unlock UI with countdown |
+| `BookingCTA2` | `src/components/` | Enhanced CTA with 7-day plan generation |
+| `PlanViewer` | `src/app/plan/[shareId]/` | 7-day plan viewer with day navigation and tabs |
+
 ### AI Prompt Strategy
 
 The Gemini integration uses an **"Elite High-Performance Coach & Futurist"** persona:
@@ -153,6 +191,49 @@ The Gemini integration uses an **"Elite High-Performance Coach & Futurist"** per
   - `image_prompt`: Detailed prompt for Nike-style transformation image
   - `mental`: Stoic mindset shift required for each stage
 - Image generation uses "Nike Advertisement" / "Billboard Campaign" style prompts
+
+### Identity Chain (v2.0)
+
+For consistent facial identity across m4/m8/m12 transformations:
+
+```
+[IDENTITY LOCK]
+Subject: {user_visual_anchor}
+PRESERVE: exact facial features, skin tone, hair color/style, distinguishing marks
+
+[TRANSFORMATION: {step} - {percent}%]
+Environment:
+- m4: gritty underground gym (40% progress)
+- m8: lifestyle setting (70% progress)
+- m12: editorial studio (100% peak form)
+
+[NEGATIVE]
+NO: CGI, cartoon, plastic skin, extra limbs, face drift, multiple subjects
+```
+
+**Reference Chaining:**
+- m4 refs: [original, styleRef]
+- m8 refs: [original, styleRef, m4]
+- m12 refs: [original, styleRef, m8]
+
+### Feature Flags (v2.0)
+
+| Flag | Default | Purpose |
+|------|---------|---------|
+| `NEXT_PUBLIC_FF_RESULTS_2` | false | Enable Results 2.0 experience |
+| `NEXT_PUBLIC_FF_OG_SPLIT_SCREEN` | true | OG split-screen (HOY vs 12 MESES) |
+| `FF_SHARE_TO_UNLOCK` | true | Unlock content after sharing |
+| `FF_REFERRAL_TRACKING` | true | Track referral visits/completions |
+| `FF_PLAN_7_DIAS` | true | Generate 7-day plan with AI |
+
+### Page Routes
+
+| Route | Purpose |
+|-------|---------|
+| `/` | Landing page |
+| `/wizard` | Multi-step wizard (email, photo, profile) |
+| `/s/[shareId]` | Shareable results page |
+| `/plan/[shareId]` | 7-day personalized plan viewer |
 
 ## Environment Variables
 
