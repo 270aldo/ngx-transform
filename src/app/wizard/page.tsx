@@ -29,12 +29,21 @@ const FormSchema = z.object({
   level: z.enum(["novato", "intermedio", "avanzado"]),
   goal: z.enum(["definicion", "masa", "mixto"]),
   weeklyTime: z.coerce.number().min(1).max(14),
+  trainingDaysPerWeek: z.coerce.number().min(1).max(7).default(3),
+  trainingHistoryYears: z.coerce.number().min(0).max(30).default(0),
+  nutritionQuality: z.coerce.number().min(1).max(10).default(6),
+  bodyFatLevel: z.enum(["bajo", "medio", "alto"]).default("medio"),
+  trainingStyle: z.enum(["fuerza", "hipertrofia", "funcional", "hiit", "mixto"]).default("mixto"),
+  aestheticPreference: z.enum(["cinematic", "editorial", "street", "minimal"]).default("cinematic"),
   stressLevel: z.coerce.number().min(1).max(10).default(5),
   sleepQuality: z.coerce.number().min(1).max(10).default(5),
   disciplineRating: z.coerce.number().min(1).max(10).default(5),
   bodyType: z.enum(["ectomorph", "mesomorph", "endomorph"]).default("mesomorph"),
   specificGoals: z.array(z.string()).default([]),
   focusZone: z.enum(["upper", "lower", "abs", "full"]).default("full"),
+  focusAreas: z.array(
+    z.enum(["pecho", "espalda", "hombros", "brazos", "gluteos", "piernas", "core"])
+  ).default([]),
   notes: z.string().optional(),
   photo: z.any(),
 });
@@ -61,10 +70,17 @@ export default function WizardPage() {
       level: "novato",
       goal: "definicion",
       weeklyTime: 3,
+      trainingDaysPerWeek: 3,
+      trainingHistoryYears: 0,
+      nutritionQuality: 6,
+      bodyFatLevel: "medio",
+      trainingStyle: "mixto",
+      aestheticPreference: "cinematic",
       stressLevel: 5,
       sleepQuality: 5,
       disciplineRating: 5,
       bodyType: "mesomorph",
+      focusAreas: [],
     },
   });
 
@@ -147,11 +163,18 @@ export default function WizardPage() {
         level: values.level,
         goal: values.goal,
         weeklyTime: values.weeklyTime,
+        trainingDaysPerWeek: values.trainingDaysPerWeek,
+        trainingHistoryYears: values.trainingHistoryYears,
+        nutritionQuality: values.nutritionQuality,
+        bodyFatLevel: values.bodyFatLevel,
+        trainingStyle: values.trainingStyle,
+        aestheticPreference: values.aestheticPreference,
         stressLevel: values.stressLevel,
         sleepQuality: values.sleepQuality,
         disciplineRating: values.disciplineRating,
         bodyType: values.bodyType,
         specificGoals: values.specificGoals,
+        focusAreas: values.focusAreas,
         notes: values.notes,
       };
       setStage("create"); setProgress(50);
@@ -176,14 +199,8 @@ export default function WizardPage() {
 
       // 5) Images (async)
       setStage("images"); setProgress(85);
-      fetch("/api/generate-images", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId }),
-      }).catch(() => { });
-
       setStage("done"); setProgress(100);
-      router.push(`/s/${sessionId}`);
+      router.push(`/loading/${sessionId}`);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Error inesperado";
       setError(message);
@@ -196,6 +213,15 @@ export default function WizardPage() {
   const photoFile = watch("photo");
   const previewUrl = photoFile && photoFile[0] ? URL.createObjectURL(photoFile[0]) : null;
   const emailVal = watch("email");
+  const focusAreasVal = watch("focusAreas") || [];
+  const toggleFocusArea = (area: FormValues["focusAreas"][number]) => {
+    const current = focusAreasVal ?? [];
+    if (current.includes(area)) {
+      setValue("focusAreas", current.filter((item) => item !== area));
+    } else {
+      setValue("focusAreas", [...current, area]);
+    }
+  };
   const stepCurrent: 1 | 2 | 3 = emailVal ? (photoFile && photoFile.length ? 3 : 2) : 1;
 
   return (
@@ -320,6 +346,20 @@ export default function WizardPage() {
                     </div>
                   </div>
 
+                  <div className="space-y-2">
+                    <Label>Nivel de Grasa Corporal</Label>
+                    <Select value={watch("bodyFatLevel")} onValueChange={(v) => setValue("bodyFatLevel", v as FormValues["bodyFatLevel"])}>
+                      <SelectTrigger className="w-full bg-black/40 border-white/10 focus:border-[#6D00FF]">
+                        <SelectValue placeholder="Seleccionar" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="bajo">Bajo (muy definido)</SelectItem>
+                        <SelectItem value="medio">Medio (atlético)</SelectItem>
+                        <SelectItem value="alto">Alto (más adiposidad)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                   {/* Focus Zone Selector */}
                   <div className="space-y-2 pt-2 border-t border-white/5">
                     <Label className="flex items-center gap-2">
@@ -343,6 +383,35 @@ export default function WizardPage() {
                         >
                           <div className="text-[10px] font-bold uppercase mb-0.5 tracking-wider">{item.label}</div>
                           <div className="text-[8px] opacity-60 leading-tight">{item.sub}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 pt-2 border-t border-white/5">
+                    <Label className="flex items-center gap-2">
+                      <span className="text-[#6D00FF]">✦</span>
+                      Zonas de Trabajo (Opcional)
+                    </Label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {([
+                        { id: "pecho" as const, label: "Pecho" },
+                        { id: "espalda" as const, label: "Espalda" },
+                        { id: "hombros" as const, label: "Hombros" },
+                        { id: "brazos" as const, label: "Brazos" },
+                        { id: "gluteos" as const, label: "Glúteos" },
+                        { id: "piernas" as const, label: "Piernas" },
+                        { id: "core" as const, label: "Core" },
+                      ]).map((item) => (
+                        <div
+                          key={item.id}
+                          onClick={() => toggleFocusArea(item.id)}
+                          className={`cursor-pointer rounded-lg border p-2 text-center transition-all ${focusAreasVal.includes(item.id)
+                            ? "bg-[#6D00FF]/20 border-[#6D00FF] text-white shadow-[0_0_15px_rgba(109,0,255,0.3)]"
+                            : "bg-black/40 border-white/5 text-neutral-500 hover:border-white/20"
+                            }`}
+                        >
+                          <div className="text-[10px] font-bold uppercase tracking-wider">{item.label}</div>
                         </div>
                       ))}
                     </div>
@@ -398,6 +467,75 @@ export default function WizardPage() {
                       className="w-full accent-[#6D00FF] h-2 bg-black/40 rounded-lg appearance-none cursor-pointer"
                       {...register("weeklyTime")}
                     />
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between text-xs mb-2">
+                      <Label>Entrenos por Semana</Label>
+                      <span className="text-[#6D00FF] font-bold">{watch("trainingDaysPerWeek")} días</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="1" max="7"
+                      className="w-full accent-[#6D00FF] h-2 bg-black/40 rounded-lg appearance-none cursor-pointer"
+                      {...register("trainingDaysPerWeek")}
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between text-xs mb-2">
+                      <Label>Historial de Entrenamiento</Label>
+                      <span className="text-[#6D00FF] font-bold">{watch("trainingHistoryYears")} años</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0" max="12"
+                      className="w-full accent-[#6D00FF] h-2 bg-black/40 rounded-lg appearance-none cursor-pointer"
+                      {...register("trainingHistoryYears")}
+                    />
+                  </div>
+
+                  <div>
+                    <Label>Estilo de Entrenamiento</Label>
+                    <Select value={watch("trainingStyle")} onValueChange={(v) => setValue("trainingStyle", v as FormValues["trainingStyle"])}>
+                      <SelectTrigger className="w-full bg-black/40 border-white/10 focus:border-[#6D00FF]">
+                        <SelectValue placeholder="Seleccionar" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="fuerza">Fuerza</SelectItem>
+                        <SelectItem value="hipertrofia">Hipertrofia</SelectItem>
+                        <SelectItem value="funcional">Funcional</SelectItem>
+                        <SelectItem value="hiit">HIIT / Cardio</SelectItem>
+                        <SelectItem value="mixto">Mixto</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between text-xs mb-2">
+                      <Label>Calidad de Nutrición</Label>
+                      <span className="text-emerald-400 font-bold">{watch("nutritionQuality")}/10</span>
+                    </div>
+                    <input
+                      type="range" min="1" max="10"
+                      className="w-full accent-emerald-500 h-2 bg-black/40 rounded-lg appearance-none cursor-pointer"
+                      {...register("nutritionQuality")}
+                    />
+                  </div>
+
+                  <div>
+                    <Label>Estética Visual</Label>
+                    <Select value={watch("aestheticPreference")} onValueChange={(v) => setValue("aestheticPreference", v as FormValues["aestheticPreference"])}>
+                      <SelectTrigger className="w-full bg-black/40 border-white/10 focus:border-[#6D00FF]">
+                        <SelectValue placeholder="Seleccionar" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="cinematic">Cinemática (Nike)</SelectItem>
+                        <SelectItem value="editorial">Editorial Premium</SelectItem>
+                        <SelectItem value="street">Street / Urbano</SelectItem>
+                        <SelectItem value="minimal">Minimal Studio</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   {/* Mental Logs */}

@@ -136,6 +136,14 @@ export async function POST(req: Request) {
     // Check if already complete
     const job = await getOrCreateJob(sessionId, "image_generation");
 
+    // Avoid duplicate concurrent generations
+    if (job.status === "in_progress" && job.startedAt) {
+      const startedAt = job.startedAt.toDate?.();
+      if (startedAt && Date.now() - startedAt.getTime() < 10 * 60 * 1000) {
+        return NextResponse.json({ ok: true, status: "in_progress" }, { status: 202 });
+      }
+    }
+
     if (job.status === "completed" && data.assets?.images) {
       const existingImages = data.assets.images;
       if (["m4", "m8", "m12"].every((s) => existingImages[s])) {
@@ -185,7 +193,9 @@ export async function POST(req: Request) {
     const styleProfile = extractStyleProfile(aiData);
 
     console.log(`[GenerateImages] Identity Chain enabled`);
-    console.log(`[GenerateImages] Visual anchor: ${userVisualAnchor.substring(0, 100)}...`);
+    console.log(
+      `[GenerateImages] Visual anchor: ${userVisualAnchor ? `${userVisualAnchor.length} chars` : "none"}`
+    );
 
     let completedCount = 0;
     const failedSteps: string[] = [];
@@ -277,10 +287,10 @@ export async function POST(req: Request) {
             `(quality: ${result.qualityScore}, chain: ${result.usedIdentityChain})`
         );
 
-        // Save partial progress
+        // Save partial progress without overwriting other steps
         await ref.set(
           {
-            assets: { ...(data.assets || {}), images },
+            assets: { images: { [step]: storagePath } },
             updatedAt: FieldValue.serverTimestamp(),
           },
           { merge: true }
@@ -301,10 +311,9 @@ export async function POST(req: Request) {
       finalStatus = failedSteps.length === stepsToProcess.length ? "failed" : "partial";
     }
 
-    // Update session with final state
+    // Update session with final state (assets already persisted per step)
     await ref.set(
       {
-        assets: { ...(data.assets || {}), images },
         status: finalStatus,
         generatedAt: FieldValue.serverTimestamp(),
         updatedAt: FieldValue.serverTimestamp(),

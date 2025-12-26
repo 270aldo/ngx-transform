@@ -206,6 +206,10 @@ export function TransformationViewer2({
 
   const handleNextStep = () => {
     const currentIndex = STEPS.indexOf(currentStep);
+    if (currentStep === "m12") {
+      window.location.href = `/dashboard/${shareId}`;
+      return;
+    }
     if (currentIndex < STEPS.length - 1) {
       setCurrentStep(STEPS[currentIndex + 1]);
     }

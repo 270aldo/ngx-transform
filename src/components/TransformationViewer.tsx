@@ -11,8 +11,9 @@ import { SocialShareButton } from "./SocialShareButton";
 import { BookingHeaderButton } from "./BookingHeaderButton";
 import { BookingCTA } from "./BookingCTA";
 import { DownloadButton } from "./DownloadButton";
+import { useRouter } from "next/navigation";
 
-export type TimelineStep = "m0" | "m4" | "m8" | "m12";
+export type TimelineStep = "m0" | "m4" | "m8" | "m12" | "summary";
 
 interface TransformationViewerProps {
   ai: InsightsResult;
@@ -25,12 +26,23 @@ interface TransformationViewerProps {
 }
 
 export function TransformationViewer({ ai, imageUrls, shareId, isReady = true }: TransformationViewerProps) {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState<TimelineStep>("m0");
 
-  const currentEntry = ai.timeline[currentStep];
+  const currentEntry = ai.timeline[currentStep === "summary" ? "m12" : currentStep];
   const currentImage = currentStep === "m0"
     ? imageUrls.originalUrl
-    : imageUrls.images?.[currentStep];
+    : currentStep === "summary"
+      ? imageUrls.images?.m12
+      : imageUrls.images?.[currentStep];
+
+  const handleStepChange = (step: TimelineStep) => {
+    if (step === "summary") {
+      router.push(`/dashboard/${shareId}`);
+      return;
+    }
+    setCurrentStep(step);
+  };
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -65,7 +77,7 @@ export function TransformationViewer({ ai, imageUrls, shareId, isReady = true }:
           <div className="lg:hidden py-3 sm:py-4 px-3 sm:px-4 bg-black/90 backdrop-blur-sm sticky top-14 sm:top-16 z-30">
             <TimelineNav
               currentStep={currentStep}
-              onStepChange={setCurrentStep}
+              onStepChange={handleStepChange}
             />
           </div>
 
@@ -97,7 +109,7 @@ export function TransformationViewer({ ai, imageUrls, shareId, isReady = true }:
           <div className="hidden lg:block sticky bottom-0 p-6 bg-gradient-to-t from-black via-black/95 to-transparent">
             <TimelineNav
               currentStep={currentStep}
-              onStepChange={setCurrentStep}
+              onStepChange={handleStepChange}
             />
           </div>
         </section>

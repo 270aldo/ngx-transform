@@ -90,10 +90,17 @@ export interface SessionDocument {
     level: "novato" | "intermedio" | "avanzado";
     goal: "definicion" | "masa" | "mixto";
     weeklyTime: number;
+    trainingDaysPerWeek?: number;
+    trainingHistoryYears?: number;
+    nutritionQuality?: number;
+    bodyFatLevel?: "bajo" | "medio" | "alto";
+    trainingStyle?: "fuerza" | "hipertrofia" | "funcional" | "hiit" | "mixto";
+    aestheticPreference?: "cinematic" | "editorial" | "street" | "minimal";
     stressLevel?: number;
     sleepQuality?: number;
     disciplineRating?: number;
     bodyType?: "ectomorph" | "mesomorph" | "endomorph";
+    focusAreas?: Array<"pecho" | "espalda" | "hombros" | "brazos" | "gluteos" | "piernas" | "core">;
     focusZone?: "upper" | "lower" | "abs" | "full";
     notes?: string;
   };
@@ -111,4 +118,3 @@ export interface SessionDocument {
   analyzedAt?: FirebaseFirestore.Timestamp;
   generatedAt?: FirebaseFirestore.Timestamp;
 }
-

@@ -23,6 +23,18 @@ export interface PromptContext {
   goal: "definicion" | "masa" | "mixto";
   sex: "male" | "female" | "other";
   focusZone?: "upper" | "lower" | "abs" | "full";
+  level?: "novato" | "intermedio" | "avanzado";
+  weeklyTime?: number;
+  trainingDaysPerWeek?: number;
+  trainingHistoryYears?: number;
+  nutritionQuality?: number;
+  bodyFatLevel?: "bajo" | "medio" | "alto";
+  trainingStyle?: "fuerza" | "hipertrofia" | "funcional" | "hiit" | "mixto";
+  aestheticPreference?: "cinematic" | "editorial" | "street" | "minimal";
+  stressLevel?: number;
+  sleepQuality?: number;
+  disciplineRating?: number;
+  focusAreas?: Array<"pecho" | "espalda" | "hombros" | "brazos" | "gluteos" | "piernas" | "core">;
   aiPrompt?: string;  // Optional AI-generated prompt from analysis
 }
 
@@ -67,6 +79,156 @@ const FOCUS_ZONE_EMPHASIS: Record<string, string> = {
   full: "with balanced full-body development and proportional muscle growth",
 };
 
+const FOCUS_AREA_LABELS: Record<string, string> = {
+  pecho: "chest",
+  espalda: "back",
+  hombros: "shoulders",
+  brazos: "arms",
+  gluteos: "glutes",
+  piernas: "legs",
+  core: "core/abs",
+};
+
+// ============================================================================ 
+// Realism & Progress Utilities
+// ============================================================================ 
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
+function normalize(value: number, min: number, max: number): number {
+  if (Number.isNaN(value)) return 0.5;
+  return clamp((value - min) / (max - min), 0, 1);
+}
+
+function computeAdherenceScore(context: PromptContext): number {
+  const parts: number[] = [];
+
+  if (typeof context.weeklyTime === "number") {
+    parts.push(normalize(context.weeklyTime, 1, 14));
+  }
+  if (typeof context.trainingDaysPerWeek === "number") {
+    parts.push(normalize(context.trainingDaysPerWeek, 1, 7));
+  }
+  if (typeof context.nutritionQuality === "number") {
+    parts.push(normalize(context.nutritionQuality, 1, 10));
+  }
+  if (typeof context.disciplineRating === "number") {
+    parts.push(normalize(context.disciplineRating, 1, 10));
+  }
+  if (typeof context.sleepQuality === "number") {
+    parts.push(normalize(context.sleepQuality, 1, 10));
+  }
+  if (typeof context.stressLevel === "number") {
+    // Higher stress lowers adherence score
+    parts.push(1 - normalize(context.stressLevel, 1, 10));
+  }
+
+  // Level baseline
+  const levelBoost =
+    context.level === "avanzado" ? 0.1 : context.level === "novato" ? -0.05 : 0.0;
+  const experienceBoost = typeof context.trainingHistoryYears === "number"
+    ? normalize(context.trainingHistoryYears, 0, 8) * 0.08
+    : 0;
+  const base = parts.length ? parts.reduce((a, b) => a + b, 0) / parts.length : 0.6;
+
+  return clamp(base + levelBoost + experienceBoost, 0.2, 0.95);
+}
+
+function describeProgressIntensity(score: number): string {
+  if (score < 0.45) return "conservative but realistic";
+  if (score < 0.7) return "moderate and sustainable";
+  return "aggressive yet realistic";
+}
+
+function describeTrainingProfile(context: PromptContext): string {
+  const weekly = typeof context.weeklyTime === "number"
+    ? `${context.weeklyTime}h/week`
+    : "unknown weekly volume";
+  const level = context.level || "intermedio";
+  const days = typeof context.trainingDaysPerWeek === "number"
+    ? `${context.trainingDaysPerWeek} days/week`
+    : "unknown days/week";
+
+  return `Training profile: ${level}, ${weekly}, ${days}.`;
+}
+
+function describeTrainingStyle(style?: PromptContext["trainingStyle"]): string {
+  if (!style) return "Balanced strength and hypertrophy approach.";
+  switch (style) {
+    case "fuerza":
+      return "Strength-focused training, heavier loads, lower reps.";
+    case "hipertrofia":
+      return "Hypertrophy-focused training, moderate reps, higher volume.";
+    case "funcional":
+      return "Functional athletic training, movement quality and power.";
+    case "hiit":
+      return "HIIT and conditioning emphasis for leanness and stamina.";
+    default:
+      return "Balanced strength and hypertrophy approach.";
+  }
+}
+
+function getChangeIntensityWord(score: number): string {
+  if (score < 0.45) return "modest";
+  if (score < 0.7) return "noticeable";
+  return "pronounced";
+}
+
+function describeBodyFatLevel(level?: PromptContext["bodyFatLevel"]): string {
+  if (!level) return "moderate body fat baseline";
+  if (level === "bajo") return "low body fat baseline";
+  if (level === "alto") return "higher body fat baseline";
+  return "moderate body fat baseline";
+}
+
+function formatFocusAreas(areas?: PromptContext["focusAreas"]): string {
+  if (!areas?.length) return "";
+  const mapped = areas.map((area) => FOCUS_AREA_LABELS[area] || area);
+  return `Primary focus areas: ${mapped.join(", ")}.`;
+}
+
+function buildVisualDelta(context: PromptContext, intensityWord: string): string {
+  const goal = context.goal;
+  const bodyFat = context.bodyFatLevel || "medio";
+  const focusAreas = formatFocusAreas(context.focusAreas);
+
+  const byStep: Record<NanoStep, string> = {
+    m4: "",
+    m8: "",
+    m12: "",
+  };
+
+  if (goal === "definicion") {
+    const earlyFat = bodyFat === "alto"
+      ? "visible fat loss with a tighter waistline and softer-to-lean transition."
+      : "tighter waistline with early ab outline and shoulder separation.";
+    byStep.m4 = `${intensityWord} ${earlyFat}`;
+    byStep.m8 = `clear fat reduction, visible ab outline, sharper jawline, defined deltoids and arms.`;
+    byStep.m12 = `deep definition, visible abdominal separation, crisp muscle striations, healthy vascularity.`;
+  } else if (goal === "masa") {
+    const cleanBulk = bodyFat === "alto"
+      ? "cleaner bulk with tighter waistline control to avoid excessive fat gain."
+      : "lean muscle gain with minimal fat increase.";
+    byStep.m4 = `${intensityWord} increase in muscle fullness, thicker chest and shoulders, early arm growth; ${cleanBulk}`;
+    byStep.m8 = `obvious mass gain in chest, shoulders, back; arms visibly thicker; stronger V-taper.`;
+    byStep.m12 = `peak muscle mass with balanced proportions; thick chest and shoulders; powerful but realistic build.`;
+  } else {
+    const recomposition = bodyFat === "alto"
+      ? "recomposition with visible waist reduction and improved posture."
+      : "recomposition: tighter waist, slightly broader shoulders, improved posture.";
+    byStep.m4 = `${intensityWord} ${recomposition}`;
+    byStep.m8 = `athletic silhouette with visible abs, broader shoulders, tighter waist, improved symmetry.`;
+    byStep.m12 = `heroic athletic build: strong V-taper, crisp definition, balanced proportions.`;
+  }
+
+  return `[VISUAL DELTA - MUST BE VISIBLE]
+${byStep[context.step]}
+${focusAreas ? `${focusAreas}` : ""}
+Body changes must be clearly visible compared to the previous stage while preserving facial identity.`;
+}
+
 // ============================================================================
 // Prompt Construction
 // ============================================================================
@@ -93,8 +255,11 @@ The output MUST be recognizable as the SAME person in the reference.`;
  * Build the transformation section based on step and goal
  */
 function buildTransformation(context: PromptContext): string {
-  const percent = TRANSFORMATION_PERCENT[context.step];
+  const basePercent = TRANSFORMATION_PERCENT[context.step];
   const env = ENVIRONMENT_BY_STEP[context.step];
+  const adherenceScore = computeAdherenceScore(context);
+  const multiplier = clamp(0.65 + adherenceScore * 0.6, 0.7, 1.15);
+  const effectivePercent = Math.min(100, Math.round(basePercent * multiplier));
 
   const sexKey = context.sex === "other" ? "neutral" : context.sex;
   const goalDesc = GOAL_DESCRIPTIONS[context.goal]?.[sexKey]
@@ -113,12 +278,32 @@ function buildTransformation(context: PromptContext): string {
     progressDescription = "PEAK TRANSFORMATION achieved. Maximum results. Competition-ready elite physique.";
   }
 
-  return `[TRANSFORMATION: ${context.step.toUpperCase()} - ${percent}% PROGRESS]
+  const intensityLabel = describeProgressIntensity(adherenceScore);
+  const trainingProfile = describeTrainingProfile(context);
+  const trainingStyle = describeTrainingStyle(context.trainingStyle);
+  const intensityWord = getChangeIntensityWord(adherenceScore);
+  const visualDelta = buildVisualDelta(context, intensityWord);
+  const bodyFatLine = `Body fat baseline: ${describeBodyFatLevel(context.bodyFatLevel)}.`;
+  const nutritionLine = typeof context.nutritionQuality === "number"
+    ? `Nutrition quality: ${context.nutritionQuality}/10.`
+    : "";
+  const recoveryNote = (context.sleepQuality !== undefined || context.stressLevel !== undefined)
+    ? `Recovery context: sleep ${context.sleepQuality ?? "N/A"}/10, stress ${context.stressLevel ?? "N/A"}/10.`
+    : "";
+
+  return `[TRANSFORMATION: ${context.step.toUpperCase()} - ${effectivePercent}% PROGRESS]
 
 Target Physique: ${goalDesc} ${focusEmphasis}
 
-Progress Level: ${percent}% toward goal
+Progress Level: ${effectivePercent}% toward goal
+Progress Intensity: ${intensityLabel}
+${trainingProfile}
+${trainingStyle}
+${bodyFatLine}
+${nutritionLine}
+${recoveryNote}
 ${progressDescription}
+${visualDelta}
 
 Environment: ${env.description}
 Setting: ${env.setting}
@@ -128,11 +313,31 @@ Mood: ${env.mood}`;
 /**
  * Build style and photography directions
  */
-function buildStyle(styleProfile?: StyleProfile): string {
-  const lighting = styleProfile?.lighting || "dramatic studio lighting with sharp shadows";
-  const wardrobe = styleProfile?.wardrobe || "premium athletic wear (Nike/Under Armour style) or shirtless";
-  const background = styleProfile?.background || "professional fitness environment";
-  const colorGrade = styleProfile?.color_grade || "cinematic with deep blacks and vibrant highlights";
+function buildStyle(context: PromptContext): string {
+  const aestheticPreference = context.aestheticPreference || "cinematic";
+  const fallbackColorGrades: Record<string, string> = {
+    cinematic: "cinematic with deep blacks and vibrant highlights",
+    editorial: "high-fashion editorial grade with crisp contrast",
+    street: "urban gritty grade with high contrast and texture",
+    minimal: "clean minimal grade with soft contrast and neutral tones",
+  };
+  const fallbackBackgrounds: Record<string, string> = {
+    cinematic: "professional fitness environment",
+    editorial: "studio backdrop with controlled lighting",
+    street: "urban concrete environment with dramatic light falloff",
+    minimal: "minimal studio setting with clean geometry",
+  };
+  const fallbackWardrobe: Record<string, string> = {
+    cinematic: "premium athletic wear (Nike/Under Armour style) or shirtless",
+    editorial: "premium athletic fashion styling with clean silhouettes",
+    street: "athletic streetwear, fitted, performance fabrics",
+    minimal: "simple, clean athletic wear with minimal branding",
+  };
+
+  const lighting = context.styleProfile?.lighting || "dramatic studio lighting with sharp shadows";
+  const wardrobe = context.styleProfile?.wardrobe || fallbackWardrobe[aestheticPreference];
+  const background = context.styleProfile?.background || fallbackBackgrounds[aestheticPreference];
+  const colorGrade = context.styleProfile?.color_grade || fallbackColorGrades[aestheticPreference];
 
   return `[PHOTOGRAPHY STYLE]
 Camera: 85mm portrait lens, f/2.8, shallow depth of field
@@ -144,6 +349,7 @@ Background: ${background}
 Color Grade: ${colorGrade}
 
 Aesthetic Reference: Nike commercial, Under Armour campaign, ESPN Body Issue
+Preferred Aesthetic: ${aestheticPreference}
 Quality: 8K ultra-high definition, photorealistic, magazine cover quality`;
 }
 
@@ -198,7 +404,7 @@ function buildDetails(step: NanoStep): string {
 export function buildImagePrompt(context: PromptContext): GeneratedPrompt {
   const identityLock = buildIdentityLock(context.userVisualAnchor);
   const transformation = buildTransformation(context);
-  const style = buildStyle(context.styleProfile);
+  const style = buildStyle(context);
   const details = buildDetails(context.step);
   const negativePrompt = buildNegativePrompt();
 

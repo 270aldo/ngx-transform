@@ -22,6 +22,12 @@ export const ProfileSchema = z.object({
   level: z.enum(["novato", "intermedio", "avanzado"]),
   goal: z.enum(["definicion", "masa", "mixto"]),
   weeklyTime: z.number().min(1).max(14),
+  trainingDaysPerWeek: z.number().min(1).max(7).default(3).optional(),
+  trainingHistoryYears: z.number().min(0).max(30).default(0).optional(),
+  nutritionQuality: z.number().min(1).max(10).default(6).optional(),
+  bodyFatLevel: z.enum(["bajo", "medio", "alto"]).default("medio").optional(),
+  trainingStyle: z.enum(["fuerza", "hipertrofia", "funcional", "hiit", "mixto"]).default("mixto").optional(),
+  aestheticPreference: z.enum(["cinematic", "editorial", "street", "minimal"]).default("cinematic").optional(),
   // Mental Logs
   stressLevel: z.number().min(1).max(10).default(5).optional(),
   sleepQuality: z.number().min(1).max(10).default(5).optional(),
@@ -30,6 +36,9 @@ export const ProfileSchema = z.object({
   bodyType: z.enum(["ectomorph", "mesomorph", "endomorph"]).default("mesomorph").optional(),
   specificGoals: z.array(z.string()).default([]).optional(),
   focusZone: z.enum(["upper", "lower", "abs", "full"]).default("full").optional(),
+  focusAreas: z.array(
+    z.enum(["pecho", "espalda", "hombros", "brazos", "gluteos", "piernas", "core"])
+  ).default([]).optional(),
   notes: z.string().optional(),
 });
 
@@ -189,4 +198,3 @@ export function getFeatureFlags(): FeatureFlags {
     FF_AGENT_BRIDGE_CTA: process.env.FF_AGENT_BRIDGE_CTA !== "false",
   });
 }
-

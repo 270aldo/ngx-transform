@@ -42,7 +42,17 @@ export interface GenerationParams {
     level: "novato" | "intermedio" | "avanzado";
     goal: "definicion" | "masa" | "mixto";
     weeklyTime: number;
+    trainingDaysPerWeek?: number;
+    trainingHistoryYears?: number;
+    nutritionQuality?: number;
+    bodyFatLevel?: "bajo" | "medio" | "alto";
+    trainingStyle?: "fuerza" | "hipertrofia" | "funcional" | "hiit" | "mixto";
+    aestheticPreference?: "cinematic" | "editorial" | "street" | "minimal";
     focusZone?: "upper" | "lower" | "abs" | "full";
+    focusAreas?: Array<"pecho" | "espalda" | "hombros" | "brazos" | "gluteos" | "piernas" | "core">;
+    stressLevel?: number;
+    sleepQuality?: number;
+    disciplineRating?: number;
     notes?: string;
   };
   step: NanoStep;
@@ -223,6 +233,18 @@ export async function generateTransformedImage(
     goal: params.profile.goal,
     sex: params.profile.sex,
     focusZone: params.profile.focusZone,
+    level: params.profile.level,
+    weeklyTime: params.profile.weeklyTime,
+    trainingDaysPerWeek: params.profile.trainingDaysPerWeek,
+    trainingHistoryYears: params.profile.trainingHistoryYears,
+    nutritionQuality: params.profile.nutritionQuality,
+    bodyFatLevel: params.profile.bodyFatLevel,
+    trainingStyle: params.profile.trainingStyle,
+    aestheticPreference: params.profile.aestheticPreference,
+    stressLevel: params.profile.stressLevel,
+    sleepQuality: params.profile.sleepQuality,
+    disciplineRating: params.profile.disciplineRating,
+    focusAreas: params.profile.focusAreas,
     aiPrompt: params.aiPrompt,
   };
 

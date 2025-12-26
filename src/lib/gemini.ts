@@ -38,10 +38,17 @@ export interface AnalysisParams {
     goal?: string;
     level?: string;
     weeklyTime?: string | number;
+    trainingDaysPerWeek?: number;
+    trainingHistoryYears?: number;
+    nutritionQuality?: number;
+    bodyFatLevel?: string;
+    trainingStyle?: string;
+    aestheticPreference?: string;
     stressLevel?: number;
     sleepQuality?: number;
     disciplineRating?: number;
     bodyType?: string;
+    focusAreas?: string[];
     focusZone?: string;
     notes?: string;
   };
@@ -91,8 +98,16 @@ USER DATA:
 - Current Level: ${profile.level || "novato"}
 - Main Goal: ${goals || "mixto"}
 - Weekly Dedication: ${profile.weeklyTime || 3} hours
+- Training Days/Week: ${profile.trainingDaysPerWeek || "N/A"}
+- Training History: ${profile.trainingHistoryYears ?? "N/A"} years
+- Nutrition Quality: ${profile.nutritionQuality ?? "N/A"}/10
+- Body Fat Level: ${profile.bodyFatLevel || "medio"}
+- Training Style: ${profile.trainingStyle || "mixto"}
 - Stress: ${profile.stressLevel || 5}/10, Sleep: ${profile.sleepQuality || 5}/10, Discipline: ${profile.disciplineRating || 5}/10
 - Focus Zone: ${profile.focusZone?.toUpperCase() || "FULL BODY"}
+- Focus Areas: ${profile.focusAreas?.length ? profile.focusAreas.join(", ") : "not specified"}
+- Aesthetic Preference: ${profile.aestheticPreference || "cinematic"}
+- Notes: ${profile.notes || "none"}
 
 TASK: Generate a COMPLETE analysis in JSON format.
 
@@ -174,10 +189,18 @@ function getV1SystemPrompt(profile: AnalysisParams["profile"]): string {
     - Current Level: ${profile.level}
     - Main Goal: ${goals}
     - Weekly Dedication: ${profile.weeklyTime} hours
+    - Training Days/Week: ${profile.trainingDaysPerWeek || "N/A"}
+    - Training History: ${profile.trainingHistoryYears ?? "N/A"} years
+    - Nutrition Quality: ${profile.nutritionQuality ?? "N/A"}/10
+    - Body Fat Level: ${profile.bodyFatLevel || "medio"}
+    - Training Style: ${profile.trainingStyle || "mixto"}
     - Stress: ${profile.stressLevel}/10, Sleep: ${profile.sleepQuality}/10, Discipline: ${profile.disciplineRating}/10
 
     FOCUS ZONE (PRIORITY): ${profile.focusZone?.toUpperCase() || "FULL BODY"}
     (Tailor the training and aesthetic focus to this area).
+    FOCUS AREAS (OPTIONAL): ${profile.focusAreas?.length ? profile.focusAreas.join(", ") : "not specified"}
+    AESTHETIC PREFERENCE: ${profile.aestheticPreference || "cinematic"}
+    NOTES: ${profile.notes || "none"}
 
     You must generate a JSON response with a timeline of 4 stages:
     - "m0" (Current): Analysis of starting point.
