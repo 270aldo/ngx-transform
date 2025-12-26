@@ -234,7 +234,7 @@ export function ChapterView({
             <div className="flex gap-3">
               <div className="text-2xl">🧠</div>
               <p className="text-white/80 leading-relaxed italic">
-                "{timelineEntry.mental}"
+                &ldquo;{timelineEntry.mental}&rdquo;
               </p>
             </div>
           </div>

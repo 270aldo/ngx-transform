@@ -97,6 +97,26 @@ export const TelemetryEventSchema = z.object({
     "cta_completed",
     "plan_generated",
     "email_sent",
+    // Viral Optimization Sprint v2.1
+    "reveal_start",
+    "reveal_complete",
+    "reveal_skip",
+    "share_modal_open",
+    "share_intent_whatsapp",
+    "share_intent_instagram",
+    "share_intent_twitter",
+    "share_intent_facebook",
+    "share_intent_copy",
+    "content_unlocked",
+    "counter_viewed",
+    "email_sequence_start",
+    "email_D0_sent",
+    "email_D1_sent",
+    "email_D3_sent",
+    "email_D7_sent",
+    "agent_cta_viewed",
+    "agent_cta_clicked",
+    "referral_code_copied",
   ]),
   stage: z.string().optional(),
   model_id: z.string().optional(),
@@ -136,6 +156,10 @@ export const FeatureFlagsSchema = z.object({
   FF_REFERRAL_TRACKING: z.boolean().default(true),
   FF_PLAN_7_DIAS: z.boolean().default(true),
   FF_EMAIL_SEQUENCE: z.boolean().default(true),
+  // Viral Optimization Sprint v2.1
+  FF_DRAMATIC_REVEAL: z.boolean().default(true),
+  FF_SOCIAL_COUNTER: z.boolean().default(true),
+  FF_AGENT_BRIDGE_CTA: z.boolean().default(true),
 });
 
 export type FeatureFlags = z.infer<typeof FeatureFlagsSchema>;
@@ -159,6 +183,10 @@ export function getFeatureFlags(): FeatureFlags {
     FF_REFERRAL_TRACKING: process.env.FF_REFERRAL_TRACKING !== "false",
     FF_PLAN_7_DIAS: process.env.FF_PLAN_7_DIAS !== "false",
     FF_EMAIL_SEQUENCE: process.env.FF_EMAIL_SEQUENCE !== "false",
+    // Viral Optimization Sprint v2.1
+    FF_DRAMATIC_REVEAL: process.env.FF_DRAMATIC_REVEAL !== "false",
+    FF_SOCIAL_COUNTER: process.env.FF_SOCIAL_COUNTER !== "false",
+    FF_AGENT_BRIDGE_CTA: process.env.FF_AGENT_BRIDGE_CTA !== "false",
   });
 }
 

@@ -44,10 +44,10 @@ export interface CostEstimate {
 
 // Model identifiers
 export const MODELS = {
-  // Gemini 3 Pro Image (Nano Banana Pro) - Higher quality, Identity Chain support
+  // Gemini 3 Pro Image (Nano Banana Pro) - Higher quality, Identity Chain support, up to 4K
   GEMINI_3_PRO_IMAGE: "gemini-3-pro-image-preview",
-  // Gemini 2.5 Flash Image (Legacy) - Faster, lower cost
-  GEMINI_25_FLASH_IMAGE: "gemini-2.5-flash-image-preview",
+  // Gemini 2.5 Flash Image (Legacy/Stable) - Faster, lower cost
+  GEMINI_25_FLASH_IMAGE: "gemini-2.5-flash-image",
 } as const;
 
 // Cost per image (USD) - Based on official Gemini pricing

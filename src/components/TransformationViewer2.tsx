@@ -9,7 +9,14 @@
  * - Compare slider integration
  * - Letter from future modal
  *
- * Controlled by FF_RESULTS_2 feature flag
+ * v2.1 Viral Optimization:
+ * - Dramatic reveal countdown
+ * - Share to unlock modal
+ * - Social counter
+ * - Agent bridge CTA
+ * - Referral card
+ *
+ * Controlled by feature flags
  */
 
 import { useState, useEffect, useCallback } from "react";
@@ -18,11 +25,17 @@ import { Loader2, ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
 import type { InsightsResult, TimelineEntry } from "@/types/ai";
 import { CinematicAutoplay } from "./results/CinematicAutoplay";
 import { ChapterView } from "./results/ChapterView";
-import { CompareSlider } from "./results/CompareSlider";
+// CompareSlider imported but reserved for future use
+// import { CompareSlider } from "./results/CompareSlider";
 import { LetterFromFuture } from "./results/LetterFromFuture";
+import { DramaticReveal } from "./results/DramaticReveal";
 import { SocialShareButton } from "./SocialShareButton";
 import { BookingHeaderButton } from "./BookingHeaderButton";
 import { BookingCTA } from "./BookingCTA";
+import { ShareToUnlockModal } from "./viral/ShareToUnlockModal";
+import { SocialCounter } from "./SocialCounter";
+import { AgentBridgeCTA } from "./AgentBridgeCTA";
+import { ReferralCard } from "./ReferralCard";
 import { cn } from "@/lib/utils";
 
 export type TimelineStep = "m0" | "m4" | "m8" | "m12";
@@ -45,6 +58,24 @@ interface TransformationViewer2Props {
   shareId: string;
   isReady?: boolean;
   letterFromFuture?: string;
+  // v2.1 Viral props
+  userName?: string;
+  userProfile?: {
+    focusZone?: "upper" | "lower" | "abs" | "full";
+    goal?: "definicion" | "masa" | "mixto";
+    stressLevel?: number;
+  };
+  referralCode?: string;
+  referralCount?: number;
+  sessionId?: string;
+  // Feature flags (passed from server)
+  featureFlags?: {
+    FF_DRAMATIC_REVEAL?: boolean;
+    FF_SOCIAL_COUNTER?: boolean;
+    FF_AGENT_BRIDGE_CTA?: boolean;
+    FF_SHARE_TO_UNLOCK?: boolean;
+    FF_REFERRAL_TRACKING?: boolean;
+  };
 }
 
 export function TransformationViewer2({
@@ -53,21 +84,59 @@ export function TransformationViewer2({
   shareId,
   isReady = true,
   letterFromFuture,
+  // v2.1 Viral props
+  userName,
+  userProfile,
+  referralCode,
+  referralCount = 0,
+  sessionId,
+  featureFlags = {},
 }: TransformationViewer2Props) {
+  // Feature flags with defaults
+  const {
+    FF_DRAMATIC_REVEAL = true,
+    FF_SOCIAL_COUNTER = true,
+    FF_AGENT_BRIDGE_CTA = true,
+    FF_SHARE_TO_UNLOCK = true,
+    FF_REFERRAL_TRACKING = true,
+  } = featureFlags;
+
   // State
-  const [showCinematic, setShowCinematic] = useState(true);
+  const [showDramaticReveal, setShowDramaticReveal] = useState(FF_DRAMATIC_REVEAL);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [unlockedContent, setUnlockedContent] = useState<string[]>([]);
+  const [showCinematic, setShowCinematic] = useState(!FF_DRAMATIC_REVEAL); // Only show if no dramatic reveal
   const [currentStep, setCurrentStep] = useState<TimelineStep>("m0");
   const [showLetter, setShowLetter] = useState(false);
   const [showNav, setShowNav] = useState(false);
   const [hasSeenCinematic, setHasSeenCinematic] = useState(false);
 
-  // Check if user has already seen the cinematic
+  // Check if user has already seen the dramatic reveal / cinematic
   useEffect(() => {
-    const key = `ngx-cinematic-seen-${shareId}`;
-    const seen = localStorage.getItem(key);
-    if (seen) {
+    const dramaticKey = `ngx-dramatic-seen-${shareId}`;
+    const cinematicKey = `ngx-cinematic-seen-${shareId}`;
+    const unlockKey = `ngx-unlocked-${shareId}`;
+
+    // Check dramatic reveal
+    if (localStorage.getItem(dramaticKey)) {
+      setShowDramaticReveal(false);
+    }
+
+    // Check cinematic
+    if (localStorage.getItem(cinematicKey)) {
       setShowCinematic(false);
       setHasSeenCinematic(true);
+    }
+
+    // Check unlocked content
+    const unlocked = localStorage.getItem(unlockKey);
+    if (unlocked) {
+      try {
+        setUnlockedContent(JSON.parse(unlocked));
+      } catch {
+        // Invalid JSON, reset
+        localStorage.removeItem(unlockKey);
+      }
     }
   }, [shareId]);
 
@@ -85,6 +154,28 @@ export function TransformationViewer2({
   };
 
   // Handlers
+
+  // Dramatic Reveal completion
+  const handleDramaticRevealComplete = useCallback(() => {
+    setShowDramaticReveal(false);
+    localStorage.setItem(`ngx-dramatic-seen-${shareId}`, "true");
+
+    // Show share modal if enabled
+    if (FF_SHARE_TO_UNLOCK && unlockedContent.length === 0) {
+      setShowShareModal(true);
+    }
+  }, [shareId, FF_SHARE_TO_UNLOCK, unlockedContent.length]);
+
+  // Content unlock handler
+  const handleContentUnlock = useCallback(
+    (contentType: string) => {
+      const newUnlocked = [...unlockedContent, contentType];
+      setUnlockedContent(newUnlocked);
+      localStorage.setItem(`ngx-unlocked-${shareId}`, JSON.stringify(newUnlocked));
+    },
+    [shareId, unlockedContent]
+  );
+
   const handleCinematicComplete = useCallback(() => {
     setShowCinematic(false);
     setCurrentStep("m12"); // Jump to m12 after cinematic
@@ -146,8 +237,25 @@ export function TransformationViewer2({
     m12: imageUrls.images?.m12,
   };
 
-  // Show cinematic on first view (only if ready)
-  if (showCinematic && isReady) {
+  // Show dramatic reveal first (v2.1)
+  if (showDramaticReveal && isReady && FF_DRAMATIC_REVEAL) {
+    return (
+      <DramaticReveal
+        images={{
+          m0: originalImage || "",
+          m4: imageUrls.images?.m4 || "",
+          m8: imageUrls.images?.m8 || "",
+          m12: imageUrls.images?.m12 || "",
+        }}
+        userName={userName}
+        onRevealComplete={handleDramaticRevealComplete}
+        sessionId={sessionId}
+      />
+    );
+  }
+
+  // Show cinematic on first view (only if ready and no dramatic reveal)
+  if (showCinematic && isReady && !FF_DRAMATIC_REVEAL) {
     return (
       <CinematicAutoplay
         images={cinematicImages}
@@ -283,9 +391,35 @@ export function TransformationViewer2({
           </motion.div>
         </AnimatePresence>
 
-        {/* Booking CTA at bottom */}
-        <div className="px-6 py-8 bg-gradient-to-t from-neutral-950 to-black">
-          <BookingCTA />
+        {/* v2.1 Viral Section */}
+        <div className="px-6 py-8 bg-gradient-to-t from-neutral-950 to-black space-y-8">
+          {/* Social Counter */}
+          {FF_SOCIAL_COUNTER && (
+            <div className="text-center">
+              <SocialCounter variant="results" sessionId={sessionId} />
+            </div>
+          )}
+
+          {/* Agent Bridge CTA (replaces BookingCTA when enabled) */}
+          {FF_AGENT_BRIDGE_CTA && userProfile ? (
+            <AgentBridgeCTA
+              userProfile={userProfile}
+              shareId={shareId}
+              sessionId={sessionId}
+            />
+          ) : (
+            <BookingCTA />
+          )}
+
+          {/* Referral Card */}
+          {FF_REFERRAL_TRACKING && referralCode && (
+            <ReferralCard
+              referralCode={referralCode}
+              referralCount={referralCount}
+              shareId={shareId}
+              sessionId={sessionId}
+            />
+          )}
         </div>
       </main>
 
@@ -330,6 +464,20 @@ export function TransformationViewer2({
           setShowLetter(false);
         }}
       />
+
+      {/* v2.1: Share to Unlock Modal */}
+      {FF_SHARE_TO_UNLOCK && (
+        <ShareToUnlockModal
+          isOpen={showShareModal}
+          onClose={() => setShowShareModal(false)}
+          shareId={shareId}
+          unlockedContent={unlockedContent}
+          onUnlock={handleContentUnlock}
+          sessionId={sessionId}
+          stats={baselineStats}
+          userName={userName}
+        />
+      )}
     </div>
   );
 }

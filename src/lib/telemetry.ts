@@ -32,7 +32,27 @@ export type FunnelEvent =
   | "cta_clicked"
   | "cta_completed"
   | "plan_generated"
-  | "email_sent";
+  | "email_sent"
+  // Viral Optimization Sprint v2.1
+  | "reveal_start"
+  | "reveal_complete"
+  | "reveal_skip"
+  | "share_modal_open"
+  | "share_intent_whatsapp"
+  | "share_intent_instagram"
+  | "share_intent_twitter"
+  | "share_intent_facebook"
+  | "share_intent_copy"
+  | "content_unlocked"
+  | "counter_viewed"
+  | "email_sequence_start"
+  | "email_D0_sent"
+  | "email_D1_sent"
+  | "email_D3_sent"
+  | "email_D7_sent"
+  | "agent_cta_viewed"
+  | "agent_cta_clicked"
+  | "referral_code_copied";
 
 export interface EventPayload {
   sessionId: string;

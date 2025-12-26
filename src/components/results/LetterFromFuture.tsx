@@ -169,7 +169,7 @@ export function LetterFromFuture({
                 <div className="relative p-6 rounded-xl bg-neutral-900/50 border border-white/5">
                   {/* Quote mark */}
                   <div className="absolute top-2 left-4 text-6xl text-[#6D00FF]/20 font-serif leading-none">
-                    "
+                    &ldquo;
                   </div>
 
                   {/* Letter text with typewriter effect */}

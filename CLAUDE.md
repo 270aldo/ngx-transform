@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Versión:** 2.0 (PRs 0-4 implementados)
+**Versión:** 2.1 (Viral Optimization Sprint)
 **Stack:** Next.js 16.0.7 + React 19 + TypeScript + Firebase + Tailwind CSS v4
 
 NGX Transform is a **premium viral lead magnet** that creates realistic 12-month physical transformation projections. Users upload a photo, provide profile data, and receive AI-generated insights with visualized progress images at m0/m4/m8/m12 milestones, plus a personalized 7-day fitness plan.
@@ -113,6 +113,9 @@ pnpm lint         # ESLint
 | `/api/social-pack/[shareId]` | GET | Download social pack (story, post, square) |
 | `/api/plan` | POST/GET | Generate or fetch 7-day personalized plan |
 | `/api/og/[shareId]` | GET | OG image (split-screen HOY vs 12 MESES) |
+| `/api/counter` | GET/POST | Social proof counter (weekly transformations) |
+| `/api/email/sequence` | POST | Email nurture sequence management |
+| `/api/email/send` | POST | Send specific email template (D0-D7) |
 
 ### Type Definitions
 
@@ -180,6 +183,25 @@ The **Mental Logs** are fed to Gemini's "Elite Coach" prompt to personalize reco
 | `BookingCTA2` | `src/components/` | Enhanced CTA with 7-day plan generation |
 | `PlanViewer` | `src/app/plan/[shareId]/` | 7-day plan viewer with day navigation and tabs |
 
+### Viral Optimization Components (v2.1)
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `DramaticReveal` | `src/components/results/` | Countdown + slow morph reveal (m0→m4→m8→m12) |
+| `ShareToUnlockModal` | `src/components/viral/` | Modal for share-to-unlock premium content |
+| `SocialCounter` | `src/components/` | Weekly transformation counter with social proof |
+| `AgentBridgeCTA` | `src/components/` | Contextual CTA with NGX agent selection |
+| `ReferralCard` | `src/components/` | Referral code UI with copy functionality |
+
+### Email Nurture Sequence (v2.1)
+
+| Template | Location | Timing | Purpose |
+|----------|----------|--------|---------|
+| `D0Results` | `src/emails/sequence/` | Immediate | Results ready notification |
+| `D1Reminder` | `src/emails/sequence/` | Day 1 | Reminder to view full analysis |
+| `D3Plan` | `src/emails/sequence/` | Day 3 | 7-day plan introduction |
+| `D7Conversion` | `src/emails/sequence/` | Day 7 | NGX ASCEND conversion CTA |
+
 ### AI Prompt Strategy
 
 The Gemini integration uses an **"Elite High-Performance Coach & Futurist"** persona:
@@ -216,7 +238,7 @@ NO: CGI, cartoon, plastic skin, extra limbs, face drift, multiple subjects
 - m8 refs: [original, styleRef, m4]
 - m12 refs: [original, styleRef, m8]
 
-### Feature Flags (v2.0)
+### Feature Flags (v2.1)
 
 | Flag | Default | Purpose |
 |------|---------|---------|
@@ -225,6 +247,10 @@ NO: CGI, cartoon, plastic skin, extra limbs, face drift, multiple subjects
 | `FF_SHARE_TO_UNLOCK` | true | Unlock content after sharing |
 | `FF_REFERRAL_TRACKING` | true | Track referral visits/completions |
 | `FF_PLAN_7_DIAS` | true | Generate 7-day plan with AI |
+| `FF_DRAMATIC_REVEAL` | true | Enable dramatic countdown reveal |
+| `FF_SOCIAL_COUNTER` | true | Show weekly transformation counter |
+| `FF_AGENT_BRIDGE_CTA` | true | Show contextual agent CTA |
+| `FF_EMAIL_SEQUENCE` | true | Enable D0-D7 email nurture sequence |
 
 ### Page Routes
 

@@ -110,15 +110,20 @@ export async function getOrCreateJob(
     status: "pending",
     retryCount: 0,
     maxRetries: mergedConfig.maxRetries,
-    progress: type === "image_generation" ? { m4: false, m8: false, m12: false } : undefined,
-    deleteToken: mergedConfig.generateDeleteToken ? generateDeleteToken() : undefined,
+    ...(type === "image_generation" && { progress: { m4: false, m8: false, m12: false } }),
+    ...(mergedConfig.generateDeleteToken && { deleteToken: generateDeleteToken() }),
   };
 
-  await jobRef.set({
-    ...newJob,
-    startedAt: FieldValue.serverTimestamp(),
-    updatedAt: FieldValue.serverTimestamp(),
-  });
+  // Filtrar campos undefined antes de guardar en Firestore
+  const jobData = Object.fromEntries(
+    Object.entries({
+      ...newJob,
+      startedAt: FieldValue.serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp(),
+    }).filter(([, v]) => v !== undefined)
+  );
+
+  await jobRef.set(jobData);
 
   console.log(`[JobManager] Created new job ${jobId}`);
   return newJob;

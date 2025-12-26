@@ -351,7 +351,7 @@ export async function generateInsightsFromImage(
     { inlineData: { mimeType, data } },
   ]);
 
-  let text = cleanJsonResponse(result.response.text());
+  const text = cleanJsonResponse(result.response.text());
 
   const parsed = InsightsResultZ.safeParse(JSON.parse(text));
   if (!parsed.success) {

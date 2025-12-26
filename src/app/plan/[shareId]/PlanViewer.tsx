@@ -396,7 +396,7 @@ export function PlanViewer({ plan, shareId }: PlanViewerProps) {
                 </h4>
               </div>
               <p className="text-lg text-white/90 italic leading-relaxed">
-                "{dayPlan.mindset}"
+                &ldquo;{dayPlan.mindset}&rdquo;
               </p>
             </div>
           </motion.div>

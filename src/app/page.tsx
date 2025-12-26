@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { Shield, Clock, Lock } from "lucide-react";
+import { SocialCounter } from "@/components/SocialCounter";
+
 export default function Home() {
   return (
     <div className="min-h-screen">
@@ -14,11 +17,31 @@ export default function Home() {
               Sube tu foto y recibe un análisis profesional con proyección realista a 4/8/12 meses.
               Insight preciso con Gemini + visuales generados con NanoBanana.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
+
+            {/* Social Counter - v2.1 */}
+            <div className="mt-6">
+              <SocialCounter variant="landing" />
+            </div>
+
+            <div className="mt-6 flex flex-wrap gap-3">
               <Link href="/wizard" className="inline-flex bg-[#6D00FF] text-white rounded-md px-5 py-2.5 font-medium hover:brightness-110">Probar gratis →</Link>
               <Link href="/demo/result" className="inline-flex bg-neutral-900 border border-neutral-800 text-neutral-200 rounded-md px-5 py-2.5 font-medium hover:bg-neutral-800">Ver demo</Link>
             </div>
-            <p className="text-xs text-neutral-500 mt-3">Gratis. Resultados en segundos. No es consejo médico.</p>
+
+            {/* Trust Badges - v2.1 */}
+            <div className="mt-6 flex flex-wrap gap-4 text-xs text-neutral-500">
+              <span className="flex items-center gap-1.5">
+                <Shield className="h-3.5 w-3.5" /> Sin tarjeta
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Clock className="h-3.5 w-3.5" /> 2 minutos
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Lock className="h-3.5 w-3.5" /> Privacidad total
+              </span>
+            </div>
+
+            <p className="text-xs text-neutral-600 mt-3">No es consejo médico.</p>
           </div>
           <div className="hidden md:block">
             <div className="card p-4">
