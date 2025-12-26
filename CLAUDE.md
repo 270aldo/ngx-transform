@@ -96,6 +96,10 @@ pnpm lint         # ESLint
 | `viral/*` | `src/lib/viral/` | Share-to-unlock, referral tracking, social pack generator |
 | `plan/*` | `src/lib/plan/` | 7-day plan generation with AI + templates |
 | `schemas/*` | `src/lib/schemas/` | Strict Zod schemas for analysis output |
+| `firebaseClient.ts` | `src/lib/` | Client-side Firebase SDK (auth + storage) |
+| `emailScheduler.ts` | `src/lib/` | Email nurture sequence scheduling (D0-D7) |
+| `watermark.ts` | `src/lib/` | Image watermarking with Sharp |
+| `utils.ts` | `src/lib/` | General utility functions (cn, formatters) |
 
 ### API Routes
 

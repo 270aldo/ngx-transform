@@ -3,7 +3,7 @@
 Aplicación Next.js con Tailwind v4, shadcn/ui v4, Firebase y Gemini (texto + imagen), orientada a generar análisis visual realista 0/4/8/12 meses.
 
 ## Resumen técnico
-- Framework: Next.js 15 (App Router), React 19, TypeScript 5
+- Framework: Next.js 16.0.7 (App Router), React 19, TypeScript 5
 - Estilos: Tailwind CSS v4 (tokens/vars), shadcn/ui v4 (Radix)
 - IA:
   - Gemini (texto): `@google/generative-ai` con validación zod estricto
