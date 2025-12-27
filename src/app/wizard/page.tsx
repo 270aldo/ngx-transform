@@ -237,12 +237,12 @@ export default function WizardPage() {
           )}
         </div>
 
-        <Card className="p-6">
+        <Card className="p-6 glass-panel rounded-2xl">
           <Stepper current={stepCurrent} />
           <form onSubmit={handleSubmit(onSubmit)} className="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Columna Foto */}
             <div className="space-y-3 lg:col-span-4 h-full">
-              <div className="bg-neutral-900/50 p-6 rounded-2xl border border-white/5 h-full flex flex-col">
+              <div className="glass-panel p-6 rounded-2xl border-glow-hover h-full flex flex-col">
                 <h3 className="text-sm font-bold text-[#6D00FF] uppercase tracking-widest border-b border-white/10 pb-2 flex items-center gap-2 mb-4">
                   <span className="w-2 h-2 rounded-full bg-[#6D00FF]"></span>
                   Fotografía
@@ -282,7 +282,7 @@ export default function WizardPage() {
 
               {/* LEFT COLUMN: IDENTITY & BIO */}
               <div className="space-y-6 h-full">
-                <div className="bg-neutral-900/50 p-6 rounded-2xl border border-white/5 space-y-6 h-full">
+                <div className="glass-panel p-6 rounded-2xl border-glow-hover space-y-6 h-full">
                   <h3 className="text-sm font-bold text-[#6D00FF] uppercase tracking-widest border-b border-white/10 pb-2 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[#6D00FF]"></span>
                     1. Identidad & Biometría
@@ -421,7 +421,7 @@ export default function WizardPage() {
 
               {/* RIGHT COLUMN: GOALS & MIND */}
               <div className="space-y-6 h-full">
-                <div className="bg-neutral-900/50 p-6 rounded-2xl border border-white/5 space-y-6 h-full">
+                <div className="glass-panel p-6 rounded-2xl border-glow-hover space-y-6 h-full">
                   <h3 className="text-sm font-bold text-[#6D00FF] uppercase tracking-widest border-b border-white/10 pb-2 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[#6D00FF]"></span>
                     2. Estrategia & Mentalidad
@@ -590,7 +590,7 @@ export default function WizardPage() {
               {error && <div className="p-3 border border-red-500/40 text-red-300 bg-red-500/10 rounded text-sm text-center">{error}</div>}
 
               {loading && (
-                <div className="space-y-2 p-4 rounded-xl bg-neutral-900/80 border border-neutral-800 backdrop-blur-sm">
+                <div className="space-y-2 p-4 rounded-xl glass-panel border border-[#6D00FF]/30 shadow-[0_0_30px_rgba(109,0,255,0.15)]">
                   <div className="flex items-center justify-center gap-3 text-neutral-300 text-sm font-medium">
                     <Spinner />
                     <span className="animate-pulse">

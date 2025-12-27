@@ -2,10 +2,13 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ToastProvider } from "@/components/ui/toast-provider";
 import { GlobalHeader } from "@/components/GlobalHeader";
-import { Inter } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 
-const sans = Inter({ subsets: ["latin"], variable: "--font-ngx-sans" });
-const display = Inter({ subsets: ["latin"], variable: "--font-ngx-display" });
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+  weight: ["300", "400", "500", "600", "700"],
+});
 
 export const metadata: Metadata = {
   title: "NGX Transform",
@@ -18,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${display.variable} ${sans.variable}`}>
+    <html lang="es" className={spaceGrotesk.variable}>
       <body className={`antialiased bg-background text-foreground scroll-smooth`}>
         <ToastProvider>
           <GlobalHeader />

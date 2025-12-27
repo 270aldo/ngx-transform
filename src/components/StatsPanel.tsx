@@ -30,6 +30,7 @@ const stepLabels: Record<TimelineStep, string> = {
   m4: "MES 4",
   m8: "MES 8",
   m12: "META FINAL",
+  summary: "RESUMEN",
 };
 
 const stepDescriptions: Record<TimelineStep, string> = {
@@ -37,6 +38,7 @@ const stepDescriptions: Record<TimelineStep, string> = {
   m4: "Primera fase de adaptación",
   m8: "Consolidación de resultados",
   m12: "Transformación completa",
+  summary: "Vista general de tu progreso",
 };
 
 // Phase-specific content templates
@@ -106,6 +108,14 @@ const phaseContent: Record<TimelineStep, {
       "Establecer nuevas metas",
       "Continuar evolución constante"
     ],
+  },
+  summary: {
+    focusTitle: "Resumen de Transformación",
+    focusDescription: "Una visión integral de tu progreso desde el día 0 hasta tu meta final. Revisa cada etapa y celebra tus logros.",
+    focusIcon: Sparkles,
+    focusColor: "text-purple-400",
+    milestones: [],
+    challenges: [],
   },
 };
 
@@ -370,7 +380,7 @@ function CoachInsights({ text }: { text: string }) {
 }
 
 function ProgressSummary({ step }: { step: TimelineStep }) {
-  const summaries: Record<Exclude<TimelineStep, "m0">, {
+  const summaries: Record<Exclude<TimelineStep, "m0" | "summary">, {
     title: string;
     items: { icon: typeof Clock; label: string; value: string }[]
   }> = {
@@ -400,7 +410,7 @@ function ProgressSummary({ step }: { step: TimelineStep }) {
     },
   };
 
-  const data = summaries[step as Exclude<TimelineStep, "m0">];
+  const data = summaries[step as Exclude<TimelineStep, "m0" | "summary">];
   if (!data) return null;
 
   return (

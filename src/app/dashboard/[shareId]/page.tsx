@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Metadata } from "next";
 import { getDb } from "@/lib/firebaseAdmin";
 import { getSignedUrl } from "@/lib/storage";
@@ -6,6 +7,7 @@ import type { InsightsResult } from "@/types/ai";
 import { BookingCTA2 } from "@/components/BookingCTA2";
 import { DownloadButton } from "@/components/DownloadButton";
 import { SocialShareButton } from "@/components/SocialShareButton";
+import { Sparkles, ArrowRight } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -225,6 +227,43 @@ export default async function DashboardPage({
                 <p className="mt-2 text-sm font-semibold text-center">{item.label}</p>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* CTA GENESIS Demo - v4.0 */}
+        <section className="relative overflow-hidden rounded-3xl border border-[#6D00FF]/30 bg-gradient-to-br from-[#6D00FF]/20 via-[#6D00FF]/10 to-transparent p-8 lg:p-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_#6D00FF20_0%,_transparent_50%)]" />
+          <div className="absolute top-4 right-4 w-24 h-24 bg-[#6D00FF]/20 rounded-full blur-3xl" />
+
+          <div className="relative z-10 flex flex-col lg:flex-row items-center gap-8">
+            <div className="flex-1 space-y-4 text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 text-xs tracking-[0.3em] uppercase text-[#B98CFF]">
+                <Sparkles className="w-4 h-4" />
+                <span>Experiencia GENESIS</span>
+              </div>
+              <h2 className="text-2xl lg:text-3xl font-bold">
+                Conoce a tu Coach IA
+              </h2>
+              <p className="text-neutral-300 max-w-xl">
+                GENESIS analizará tu perfil y te guiará para crear tu primer plan de entrenamiento
+                personalizado. Es gratis y solo toma 2 minutos.
+              </p>
+              <ul className="text-sm text-neutral-400 space-y-1">
+                <li>✓ Conversación personalizada con IA</li>
+                <li>✓ Plan Semana 1 descargable</li>
+                <li>✓ Sin compromiso</li>
+              </ul>
+            </div>
+
+            <div className="flex-shrink-0">
+              <Link
+                href={`/demo/${shareId}`}
+                className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[#6D00FF] hover:bg-[#5B00E0] text-white font-semibold text-lg transition-all duration-300 shadow-lg shadow-[#6D00FF]/30 hover:shadow-[#6D00FF]/50 hover:scale-105"
+              >
+                <span>CREAR MI PRIMER PLAN GRATIS</span>
+                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </div>
           </div>
         </section>
 
