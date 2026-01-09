@@ -9,3 +9,7 @@ export { CompareSlider } from "./CompareSlider";
 export { LetterFromFuture } from "./LetterFromFuture";
 export { StatsDelta } from "./StatsDelta";
 export { ChapterView } from "./ChapterView";
+
+// Genesis Demo Components
+export { TransformationSummary } from "./TransformationSummary";
+export { ComparisonCTA } from "./ComparisonCTA";

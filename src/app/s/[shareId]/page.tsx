@@ -3,6 +3,7 @@ import type { InsightsResult } from "@/types/ai";
 import { TransformationViewer } from "@/components/TransformationViewer";
 import { TransformationViewer2 } from "@/components/TransformationViewer2";
 import { BiometricLoader } from "@/components/BiometricLoader";
+import { TransformationSummary } from "@/components/results/TransformationSummary";
 import RefreshClient from "./refresh-client";
 import { Metadata } from "next";
 
@@ -109,6 +110,14 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
           isReady={isReady}
           letterFromFuture={data.letter_from_future}
         />
+        {/* Genesis Demo CTA - appears after transformation viewer */}
+        {isReady && (
+          <TransformationSummary
+            ai={ai}
+            imageUrls={urls}
+            shareId={shareId}
+          />
+        )}
         <RefreshClient shareId={shareId} active={stillGenerating} />
       </>
     );
@@ -118,6 +127,14 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
   return (
     <>
       <TransformationViewer ai={ai} imageUrls={urls} shareId={shareId} isReady={isReady} />
+      {/* Genesis Demo CTA - appears after transformation viewer */}
+      {isReady && (
+        <TransformationSummary
+          ai={ai}
+          imageUrls={urls}
+          shareId={shareId}
+        />
+      )}
       <RefreshClient shareId={shareId} active={stillGenerating} />
     </>
   );
