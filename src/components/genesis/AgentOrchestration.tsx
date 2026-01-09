@@ -107,13 +107,17 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
     eventSource.addEventListener('complete', () => {
       setIsComplete(true);
       setProgress(100);
+      eventSource.close(); // Close connection after completion
       setTimeout(() => {
         onComplete();
       }, 1500);
     });
 
-    eventSource.addEventListener('error', () => {
-      console.error('SSE connection error');
+    eventSource.addEventListener('error', (e) => {
+      // Only log error if connection failed unexpectedly (not after complete)
+      if (eventSource.readyState !== EventSource.CLOSED) {
+        console.error('SSE connection error:', e);
+      }
       eventSource.close();
     });
 
