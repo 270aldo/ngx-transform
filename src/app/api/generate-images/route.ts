@@ -23,6 +23,7 @@ import { getImageConfig, estimateSessionCost } from "@/lib/imageConfig";
 import { FieldValue } from "firebase-admin/firestore";
 import sharp from "sharp";
 import { telemetry, startTimer } from "@/lib/telemetry";
+import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 import {
   getOrCreateJob,
   markJobInProgress,
@@ -110,6 +111,16 @@ export async function POST(req: Request) {
 
     const { sessionId } = parsed.data;
     parsedSessionId = sessionId;
+
+    // Rate limiting by IP (Upstash Redis)
+    const clientIP = getClientIP(req);
+    const rateLimitResult = await checkRateLimit("api:generate-images", clientIP);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please wait a moment." },
+        { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+      );
+    }
 
     if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json({ error: "GEMINI_API_KEY no está configurada" }, { status: 400 });

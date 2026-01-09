@@ -98,6 +98,16 @@ export async function GET(request: NextRequest) {
 // POST to generate plan data (for preview)
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting by IP (Upstash Redis)
+    const clientIP = getClientIP(request);
+    const rateLimitResult = await checkRateLimit("api:generate-plan", clientIP);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please wait a moment." },
+        { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+      );
+    }
+
     const body = await request.json();
     const { shareId, responses } = body;
 

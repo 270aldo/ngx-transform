@@ -6,6 +6,7 @@ import { randomUUID } from "crypto";
 import { Resend } from "resend";
 import { telemetry, initSessionMetrics, startTimer } from "@/lib/telemetry";
 import { getOrCreateJob } from "@/lib/jobManager";
+import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 
 /**
  * Genera un token seguro para acciones destructivas
@@ -33,13 +34,22 @@ export async function POST(req: Request) {
     }
 
     const { email, input, photoPath } = parsed.data;
-    const ip = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() || "unknown";
+    const ip = getClientIP(req);
     const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
     ipDocId = `${ip}-${today}`;
 
     const db = getDb();
     const limit = Number(process.env.MAX_SESSIONS_PER_IP_PER_DAY || "3");
     const emailLimit = Number(process.env.MAX_SESSIONS_PER_EMAIL_PER_DAY || "2");
+
+    // Distributed rate limiting (Upstash Redis)
+    const rateLimitResult = await checkRateLimit("api:sessions", ip);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "Rate limit exceeded. Vuelve mañana." },
+        { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+      );
+    }
 
     // Rate limit per IP per day
     if (ip !== "unknown") {

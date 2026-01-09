@@ -12,6 +12,7 @@ import { z } from "zod";
 import { getDb } from "@/lib/firebaseAdmin";
 import { generatePlan, type ProfileSummary } from "@/lib/plan";
 import { FieldValue } from "firebase-admin/firestore";
+import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 
 // Feature flag
 const FF_PLAN_7_DIAS = process.env.FF_PLAN_7_DIAS !== "false";
@@ -45,6 +46,16 @@ export async function POST(request: NextRequest) {
     }
 
     const { shareId } = validation.data;
+
+    // Rate limiting by IP (Upstash Redis)
+    const clientIP = getClientIP(request);
+    const rateLimitResult = await checkRateLimit("api:plan", clientIP);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { success: false, message: "Too many requests. Please wait a moment." },
+        { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+      );
+    }
 
     // Get session data
     const db = getDb();

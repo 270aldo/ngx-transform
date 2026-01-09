@@ -61,12 +61,30 @@ export interface AnalysisParams {
 async function fetchImageAsInlineData(
   url: string
 ): Promise<{ mimeType: string; data: string }> {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Failed fetching image: ${res.status}`);
-  const mimeType = res.headers.get("content-type") || "image/jpeg";
-  const arrayBuffer = await res.arrayBuffer();
-  const data = Buffer.from(arrayBuffer).toString("base64");
-  return { mimeType, data };
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    if (!res.ok) throw new Error(`Failed fetching image: ${res.status}`);
+
+    const contentLength = res.headers.get("content-length");
+    if (contentLength && parseInt(contentLength) > 10 * 1024 * 1024) { // 10MB limit
+      throw new Error("Image too large (>10MB)");
+    }
+
+    const mimeType = res.headers.get("content-type") || "image/jpeg";
+    const arrayBuffer = await res.arrayBuffer();
+
+    if (arrayBuffer.byteLength > 10 * 1024 * 1024) {
+      throw new Error("Image buffer too large (>10MB)");
+    }
+
+    const data = Buffer.from(arrayBuffer).toString("base64");
+    return { mimeType, data };
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
 
 function cleanJsonResponse(text: string): string {

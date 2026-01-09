@@ -18,6 +18,7 @@ export function CinematicViewer({
     const [activeStep, setActiveStep] = useState<StepKey>("m0");
     const [showMental, setShowMental] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
+    const [isGlitching, setIsGlitching] = useState(false);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
     // Preload images
@@ -40,10 +41,16 @@ export function CinematicViewer({
 
     const handleStepChange = (step: StepKey) => {
         if (step === activeStep) return;
+
+        // Trigger Haptic & Glitch
+        if (navigator.vibrate) navigator.vibrate(15);
+        setIsGlitching(true);
         setIsAnimating(true);
+
         setTimeout(() => {
             setActiveStep(step);
             setIsAnimating(false);
+            setTimeout(() => setIsGlitching(false), 150);
         }, 300);
     };
 
@@ -107,7 +114,8 @@ export function CinematicViewer({
                 <div
                     className={cn(
                         "absolute inset-0 bg-cover bg-center transition-all duration-700 ease-in-out transform",
-                        isAnimating ? "scale-105 opacity-50 blur-sm" : "scale-100 opacity-100 blur-0"
+                        isAnimating ? "scale-105 opacity-50 blur-sm" : "scale-100 opacity-100 blur-0",
+                        isGlitching && "animate-glitch mix-blend-hard-light hue-rotate-15 contrast-125"
                     )}
                     style={{ backgroundImage: `url(${currentImg})` }}
                 />

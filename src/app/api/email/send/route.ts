@@ -13,6 +13,7 @@ import D0Results from "@/emails/sequence/D0Results";
 import D1Reminder from "@/emails/sequence/D1Reminder";
 import D3Plan from "@/emails/sequence/D3Plan";
 import D7Conversion from "@/emails/sequence/D7Conversion";
+import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 
 // Lazy initialization of Resend to avoid build errors
 function getResend(): Resend | null {
@@ -24,8 +25,6 @@ function getResend(): Resend | null {
 const SendEmailSchema = z.object({
   shareId: z.string().min(1),
   template: z.enum(["D0", "D1", "D3", "D7"]),
-  // Optional overrides
-  email: z.string().email().optional(),
   name: z.string().optional(),
   m0ImageUrl: z.string().url().optional(),
   m12ImageUrl: z.string().url().optional(),
@@ -58,16 +57,36 @@ function getEmailComponent(
 
 export async function POST(req: NextRequest) {
   try {
+    // Require API key for email sending (server-to-server)
+    const expectedKey = process.env.CRON_API_KEY;
+    const apiKey = req.headers.get("X-Api-Key");
+    if (expectedKey && apiKey !== expectedKey) {
+      return NextResponse.json(
+        { error: "Unauthorized - API key required" },
+        { status: 401 }
+      );
+    }
+
+    // Rate limiting by IP (Upstash Redis)
+    const clientIP = getClientIP(req);
+    const rateLimitResult = await checkRateLimit("api:email", clientIP);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please wait a moment." },
+        { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+      );
+    }
+
     const body = await req.json();
     const validated: SendEmailRequest = SendEmailSchema.parse(body);
 
     // Get sequence to find email
     const sequence = await getSequenceStatus(validated.shareId);
-    const email = validated.email || sequence?.email;
+    const email = sequence?.email;
 
     if (!email) {
       return NextResponse.json(
-        { error: "Email not found. Provide email or start sequence first." },
+        { error: "Email not found. Start sequence first." },
         { status: 400 }
       );
     }

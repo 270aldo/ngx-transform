@@ -3,9 +3,20 @@ import { Resend } from "resend";
 import React from "react";
 import ResultsEmail from "@/emails/ResultsEmail";
 import { getDb } from "@/lib/firebaseAdmin";
+import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 
 export async function POST(req: Request) {
   try {
+    // Rate limiting by IP (Upstash Redis)
+    const clientIP = getClientIP(req);
+    const rateLimitResult = await checkRateLimit("api:email", clientIP);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please wait a moment." },
+        { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+      );
+    }
+
     const body = await req.json();
     const { shareId } = body as { shareId?: string };
     if (!shareId) return NextResponse.json({ error: "Missing shareId" }, { status: 400 });
@@ -21,7 +32,7 @@ export async function POST(req: Request) {
     }
 
     const sessionData = sessionDoc.data();
-    const ownerEmail = sessionData?.input?.email;
+    const ownerEmail = sessionData?.email || sessionData?.input?.email;
     if (!ownerEmail) {
       return NextResponse.json({ error: "No email associated with this session" }, { status: 400 });
     }

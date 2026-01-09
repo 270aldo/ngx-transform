@@ -5,6 +5,7 @@ import { getSignedUrl } from "@/lib/storage";
 import { generateInsightsFromImage } from "@/lib/gemini";
 import { FieldValue } from "firebase-admin/firestore";
 import { telemetry, startTimer } from "@/lib/telemetry";
+import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 import {
   getOrCreateJob,
   markJobInProgress,
@@ -38,6 +39,16 @@ export async function POST(req: Request) {
 
     const { sessionId } = parsed.data;
     parsedSessionId = sessionId;
+
+    // Rate limiting by IP (Upstash Redis)
+    const clientIP = getClientIP(req);
+    const rateLimitResult = await checkRateLimit("api:analyze", clientIP);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please wait a moment." },
+        { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+      );
+    }
 
     if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json({ error: "GEMINI_API_KEY no está configurado" }, { status: 400 });

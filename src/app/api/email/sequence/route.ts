@@ -48,6 +48,17 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const validated = RequestSchema.parse(body);
 
+    // Require API key for sequence management (server-to-server)
+    const expectedKey = process.env.CRON_API_KEY;
+    const headerKey = req.headers.get("X-Api-Key");
+    const bodyKey = "apiKey" in validated ? validated.apiKey : undefined;
+    if (expectedKey && (headerKey || bodyKey) !== expectedKey) {
+      return NextResponse.json(
+        { error: "Unauthorized - API key required" },
+        { status: 401 }
+      );
+    }
+
     switch (validated.action) {
       case "start": {
         const sequenceId = await startEmailSequence(
@@ -93,7 +104,8 @@ export async function POST(req: NextRequest) {
       case "get_due": {
         // Validate API key for cron
         const expectedKey = process.env.CRON_API_KEY;
-        if (!expectedKey || validated.apiKey !== expectedKey) {
+        const headerKey = req.headers.get("X-Api-Key");
+        if (!expectedKey || (validated.apiKey || headerKey) !== expectedKey) {
           return NextResponse.json(
             { error: "Unauthorized" },
             { status: 401 }

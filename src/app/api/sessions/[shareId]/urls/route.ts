@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getDb } from "@/lib/firebaseAdmin";
 import { getSignedUrl } from "@/lib/storage";
 
+const FF_EXPOSE_ORIGINAL = process.env.FF_EXPOSE_ORIGINAL !== "false";
+
 export async function GET(_: Request, context: { params: Promise<{ shareId: string }> }) {
   try {
     const { shareId } = await context.params;
@@ -19,7 +21,7 @@ export async function GET(_: Request, context: { params: Promise<{ shareId: stri
 
     const result: { originalUrl?: string; images?: Record<string, string> } = {};
 
-    if (photoPath) {
+    if (photoPath && FF_EXPOSE_ORIGINAL) {
       result.originalUrl = await getSignedUrl(photoPath, { expiresInSeconds: 3600 });
     }
 

@@ -60,6 +60,12 @@ function getRateLimiters(): Map<string, Ratelimit> | null {
     prefix: "rl:plan",
   }));
 
+  rateLimiters.set("api:plan", new Ratelimit({
+    redis: redisClient,
+    limiter: Ratelimit.slidingWindow(5, "1 h"), // 5 plan generations per hour
+    prefix: "rl:plan-api",
+  }));
+
   rateLimiters.set("api:analyze", new Ratelimit({
     redis: redisClient,
     limiter: Ratelimit.slidingWindow(10, "1 h"), // 10 analyses per hour
