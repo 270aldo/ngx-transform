@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import { getApps, initializeApp, cert } from "firebase-admin/app";
 import { z } from "zod";
+import { checkRateLimit, getRateLimitHeaders } from "@/lib/rateLimit";
 
 // Initialize Firebase Admin if not already initialized
 if (!getApps().length) {
@@ -24,23 +25,6 @@ const remarketingSchema = z.object({
   reminderDays: z.number().min(1).max(30).optional().default(7),
 });
 
-// Rate limiting
-const rateLimitMap = new Map<string, number>();
-const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
-const MAX_REQUESTS = 3;
-
-function isRateLimited(key: string): boolean {
-  const now = Date.now();
-  const lastRequest = rateLimitMap.get(key);
-
-  if (!lastRequest || now - lastRequest > RATE_LIMIT_WINDOW) {
-    rateLimitMap.set(key, now);
-    return false;
-  }
-
-  return true;
-}
-
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -56,11 +40,15 @@ export async function POST(request: NextRequest) {
 
     const { email, shareId, source, reminderDays } = result.data;
 
-    // Rate limiting by email
-    if (isRateLimited(`remarketing:${email}`)) {
+    // Rate limiting by email (Upstash Redis)
+    const rateLimitResult = await checkRateLimit("api:remarketing", email);
+    if (!rateLimitResult.success) {
       return NextResponse.json(
         { error: "Demasiadas solicitudes. Intenta de nuevo más tarde." },
-        { status: 429 }
+        {
+          status: 429,
+          headers: getRateLimitHeaders(rateLimitResult),
+        }
       );
     }
 

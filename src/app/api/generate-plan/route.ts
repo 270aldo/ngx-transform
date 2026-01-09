@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { generatePlanPDF, generateSamplePlan } from "@/lib/plan-pdf";
 import { getFirestore } from "firebase-admin/firestore";
 import { getApps, initializeApp, cert } from "firebase-admin/app";
+import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 
 // Initialize Firebase Admin if not already initialized
 if (!getApps().length) {
@@ -16,24 +17,6 @@ if (!getApps().length) {
   }
 }
 
-// Rate limiting map (in-memory, reset on deploy)
-const rateLimitMap = new Map<string, number>();
-const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
-const MAX_REQUESTS = 3; // 3 per minute per shareId
-
-function isRateLimited(shareId: string): boolean {
-  const now = Date.now();
-  const key = `plan:${shareId}`;
-  const lastRequest = rateLimitMap.get(key);
-
-  if (!lastRequest || now - lastRequest > RATE_LIMIT_WINDOW) {
-    rateLimitMap.set(key, now);
-    return false;
-  }
-
-  return true;
-}
-
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const shareId = searchParams.get("shareId");
@@ -45,11 +28,16 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // Rate limiting
-  if (isRateLimited(shareId)) {
+  // Rate limiting by IP (Upstash Redis)
+  const clientIP = getClientIP(request);
+  const rateLimitResult = await checkRateLimit("api:generate-plan", clientIP);
+  if (!rateLimitResult.success) {
     return NextResponse.json(
       { error: "Too many requests. Please wait a moment." },
-      { status: 429 }
+      {
+        status: 429,
+        headers: getRateLimitHeaders(rateLimitResult),
+      }
     );
   }
 
