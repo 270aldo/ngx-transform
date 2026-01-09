@@ -55,7 +55,16 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const { action } = await req.json();
+    const { action, apiKey } = await req.json();
+
+    // SECURITY: Require API key for counter manipulation
+    const expectedKey = process.env.CRON_API_KEY;
+    if (!expectedKey || apiKey !== expectedKey) {
+      return NextResponse.json(
+        { error: "Unauthorized - API key required" },
+        { status: 401 }
+      );
+    }
 
     if (action !== "increment") {
       return NextResponse.json({ error: "Invalid action" }, { status: 400 });

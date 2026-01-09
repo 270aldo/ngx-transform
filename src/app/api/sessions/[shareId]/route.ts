@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/firebaseAdmin";
 import { deletePath, deletePrefix } from "@/lib/storage";
+import { validateDeleteToken } from "@/lib/jobManager";
 
 export async function GET(_: Request, context: { params: Promise<{ shareId: string }> }) {
   try {
@@ -31,6 +32,20 @@ export async function GET(_: Request, context: { params: Promise<{ shareId: stri
 export async function DELETE(req: Request, context: { params: Promise<{ shareId: string }> }) {
   try {
     const { shareId } = await context.params;
+
+    // Extract deleteToken from header or query param
+    const url = new URL(req.url);
+    const token = req.headers.get("X-Delete-Token") || url.searchParams.get("token") || "";
+
+    // Validate token (controlled by FF_DELETE_TOKEN_REQUIRED env var)
+    const isValid = await validateDeleteToken(shareId, token);
+    if (!isValid) {
+      return NextResponse.json(
+        { error: "Invalid or missing delete token" },
+        { status: 403 }
+      );
+    }
+
     const db = getDb();
     const ref = db.collection("sessions").doc(shareId);
     const snap = await ref.get();
