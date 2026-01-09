@@ -136,8 +136,21 @@ export async function POST(request: NextRequest) {
 }
 
 // GET endpoint to check lead status (for admin/debugging)
+// SECURITY: Requires API key to prevent PII exposure
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
+
+  // Validate API key first
+  const apiKey = searchParams.get("apiKey") || request.headers.get("X-Api-Key");
+  const expectedKey = process.env.CRON_API_KEY;
+
+  if (!expectedKey || apiKey !== expectedKey) {
+    return NextResponse.json(
+      { error: "Unauthorized - API key required" },
+      { status: 401 }
+    );
+  }
+
   const email = searchParams.get("email");
 
   if (!email) {
