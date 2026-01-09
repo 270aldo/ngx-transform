@@ -4,10 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Versión:** 2.1 (Viral Optimization Sprint)
-**Stack:** Next.js 16.0.7 + React 19 + TypeScript + Firebase + Tailwind CSS v4
+**Versión:** 3.0 (Genesis Experience)
+**Stack:** Next.js 16.0.7 + React 19 + TypeScript + Firebase + Tailwind CSS v4 + Upstash Redis
 
 NGX Transform is a **premium viral lead magnet** that creates realistic 12-month physical transformation projections. Users upload a photo, provide profile data, and receive AI-generated insights with visualized progress images at m0/m4/m8/m12 milestones, plus a personalized 7-day fitness plan.
+
+**v3.0 Genesis Experience** introduces an interactive demo of the **13 GENESIS AI Agents** that power NGX's main subscription app, converting users through an immersive orchestration experience.
 
 ## Business Context
 
@@ -47,12 +49,24 @@ Processing (BiometricLoader)
 Results (/s/[shareId])
     ├── CinematicViewer (fullscreen immersive)
     ├── Timeline navigation (HOY → MES 4 → MES 8 → MES 12)
-    ├── Physical/Mental toggle
+    ├── TransformationSummary (stats delta)
     ├── NeonRadar stats visualization
-    └── Share button (native share API)
+    └── CTA: "Ver cómo GENESIS crea tu plan"
+    ↓
+Genesis Demo (/s/[shareId]/demo) ⭐ NEW v3.0
+    ├── AgentOrchestration (13 AI agents animation)
+    │   ├── Phase 1: GENESIS, STELLA, LOGOS (analyzing)
+    │   ├── Phase 2: BLAZE, TEMPO, ATLAS, SAGE, MACRO, METABOL (designing)
+    │   └── Phase 3: WAVE, SPARK, NOVA, LUNA (personalizing)
+    └── DemoChat (5 limited interactions with A2UI widgets)
+    ↓
+Plan Preview (/s/[shareId]/plan)
+    ├── Day 1: Complete and functional (WorkoutCard, MealPlan, Checklist)
+    ├── Days 2-7: Blurred + locked
+    └── ComparisonCTA ("Sin Agentes vs GENESIS")
     ↓
 Conversion
-    └── CTA to NGX subscription app
+    └── CTA: "🚀 DESBLOQUEAR MI PLAN COMPLETO"
 ```
 
 ## Development Commands
@@ -100,6 +114,8 @@ pnpm lint         # ESLint
 | `emailScheduler.ts` | `src/lib/` | Email nurture sequence scheduling (D0-D7) |
 | `watermark.ts` | `src/lib/` | Image watermarking with Sharp |
 | `utils.ts` | `src/lib/` | General utility functions (cn, formatters) |
+| `rateLimit.ts` | `src/lib/` | Distributed rate limiting with Upstash Redis (v3.0) |
+| `genesis-demo/agents.ts` | `src/lib/` | 13 GENESIS agents config, colors, phases (v3.0) |
 
 ### API Routes
 
@@ -120,6 +136,11 @@ pnpm lint         # ESLint
 | `/api/counter` | GET/POST | Social proof counter (weekly transformations) |
 | `/api/email/sequence` | POST | Email nurture sequence management |
 | `/api/email/send` | POST | Send specific email template (D0-D7) |
+| `/api/genesis-demo` | GET | SSE streaming for agent orchestration animation (v3.0) |
+| `/api/genesis-chat` | POST | DemoChat responses with A2UI widgets (v3.0) |
+| `/api/genesis-voice` | POST | Voice agent responses via ElevenLabs (v3.0) |
+| `/api/remarketing` | POST/GET | Remarketing leads (POST: register, GET: admin lookup) |
+| `/api/generate-plan` | GET/POST | PDF plan generation with rate limiting |
 
 ### Type Definitions
 
@@ -197,6 +218,53 @@ The **Mental Logs** are fed to Gemini's "Elite Coach" prompt to personalize reco
 | `AgentBridgeCTA` | `src/components/` | Contextual CTA with NGX agent selection |
 | `ReferralCard` | `src/components/` | Referral code UI with copy functionality |
 
+### Genesis Experience Components (v3.0) ⭐ NEW
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `AgentOrchestration` | `src/components/genesis/` | 13-agent grid with SSE-driven animation (3 phases) |
+| `DemoChat` | `src/components/genesis/` | Limited chat (5 interactions) with quick actions |
+| `PlanPreview` | `src/components/genesis/` | Day 1 visible, Days 2-7 blurred/locked |
+| `GenesisDemo` | `src/components/genesis/` | Main wrapper for demo experience |
+| `TransformationSummary` | `src/components/results/` | Timeline + stats delta after CinematicViewer |
+| `ComparisonCTA` | `src/components/results/` | "Sin Agentes vs GENESIS" comparison table |
+
+### A2UI Widgets (v3.0) ⭐ NEW
+
+Ported from genesis_A2UI for consistent agent-style UI:
+
+| Widget | Location | Purpose |
+|--------|----------|---------|
+| `GlassCard` | `src/components/widgets/` | Base card with glassmorphism + agent accent |
+| `AgentBadge` | `src/components/widgets/` | Agent identifier (colored uppercase badge) |
+| `ActionButton` | `src/components/widgets/` | Full-width gradient CTA button |
+| `ProgressBar` | `src/components/widgets/` | Animated progress with agent color |
+| `WorkoutCard` | `src/components/widgets/` | Exercise display with sets/reps/rest |
+| `MealPlan` | `src/components/widgets/` | Nutrition plan with macros |
+| `InsightCard` | `src/components/widgets/` | Agent insight with icon + message |
+| `ChecklistWidget` | `src/components/widgets/` | Interactive checklist with completion |
+| `A2UIMediator` | `src/components/widgets/` | Widget orchestrator for chat responses |
+
+### GENESIS Agents (v3.0)
+
+The 13 AI agents that power the subscription app:
+
+| Agent | Color | Domain |
+|-------|-------|--------|
+| GENESIS | `#6D00FF` | Core orchestrator |
+| BLAZE | `#FF4500` | Workout design |
+| TEMPO | `#8B5CF6` | Training periodization |
+| ATLAS | `#F59E0B` | Strength programming |
+| WAVE | `#0EA5E9` | Recovery & mobility |
+| SAGE | `#10B981` | Mindset coaching |
+| MACRO | `#FF6347` | Nutrition planning |
+| METABOL | `#14B8A6` | Metabolism optimization |
+| NOVA | `#D946EF` | Habit formation |
+| SPARK | `#FBBF24` | Motivation & energy |
+| STELLA | `#A855F7` | Sleep optimization |
+| LUNA | `#6366F1` | Circadian rhythms |
+| LOGOS | `#6D00FF` | Analytics & tracking |
+
 ### Email Nurture Sequence (v2.1)
 
 | Template | Location | Timing | Purpose |
@@ -242,7 +310,7 @@ NO: CGI, cartoon, plastic skin, extra limbs, face drift, multiple subjects
 - m8 refs: [original, styleRef, m4]
 - m12 refs: [original, styleRef, m8]
 
-### Feature Flags (v2.1)
+### Feature Flags (v3.0)
 
 | Flag | Default | Purpose |
 |------|---------|---------|
@@ -255,6 +323,11 @@ NO: CGI, cartoon, plastic skin, extra limbs, face drift, multiple subjects
 | `FF_SOCIAL_COUNTER` | true | Show weekly transformation counter |
 | `FF_AGENT_BRIDGE_CTA` | true | Show contextual agent CTA |
 | `FF_EMAIL_SEQUENCE` | true | Enable D0-D7 email nurture sequence |
+| `FF_TELEMETRY_ENABLED` | true | Enable funnel telemetry (v3.0) |
+| `FF_DELETE_TOKEN_REQUIRED` | true | Require delete token for session deletion (v3.0) |
+| `FF_NB_PRO` | false | Enable Nano Banana Pro (Gemini 3 Pro Image) |
+| `FF_IDENTITY_CHAIN` | true | Enable identity chain for consistent faces |
+| `FF_QUALITY_GATES` | true | Enable output validation gates |
 
 ### Page Routes
 
@@ -262,26 +335,42 @@ NO: CGI, cartoon, plastic skin, extra limbs, face drift, multiple subjects
 |-------|---------|
 | `/` | Landing page |
 | `/wizard` | Multi-step wizard (email, photo, profile) |
-| `/s/[shareId]` | Shareable results page |
-| `/plan/[shareId]` | 7-day personalized plan viewer |
+| `/s/[shareId]` | Shareable results page with TransformationSummary |
+| `/s/[shareId]/demo` | Genesis Experience demo (agent orchestration + chat) ⭐ v3.0 |
+| `/s/[shareId]/plan` | Plan preview (Day 1 free, Days 2-7 locked) ⭐ v3.0 |
+| `/plan/[shareId]` | Legacy: 7-day personalized plan viewer |
 
 ## Environment Variables
 
 Copy `app/.env.example` to `app/.env.local`:
 
 ```bash
-# Required
+# Required - Firebase
 NEXT_PUBLIC_FIREBASE_API_KEY=
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
 FIREBASE_PROJECT_ID=
 FIREBASE_CLIENT_EMAIL=
 FIREBASE_PRIVATE_KEY="-----BEGIN..."  # Escape \n as literal
+
+# Required - AI
 GEMINI_API_KEY=
 
-# Optional
+# Required - Security (v3.0)
+CRON_API_KEY=                    # API key for internal endpoints (counter, email, remarketing)
+
+# Required - Rate Limiting (v3.0)
+UPSTASH_REDIS_REST_URL=          # From https://console.upstash.com/redis
+UPSTASH_REDIS_REST_TOKEN=        # From https://console.upstash.com/redis
+
+# Optional - AI Models
 GEMINI_IMAGE_MODEL=gemini-2.5-pro-image-preview  # Default model
-RESEND_API_KEY=                                   # For email sharing
-NEXT_PUBLIC_BOOKING_URL=                          # CTA link
+PLAN_GENERATION_MODEL=gemini-2.5-flash           # Plan generation model
+
+# Optional - Email
+RESEND_API_KEY=                  # For email sharing
+
+# Optional - Booking
+NEXT_PUBLIC_BOOKING_URL=         # CTA link
 ```
 
 ## Design System
@@ -300,3 +389,98 @@ NEXT_PUBLIC_BOOKING_URL=                          # CTA link
 - Lib/utils: `camelCase.ts` in `src/lib/`
 - API routes: `route.ts` following Next.js App Router patterns
 - Path alias: `@/*` maps to `./src/*`
+
+## Security (v3.0) ⭐ NEW
+
+### API Protection
+
+| Endpoint | Protection |
+|----------|------------|
+| `DELETE /api/sessions/[shareId]` | Delete token validation (via `X-Delete-Token` header or `?token=` query) |
+| `POST /api/email` | Only sends to session owner's email (prevents spam vector) |
+| `POST /api/counter` | Requires `CRON_API_KEY` (prevents counter manipulation) |
+| `GET /api/remarketing` | Requires `CRON_API_KEY` (protects PII) |
+| `POST /api/remarketing` | Upstash rate limiting by email |
+| `GET /api/generate-plan` | Upstash rate limiting by IP |
+
+### Rate Limiting (Upstash Redis)
+
+Distributed rate limiting via `src/lib/rateLimit.ts`:
+
+```typescript
+// Rate limits by endpoint
+"api:sessions"      // 3 per day (by IP)
+"api:remarketing"   // 3 per minute (by email)
+"api:generate-plan" // 10 per hour (by IP)
+"api:email"         // 2 per hour (by IP)
+```
+
+### Content Security Policy (CSP)
+
+Implemented in `src/middleware.ts`:
+
+- **script-src**: `'self'` + nonce-based + `'strict-dynamic'`
+- **connect-src**: Whitelisted Firebase, Upstash, Vercel, Google APIs
+- **frame-ancestors**: `'self'` only
+- **object-src**: `'none'`
+- **upgrade-insecure-requests**: Enabled
+
+### Security Headers
+
+| Header | Value |
+|--------|-------|
+| `Strict-Transport-Security` | `max-age=63072000; includeSubDomains; preload` |
+| `X-Frame-Options` | `SAMEORIGIN` |
+| `X-Content-Type-Options` | `nosniff` |
+| `X-XSS-Protection` | `1; mode=block` |
+| `Referrer-Policy` | `origin-when-cross-origin` |
+| `Permissions-Policy` | `camera=(), microphone=(), geolocation=()` |
+
+### Delete Token Flow
+
+```
+1. Session creation → Generate deleteToken
+2. Store: Firestore + return in response
+3. DELETE request → Validate token via header/query
+4. Invalid token → 403 Forbidden
+```
+
+## Architecture Decisions (v3.0)
+
+### Why Upstash vs In-Memory Rate Limiting?
+
+**Problem**: In-memory `Map` resets on cold starts, bypassed across Vercel instances.
+
+**Solution**: Upstash Redis with sliding window algorithm:
+- Distributed across all instances
+- Persists across deployments
+- Sub-50ms latency via REST API
+- Automatic cleanup (no TTL management)
+
+### Why SSE for Agent Orchestration?
+
+**Problem**: WebSocket overkill for unidirectional event stream.
+
+**Solution**: Server-Sent Events (SSE):
+- Native browser support
+- No WebSocket infrastructure
+- Simple reconnection handling
+- Works through proxies/CDNs
+
+### Genesis Demo Flow
+
+```
+/api/genesis-demo (SSE)
+    ├── Event: phase (phase 1 start)
+    ├── Event: agent (GENESIS analyzing)
+    ├── Event: agent (GENESIS complete)
+    ├── Event: agent (STELLA analyzing)
+    │   ... (20-25 seconds total)
+    └── Event: complete
+
+Client → AgentOrchestration.tsx
+    ├── Subscribe to SSE
+    ├── Update agent states
+    ├── Animate transitions
+    └── Show DemoChat when complete
+```
