@@ -7,6 +7,7 @@ import { Resend } from "resend";
 import { telemetry, initSessionMetrics, startTimer } from "@/lib/telemetry";
 import { getOrCreateJob } from "@/lib/jobManager";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
+import { requireAuth } from "@/lib/authServer";
 
 /**
  * Genera un token seguro para acciones destructivas
@@ -33,7 +34,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
     }
 
+    const authUser = await requireAuth(req);
+    if (!authUser.email) {
+      return NextResponse.json({ error: "Authentication email missing" }, { status: 400 });
+    }
+
     const { email, input, photoPath } = parsed.data;
+    if (email && email.toLowerCase() !== authUser.email.toLowerCase()) {
+      return NextResponse.json({ error: "Email mismatch" }, { status: 400 });
+    }
     const ip = getClientIP(req);
     const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
     ipDocId = `${ip}-${today}`;
@@ -88,7 +97,9 @@ export async function POST(req: Request) {
 
     await ref.set({
       shareId,
-      email: email ?? null,
+      email: authUser.email,
+      ownerUid: authUser.uid,
+      shareOriginal: false,
       input,
       photo: { originalStoragePath: photoPath },
       ai: null,
@@ -156,6 +167,9 @@ export async function POST(req: Request) {
     });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : "Unknown error";
+    if (message === "UNAUTHORIZED") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     console.error("[Sessions] Error:", e);
 
     // Rollback rate-limit increment if session creation failed (safe decrement with min 0)

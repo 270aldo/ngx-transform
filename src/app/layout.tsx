@@ -3,6 +3,7 @@ import "./globals.css";
 import { ToastProvider } from "@/components/ui/toast-provider";
 import { GlobalHeader } from "@/components/GlobalHeader";
 import { Space_Grotesk } from "next/font/google";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -23,12 +24,14 @@ export default function RootLayout({
   return (
     <html lang="es" className={spaceGrotesk.variable}>
       <body className={`antialiased bg-background text-foreground scroll-smooth`}>
-        <ToastProvider>
-          <GlobalHeader />
-          <main>
-            {children}
-          </main>
-        </ToastProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <GlobalHeader />
+            <main>
+              {children}
+            </main>
+          </ToastProvider>
+        </AuthProvider>
       </body>
     </html>
   );

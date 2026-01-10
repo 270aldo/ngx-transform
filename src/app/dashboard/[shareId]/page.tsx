@@ -1,111 +1,120 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Metadata } from "next";
-import { getDb } from "@/lib/firebaseAdmin";
-import { getSignedUrl } from "@/lib/storage";
-import type { InsightsResult } from "@/types/ai";
+import { useRouter } from "next/navigation";
+import { Sparkles, ArrowRight } from "lucide-react";
 import { BookingCTA2 } from "@/components/BookingCTA2";
 import { DownloadButton } from "@/components/DownloadButton";
 import { SocialShareButton } from "@/components/SocialShareButton";
-import { Sparkles, ArrowRight } from "lucide-react";
-
-export const dynamic = "force-dynamic";
+import { useAuth } from "@/components/auth/AuthProvider";
+import type { InsightsResult } from "@/types/ai";
 
 interface SessionDoc {
   shareId: string;
-  email?: string | null;
-  input: {
-    age: number;
-    sex: "male" | "female" | "other";
-    heightCm: number;
-    weightKg: number;
-    level: "novato" | "intermedio" | "avanzado";
-    goal: "definicion" | "masa" | "mixto";
-    weeklyTime: number;
-    trainingDaysPerWeek?: number;
-    trainingHistoryYears?: number;
-    nutritionQuality?: number;
-    bodyFatLevel?: "bajo" | "medio" | "alto";
-    trainingStyle?: "fuerza" | "hipertrofia" | "funcional" | "hiit" | "mixto";
-    aestheticPreference?: "cinematic" | "editorial" | "street" | "minimal";
-    focusAreas?: Array<"pecho" | "espalda" | "hombros" | "brazos" | "gluteos" | "piernas" | "core">;
-    focusZone?: "upper" | "lower" | "abs" | "full";
+  input?: {
+    goal?: string;
+    level?: string;
   };
-  photo?: { originalStoragePath?: string };
-  assets?: { images?: Record<string, string> };
   ai?: InsightsResult & { letter_from_future?: string };
-  plan?: unknown;
   status?: string;
-}
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ shareId: string }>;
-}): Promise<Metadata> {
-  const { shareId } = await params;
-  return {
-    title: "Dashboard NGX - Resumen Completo",
-    description: `Resumen completo de la transformación (${shareId})`,
+  urls?: {
+    originalUrl?: string;
+    images?: Record<string, string>;
   };
 }
 
-async function resolveUrls(data: SessionDoc) {
-  const originalPath = data.photo?.originalStoragePath;
-  const images = data.assets?.images || {};
+export default function DashboardDetailPage({ params }: { params: { shareId: string } }) {
+  const { shareId } = params;
+  const router = useRouter();
+  const { user, loading: authLoading, getIdToken } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<SessionDoc | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const originalUrl = originalPath
-    ? await getSignedUrl(originalPath, { expiresInSeconds: 3600 })
-    : undefined;
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push(`/auth?next=/dashboard/${shareId}`);
+    }
+  }, [authLoading, user, router, shareId]);
 
-  const m4 = images.m4 ? await getSignedUrl(images.m4, { expiresInSeconds: 3600 }) : undefined;
-  const m8 = images.m8 ? await getSignedUrl(images.m8, { expiresInSeconds: 3600 }) : undefined;
-  const m12 = images.m12 ? await getSignedUrl(images.m12, { expiresInSeconds: 3600 }) : undefined;
+  useEffect(() => {
+    const load = async () => {
+      if (!user) return;
+      try {
+        setLoading(true);
+        const token = await getIdToken();
+        if (!token) throw new Error("No se pudo validar tu sesión");
 
-  return { originalUrl, m4, m8, m12 };
-}
+        const res = await fetch(`/api/sessions/${shareId}/private`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) {
+          const j = await res.json().catch(() => ({}));
+          throw new Error(j.error || "No se pudo cargar la sesión");
+        }
+        const json = (await res.json()) as SessionDoc;
+        setData(json);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Error inesperado";
+        setError(message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-function formatDelta(value?: number, base?: number) {
-  if (value === undefined || base === undefined) return "--";
-  const diff = value - base;
-  return diff >= 0 ? `+${diff}` : `${diff}`;
-}
+    load();
+  }, [user, shareId, getIdToken]);
 
-export default async function DashboardPage({
-  params,
-}: {
-  params: Promise<{ shareId: string }>;
-}) {
-  const { shareId } = await params;
-  const db = getDb();
-  const snap = await db.collection("sessions").doc(shareId).get();
+  const urls = data?.urls;
+  const images = urls?.images || {};
+  const m0 = urls?.originalUrl;
+  const m4 = images.m4;
+  const m8 = images.m8;
+  const m12 = images.m12;
 
-  if (!snap.exists) {
-    return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">Sesión no encontrada</h1>
-          <p className="text-neutral-400">No pudimos cargar el resumen.</p>
-        </div>
-      </div>
-    );
-  }
-
-  const data = snap.data() as SessionDoc;
-  const ai = data.ai;
-  const { originalUrl, m4, m8, m12 } = await resolveUrls(data);
-
+  const ai = data?.ai;
   const m0Stats = ai?.timeline?.m0?.stats;
   const m12Stats = ai?.timeline?.m12?.stats;
 
   const insights = ai?.insightsText || "Tu proyección está lista.";
   const letter = ai?.letter_from_future;
 
+  const statusLabel = useMemo(() => {
+    if (!data?.status) return "Procesando";
+    if (data.status === "ready") return "Listo";
+    if (data.status === "failed") return "Falló";
+    return "Procesando";
+  }, [data?.status]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <p className="text-sm text-neutral-400">Cargando dashboard...</p>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-2">No pudimos cargar el dashboard</h1>
+          <p className="text-neutral-400">{error || "Intenta de nuevo"}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="max-w-6xl mx-auto px-6 py-10 space-y-12">
         <header className="space-y-4">
-          <p className="text-xs tracking-[0.35em] uppercase text-[#6D00FF]">Dashboard NGX</p>
+          <div className="flex items-center justify-between">
+            <p className="text-xs tracking-[0.35em] uppercase text-[#6D00FF]">Dashboard NGX</p>
+            <span className="text-xs text-neutral-400">Estado: {statusLabel}</span>
+          </div>
           <h1 className="text-3xl sm:text-4xl font-bold">
             Tu resumen completo de transformación
           </h1>
@@ -115,9 +124,9 @@ export default async function DashboardPage({
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="grid grid-cols-2 gap-4">
             <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-white/10 bg-white/5">
-              {originalUrl ? (
+              {m0 ? (
                 <Image
-                  src={originalUrl}
+                  src={m0}
                   alt="Inicio"
                   fill
                   sizes="(min-width: 1024px) 25vw, 50vw"
@@ -172,7 +181,8 @@ export default async function DashboardPage({
                       {stat.value ?? "--"}
                       {stat.value !== undefined && stat.base !== undefined ? (
                         <span className="text-xs text-emerald-400 ml-2">
-                          {formatDelta(stat.value, stat.base)}
+                          {stat.value - stat.base >= 0 ? "+" : ""}
+                          {stat.value - stat.base}
                         </span>
                       ) : null}
                     </p>
@@ -199,102 +209,35 @@ export default async function DashboardPage({
                 <DownloadButton imageUrl={m12} filename={`ngx-${shareId}-m12`} />
                 <SocialShareButton shareId={shareId} imageUrl={m12} />
               </div>
-              <p className="text-xs text-neutral-500">
-                Descarga con watermark o comparte directamente tu resultado.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">Timeline completo</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[
-              { label: "Mes 4", url: m4 },
-              { label: "Mes 8", url: m8 },
-              { label: "Mes 12", url: m12 },
-            ].map((item) => (
-              <div key={item.label} className="rounded-2xl border border-white/10 bg-white/5 p-3">
-                <div className="relative aspect-[3/4] rounded-xl overflow-hidden bg-black/40">
-                  {item.url ? (
-                    <Image src={item.url} alt={item.label} fill className="object-cover" unoptimized />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-neutral-500 text-sm">
-                      {item.label} no disponible
-                    </div>
-                  )}
-                </div>
-                <p className="mt-2 text-sm font-semibold text-center">{item.label}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* CTA GENESIS Demo - v4.0 */}
-        <section className="relative overflow-hidden rounded-3xl border border-[#6D00FF]/30 bg-gradient-to-br from-[#6D00FF]/20 via-[#6D00FF]/10 to-transparent p-8 lg:p-10">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_#6D00FF20_0%,_transparent_50%)]" />
-          <div className="absolute top-4 right-4 w-24 h-24 bg-[#6D00FF]/20 rounded-full blur-3xl" />
-
-          <div className="relative z-10 flex flex-col lg:flex-row items-center gap-8">
-            <div className="flex-1 space-y-4 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 text-xs tracking-[0.3em] uppercase text-[#B98CFF]">
-                <Sparkles className="w-4 h-4" />
-                <span>Experiencia GENESIS</span>
-              </div>
-              <h2 className="text-2xl lg:text-3xl font-bold">
-                Conoce a tu Coach IA
-              </h2>
-              <p className="text-neutral-300 max-w-xl">
-                GENESIS analizará tu perfil y te guiará para crear tu primer plan de entrenamiento
-                personalizado. Es gratis y solo toma 2 minutos.
-              </p>
-              <ul className="text-sm text-neutral-400 space-y-1">
-                <li>✓ Conversación personalizada con IA</li>
-                <li>✓ Plan Semana 1 descargable</li>
-                <li>✓ Sin compromiso</li>
-              </ul>
             </div>
 
-            <div className="flex-shrink-0">
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-5 flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-sm font-semibold">Ver resultados públicos</p>
+                <p className="text-xs text-neutral-500">Comparte tu transformación cuando lo decidas.</p>
+              </div>
               <Link
-                href={`/demo/${shareId}`}
-                className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[#6D00FF] hover:bg-[#5B00E0] text-white font-semibold text-lg transition-all duration-300 shadow-lg shadow-[#6D00FF]/30 hover:shadow-[#6D00FF]/50 hover:scale-105"
+                href={`/s/${shareId}`}
+                className="inline-flex items-center gap-2 text-[#6D00FF] hover:text-[#B98CFF] text-sm"
               >
-                <span>CREAR MI PRIMER PLAN GRATIS</span>
-                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                Ver share <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
         </section>
 
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Plan personalizado</h2>
-            <p className="text-sm text-neutral-400">
-              Genera tu plan de 7 días basado en tu análisis y descárgalo de inmediato.
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-6 space-y-3">
+            <div className="flex items-center gap-2 text-sm font-semibold">
+              <Sparkles className="w-4 h-4 text-[#6D00FF]" />
+              Proyección avanzada
+            </div>
+            <p className="text-xs text-neutral-400">
+              Explora la evolución completa, con tu before protegido y listo para compartir cuando decidas.
             </p>
-            <BookingCTA2 shareId={shareId} hasPlan={Boolean(data.plan)} />
           </div>
-          <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-[#6D00FF]/15 to-transparent p-6 space-y-4">
-            <h3 className="font-semibold">Resumen ejecutivo</h3>
-            <ul className="text-sm text-neutral-300 space-y-2">
-              <li>• Objetivo: {data.input.goal}</li>
-              <li>• Nivel actual: {data.input.level}</li>
-              <li>• Enfoque: {data.input.focusZone || "full"}</li>
-              <li>• Tiempo semanal: {data.input.weeklyTime} horas</li>
-              <li>• Entrenos/semana: {data.input.trainingDaysPerWeek ?? "--"}</li>
-              <li>• Estilo de entrenamiento: {data.input.trainingStyle ?? "--"}</li>
-              <li>• Nutrición: {data.input.nutritionQuality ?? "--"}/10</li>
-              <li>• Grasa corporal: {data.input.bodyFatLevel ?? "--"}</li>
-              <li>• Zonas foco: {data.input.focusAreas?.length ? data.input.focusAreas.join(", ") : "--"}</li>
-              <li>• Estética: {data.input.aestheticPreference ?? "--"}</li>
-            </ul>
-            <a
-              href={`/s/${shareId}`}
-              className="text-sm text-[#6D00FF] hover:text-[#B98CFF] transition-colors"
-            >
-              Volver a resultados
-            </a>
+          <div className="lg:col-span-2">
+            <BookingCTA2 shareId={shareId} />
           </div>
         </section>
       </div>

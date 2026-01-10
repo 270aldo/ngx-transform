@@ -1,11 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { getClientAuth, getClientStorage } from "@/lib/firebaseClient";
-import { signInAnonymously } from "firebase/auth";
+import { getClientStorage } from "@/lib/firebaseClient";
 import { ref, uploadBytes } from "firebase/storage";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -19,6 +18,7 @@ import { useToast } from "@/components/ui/toast-provider";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/shadcn/ui/select";
 import { Stepper } from "@/components/Stepper";
 import { Card } from "@/components/shadcn/ui/card";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 const FormSchema = z.object({
   email: z.string().email(),
@@ -60,6 +60,7 @@ export default function WizardPage() {
   const [progress, setProgress] = useState(0);
   const { addToast } = useToast();
   const DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "1";
+  const { user, loading: authLoading, getIdToken } = useAuth();
 
   const { register, handleSubmit, watch, formState: { errors }, setValue } = useForm<FormValues>({
     // Type cast for resolver to avoid strict generic mismatch; acceptable for MVP
@@ -85,13 +86,19 @@ export default function WizardPage() {
   });
 
   const photoReg = register("photo");
+  const emailReg = register("email");
 
   useEffect(() => {
-    if (!DEMO) {
-      // Only si NO es demo, autenticamos para Storage
-      signInAnonymously(getClientAuth()).catch(() => { });
+    if (!DEMO && !authLoading && !user) {
+      router.push("/auth?next=/wizard");
     }
-  }, [DEMO]);
+  }, [DEMO, authLoading, user, router]);
+
+  useEffect(() => {
+    if (user?.email) {
+      setValue("email", user.email);
+    }
+  }, [user?.email, setValue]);
 
   // ----------
   // UI: Dropzone simple y consistente
@@ -116,6 +123,9 @@ export default function WizardPage() {
     try {
       setLoading(true);
       setError(null);
+      if (!DEMO && !user) {
+        throw new Error("Necesitas iniciar sesión para continuar");
+      }
       const file: File | undefined = values.photo?.[0];
       if (!file) throw new Error("Debes subir una fotografía");
       if (file.size > 8 * 1024 * 1024) throw new Error("La fotografía supera 8MB. Por favor, usa una imagen más ligera.");
@@ -148,7 +158,8 @@ export default function WizardPage() {
       // 2) Upload photo
       const sessionSeed = (typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)).replace(/-/g, "").slice(0, 12);
       const ext = file.name.split(".").pop() || "jpg";
-      const storagePath = `uploads/${sessionSeed}/original.${ext}`;
+      const uid = user?.uid || "anonymous";
+      const storagePath = `uploads/${uid}/${sessionSeed}/original.${ext}`;
 
       setStage("upload"); setProgress(30);
       const storageRef = ref(getClientStorage(), storagePath);
@@ -178,9 +189,15 @@ export default function WizardPage() {
         notes: values.notes,
       };
       setStage("create"); setProgress(50);
+      const token = await getIdToken();
+      if (!token) throw new Error("No se pudo validar tu sesión");
+
       const createRes = await fetch("/api/sessions", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ email: values.email, input: profile, photoPath: storagePath }),
       });
       const createJson = await createRes.json();
@@ -213,6 +230,7 @@ export default function WizardPage() {
   const photoFile = watch("photo");
   const previewUrl = photoFile && photoFile[0] ? URL.createObjectURL(photoFile[0]) : null;
   const emailVal = watch("email");
+  const emailLocked = !DEMO && !!user;
   const focusAreasVal = watch("focusAreas") || [];
   const toggleFocusArea = (area: FormValues["focusAreas"][number]) => {
     const current = focusAreasVal ?? [];
@@ -290,7 +308,15 @@ export default function WizardPage() {
 
                   <div className="space-y-2">
                     <Label>Email</Label>
-                    <Input placeholder="tu@email" {...register("email")} className="bg-black/40 border-white/10 focus:border-[#6D00FF]" />
+                    <Input
+                      placeholder="tu@email"
+                      {...emailReg}
+                      value={emailVal || ""}
+                      onChange={(e) => emailReg.onChange(e)}
+                      readOnly={emailLocked}
+                      disabled={emailLocked}
+                      className="bg-black/40 border-white/10 focus:border-[#6D00FF]"
+                    />
                     {errors.email && <p className="text-red-400 text-sm">{String(errors.email.message)}</p>}
                   </div>
 

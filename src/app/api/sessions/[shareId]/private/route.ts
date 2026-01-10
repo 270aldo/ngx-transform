@@ -1,34 +1,43 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/firebaseAdmin";
 import { getSignedUrl } from "@/lib/storage";
-import { getAuthUser } from "@/lib/authServer";
-
-const FF_EXPOSE_ORIGINAL = process.env.FF_EXPOSE_ORIGINAL !== "false";
+import { requireAuth } from "@/lib/authServer";
 
 export async function GET(req: Request, context: { params: Promise<{ shareId: string }> }) {
   try {
+    const authUser = await requireAuth(req);
     const { shareId } = await context.params;
     const db = getDb();
     const ref = db.collection("sessions").doc(shareId);
     const snap = await ref.get();
-    if (!snap.exists) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    if (!snap.exists) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
 
     const data = snap.data() as {
+      shareId?: string;
       ownerUid?: string;
       shareOriginal?: boolean;
-      photo?: { originalStoragePath?: string };
+      status?: string;
+      input?: unknown;
+      ai?: unknown;
       assets?: { images?: Record<string, string> };
-    } | undefined;
-    const photoPath: string | undefined = data?.photo?.originalStoragePath;
-    const images: Record<string, string> | undefined = data?.assets?.images;
+      photo?: { originalStoragePath?: string };
+    };
 
-    const result: { originalUrl?: string; images?: Record<string, string> } = {};
+    if (!data.ownerUid || data.ownerUid !== authUser.uid) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
-    const authUser = await getAuthUser(req);
-    const isOwner = authUser?.uid && data?.ownerUid && authUser.uid === data.ownerUid;
-    const allowPublicOriginal = FF_EXPOSE_ORIGINAL && !!data?.shareOriginal;
+    const photoPath = data.photo?.originalStoragePath;
+    const images = data.assets?.images || {};
 
-    if (photoPath && (isOwner || allowPublicOriginal)) {
+    const result: {
+      originalUrl?: string;
+      images?: Record<string, string>;
+    } = {};
+
+    if (photoPath) {
       result.originalUrl = await getSignedUrl(photoPath, { expiresInSeconds: 3600 });
     }
 
@@ -44,10 +53,22 @@ export async function GET(req: Request, context: { params: Promise<{ shareId: st
       result.images = out;
     }
 
-    return NextResponse.json(result);
+    return NextResponse.json({
+      shareId: data.shareId || shareId,
+      status: data.status,
+      input: data.input,
+      ai: data.ai,
+      assets: data.assets,
+      photo: data.photo,
+      shareOriginal: data.shareOriginal || false,
+      urls: result,
+    });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : "Unknown error";
-    console.error(e);
+    if (message === "UNAUTHORIZED") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    console.error("[SESSIONS_PRIVATE]", e);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
