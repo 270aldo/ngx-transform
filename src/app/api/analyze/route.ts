@@ -6,6 +6,7 @@ import { generateInsightsFromImage } from "@/lib/gemini";
 import { FieldValue } from "firebase-admin/firestore";
 import { telemetry, startTimer } from "@/lib/telemetry";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
+import { checkSpendLimit, recordSpend } from "@/lib/spendLimiter";
 import { getAuthUser } from "@/lib/authServer";
 import {
   getOrCreateJob,
@@ -87,6 +88,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing photo" }, { status: 400 });
     }
 
+    // Check spend limits (analysis is cheap but still tracked)
+    const analysisCost = 0.001; // ~$0.001 per analysis (conservative estimate)
+    const spendCheck = await checkSpendLimit(analysisCost);
+    if (!spendCheck.allowed) {
+      console.error(`[Analyze] Spend limit exceeded: ${spendCheck.reason}`);
+      return NextResponse.json(
+        { error: "Service temporarily unavailable. Please try again later." },
+        { status: 503 }
+      );
+    }
+
     // Marcar job en progreso
     await markJobInProgress(`${sessionId}_analysis`);
 
@@ -134,6 +146,9 @@ export async function POST(req: Request) {
     // Track análisis completado
     const latency = timer.stop();
     await telemetry.analysisCompleted(sessionId, latency, MODEL_ID);
+
+    // Record spend
+    await recordSpend(analysisCost, "analysis");
 
     console.log(`[Analyze] Completed ${sessionId} in ${latency}ms (${retryCount} retries)`);
 

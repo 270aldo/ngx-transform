@@ -24,6 +24,7 @@ import { FieldValue } from "firebase-admin/firestore";
 import sharp from "sharp";
 import { telemetry, startTimer } from "@/lib/telemetry";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
+import { checkSpendLimit, recordSpend } from "@/lib/spendLimiter";
 import { getAuthUser } from "@/lib/authServer";
 import {
   getOrCreateJob,
@@ -151,6 +152,20 @@ export async function POST(req: Request) {
     const imageConfig = getImageConfig();
     const estimatedCost = estimateSessionCost(["m4", "m8", "m12"]);
     console.log(`[GenerateImages] Estimated cost: $${estimatedCost.toFixed(3)}`);
+
+    // Check spend limits before proceeding
+    const spendCheck = await checkSpendLimit(estimatedCost);
+    if (!spendCheck.allowed) {
+      console.error(`[GenerateImages] Spend limit exceeded: ${spendCheck.reason}`);
+      return NextResponse.json(
+        {
+          error: "Service temporarily unavailable due to high demand. Please try again later.",
+          reason: spendCheck.reason,
+          retryAfter: 3600, // Suggest retry in 1 hour
+        },
+        { status: 503 }
+      );
+    }
 
     // Check if already complete
     const job = await getOrCreateJob(sessionId, "image_generation");
@@ -300,6 +315,10 @@ export async function POST(req: Request) {
           result.model,
           imageConfig.byStep[step].imageSize
         );
+
+        // Record spend for this step
+        const stepCost = estimateSessionCost([step]);
+        await recordSpend(stepCost, `image_generation_${step}`);
 
         console.log(
           `[GenerateImages] ${step} completed for ${sessionId} in ${stepLatency}ms ` +
