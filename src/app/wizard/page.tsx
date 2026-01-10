@@ -288,7 +288,7 @@ export default function WizardPage() {
                       <p className="text-muted-foreground text-sm">JPG/PNG, máx 8MB. Enfoque frontal, buena luz.</p>
                     </div>
                   ) : (
-                    <Image src={previewUrl} alt="preview" fill unoptimized className="object-cover rounded-lg" />
+                    <Image src={previewUrl} alt="preview" fill unoptimized className="object-cover rounded-lg pointer-events-none" />
                   )}
                 </label>
                 <p className="text-xs text-neutral-500 mt-3 text-center">Sugerencia: ilumina bien el rostro y evita filtros.</p>
