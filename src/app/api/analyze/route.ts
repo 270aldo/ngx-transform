@@ -6,6 +6,7 @@ import { generateInsightsFromImage } from "@/lib/gemini";
 import { FieldValue } from "firebase-admin/firestore";
 import { telemetry, startTimer } from "@/lib/telemetry";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
+import { getAuthUser } from "@/lib/authServer";
 import {
   getOrCreateJob,
   markJobInProgress,
@@ -65,6 +66,13 @@ export async function POST(req: Request) {
     const data = snap.data() as SessionDocument | undefined;
     if (!data) {
       return NextResponse.json({ error: "Session data missing" }, { status: 500 });
+    }
+
+    // Auth check: if authenticated, verify session ownership
+    const authUser = await getAuthUser(req);
+    if (authUser && data.email && authUser.email !== data.email) {
+      console.warn(`[Analyze] Auth mismatch: ${authUser.email} != ${data.email}`);
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
     // Verificar si ya está analizado (idempotencia)

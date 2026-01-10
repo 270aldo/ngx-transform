@@ -104,8 +104,7 @@ export function middleware(request: NextRequest) {
 
             if (!allowedOrigins.some((allowed) => origin.startsWith(allowed))) {
                 console.warn(`[Middleware] Blocked request from origin: ${origin}`);
-                // Uncomment to enforce:
-                // return new NextResponse("Forbidden", { status: 403 });
+                return new NextResponse("Forbidden", { status: 403 });
             }
         }
     }

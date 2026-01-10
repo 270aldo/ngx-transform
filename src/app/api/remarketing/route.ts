@@ -1,21 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getFirestore, FieldValue } from "firebase-admin/firestore";
-import { getApps, initializeApp, cert } from "firebase-admin/app";
+import { FieldValue } from "firebase-admin/firestore";
 import { z } from "zod";
 import { checkRateLimit, getRateLimitHeaders } from "@/lib/rateLimit";
-
-// Initialize Firebase Admin if not already initialized
-if (!getApps().length) {
-  const serviceAccount = process.env.FIREBASE_ADMIN_SDK
-    ? JSON.parse(Buffer.from(process.env.FIREBASE_ADMIN_SDK, "base64").toString())
-    : null;
-
-  if (serviceAccount) {
-    initializeApp({
-      credential: cert(serviceAccount),
-    });
-  }
-}
+import { getDb } from "@/lib/firebaseAdmin";
 
 // Validation schema
 const remarketingSchema = z.object({
@@ -52,16 +39,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if Firebase is initialized
-    if (!getApps().length) {
-      console.warn("Firebase not initialized, skipping database save");
-      return NextResponse.json({
-        success: true,
-        message: "Email registrado (modo demo)",
-      });
-    }
-
-    const db = getFirestore();
+    const db = getDb();
 
     // Calculate reminder date
     const reminderDate = new Date();
@@ -128,8 +106,8 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 
-  // Validate API key first
-  const apiKey = searchParams.get("apiKey") || request.headers.get("X-Api-Key");
+  // Validate API key first (header only - never accept in query params for security)
+  const apiKey = request.headers.get("X-Api-Key");
   const expectedKey = process.env.CRON_API_KEY;
 
   if (!expectedKey || apiKey !== expectedKey) {
@@ -148,15 +126,8 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  if (!getApps().length) {
-    return NextResponse.json(
-      { error: "Firebase not initialized" },
-      { status: 500 }
-    );
-  }
-
   try {
-    const db = getFirestore();
+    const db = getDb();
     const leadDoc = await db.collection("remarketing_leads").doc(email).get();
 
     if (!leadDoc.exists) {

@@ -1,21 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generatePlanPDF, generateSamplePlan } from "@/lib/plan-pdf";
-import { getFirestore } from "firebase-admin/firestore";
-import { getApps, initializeApp, cert } from "firebase-admin/app";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
-
-// Initialize Firebase Admin if not already initialized
-if (!getApps().length) {
-  const serviceAccount = process.env.FIREBASE_ADMIN_SDK
-    ? JSON.parse(Buffer.from(process.env.FIREBASE_ADMIN_SDK, "base64").toString())
-    : null;
-
-  if (serviceAccount) {
-    initializeApp({
-      credential: cert(serviceAccount),
-    });
-  }
-}
+import { getDb } from "@/lib/firebaseAdmin";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -48,28 +34,26 @@ export async function GET(request: NextRequest) {
     let level = "intermedio";
     let trainingDays = 4;
 
-    if (getApps().length > 0) {
-      try {
-        const db = getFirestore();
-        const sessionDoc = await db.collection("sessions").doc(shareId).get();
+    try {
+      const db = getDb();
+      const sessionDoc = await db.collection("sessions").doc(shareId).get();
 
-        if (sessionDoc.exists) {
-          const data = sessionDoc.data();
-          userName = data?.name || data?.email?.split("@")[0] || "Usuario";
-          goal = data?.goal || "mixto";
-          level = data?.level || "intermedio";
-          trainingDays = data?.weeklyTime
-            ? data.weeklyTime <= 3
-              ? 3
-              : data.weeklyTime <= 5
-              ? 4
-              : 5
-            : 4;
-        }
-      } catch (dbError) {
-        console.warn("Could not fetch session from Firestore:", dbError);
-        // Continue with default values
+      if (sessionDoc.exists) {
+        const data = sessionDoc.data();
+        userName = data?.name || data?.email?.split("@")[0] || "Usuario";
+        goal = data?.goal || "mixto";
+        level = data?.level || "intermedio";
+        trainingDays = data?.weeklyTime
+          ? data.weeklyTime <= 3
+            ? 3
+            : data.weeklyTime <= 5
+            ? 4
+            : 5
+          : 4;
       }
+    } catch (dbError) {
+      console.warn("Could not fetch session from Firestore:", dbError);
+      // Continue with default values
     }
 
     // Generate the plan
@@ -135,19 +119,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Try to get name from Firestore
-    if (getApps().length > 0) {
-      try {
-        const db = getFirestore();
-        const sessionDoc = await db.collection("sessions").doc(shareId).get();
+    try {
+      const db = getDb();
+      const sessionDoc = await db.collection("sessions").doc(shareId).get();
 
-        if (sessionDoc.exists) {
-          const data = sessionDoc.data();
-          userName = data?.name || data?.email?.split("@")[0] || "Usuario";
-          level = data?.level || "intermedio";
-        }
-      } catch (dbError) {
-        console.warn("Could not fetch session from Firestore:", dbError);
+      if (sessionDoc.exists) {
+        const data = sessionDoc.data();
+        userName = data?.name || data?.email?.split("@")[0] || "Usuario";
+        level = data?.level || "intermedio";
       }
+    } catch (dbError) {
+      console.warn("Could not fetch session from Firestore:", dbError);
     }
 
     // Generate plan data
