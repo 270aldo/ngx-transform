@@ -114,8 +114,20 @@ export async function checkRateLimit(
 ): Promise<RateLimitResult> {
   const limiters = getRateLimiters();
 
-  // If Redis is not configured, allow all requests (dev mode)
+  // If Redis is not configured, check environment
   if (!limiters) {
+    // CRITICAL: Block requests in production if Redis is not configured
+    if (process.env.NODE_ENV === "production") {
+      console.error("[RateLimit] CRITICAL: Redis not configured in production! Blocking request.");
+      return {
+        success: false,
+        limit: 0,
+        remaining: 0,
+        reset: Date.now() + 60000,
+      };
+    }
+    // Dev mode: allow all requests
+    console.warn("[RateLimit] Redis not configured - allowing request (dev mode)");
     return {
       success: true,
       limit: 999,

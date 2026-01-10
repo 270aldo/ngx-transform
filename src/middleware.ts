@@ -1,27 +1,33 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// Generate nonce for inline scripts (CSP)
-function generateNonce(): string {
-    const array = new Uint8Array(16);
-    crypto.getRandomValues(array);
-    return Buffer.from(array).toString("base64");
-}
-
-// Build Content Security Policy
-function buildCSP(nonce: string, isDev: boolean): string {
+// Build Content Security Policy (Static/SSG Compatible)
+function buildCSP(isDev: boolean): string {
     const directives: Record<string, string[]> = {
         "default-src": ["'self'"],
         "script-src": [
             "'self'",
-            `'nonce-${nonce}'`,
-            "'strict-dynamic'",
-            // Next.js requires unsafe-eval in dev mode
+            "'unsafe-inline'", // Needed for Next.js inline scripts in some modes
             ...(isDev ? ["'unsafe-eval'"] : []),
+            "https://*.google.com",
+            "https://*.gstatic.com",
+        ],
+        "script-src-elem": [
+            "'self'",
+            "'unsafe-inline'",
+            ...(isDev ? ["'unsafe-eval'"] : []),
+            "https://*.google.com",
+            "https://*.gstatic.com",
         ],
         "style-src": [
             "'self'",
-            "'unsafe-inline'", // Required for styled-jsx and inline styles
+            "'unsafe-inline'",
+            "https://fonts.googleapis.com",
+        ],
+        "style-src-elem": [
+            "'self'",
+            "'unsafe-inline'",
+            "https://fonts.googleapis.com",
         ],
         "img-src": [
             "'self'",
@@ -45,19 +51,20 @@ function buildCSP(nonce: string, isDev: boolean): string {
             "https://firebasestorage.googleapis.com",
             "https://*.upstash.io",
             "https://generativelanguage.googleapis.com",
-            // Vercel analytics
             "https://vitals.vercel-insights.com",
             ...(isDev ? ["ws://localhost:*", "http://localhost:*"] : []),
         ],
         "frame-src": [
             "'self'",
             "https://*.firebaseapp.com",
+            "https://accounts.google.com",
         ],
         "frame-ancestors": ["'self'"],
         "form-action": ["'self'"],
         "base-uri": ["'self'"],
         "object-src": ["'none'"],
         "upgrade-insecure-requests": [],
+        "report-uri": ["/api/csp-report"],
     };
 
     return Object.entries(directives)
@@ -71,7 +78,6 @@ function buildCSP(nonce: string, isDev: boolean): string {
 export function middleware(request: NextRequest) {
     const response = NextResponse.next();
     const isDev = process.env.NODE_ENV === "development";
-    const nonce = generateNonce();
 
     // Security Headers
     response.headers.set("X-DNS-Prefetch-Control", "on");
@@ -83,11 +89,11 @@ export function middleware(request: NextRequest) {
     response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
 
     // Content Security Policy
-    const csp = buildCSP(nonce, isDev);
+    const csp = buildCSP(isDev);
     response.headers.set("Content-Security-Policy", csp);
-
-    // Pass nonce to the page for inline scripts
-    response.headers.set("x-nonce", nonce);
+    if (!isDev) {
+        response.headers.set("Content-Security-Policy-Report-Only", csp);
+    }
 
     // Origin validation for API routes
     if (request.nextUrl.pathname.startsWith("/api/")) {
