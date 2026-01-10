@@ -1,0 +1,32 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#050505"/>
+      <stop offset="1" stop-color="#1A0D2E"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="200" y1="0" x2="1000" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6D00FF" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#B98CFF" stop-opacity="0.25"/>
+    </linearGradient>
+    <filter id="blur" x="-200" y="-200" width="1600" height="1030" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="80"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <g filter="url(#blur)">
+    <ellipse cx="260" cy="120" rx="180" ry="180" fill="#6D00FF" fill-opacity="0.35"/>
+    <ellipse cx="980" cy="520" rx="240" ry="240" fill="#B98CFF" fill-opacity="0.25"/>
+  </g>
+
+  <rect x="120" y="110" width="960" height="410" rx="32" stroke="url(#glow)" stroke-width="2" fill="rgba(5,5,5,0.6)"/>
+
+  <text x="140" y="220" fill="#B98CFF" font-family="Space Grotesk, Arial, sans-serif" font-size="28" letter-spacing="10">NGX TRANSFORM</text>
+  <text x="140" y="320" fill="#FFFFFF" font-family="Space Grotesk, Arial, sans-serif" font-size="72" font-weight="700">Tu transformación</text>
+  <text x="140" y="400" fill="#FFFFFF" font-family="Space Grotesk, Arial, sans-serif" font-size="72" font-weight="700">empieza hoy</text>
+  <text x="140" y="460" fill="#9A9A9A" font-family="Space Grotesk, Arial, sans-serif" font-size="24">Visual fitness premium by NGX</text>
+
+  <rect x="140" y="500" width="260" height="50" rx="25" fill="#6D00FF"/>
+  <text x="170" y="533" fill="#FFFFFF" font-family="Space Grotesk, Arial, sans-serif" font-size="20" font-weight="600">VER PROYECCIÓN</text>
+</svg>
