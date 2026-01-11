@@ -35,12 +35,16 @@ export async function POST(req: Request) {
     }
 
     const authUser = await requireAuth(req);
-    if (!authUser.email) {
-      return NextResponse.json({ error: "Authentication email missing" }, { status: 400 });
+    const { email: formEmail, input, photoPath } = parsed.data;
+
+    // Determine the email to use: prefer auth email, fall back to form email
+    const userEmail = authUser.email || formEmail;
+    if (!userEmail) {
+      return NextResponse.json({ error: "Email is required. Please sign in with Google or email/password." }, { status: 400 });
     }
 
-    const { email, input, photoPath } = parsed.data;
-    if (email && email.toLowerCase() !== authUser.email.toLowerCase()) {
+    // If both auth email and form email exist, they must match
+    if (authUser.email && formEmail && formEmail.toLowerCase() !== authUser.email.toLowerCase()) {
       return NextResponse.json({ error: "Email mismatch" }, { status: 400 });
     }
     const ip = getClientIP(req);
@@ -74,19 +78,18 @@ export async function POST(req: Request) {
       );
     }
 
-    if (email) {
-      emailDocId = `${email.toLowerCase()}-${today}`;
-      const erRef = db.collection("rate_limits_email").doc(emailDocId);
-      const erSnap = await erRef.get();
-      const current = erSnap.exists ? erSnap.data()?.count || 0 : 0;
-      if (current >= emailLimit) {
-        return NextResponse.json({ error: "Demasiados intentos para este correo hoy." }, { status: 429 });
-      }
-      await erRef.set(
-        { count: FieldValue.increment(1), email: email.toLowerCase(), day: today, updatedAt: FieldValue.serverTimestamp() },
-        { merge: true }
-      );
+    // Rate limit by email (userEmail is guaranteed to be set at this point)
+    emailDocId = `${userEmail.toLowerCase()}-${today}`;
+    const erRef = db.collection("rate_limits_email").doc(emailDocId);
+    const erSnap = await erRef.get();
+    const current = erSnap.exists ? erSnap.data()?.count || 0 : 0;
+    if (current >= emailLimit) {
+      return NextResponse.json({ error: "Demasiados intentos para este correo hoy." }, { status: 429 });
     }
+    await erRef.set(
+      { count: FieldValue.increment(1), email: userEmail.toLowerCase(), day: today, updatedAt: FieldValue.serverTimestamp() },
+      { merge: true }
+    );
 
     shareId = randomUUID().replace(/-/g, "").slice(0, 12);
     const deleteToken = generateDeleteToken();
@@ -97,7 +100,7 @@ export async function POST(req: Request) {
 
     await ref.set({
       shareId,
-      email: authUser.email,
+      email: userEmail,
       ownerUid: authUser.uid,
       shareOriginal: false,
       input,
@@ -127,7 +130,7 @@ export async function POST(req: Request) {
           body: JSON.stringify({
             type: "ngx_session_created",
             shareId,
-            email: email ?? null,
+            email: userEmail,
             input,
             source: "wizard",
             createdAt: new Date().toISOString(),
@@ -138,10 +141,9 @@ export async function POST(req: Request) {
       }
     })();
 
-    // Fire-and-forget email confirmation with share link (validates correo)
+    // Fire-and-forget email confirmation with share link
     (async () => {
       try {
-        if (!email) return;
         const key = process.env.RESEND_API_KEY;
         if (!key) return;
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL || "http://localhost:3000";
@@ -149,7 +151,7 @@ export async function POST(req: Request) {
         const resend = new Resend(key);
         await resend.emails.send({
           from: "NGX Transform <no-reply@resend.dev>",
-          to: email,
+          to: userEmail,
           subject: "Tus resultados NGX están en proceso",
           html: `<p>Estamos generando tu proyección. Podrás verla aquí:</p><p><a href="${url}">${url}</a></p><p>Puede tardar unos minutos.</p>`,
         });

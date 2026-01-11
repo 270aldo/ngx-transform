@@ -128,9 +128,11 @@ export function CinematicAutoplay({
           className="absolute inset-0"
         >
           {currentImage ? (
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(${currentImage})` }}
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={currentImage}
+              alt={currentMilestone.label}
+              className="absolute inset-0 w-full h-full object-cover object-center"
             />
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 to-black" />

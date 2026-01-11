@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 const LOADING_STEPS = [
   "Iniciando escaneo biométrico...",
@@ -28,6 +29,7 @@ const PROGRESS_BY_COUNT = [12, 45, 75, 100];
 
 export function LoadingExperience({ shareId }: { shareId: string }) {
   const router = useRouter();
+  const { user, loading: authLoading, getIdToken } = useAuth();
   const [stepIndex, setStepIndex] = useState(0);
   const [tipIndex, setTipIndex] = useState(0);
   const [status, setStatus] = useState<string>("processing");
@@ -75,13 +77,34 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
         setImageCount(count);
         setProgress(PROGRESS_BY_COUNT[Math.min(count, 3)]);
 
-        if (!startedGenerationRef.current && (nextStatus === "analyzed" || nextStatus === "processing") && count === 0) {
+        if (!startedGenerationRef.current && (nextStatus === "analyzed" || nextStatus === "processing") && count === 0 && !authLoading) {
           startedGenerationRef.current = true;
-          fetch("/api/generate-images", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ sessionId: shareId }),
-          }).catch(() => {});
+
+          (async () => {
+            try {
+              const token = await getIdToken();
+
+              const genRes = await fetch("/api/generate-images", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  ...(token ? { Authorization: `Bearer ${token}` } : {})
+                },
+                body: JSON.stringify({ sessionId: shareId }),
+              });
+
+              if (!genRes.ok) {
+                const errData = await genRes.json();
+                console.error("[Loading] Generation trigger failed:", errData.error);
+                if (errData.error === "Unauthorized") {
+                  setError("Error de autenticación. Redirigiendo...");
+                  // Optional: Redirect to login if needed, or just show error
+                }
+              }
+            } catch (err) {
+              console.error("[Loading] Error triggering generation:", err);
+            }
+          })();
         }
 
         if (nextStatus === "failed") {
@@ -103,7 +126,7 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
       mounted = false;
       clearInterval(id);
     };
-  }, [shareId, router]);
+  }, [shareId, router, authLoading, getIdToken]);
 
   return (
     <div className="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center text-white overflow-hidden">

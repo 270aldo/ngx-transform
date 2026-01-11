@@ -34,6 +34,7 @@ function buildCSP(isDev: boolean): string {
             "data:",
             "blob:",
             "https://*.googleusercontent.com",
+            "https://storage.googleapis.com",
             "https://*.firebasestorage.app",
             "https://firebasestorage.googleapis.com",
             "https://*.vercel.app",

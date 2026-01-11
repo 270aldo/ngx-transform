@@ -206,21 +206,21 @@ function buildVisualDelta(context: PromptContext, intensityWord: string): string
       : "tighter waistline with early ab outline and shoulder separation.";
     byStep.m4 = `${intensityWord} ${earlyFat}`;
     byStep.m8 = `clear fat reduction, visible ab outline, sharper jawline, defined deltoids and arms.`;
-    byStep.m12 = `deep definition, visible abdominal separation, crisp muscle striations, healthy vascularity.`;
+    byStep.m12 = `COMPLETE METAMORPHOSIS: Deep definition. Razor-sharp abdominal separation. Cross-striations visible. 12 months of diet and training discipline visible.`;
   } else if (goal === "masa") {
     const cleanBulk = bodyFat === "alto"
       ? "cleaner bulk with tighter waistline control to avoid excessive fat gain."
       : "lean muscle gain with minimal fat increase.";
     byStep.m4 = `${intensityWord} increase in muscle fullness, thicker chest and shoulders, early arm growth; ${cleanBulk}`;
     byStep.m8 = `obvious mass gain in chest, shoulders, back; arms visibly thicker; stronger V-taper.`;
-    byStep.m12 = `peak muscle mass with balanced proportions; thick chest and shoulders; powerful but realistic build.`;
+    byStep.m12 = `COMPLETE METAMORPHOSIS: Peak muscle mass. Unrecognizable density. Thick chest and shelf-like shoulders. Powerful, intimidating build. 12 months of heavy lifting visible.`;
   } else {
     const recomposition = bodyFat === "alto"
       ? "recomposition with visible waist reduction and improved posture."
       : "recomposition: tighter waist, slightly broader shoulders, improved posture.";
     byStep.m4 = `${intensityWord} ${recomposition}`;
     byStep.m8 = `athletic silhouette with visible abs, broader shoulders, tighter waist, improved symmetry.`;
-    byStep.m12 = `heroic athletic build: strong V-taper, crisp definition, balanced proportions.`;
+    byStep.m12 = `COMPLETE METAMORPHOSIS: Heroic athletic build. Dramatic V-taper. Crisp definition. 12 months of hardcore dedication visible in every muscle fiber. Unrecognizable from day 1.`;
   }
 
   return `[VISUAL DELTA - MUST BE VISIBLE]
@@ -275,7 +275,7 @@ function buildTransformation(context: PromptContext): string {
   } else if (context.step === "m8") {
     progressDescription = "Significant transformation in progress. Clear visible changes. Athletic build emerging strongly.";
   } else {
-    progressDescription = "PEAK TRANSFORMATION achieved. Maximum results. Competition-ready elite physique.";
+    progressDescription = "PEAK TRANSFORMATION. 12 MONTHS OF GRIND. The subject is captured MID-WORKOUT, executing a heavy lift with perfect form. SWEAT dripping. VEINS popping. MAXIMUM EFFORT.";
   }
 
   const intensityLabel = describeProgressIntensity(adherenceScore);
@@ -350,7 +350,7 @@ Color Grade: ${colorGrade}
 
 Aesthetic Reference: Nike commercial, Under Armour campaign, ESPN Body Issue
 Preferred Aesthetic: ${aestheticPreference}
-Quality: 8K ultra-high definition, photorealistic, magazine cover quality`;
+Quality: 8K ultra-high definition, photorealistic, cinematic action shot, sweat particles, volumetric lighting`;
 }
 
 /**
@@ -385,10 +385,12 @@ function buildDetails(step: NanoStep): string {
 
   if (step === "m12") {
     return `${detailsBase}
-- Visible vascularity where appropriate
-- Peak conditioning visible
-- Competition-ready muscle definition
-- Confident, accomplished expression`;
+- Visible vascularity (veins) on arms and shoulders
+- Drenched in sweat, glistening skin
+- Mature muscle density (hardened look)
+- Grimace of effort or intense laser focus
+- Atmospheric gym lighting interacting with sweat
+- Competition-ready conditioning`;
   }
 
   return detailsBase;

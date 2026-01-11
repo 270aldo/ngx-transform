@@ -107,10 +107,14 @@ export function CompareSlider({
       onTouchEnd={handleTouchEnd}
     >
       {/* After Image (Full, shown behind) */}
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${afterImage})` }}
-      />
+      <div className="absolute inset-0">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={afterImage}
+          alt={afterLabel}
+          className="w-full h-full object-cover object-center"
+        />
+      </div>
 
       {/* After Label */}
       <div className="absolute top-4 right-4 z-10">
@@ -121,12 +125,18 @@ export function CompareSlider({
 
       {/* Before Image (Clipped) */}
       <div
-        className="absolute inset-0 bg-cover bg-center"
+        className="absolute inset-0"
         style={{
-          backgroundImage: `url(${beforeImage})`,
           clipPath: `inset(0 ${100 - position}% 0 0)`,
         }}
-      />
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={beforeImage}
+          alt={beforeLabel}
+          className="w-full h-full object-cover object-center"
+        />
+      </div>
 
       {/* Before Label */}
       <div

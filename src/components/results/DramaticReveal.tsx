@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
 
 interface DramaticRevealProps {
   images: {
@@ -177,12 +176,11 @@ export function DramaticReveal({
                 transition={{ duration: 0.8 }}
                 className="relative w-full h-full"
               >
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={images[currentImage]}
                   alt={`Transformación ${currentImage}`}
-                  fill
-                  className="object-contain"
-                  priority
+                  className="w-full h-full object-contain"
                 />
               </motion.div>
             </AnimatePresence>

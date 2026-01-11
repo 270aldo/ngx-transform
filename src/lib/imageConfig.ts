@@ -74,9 +74,9 @@ export const ENVIRONMENT_BY_STEP: Record<NanoStep, {
     setting: "premium fitness studio, natural light, modern equipment",
   },
   m12: {
-    description: "editorial studio",
-    mood: "peak athletic form, magazine-worthy",
-    setting: "professional photo studio, perfect lighting, clean backdrop",
+    description: "elite training facility",
+    mood: "raw power, maximum intensity, sweat-drenched victory, peak visualization",
+    setting: "high-end dark gym with cinematic lighting, heavy iron plates, atmospheric haze, sweat, focus",
   },
 };
 

@@ -106,88 +106,47 @@ function getV2SystemPrompt(profile: AnalysisParams["profile"]): string {
   const weight = profile.weight ?? profile.weightKg;
   const goals = profile.goals ?? profile.goal;
 
-  return `You are an Elite High-Performance Coach & Futurist with forensic visual analysis capabilities.
-Your mission: Analyze the user's photo and data to project their physical evolution over 12 months.
+  return `Eres un Entrenador de Alto Rendimiento Elite y Experto en Fisiología Deportiva con capacidades de análisis forense visual.
+Tu misión: Analizar la foto y datos del usuario para proyectar su evolución física en 12 meses basándote en PRINCIPIOS CIENTÍFICOS REALES (adaptación fisiológica, hipertrofia, recomposición).
 
-USER DATA:
-- Age: ${profile.age}, Sex: ${profile.sex}
-- Height: ${height}cm, Weight: ${weight}kg
-- Body Type: ${profile.bodyType || "not specified"}
-- Current Level: ${profile.level || "novato"}
-- Main Goal: ${goals || "mixto"}
-- Weekly Dedication: ${profile.weeklyTime || 3} hours
-- Training Days/Week: ${profile.trainingDaysPerWeek || "N/A"}
-- Training History: ${profile.trainingHistoryYears ?? "N/A"} years
-- Nutrition Quality: ${profile.nutritionQuality ?? "N/A"}/10
-- Body Fat Level: ${profile.bodyFatLevel || "medio"}
-- Training Style: ${profile.trainingStyle || "mixto"}
-- Stress: ${profile.stressLevel || 5}/10, Sleep: ${profile.sleepQuality || 5}/10, Discipline: ${profile.disciplineRating || 5}/10
-- Focus Zone: ${profile.focusZone?.toUpperCase() || "FULL BODY"}
-- Focus Areas: ${profile.focusAreas?.length ? profile.focusAreas.join(", ") : "not specified"}
-- Aesthetic Preference: ${profile.aestheticPreference || "cinematic"}
-- Notes: ${profile.notes || "none"}
+DATOS DEL USUARIO:
+- Edad: ${profile.age}, Sexo: ${profile.sex}
+- Altura: ${height}cm, Peso: ${weight}kg
+- Somatotipo: ${profile.bodyType || "no especificado"}
+- Nivel Actual: ${profile.level || "novato"}
+- Objetivo Principal: ${goals || "mixto"}
+- Dedicación Semanal: ${profile.weeklyTime || 3} horas
+- Días/Semana: ${profile.trainingDaysPerWeek || "N/A"}
+- Historia de Entrenamiento: ${profile.trainingHistoryYears ?? "N/A"} años
+- Nutrición: ${profile.nutritionQuality ?? "N/A"}/10
+- Grasa Corporal: ${profile.bodyFatLevel || "medio"}
+- Estilo: ${profile.trainingStyle || "mixto"}
+- Deep Data: Estrés ${profile.stressLevel}/10, Sueño ${profile.sleepQuality}/10, Disciplina ${profile.disciplineRating}/10
 
-TASK: Generate a COMPLETE analysis in JSON format.
+ZONA PRIORITARIA: ${profile.focusZone?.toUpperCase() || "FULL BODY"}
+ÁREAS FOCO: ${profile.focusAreas?.length ? profile.focusAreas.join(", ") : "no especificado"}
+ESTÉTICA: ${profile.aestheticPreference || "cinematic"}
+NOTAS: ${profile.notes || "ninguna"}
 
-${getVisualAnchorSystemPrompt()}
+INSTRUCCIONES CLAVE:
+1. OUTPUT MUST BE IN SPANISH (LATAM). TODO EL TEXTO VISIBLE AL USUARIO (title, description, narrative, stats names) DEBE SER EN ESPAÑOL (LATAM).
+2. "image_prompt" DEBE MANTENERSE EN INGLÉS (Detailed ENGLISH prompt for generating fitness photo).
+3. Sé CIENTÍFICAMENTE PRECISO. Si el usuario duerme mal, menciónalo como factor limitante. Usa terminología correcta (ej: "adaptación neuromuscular", "síntesis proteica").
+4. TONO: Profesional, Maduro, Estoico. Nada de "marketing hype" barato.
 
-${getStyleProfileSystemPrompt()}
-
-TIMELINE GENERATION:
-For each milestone (m0, m4, m8, m12), generate:
-- title: Powerful 1-2 word phase name (e.g., "GÉNESIS", "METAMORFOSIS", "ASCENSIÓN", "APEX")
-- description: Clinical but inspiring 2-3 sentence summary
-- narrative: Longer motivational narrative (3-5 sentences) about this phase
-- stats: { strength: 0-100, aesthetics: 0-100, endurance: 0-100, mental: 0-100 }
-- image_prompt: Detailed English prompt for generating fitness photo at this stage
-- mental: Stoic mindset shift required
-- risks (m0 only): Array of potential pitfalls
-- expectations (m0 only): Array of realistic outcomes
-
-LETTER FROM FUTURE:
-Write a 50-100 word message from the m12 version of this person to their current self.
-Tone: Stoic but warm. Acknowledge the struggle ahead. End with encouragement.
-
-OVERLAYS (optional):
-For each milestone, provide 2-4 overlay points marking key transformation areas:
-{ x: 0.0-1.0, y: 0.0-1.0, label: "short label", detail: "explanation" }
-
-OUTPUT SCHEMA (strict JSON):
+FORMATO JSON REQUERIDO:
 {
-  "user_visual_anchor": "detailed 100-400 word description of immutable facial/physical characteristics",
-  "profile_summary": {
-    "sex": "male|female|other",
-    "age": number,
-    "goal": "definicion|masa|mixto",
-    "bodyType": "ectomorph|mesomorph|endomorph",
-    "focusZone": "upper|lower|abs|full"
-  },
-  "insightsText": "main analysis summary",
+  "user_visual_anchor": "Brief visual description of the user from the photo (use for strict consistency)",
+  "style_profile": "Cinematic lighting keywords based on user aesthetic preference",
   "timeline": {
-    "m0": { "month": 0, "title": "...", "description": "...", "narrative": "...", "stats": {...}, "image_prompt": "...", "mental": "...", "risks": [...], "expectations": [...] },
-    "m4": { "month": 4, "title": "...", "description": "...", "narrative": "...", "stats": {...}, "image_prompt": "...", "mental": "..." },
-    "m8": { "month": 8, "title": "...", "description": "...", "narrative": "...", "stats": {...}, "image_prompt": "...", "mental": "..." },
-    "m12": { "month": 12, "title": "...", "description": "...", "narrative": "...", "stats": {...}, "image_prompt": "...", "mental": "..." }
-  },
-  "overlays": {
-    "m0": [...], "m4": [...], "m8": [...], "m12": [...]
-  },
-  "letter_from_future": "message from m12 self",
-  "style_profile": {
-    "lighting": "...",
-    "wardrobe": "...",
-    "background": "...",
-    "color_grade": "..."
-  }
+  "style_profile": { ... }
 }
 
-CRITICAL RULES:
-1. "user_visual_anchor" must be 100-400 words, extremely detailed about facial features
-2. "stats" values must be integers 0-100
-3. "overlays" coordinates x,y must be 0.0-1.0 (relative)
-4. "image_prompt" must be English, photorealistic, Nike commercial style
-5. "letter_from_future" must be 50-100 words, stoic but encouraging
-6. Return ONLY valid JSON, no markdown, no explanations`;
+REGLAS CRÍTICAS:
+1. TODO EL TEXTO VISIBLE (title, description, narrative, mental, risks, expectations, letter) DEBE SER EN ESPAÑOL (LATAM).
+2. "image_prompt" DEBE MANTENERSE EN INGLÉS.
+3. Sé CIENTÍFICAMENTE PRECISO. Si el usuario duerme mal, menciónalo como factor limitante.
+4. JSON válido únicamente.`;
 }
 
 // Legacy V1 prompt for backward compatibility
@@ -197,71 +156,65 @@ function getV1SystemPrompt(profile: AnalysisParams["profile"]): string {
   const goals = profile.goals ?? profile.goal;
 
   return `
-    You are an Elite High-Performance Coach & Futurist (Stoic, Clinical, Motivational).
-    Your goal is to analyze the user's current photo and data to project their physical and mental evolution over 12 months.
+    Eres un Entrenador de Alto Rendimiento Elite y Futurista (Estoico, Clínico, Motivacional).
+    Tu objetivo es analizar la foto y datos del usuario para proyectar su evolución física y mental en 12 meses.
 
-    USER DATA:
-    - Age: ${profile.age}, Sex: ${profile.sex}
-    - Height: ${height}cm, Weight: ${weight}kg
-    - Body Type: ${profile.bodyType}
-    - Current Level: ${profile.level}
-    - Main Goal: ${goals}
-    - Weekly Dedication: ${profile.weeklyTime} hours
-    - Training Days/Week: ${profile.trainingDaysPerWeek || "N/A"}
-    - Training History: ${profile.trainingHistoryYears ?? "N/A"} years
-    - Nutrition Quality: ${profile.nutritionQuality ?? "N/A"}/10
-    - Body Fat Level: ${profile.bodyFatLevel || "medio"}
-    - Training Style: ${profile.trainingStyle || "mixto"}
-    - Stress: ${profile.stressLevel}/10, Sleep: ${profile.sleepQuality}/10, Discipline: ${profile.disciplineRating}/10
+    DATOS DEL USUARIO:
+    - Edad: ${profile.age}, Sexo: ${profile.sex}
+    - Altura: ${height}cm, Peso: ${weight}kg
+    - Somatotipo: ${profile.bodyType}
+    - Nivel Actual: ${profile.level}
+    - Objetivo: ${goals}
+    - Dedicación: ${profile.weeklyTime} horas/semana
+    - Días Entreno: ${profile.trainingDaysPerWeek || "N/A"}
+    - Historia: ${profile.trainingHistoryYears ?? "N/A"} años
+    - Nutrición: ${profile.nutritionQuality ?? "N/A"}/10
+    - Grasa: ${profile.bodyFatLevel || "medio"}
+    - Estilo: ${profile.trainingStyle || "mixto"}
+    - Deep Data: Estrés ${profile.stressLevel}/10, Sueño ${profile.sleepQuality}/10, Disciplina ${profile.disciplineRating}/10
 
-    FOCUS ZONE (PRIORITY): ${profile.focusZone?.toUpperCase() || "FULL BODY"}
-    (Tailor the training and aesthetic focus to this area).
-    FOCUS AREAS (OPTIONAL): ${profile.focusAreas?.length ? profile.focusAreas.join(", ") : "not specified"}
-    AESTHETIC PREFERENCE: ${profile.aestheticPreference || "cinematic"}
-    NOTES: ${profile.notes || "none"}
+    ZONA PRIORITARIA: ${profile.focusZone?.toUpperCase() || "FULL BODY"}
+    (Adapta el enfoque a esta área).
+    ÁREAS FOCO: ${profile.focusAreas?.length ? profile.focusAreas.join(", ") : "no especificado"}
+    ESTÉTICA: ${profile.aestheticPreference || "cinematic"}
+    NOTAS: ${profile.notes || "ninguna"}
 
-    You must generate a JSON response with a timeline of 4 stages:
-    - "m0" (Current): Analysis of starting point.
-    - "m4" (Foundation): Early visible changes.
-    - "m8" (Expansion): Significant muscle/definition gains.
-    - "m12" (Peak): The final transformed state.
+    Genera un JSON con una línea de tiempo de 4 fases (OUTPUT IN SPANISH):
+    - "m0" (Actual): Análisis del punto de partida.
+    - "m4" (Fundación): Cambios visibles tempranos, adaptación.
+    - "m8" (Expansión): Ganancias musculares notables, definición.
+    - "m12" (Cúspide): Estado final transformado.
 
-    For each stage, provide:
-    1. "title": A powerful, 1-2 word phase name (e.g., "GÉNESIS", "METAMORFOSIS").
-    2. "description": A clinical but motivating summary of changes.
-    3. "stats": Numerical attributes (0-100) for Strength, Aesthetics, Endurance, Mental.
-    4. "image_prompt": A highly detailed, photorealistic prompt for generating the user's photo at this stage.
-       - MUST incorporate the user's "Visual Vision" for this specific month.
-       - Keep the face consistent but evolve the body.
-       - Style: Cinematic, 8k, dramatic lighting, Nike commercial aesthetic.
-    5. "mental": A short, stoic mindset shift required for this stage.
-    6. "risks" (m0 only): Potential pitfalls based on their stress/sleep data.
-    7. "expectations" (m0 only): Realistic physical outcomes.
+    Para cada fase:
+    1. "title": Nombre de fase poderoso (ej: "GÉNESIS", "METAMORFOSIS").
+    2. "description": Resumen clínico y motivador en ESPAÑOL.
+    3. "stats": Numéricos (0-100) Fuerza, Estética, Resistencia, Mental.
+    4. "image_prompt": Prompt en INGLÉS altamente detallado para generar la foto.
+       - Mantén la identidad facial.
+       - Estilo: Cinematic, 8k, dramatic lighting, Nike commercial.
+       - POSES: m4 = Entrenando duro; m8 = Atleta dinámico; m12 = Héroe estático/Portada.
+    5. "mental": Cambio de mentalidad estoico (en ESPAÑOL).
+    6. "risks" (m0): Riesgos potenciales (en ESPAÑOL).
+    7. "expectations" (m0): Expectativas realistas (en ESPAÑOL).
 
-    TONE:
-    - Clinical yet inspiring.
-    - Use "Deep Data" (stress, sleep) to customize advice.
-    - If stress is high, emphasize recovery. If discipline is low, emphasize consistency.
+    TONO:
+    - Clínico pero inspirador.
+    - Usa "Deep Data" (estrés, sueño) para personalizar el consejo.
+    - Sé CIENTÍFICO (ej: habla de recuperación, síntesis, adaptaciones).
 
-    OUTPUT FORMAT:
-    Return ONLY valid JSON matching this exact Schema:
+    OUTPUT FORMAT (JSON):
     {
-      "insightsText": "string (Main analysis summary)",
+      "insightsText": "Resumen principal (ESPAÑOL)",
       "timeline": {
-        "m0": { "month": 0, "title": "string", "description": "string", "stats": { "strength": number, "aesthetics": number, "endurance": number, "mental": number }, "image_prompt": "string", "mental": "string", "risks": ["string"], "expectations": ["string"] },
-        "m4": { "month": 4, "title": "string", "description": "string", "stats": { "strength": number, "aesthetics": number, "endurance": number, "mental": number }, "image_prompt": "string", "mental": "string" },
-        "m8": { "month": 8, "title": "string", "description": "string", "stats": { "strength": number, "aesthetics": number, "endurance": number, "mental": number }, "image_prompt": "string", "mental": "string" },
-        "m12": { "month": 12, "title": "string", "description": "string", "stats": { "strength": number, "aesthetics": number, "endurance": number, "mental": number }, "image_prompt": "string", "mental": "string" }
+        "m0": { "month": 0, "title": "...", "description": "...", "stats": {...}, "image_prompt": "ENGLISH...", "mental": "...", "risks": ["..."], "expectations": ["..."] },
+        "m4": { "month": 4, "title": "...", "description": "...", "stats": {...}, "image_prompt": "ENGLISH...", "mental": "..." },
+        "m8": { "month": 8, "title": "...", "description": "...", "stats": {...}, "image_prompt": "ENGLISH...", "mental": "..." },
+        "m12": { "month": 12, "title": "...", "description": "...", "stats": {...}, "image_prompt": "ENGLISH...", "mental": "..." }
       },
       "overlays": {
         "m0": [{ "x": number, "y": number, "label": "string" }]
       }
     }
-
-    IMPORTANT:
-    - "stats" values must be integers 0-100.
-    - "overlays" coordinates x,y must be 0.0-1.0 (relative).
-    - "image_prompt" must be English, highly detailed, photorealistic.
   `;
 }
 
@@ -285,7 +238,7 @@ export async function generateInsightsV2(
 
   const { mimeType, data } = await fetchImageAsInlineData(params.imageUrl);
   const systemPrompt = getV2SystemPrompt(params.profile);
-  const userContext = `Profile: ${JSON.stringify(params.profile)}`;
+  const userContext = `Profile: ${JSON.stringify(params.profile)} `;
 
   console.log("[Gemini V2] Generating analysis...");
 
@@ -321,7 +274,7 @@ export async function generateInsightsV2(
     }
 
     throw new Error(
-      `Gemini output validation failed: ${validation.errors?.map((e) => e.message).join(", ")}`
+      `Gemini output validation failed: ${validation.errors?.map((e) => e.message).join(", ")} `
     );
   }
 

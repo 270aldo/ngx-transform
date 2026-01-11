@@ -6,9 +6,11 @@ import { BiometricLoader } from "@/components/BiometricLoader";
 import { TransformationSummary } from "@/components/results/TransformationSummary";
 import RefreshClient from "./refresh-client";
 import { Metadata } from "next";
+import { getSignedUrl } from "@/lib/storage";
 
 // Feature flag for Results 2.0 experience
 const FF_RESULTS_2 = process.env.NEXT_PUBLIC_FF_RESULTS_2 === "true";
+const FF_EXPOSE_ORIGINAL = process.env.FF_EXPOSE_ORIGINAL !== "false";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +34,7 @@ interface SessionDoc {
   status: "processing" | "analyzed" | "generating" | "ready" | "failed";
   // v2.0 fields
   letter_from_future?: string;
+  shareOriginal?: boolean;
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ shareId: string }> }): Promise<Metadata> {
@@ -49,12 +52,37 @@ export async function generateMetadata({ params }: { params: Promise<{ shareId: 
   };
 }
 
-async function getUrls(shareId: string) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
-  // Fix spacing in URL construction
-  const res = await fetch(`${baseUrl}/api/sessions/${shareId}/urls`, { cache: "no-store" });
-  if (!res.ok) return {} as { originalUrl?: string; images?: Record<string, string> };
-  return (await res.json()) as { originalUrl?: string; images?: Record<string, string> };
+async function getUrlsLocally(data: SessionDoc) {
+  const result: { originalUrl?: string; images?: Record<string, string> } = {};
+
+  // 1. Original Photo (Always sign for the visualization page if allowed)
+  const photoPath = data.photo?.originalStoragePath;
+  const allowOriginal = FF_EXPOSE_ORIGINAL || data.shareOriginal;
+
+  if (photoPath && allowOriginal) {
+    try {
+      result.originalUrl = await getSignedUrl(photoPath, { expiresInSeconds: 3600 });
+    } catch (e) {
+      console.error("Error signing original:", e);
+    }
+  }
+
+  // 2. Generated Images
+  if (data.assets?.images) {
+    result.images = {};
+    await Promise.all(
+      Object.entries(data.assets.images).map(async ([key, path]) => {
+        try {
+          const url = await getSignedUrl(path, { expiresInSeconds: 3600 });
+          result.images![key] = url;
+        } catch (e) {
+          console.error(`Error signing ${key}:`, e);
+        }
+      })
+    );
+  }
+
+  return result;
 }
 
 export default async function Page({ params }: { params: Promise<{ shareId: string }> }) {
@@ -68,7 +96,7 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
   if (!data) return <div className="text-white p-10">Datos inválidos</div>;
 
   const ai = data.ai;
-  const urls = await getUrls(shareId);
+  const urls = await getUrlsLocally(data);
 
   // If processing or no AI, show simple loading
   // If no AI yet, keep loading

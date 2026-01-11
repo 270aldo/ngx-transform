@@ -7,10 +7,6 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "firebasestorage.googleapis.com" },
     ],
   },
-  // Ensure Next/Turbopack uses this project as the workspace root, not the home directory
-  turbopack: {
-    root: __dirname,
-  },
 };
 
 export default nextConfig;
