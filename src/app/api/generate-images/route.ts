@@ -145,7 +145,7 @@ export async function POST(req: Request) {
     const authUser = await getAuthUser(req);
     if (authUser && authUser.email && data.email && authUser.email.toLowerCase() !== data.email.toLowerCase()) {
       console.warn(`[GenerateImages] Auth mismatch DETECTED (Bypassing for debug): Token=${authUser.email} Session=${data.email}`);
-      // return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
     // Get image config

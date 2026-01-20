@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     }
 
     const authUser = await requireAuth(req);
-    const { email: formEmail, input, photoPath } = parsed.data;
+    const { email: formEmail, input, photoPath, landingVariant } = parsed.data;
 
     // Determine the email to use: prefer auth email, fall back to form email
     const userEmail = authUser.email || formEmail;
@@ -109,6 +109,9 @@ export async function POST(req: Request) {
       assets: {},
       status: "processing",
       deleteToken, // Token para acciones destructivas
+      source: {
+        variant: landingVariant || "general",
+      },
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     });

@@ -14,6 +14,7 @@ import { useToast } from "@/components/ui/toast-provider";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { cn } from "@/lib/utils";
 import { Eye, Target, Activity, Cpu, ArrowRight, Upload, ChevronRight, ChevronLeft } from "lucide-react";
+import { getStoredVariant } from "@/hooks/useVariantTracking";
 
 // New Components
 import { EliteOptionCard } from "@/components/EliteOptionCard";
@@ -196,10 +197,13 @@ export default function WizardPage() {
       const profile = { ...values, notes: values.notes || "" };
       const token = await getIdToken();
 
+      // Get landing variant for analytics tracking
+      const landingVariant = getStoredVariant();
+
       const createRes = await fetch("/api/sessions", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ email: values.email, input: profile, photoPath: storagePath }),
+        body: JSON.stringify({ email: values.email, input: profile, photoPath: storagePath, landingVariant }),
       });
       const createJson = await createRes.json();
       if (!createRes.ok) throw new Error(createJson.error);

@@ -52,6 +52,8 @@ export const CreateSessionSchema = z.object({
   email: z.string().email().optional(),
   input: ProfileSchema,
   photoPath: z.string(),
+  /** Landing page variant for A/B testing analytics */
+  landingVariant: z.enum(["general", "jovenes", "mayores"]).optional(),
 });
 
 export const AnalyzeSchema = z.object({

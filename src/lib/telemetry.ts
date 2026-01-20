@@ -92,6 +92,32 @@ function isTelemetryEnabled(): boolean {
 // ============================================================================
 
 /**
+ * Simple PII scrubber to redact email addresses from strings and objects
+ */
+function scrubPII(data: unknown): unknown {
+  if (typeof data === "string") {
+    // Redact emails
+    return data.replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, "[REDACTED_EMAIL]");
+  }
+  if (Array.isArray(data)) {
+    return data.map(scrubPII);
+  }
+  if (typeof data === "object" && data !== null) {
+    const scrubbed: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(data)) {
+      // Skip obviously safe keys to save perf
+      if (["sessionId", "event", "stage", "model_id", "timestamp"].includes(key)) {
+        scrubbed[key] = value;
+      } else {
+        scrubbed[key] = scrubPII(value);
+      }
+    }
+    return scrubbed;
+  }
+  return data;
+}
+
+/**
  * Trackea un evento del funnel
  */
 export async function trackEvent(payload: EventPayload): Promise<void> {
@@ -102,8 +128,12 @@ export async function trackEvent(payload: EventPayload): Promise<void> {
 
   try {
     const db = getDb();
+    
+    // Scrub PII from payload before saving
+    const safePayload = scrubPII(payload) as EventPayload;
+
     const eventDoc = {
-      ...payload,
+      ...safePayload,
       timestamp: FieldValue.serverTimestamp(),
       environment: process.env.NODE_ENV || "development",
     };
@@ -112,7 +142,7 @@ export async function trackEvent(payload: EventPayload): Promise<void> {
     await db.collection("telemetry_events").add(eventDoc);
 
     // Actualizar métricas agregadas de la sesión
-    await updateSessionMetrics(payload);
+    await updateSessionMetrics(safePayload);
 
     console.log(`[Telemetry] ${payload.event} - ${payload.sessionId}`);
   } catch (error) {
