@@ -26,6 +26,7 @@ import { telemetry, startTimer } from "@/lib/telemetry";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 import { checkSpendLimit, recordSpend } from "@/lib/spendLimiter";
 import { getAuthUser } from "@/lib/authServer";
+import { getAiGenerationFlag } from "@/lib/aiKillSwitch";
 import {
   getOrCreateJob,
   markJobInProgress,
@@ -53,6 +54,17 @@ const PREVIOUS_STEP: Record<NanoStep, NanoStep | null> = {
   m8: "m4",
   m12: "m8",
 };
+
+const WORKER_TOKEN = process.env.AI_WORKER_TOKEN || "";
+
+function isWorkerRequest(req: Request): boolean {
+  if (!WORKER_TOKEN) return false;
+  const headerToken = req.headers.get("x-worker-token") || "";
+  const url = new URL(req.url);
+  const queryToken = url.searchParams.get("workerToken") || "";
+  const token = headerToken || queryToken;
+  return token === WORKER_TOKEN;
+}
 
 // ============================================================================
 // Watermark Utility
@@ -114,14 +126,27 @@ export async function POST(req: Request) {
     const { sessionId } = parsed.data;
     parsedSessionId = sessionId;
 
-    // Rate limiting by IP (Upstash Redis)
-    const clientIP = getClientIP(req);
-    const rateLimitResult = await checkRateLimit("api:generate-images", clientIP);
-    if (!rateLimitResult.success) {
+    const isWorker = isWorkerRequest(req);
+
+    // Kill switch for AI generation
+    const aiFlag = await getAiGenerationFlag();
+    if (!aiFlag.enabled) {
       return NextResponse.json(
-        { error: "Too many requests. Please wait a moment." },
-        { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+        { error: "AI generation is temporarily disabled", source: aiFlag.source },
+        { status: 503 }
       );
+    }
+
+    // Rate limiting by IP (Upstash Redis)
+    if (!isWorker) {
+      const clientIP = getClientIP(req);
+      const rateLimitResult = await checkRateLimit("api:generate-images", clientIP);
+      if (!rateLimitResult.success) {
+        return NextResponse.json(
+          { error: "Too many requests. Please wait a moment." },
+          { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+        );
+      }
     }
 
     if (!process.env.GEMINI_API_KEY) {

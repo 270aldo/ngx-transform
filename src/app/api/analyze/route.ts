@@ -8,6 +8,7 @@ import { telemetry, startTimer } from "@/lib/telemetry";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 import { checkSpendLimit, recordSpend } from "@/lib/spendLimiter";
 import { getAuthUser } from "@/lib/authServer";
+import { getAiGenerationFlag } from "@/lib/aiKillSwitch";
 import {
   getOrCreateJob,
   markJobInProgress,
@@ -41,6 +42,15 @@ export async function POST(req: Request) {
 
     const { sessionId } = parsed.data;
     parsedSessionId = sessionId;
+
+    // Kill switch for AI generation
+    const aiFlag = await getAiGenerationFlag();
+    if (!aiFlag.enabled) {
+      return NextResponse.json(
+        { error: "AI generation is temporarily disabled", source: aiFlag.source },
+        { status: 503 }
+      );
+    }
 
     // Rate limiting by IP (Upstash Redis)
     const clientIP = getClientIP(req);

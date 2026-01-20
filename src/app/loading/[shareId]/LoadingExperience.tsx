@@ -98,7 +98,8 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
                 console.error("[Loading] Generation trigger failed:", errData.error);
                 if (errData.error === "Unauthorized") {
                   setError("Error de autenticación. Redirigiendo...");
-                  // Optional: Redirect to login if needed, or just show error
+                } else if (errData.error === "AI generation is temporarily disabled") {
+                  setError("La generación está pausada temporalmente. Intenta más tarde.");
                 }
               }
             } catch (err) {

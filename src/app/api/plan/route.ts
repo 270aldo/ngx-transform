@@ -13,6 +13,7 @@ import { getDb } from "@/lib/firebaseAdmin";
 import { generatePlan, type ProfileSummary } from "@/lib/plan";
 import { FieldValue } from "firebase-admin/firestore";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
+import { getAiGenerationFlag } from "@/lib/aiKillSwitch";
 
 // Feature flag
 const FF_PLAN_7_DIAS = process.env.FF_PLAN_7_DIAS !== "false";
@@ -31,6 +32,15 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    // Kill switch for AI generation
+    const aiFlag = await getAiGenerationFlag();
+    if (!aiFlag.enabled) {
+      return NextResponse.json(
+        { success: false, message: "AI generation is temporarily disabled", source: aiFlag.source },
+        { status: 503 }
+      );
+    }
+
     const body = await request.json();
     const validation = PlanRequestSchema.safeParse(body);
 

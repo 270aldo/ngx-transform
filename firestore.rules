@@ -11,19 +11,9 @@ service cloud.firestore {
       return request.auth.uid == userId;
     }
 
-    // Sessions collection
+    // Sessions collection (backend-only: Admin SDK bypasses rules)
     match /sessions/{sessionId} {
-      // Allow creation if authenticated (or public if anonymous auth is used)
-      allow create: if true; 
-      
-      // Allow read/update only if the user owns the session (based on email or auth uid if available)
-      // This is a strict rule. You might need to adjust based on your exact auth model.
-      // Assuming 'userId' field exists or matching email. 
-      // For now, defaulting to a secure baseline where only the backend (Admin SDK) has full access,
-      // and clients have limited access.
-      allow read: if true; // Public read needed for share pages? If so, restrict to specific fields if possible.
-      allow update: if false; // Only backend should update status/results
-      allow delete: if false; // Only backend should delete
+      allow read, write: if false;
     }
 
     // Deny access to everything else by default
