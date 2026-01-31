@@ -84,11 +84,16 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
             try {
               const token = await getIdToken();
 
+              if (!token) {
+                setError("Error de autenticación. Inicia sesión e intenta de nuevo.");
+                return;
+              }
+
               const genRes = await fetch("/api/generate-images", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
-                  ...(token ? { Authorization: `Bearer ${token}` } : {})
+                  Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({ sessionId: shareId }),
               });

@@ -247,8 +247,10 @@ export async function validateDeleteToken(
   sessionId: string,
   providedToken: string
 ): Promise<boolean> {
-  if (!process.env.FF_DELETE_TOKEN_REQUIRED || process.env.FF_DELETE_TOKEN_REQUIRED === "false") {
-    // Feature flag desactivado, permitir sin token
+  // In production, always validate delete tokens regardless of feature flag
+  const isProduction = process.env.NODE_ENV === "production";
+  if (!isProduction && (!process.env.FF_DELETE_TOKEN_REQUIRED || process.env.FF_DELETE_TOKEN_REQUIRED === "false")) {
+    // Feature flag desactivado in non-production, permitir sin token
     return true;
   }
 

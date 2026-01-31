@@ -15,6 +15,7 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/firebaseAdmin";
 import { Timestamp } from "firebase-admin/firestore";
+import { deletePath, deletePrefix } from "@/lib/storage";
 
 export const runtime = "nodejs";
 export const maxDuration = 60; // 1 minute max for cleanup
@@ -136,6 +137,35 @@ async function cleanupAbandonedSessions(): Promise<CleanupResult> {
       };
     }
 
+    // Delete Storage files before removing Firestore docs
+    const storageDeletePromises: Promise<unknown>[] = [];
+    for (const doc of snapshot.docs) {
+      const data = doc.data();
+      if (!sessionsToDelete.includes(doc.id)) continue;
+
+      // Delete original photo
+      if (data.photo?.originalStoragePath) {
+        storageDeletePromises.push(deletePath(data.photo.originalStoragePath));
+      }
+      // Delete generated images
+      if (data.assets?.images) {
+        for (const path of Object.values(data.assets.images)) {
+          if (typeof path === "string") {
+            storageDeletePromises.push(deletePath(path));
+          }
+        }
+      }
+      // Delete session folder prefix
+      storageDeletePromises.push(deletePrefix(`sessions/${doc.id}/`));
+    }
+
+    // Use allSettled so one failure doesn't block others
+    const storageResults = await Promise.allSettled(storageDeletePromises);
+    const storageFailed = storageResults.filter((r) => r.status === "rejected").length;
+    if (storageFailed > 0) {
+      console.warn(`[Cleanup] ${storageFailed}/${storageResults.length} storage deletions failed`);
+    }
+
     // Execute batch delete
     await batch.commit();
     deletedCount = sessionsToDelete.length;
@@ -173,27 +203,37 @@ async function cleanupRelatedData(
   db: FirebaseFirestore.Firestore,
   sessionIds: string[]
 ): Promise<void> {
+  const CHUNK_SIZE = 30; // Firestore 'in' query max
+
   try {
-    // Clean up job records
-    const jobsQuery = db.collection("jobs").where("sessionId", "in", sessionIds.slice(0, 10)); // Firestore 'in' limit
-    const jobsSnapshot = await jobsQuery.get();
+    for (let i = 0; i < sessionIds.length; i += CHUNK_SIZE) {
+      const chunk = sessionIds.slice(i, i + CHUNK_SIZE);
 
-    if (!jobsSnapshot.empty) {
-      const batch = db.batch();
-      jobsSnapshot.docs.forEach((doc) => batch.delete(doc.ref));
-      await batch.commit();
-      console.log(`[Cleanup] Deleted ${jobsSnapshot.size} job records`);
-    }
+      // Clean up job records
+      const jobsSnapshot = await db
+        .collection("jobs")
+        .where("sessionId", "in", chunk)
+        .get();
 
-    // Clean up session metrics
-    const metricsQuery = db.collection("session_metrics").where("sessionId", "in", sessionIds.slice(0, 10));
-    const metricsSnapshot = await metricsQuery.get();
+      if (!jobsSnapshot.empty) {
+        const batch = db.batch();
+        jobsSnapshot.docs.forEach((doc) => batch.delete(doc.ref));
+        await batch.commit();
+        console.log(`[Cleanup] Deleted ${jobsSnapshot.size} job records (chunk ${i / CHUNK_SIZE + 1})`);
+      }
 
-    if (!metricsSnapshot.empty) {
-      const batch = db.batch();
-      metricsSnapshot.docs.forEach((doc) => batch.delete(doc.ref));
-      await batch.commit();
-      console.log(`[Cleanup] Deleted ${metricsSnapshot.size} metrics records`);
+      // Clean up session metrics
+      const metricsSnapshot = await db
+        .collection("session_metrics")
+        .where("sessionId", "in", chunk)
+        .get();
+
+      if (!metricsSnapshot.empty) {
+        const batch = db.batch();
+        metricsSnapshot.docs.forEach((doc) => batch.delete(doc.ref));
+        await batch.commit();
+        console.log(`[Cleanup] Deleted ${metricsSnapshot.size} metrics records (chunk ${i / CHUNK_SIZE + 1})`);
+      }
     }
   } catch (error) {
     // Don't fail the main cleanup if related data cleanup fails
@@ -231,6 +271,71 @@ async function cleanupOldSpendRecords(): Promise<number> {
   }
 }
 
+/**
+ * Clean up old rate limit records (keep 7 days)
+ */
+async function cleanupOldRateLimits(): Promise<number> {
+  try {
+    const db = getDb();
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - 7);
+    const cutoff = Timestamp.fromDate(cutoffDate);
+
+    let deleted = 0;
+
+    for (const collection of ["rate_limits", "rate_limits_email"]) {
+      const oldDocs = await db
+        .collection(collection)
+        .where("lastUpdated", "<", cutoff)
+        .limit(200)
+        .get();
+
+      if (!oldDocs.empty) {
+        const batch = db.batch();
+        oldDocs.docs.forEach((doc) => batch.delete(doc.ref));
+        await batch.commit();
+        deleted += oldDocs.size;
+        console.log(`[Cleanup] Deleted ${oldDocs.size} old ${collection} records`);
+      }
+    }
+
+    return deleted;
+  } catch (error) {
+    console.error("[Cleanup] Error cleaning rate limits:", error);
+    return 0;
+  }
+}
+
+/**
+ * Clean up old telemetry events (older than SESSION_TTL_DAYS)
+ */
+async function cleanupOldTelemetryEvents(): Promise<number> {
+  try {
+    const db = getDb();
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - SESSION_TTL_DAYS);
+    const cutoff = Timestamp.fromDate(cutoffDate);
+
+    const oldEvents = await db
+      .collection("telemetry_events")
+      .where("timestamp", "<", cutoff)
+      .limit(400)
+      .get();
+
+    if (oldEvents.empty) return 0;
+
+    const batch = db.batch();
+    oldEvents.docs.forEach((doc) => batch.delete(doc.ref));
+    await batch.commit();
+
+    console.log(`[Cleanup] Deleted ${oldEvents.size} old telemetry events`);
+    return oldEvents.size;
+  } catch (error) {
+    console.error("[Cleanup] Error cleaning telemetry events:", error);
+    return 0;
+  }
+}
+
 // ============================================================================
 // Route Handler
 // ============================================================================
@@ -245,14 +350,18 @@ export async function POST(req: Request) {
   console.log("[Cleanup] Starting cleanup job...");
 
   // Run cleanup tasks
-  const [sessionResult, spendRecordsDeleted] = await Promise.all([
+  const [sessionResult, spendRecordsDeleted, rateLimitsDeleted, telemetryEventsDeleted] = await Promise.all([
     cleanupAbandonedSessions(),
     cleanupOldSpendRecords(),
+    cleanupOldRateLimits(),
+    cleanupOldTelemetryEvents(),
   ]);
 
   const response = {
     ...sessionResult,
     spendRecordsDeleted,
+    rateLimitsDeleted,
+    telemetryEventsDeleted,
     ttlDays: SESSION_TTL_DAYS,
     timestamp: new Date().toISOString(),
   };

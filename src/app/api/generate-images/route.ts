@@ -25,7 +25,7 @@ import sharp from "sharp";
 import { telemetry, startTimer } from "@/lib/telemetry";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 import { checkSpendLimit, recordSpend } from "@/lib/spendLimiter";
-import { getAuthUser } from "@/lib/authServer";
+import { requireAuth } from "@/lib/authServer";
 import { getAiGenerationFlag } from "@/lib/aiKillSwitch";
 import {
   getOrCreateJob,
@@ -37,6 +37,7 @@ import {
   withRetry,
 } from "@/lib/jobManager";
 import type { SessionDocument, AnalysisOutput, InsightsResult } from "@/types/ai";
+import { completeReferral } from "@/lib/viral/referralTracking";
 
 // ============================================================================
 // Config
@@ -166,31 +167,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Session data missing" }, { status: 500 });
     }
 
-    // Auth check: if authenticated, verify session ownership
-    const authUser = await getAuthUser(req);
-    if (authUser && authUser.email && data.email && authUser.email.toLowerCase() !== data.email.toLowerCase()) {
-      console.warn(`[GenerateImages] Auth mismatch DETECTED (Bypassing for debug): Token=${authUser.email} Session=${data.email}`);
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    // Auth check: require auth for non-worker requests
+    if (!isWorker) {
+      const authUser = await requireAuth(req);
+      const ownerUid = (data as unknown as Record<string, unknown>).ownerUid as string | undefined;
+      if (ownerUid && authUser.uid !== ownerUid) {
+        console.warn(`[GenerateImages] Owner mismatch: Token uid=${authUser.uid} Session ownerUid=${ownerUid}`);
+        return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+      }
+      if (data.email && authUser.email && authUser.email.toLowerCase() !== data.email.toLowerCase()) {
+        console.warn(`[GenerateImages] Email mismatch: Token=${authUser.email} Session=${data.email}`);
+        return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+      }
     }
 
     // Get image config
     const imageConfig = getImageConfig();
-    const estimatedCost = estimateSessionCost(["m4", "m8", "m12"]);
-    console.log(`[GenerateImages] Estimated cost: $${estimatedCost.toFixed(3)}`);
-
-    // Check spend limits before proceeding
-    const spendCheck = await checkSpendLimit(estimatedCost);
-    if (!spendCheck.allowed) {
-      console.error(`[GenerateImages] Spend limit exceeded: ${spendCheck.reason}`);
-      return NextResponse.json(
-        {
-          error: "Service temporarily unavailable due to high demand. Please try again later.",
-          reason: spendCheck.reason,
-          retryAfter: 3600, // Suggest retry in 1 hour
-        },
-        { status: 503 }
-      );
-    }
 
     // Check if already complete
     const job = await getOrCreateJob(sessionId, "image_generation");
@@ -223,6 +215,23 @@ export async function POST(req: Request) {
     if (stepsToProcess.length === 0) {
       console.log(`[GenerateImages] No pending steps for ${sessionId}`);
       return NextResponse.json({ ok: true, images: data.assets?.images || {}, cached: true });
+    }
+
+    // Check spend limits based on actual steps to process (not hardcoded all 3)
+    const estimatedCost = estimateSessionCost(stepsToProcess);
+    console.log(`[GenerateImages] Estimated cost for ${stepsToProcess.join(",")}: $${estimatedCost.toFixed(3)}`);
+
+    const spendCheck = await checkSpendLimit(estimatedCost);
+    if (!spendCheck.allowed) {
+      console.error(`[GenerateImages] Spend limit exceeded: ${spendCheck.reason}`);
+      return NextResponse.json(
+        {
+          error: "Service temporarily unavailable due to high demand. Please try again later.",
+          reason: spendCheck.reason,
+          retryAfter: 3600,
+        },
+        { status: 503 }
+      );
     }
 
     const photoPath = data.photo?.originalStoragePath;
@@ -362,7 +371,18 @@ export async function POST(req: Request) {
         const errorMsg = stepError instanceof Error ? stepError.message : "Unknown error";
         console.error(`[GenerateImages] Failed ${step} for ${sessionId}:`, errorMsg);
         failedSteps.push(step);
-        // Continue with next step (graceful degradation)
+
+        // Fast-fail on systemic errors (auth, network) - don't waste time on remaining steps
+        const isSystemic = errorMsg.includes("UNAUTHENTICATED") ||
+          errorMsg.includes("PERMISSION_DENIED") ||
+          errorMsg.includes("network") ||
+          errorMsg.includes("ECONNREFUSED") ||
+          errorMsg.includes("API key");
+        if (isSystemic) {
+          console.error(`[GenerateImages] Systemic error detected, aborting remaining steps`);
+          break;
+        }
+        // Continue with next step for transient/step-specific errors (graceful degradation)
       }
     }
 
@@ -384,9 +404,13 @@ export async function POST(req: Request) {
       { merge: true }
     );
 
-    // Mark job according to result
+    // Mark job according to result and trigger referral completion
     if (allRequestedComplete) {
       await markJobCompleted(`${sessionId}_image_generation`);
+      // Trigger referral completion when session is ready (viral loop)
+      completeReferral(sessionId).catch((err) =>
+        console.warn("[GenerateImages] Referral completion failed (non-blocking):", err)
+      );
     } else if (failedSteps.length === stepsToProcess.length) {
       await markJobFailed(
         `${sessionId}_image_generation`,
@@ -415,6 +439,12 @@ export async function POST(req: Request) {
     });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : "Unknown error";
+
+    // Return 401 for auth failures
+    if (message === "UNAUTHORIZED") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     console.error("[GenerateImages] Error:", e);
 
     if (parsedSessionId) {

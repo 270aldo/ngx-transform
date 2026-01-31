@@ -13,13 +13,26 @@ export async function GET(_: Request, context: { params: Promise<{ shareId: stri
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
     const data = snap.data()!;
+
+    // Allowlist input fields — strip PII (age, sex, stress, sleep, etc.)
+    const safeInput = data.input
+      ? {
+          level: data.input.level,
+          goal: data.input.goal,
+          weightKg: data.input.weightKg,
+          bodyType: data.input.bodyType,
+          focusZone: data.input.focusZone,
+          heightCm: data.input.heightCm,
+        }
+      : undefined;
+
     return NextResponse.json({
       shareId: data.shareId,
       status: data.status,
-      input: data.input,
+      input: safeInput,
       ai: data.ai,
       assets: data.assets,
-      photo: { originalStoragePath: data.photo?.originalStoragePath },
+      hasPhoto: !!data.photo?.originalStoragePath,
       createdAt: data.createdAt,
     });
   } catch (e: unknown) {

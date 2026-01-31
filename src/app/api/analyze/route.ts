@@ -7,7 +7,7 @@ import { FieldValue } from "firebase-admin/firestore";
 import { telemetry, startTimer } from "@/lib/telemetry";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 import { checkSpendLimit, recordSpend } from "@/lib/spendLimiter";
-import { getAuthUser } from "@/lib/authServer";
+import { requireAuth } from "@/lib/authServer";
 import { getAiGenerationFlag } from "@/lib/aiKillSwitch";
 import {
   getOrCreateJob,
@@ -79,11 +79,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Session data missing" }, { status: 500 });
     }
 
-    // Auth check: if authenticated, verify session ownership
-    const authUser = await getAuthUser(req);
-    if (authUser && data.email && authUser.email && authUser.email.toLowerCase() !== data.email.toLowerCase()) {
-      console.warn(`[Analyze] Auth mismatch DETECTED (Bypassing): Token=${authUser.email} Session=${data.email}`);
+    // Require authentication and verify session ownership
+    const authUser = await requireAuth(req);
+    const ownerUid = (data as unknown as Record<string, unknown>).ownerUid as string | undefined;
+    if (ownerUid && authUser.uid !== ownerUid) {
+      console.warn(`[Analyze] Owner mismatch: Token uid=${authUser.uid} Session ownerUid=${ownerUid}`);
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    }
+    if (data.email && authUser.email) {
+      const tokenEmail = authUser.email.toLowerCase().trim();
+      const sessionEmail = data.email.toLowerCase().trim();
+      if (tokenEmail !== sessionEmail) {
+        console.warn(`[Analyze] Email mismatch: Token=${tokenEmail} Session=${sessionEmail}`);
+        return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+      }
     }
 
     // Verificar si ya está analizado (idempotencia)
@@ -170,6 +179,12 @@ export async function POST(req: Request) {
     });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : "Unknown error";
+
+    // Return 401 for auth failures
+    if (message === "UNAUTHORIZED") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     console.error("[Analyze] Error:", e);
 
     // Track fallo

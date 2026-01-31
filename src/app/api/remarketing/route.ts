@@ -25,7 +25,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { email, shareId, source, reminderDays } = result.data;
+    const { email: rawEmail, shareId, source, reminderDays } = result.data;
+    const email = rawEmail.toLowerCase().trim();
 
     // Rate limiting by email (Upstash Redis)
     const rateLimitResult = await checkRateLimit("api:remarketing", email);
@@ -83,8 +84,9 @@ export async function POST(request: NextRequest) {
         remarketingSource: source,
         remarketingDate: FieldValue.serverTimestamp(),
       });
-    } catch {
-      // Session might not exist, that's ok
+    } catch (err) {
+      // Log non-critical failure (session might not exist)
+      console.warn("[Remarketing] Session update failed:", err instanceof Error ? err.message : err);
     }
 
     return NextResponse.json({
@@ -117,14 +119,16 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const email = searchParams.get("email");
+  const rawEmail = searchParams.get("email");
 
-  if (!email) {
+  if (!rawEmail) {
     return NextResponse.json(
       { error: "email parameter required" },
       { status: 400 }
     );
   }
+
+  const email = rawEmail.toLowerCase().trim();
 
   try {
     const db = getDb();
