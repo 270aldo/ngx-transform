@@ -76,15 +76,83 @@ async function cleanupAbandonedSessions(): Promise<CleanupResult> {
 
     // Query for old sessions that are not completed
     // We preserve completed sessions (they have value for users)
-    const query = db
+    const baseQuery = db
       .collection("sessions")
       .where("createdAt", "<", cutoffTimestamp)
       .where("status", "in", ["pending", "analyzing", "generating", "failed", "partial"])
+      .orderBy("createdAt")
       .limit(BATCH_SIZE);
 
-    const snapshot = await query.get();
+    let lastDoc: FirebaseFirestore.QueryDocumentSnapshot | null = null;
+    let totalFound = 0;
 
-    if (snapshot.empty) {
+    while (true) {
+      const query: FirebaseFirestore.Query = lastDoc ? baseQuery.startAfter(lastDoc) : baseQuery;
+      const snapshot: FirebaseFirestore.QuerySnapshot = await query.get();
+
+      if (snapshot.empty) break;
+      totalFound += snapshot.size;
+      lastDoc = snapshot.docs[snapshot.docs.length - 1] || null;
+
+      const batch = db.batch();
+      const sessionsToDelete: string[] = [];
+      const storageDeletePromises: Promise<unknown>[] = [];
+
+      for (const doc of snapshot.docs) {
+        const data = doc.data();
+        const sessionId = doc.id;
+
+        // Double-check: skip if somehow completed
+        if (data.status === "ready" || data.status === "completed") {
+          skippedCount++;
+          continue;
+        }
+
+        // Skip if has generated images (partial success)
+        const hasImages = data.assets?.images && Object.keys(data.assets.images).length > 0;
+        if (hasImages && data.status === "partial") {
+          skippedCount++;
+          console.log(`[Cleanup] Skipping partial session with images: ${sessionId}`);
+          continue;
+        }
+
+        sessionsToDelete.push(sessionId);
+        batch.delete(doc.ref);
+
+        // Delete original photo
+        if (data.photo?.originalStoragePath) {
+          storageDeletePromises.push(deletePath(data.photo.originalStoragePath));
+        }
+        // Delete generated images
+        if (data.assets?.images) {
+          for (const path of Object.values(data.assets.images)) {
+            if (typeof path === "string") {
+              storageDeletePromises.push(deletePath(path));
+            }
+          }
+        }
+        // Delete session folder prefix
+        storageDeletePromises.push(deletePrefix(`sessions/${doc.id}/`));
+      }
+
+      if (sessionsToDelete.length === 0) {
+        continue;
+      }
+
+      const storageResults = await Promise.allSettled(storageDeletePromises);
+      const storageFailed = storageResults.filter((r) => r.status === "rejected").length;
+      if (storageFailed > 0) {
+        console.warn(`[Cleanup] ${storageFailed}/${storageResults.length} storage deletions failed`);
+      }
+
+      await batch.commit();
+      deletedCount += sessionsToDelete.length;
+      console.log(`[Cleanup] Deleted ${sessionsToDelete.length} sessions (batch)`);
+
+      await cleanupRelatedData(db, sessionsToDelete);
+    }
+
+    if (totalFound === 0) {
       console.log("[Cleanup] No sessions to clean up");
       return {
         success: true,
@@ -96,37 +164,7 @@ async function cleanupAbandonedSessions(): Promise<CleanupResult> {
       };
     }
 
-    console.log(`[Cleanup] Found ${snapshot.size} sessions to evaluate`);
-
-    // Process in batches
-    const batch = db.batch();
-    const sessionsToDelete: string[] = [];
-
-    for (const doc of snapshot.docs) {
-      const data = doc.data();
-      const sessionId = doc.id;
-
-      // Double-check: skip if somehow completed
-      if (data.status === "ready" || data.status === "completed") {
-        skippedCount++;
-        continue;
-      }
-
-      // Skip if has generated images (partial success)
-      const hasImages = data.assets?.images && Object.keys(data.assets.images).length > 0;
-      if (hasImages && data.status === "partial") {
-        // Partial sessions with images are kept (user might return)
-        skippedCount++;
-        console.log(`[Cleanup] Skipping partial session with images: ${sessionId}`);
-        continue;
-      }
-
-      // Mark for deletion
-      sessionsToDelete.push(sessionId);
-      batch.delete(doc.ref);
-    }
-
-    if (sessionsToDelete.length === 0) {
+    if (deletedCount === 0) {
       return {
         success: true,
         deletedCount: 0,
@@ -136,44 +174,6 @@ async function cleanupAbandonedSessions(): Promise<CleanupResult> {
         message: "All sessions were preserved (completed or partial with images)",
       };
     }
-
-    // Delete Storage files before removing Firestore docs
-    const storageDeletePromises: Promise<unknown>[] = [];
-    for (const doc of snapshot.docs) {
-      const data = doc.data();
-      if (!sessionsToDelete.includes(doc.id)) continue;
-
-      // Delete original photo
-      if (data.photo?.originalStoragePath) {
-        storageDeletePromises.push(deletePath(data.photo.originalStoragePath));
-      }
-      // Delete generated images
-      if (data.assets?.images) {
-        for (const path of Object.values(data.assets.images)) {
-          if (typeof path === "string") {
-            storageDeletePromises.push(deletePath(path));
-          }
-        }
-      }
-      // Delete session folder prefix
-      storageDeletePromises.push(deletePrefix(`sessions/${doc.id}/`));
-    }
-
-    // Use allSettled so one failure doesn't block others
-    const storageResults = await Promise.allSettled(storageDeletePromises);
-    const storageFailed = storageResults.filter((r) => r.status === "rejected").length;
-    if (storageFailed > 0) {
-      console.warn(`[Cleanup] ${storageFailed}/${storageResults.length} storage deletions failed`);
-    }
-
-    // Execute batch delete
-    await batch.commit();
-    deletedCount = sessionsToDelete.length;
-
-    console.log(`[Cleanup] Deleted ${deletedCount} sessions: ${sessionsToDelete.join(", ")}`);
-
-    // Also clean up related collections
-    await cleanupRelatedData(db, sessionsToDelete);
 
     return {
       success: true,
@@ -203,7 +203,7 @@ async function cleanupRelatedData(
   db: FirebaseFirestore.Firestore,
   sessionIds: string[]
 ): Promise<void> {
-  const CHUNK_SIZE = 30; // Firestore 'in' query max
+  const CHUNK_SIZE = 10; // Firestore 'in' query max
 
   try {
     for (let i = 0; i < sessionIds.length; i += CHUNK_SIZE) {

@@ -5,7 +5,7 @@
  * Consume SSE desde /api/genesis-demo
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Brain,
@@ -75,17 +75,24 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
     return Math.round((completedAgents / totalAgents) * 100);
   }, []);
 
+  const [hasError, setHasError] = useState(false);
+  const completionTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const mountedRef = useRef(true);
+
   // SSE connection
   useEffect(() => {
+    mountedRef.current = true;
     const eventSource = new EventSource(`/api/genesis-demo?shareId=${shareId}`);
 
     eventSource.addEventListener('phase', (e) => {
+      if (!mountedRef.current) return;
       const data = JSON.parse(e.data);
       setCurrentPhase(data.phase);
       setPhaseTitle(data.title);
     });
 
     eventSource.addEventListener('agent', (e) => {
+      if (!mountedRef.current) return;
       const data = JSON.parse(e.data);
       const { agent, status, message } = data as AgentState;
 
@@ -105,23 +112,26 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
     });
 
     eventSource.addEventListener('complete', () => {
+      if (!mountedRef.current) return;
       setIsComplete(true);
       setProgress(100);
-      eventSource.close(); // Close connection after completion
-      setTimeout(() => {
-        onComplete();
+      eventSource.close();
+      completionTimerRef.current = setTimeout(() => {
+        if (mountedRef.current) onComplete();
       }, 1500);
     });
 
     eventSource.addEventListener('error', (e) => {
-      // Only log error if connection failed unexpectedly (not after complete)
       if (eventSource.readyState !== EventSource.CLOSED) {
         console.error('SSE connection error:', e);
+        if (mountedRef.current) setHasError(true);
       }
       eventSource.close();
     });
 
     return () => {
+      mountedRef.current = false;
+      if (completionTimerRef.current) clearTimeout(completionTimerRef.current);
       eventSource.close();
     };
   }, [shareId, onComplete, calculateProgress]);
@@ -316,6 +326,41 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
             )}
           </div>
         </motion.div>
+
+        {/* Error recovery */}
+        <AnimatePresence>
+          {hasError && !isComplete && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-6 text-center"
+            >
+              <div className="flex items-center justify-center gap-2 text-red-400">
+                <Activity size={16} />
+                <span className="text-sm font-bold">Conexión perdida</span>
+              </div>
+              <p className="text-[10px] text-white/50 mt-1 mb-3">
+                Se interrumpió la conexión con los agentes.
+              </p>
+              <button
+                onClick={() => {
+                  setHasError(false);
+                  setAgentStates(() => {
+                    const initial: Record<string, AgentStatus> = {};
+                    GRID_AGENTS.forEach((agent) => { if (agent) initial[agent] = 'pending'; });
+                    return initial as Record<AgentType, AgentStatus>;
+                  });
+                  setProgress(0);
+                  setFeedMessages([]);
+                  setPhaseTitle('Preparando análisis...');
+                }}
+                className="px-4 py-2 bg-[#6D00FF] text-white text-xs font-bold rounded-full hover:bg-[#5800cc] transition-colors"
+              >
+                Reintentar
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Completion indicator */}
         <AnimatePresence>

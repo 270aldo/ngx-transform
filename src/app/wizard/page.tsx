@@ -78,11 +78,12 @@ function LoadingMessages({ stage }: { stage: string }) {
 
   useEffect(() => {
     if (stage !== 'analyze') return;
+    const len = analyzeMessages.length;
     const interval = setInterval(() => {
-      setMsgIndex(i => (i + 1) % analyzeMessages.length);
+      setMsgIndex(i => (i + 1) % len);
     }, 2000);
     return () => clearInterval(interval);
-  }, [stage]);
+  }, [stage, analyzeMessages.length]);
 
   let text = "";
   if (stage === 'upload') text = "SUBIENDO DATOS...";

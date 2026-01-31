@@ -29,7 +29,7 @@ import { requireAuth } from "@/lib/authServer";
 import { getAiGenerationFlag } from "@/lib/aiKillSwitch";
 import {
   getOrCreateJob,
-  markJobInProgress,
+  acquireJobLock,
   markJobCompleted,
   markJobFailed,
   updateJobProgress,
@@ -143,6 +143,9 @@ export async function POST(req: Request) {
       const clientIP = getClientIP(req);
       const rateLimitResult = await checkRateLimit("api:generate-images", clientIP);
       if (!rateLimitResult.success) {
+        if (parsedSessionId) {
+          telemetry.rateLimitBlocked(parsedSessionId, "api:generate-images");
+        }
         return NextResponse.json(
           { error: "Too many requests. Please wait a moment." },
           { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
@@ -173,10 +176,12 @@ export async function POST(req: Request) {
       const ownerUid = (data as unknown as Record<string, unknown>).ownerUid as string | undefined;
       if (ownerUid && authUser.uid !== ownerUid) {
         console.warn(`[GenerateImages] Owner mismatch: Token uid=${authUser.uid} Session ownerUid=${ownerUid}`);
+        telemetry.authFailed(sessionId, { reason: "owner_mismatch" });
         return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
       }
       if (data.email && authUser.email && authUser.email.toLowerCase() !== data.email.toLowerCase()) {
         console.warn(`[GenerateImages] Email mismatch: Token=${authUser.email} Session=${data.email}`);
+        telemetry.authFailed(sessionId, { reason: "email_mismatch" });
         return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
       }
     }
@@ -186,14 +191,6 @@ export async function POST(req: Request) {
 
     // Check if already complete
     const job = await getOrCreateJob(sessionId, "image_generation");
-
-    // Avoid duplicate concurrent generations
-    if (job.status === "in_progress" && job.startedAt) {
-      const startedAt = job.startedAt.toDate?.();
-      if (startedAt && Date.now() - startedAt.getTime() < 10 * 60 * 1000) {
-        return NextResponse.json({ ok: true, status: "in_progress" }, { status: 202 });
-      }
-    }
 
     if (job.status === "completed" && data.assets?.images) {
       const existingImages = data.assets.images;
@@ -224,6 +221,7 @@ export async function POST(req: Request) {
     const spendCheck = await checkSpendLimit(estimatedCost);
     if (!spendCheck.allowed) {
       console.error(`[GenerateImages] Spend limit exceeded: ${spendCheck.reason}`);
+      telemetry.spendLimitBlocked(sessionId, spendCheck.reason);
       return NextResponse.json(
         {
           error: "Service temporarily unavailable due to high demand. Please try again later.",
@@ -234,13 +232,18 @@ export async function POST(req: Request) {
       );
     }
 
+    // Acquire job lock after spend check
+    const lock = await acquireJobLock(sessionId, "image_generation");
+    if (!lock.acquired) {
+      telemetry.jobLockDenied(sessionId, "image_generation");
+      return NextResponse.json({ ok: true, status: "in_progress" }, { status: 202 });
+    }
+
     const photoPath = data.photo?.originalStoragePath;
     if (!photoPath) {
       return NextResponse.json({ error: "Missing photo" }, { status: 400 });
     }
 
-    // Mark job in progress
-    await markJobInProgress(`${sessionId}_image_generation`);
     await ref.set({ status: "generating", updatedAt: FieldValue.serverTimestamp() }, { merge: true });
 
     // Get model from config

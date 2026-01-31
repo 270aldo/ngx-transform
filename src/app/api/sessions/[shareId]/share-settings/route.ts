@@ -2,10 +2,17 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getDb } from "@/lib/firebaseAdmin";
 import { requireAuth } from "@/lib/authServer";
+import { FieldValue } from "firebase-admin/firestore";
 
-const ShareSettingsSchema = z.object({
-  shareOriginal: z.boolean(),
-});
+const ShareSettingsSchema = z
+  .object({
+    shareOriginal: z.boolean().optional(),
+    shareInsights: z.boolean().optional(),
+    shareProfile: z.boolean().optional(),
+  })
+  .refine((data) => Object.values(data).some((v) => v !== undefined), {
+    message: "At least one setting is required",
+  });
 
 export async function POST(req: Request, context: { params: Promise<{ shareId: string }> }) {
   try {
@@ -24,20 +31,40 @@ export async function POST(req: Request, context: { params: Promise<{ shareId: s
       return NextResponse.json({ error: "Session not found" }, { status: 404 });
     }
 
-    const data = snap.data() as { ownerUid?: string } | undefined;
+    const data = snap.data() as {
+      ownerUid?: string;
+      shareOriginal?: boolean;
+      shareScope?: {
+        shareOriginal?: boolean;
+        shareInsights?: boolean;
+        shareProfile?: boolean;
+      };
+    } | undefined;
     if (!data?.ownerUid || data.ownerUid !== authUser.uid) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
+    const currentScope = {
+      shareOriginal: data.shareScope?.shareOriginal ?? !!data.shareOriginal,
+      shareInsights: data.shareScope?.shareInsights ?? false,
+      shareProfile: data.shareScope?.shareProfile ?? false,
+    };
+
+    const nextScope = {
+      ...currentScope,
+      ...parsed.data,
+    };
+
     await ref.set(
       {
-        shareOriginal: parsed.data.shareOriginal,
-        updatedAt: new Date(),
+        shareOriginal: nextScope.shareOriginal,
+        shareScope: nextScope,
+        updatedAt: FieldValue.serverTimestamp(),
       },
       { merge: true }
     );
 
-    return NextResponse.json({ success: true, shareOriginal: parsed.data.shareOriginal });
+    return NextResponse.json({ success: true, shareScope: nextScope });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : "Unknown error";
     if (message === "UNAUTHORIZED") {

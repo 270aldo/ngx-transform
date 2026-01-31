@@ -52,6 +52,10 @@ export async function POST(req: NextRequest) {
     const expectedKey = process.env.CRON_API_KEY;
     const headerKey = req.headers.get("X-Api-Key");
     const bodyKey = "apiKey" in validated ? validated.apiKey : undefined;
+    if (!expectedKey && process.env.NODE_ENV === "production") {
+      console.error("[EMAIL_SEQUENCE] CRON_API_KEY not configured in production!");
+      return NextResponse.json({ error: "Server misconfigured" }, { status: 503 });
+    }
     if (expectedKey && (headerKey || bodyKey) !== expectedKey) {
       return NextResponse.json(
         { error: "Unauthorized - API key required" },

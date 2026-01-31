@@ -137,7 +137,8 @@ export async function validateVoiceId(voiceId: string): Promise<boolean> {
   try {
     await client.voices.get(voiceId);
     return true;
-  } catch {
+  } catch (err) {
+    console.warn("[ElevenLabs] Voice validation failed for", voiceId, ":", err instanceof Error ? err.message : err);
     return false;
   }
 }

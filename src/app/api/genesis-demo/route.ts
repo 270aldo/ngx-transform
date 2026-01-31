@@ -10,6 +10,7 @@ import {
   AGENT_MESSAGES,
   interpolateMessage,
 } from '@/lib/genesis-demo/agents';
+import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 import type { AgentType, AgentStatus } from '@/types/genesis';
 
 export const runtime = 'nodejs';
@@ -42,8 +43,19 @@ export async function GET(request: NextRequest) {
     return new Response('Missing shareId', { status: 400 });
   }
 
+  // Rate limiting by IP
+  const clientIP = getClientIP(request);
+  const rateLimitResult = await checkRateLimit("api:genesis-demo", clientIP);
+  if (!rateLimitResult.success) {
+    return new Response("Too many requests", {
+      status: 429,
+      headers: { ...getRateLimitHeaders(rateLimitResult), "Content-Type": "text/plain" },
+    });
+  }
+
   // Fetch session data for personalization
   let sessionData: SessionData = {};
+  let sessionFetchFailed = false;
   try {
     const db = getDb();
     const snap = await db.collection('sessions').doc(shareId).get();
@@ -51,7 +63,8 @@ export async function GET(request: NextRequest) {
       sessionData = snap.data() as SessionData;
     }
   } catch (error) {
-    console.error('Error fetching session:', error);
+    console.error('[GenesisDemo] Error fetching session:', error);
+    sessionFetchFailed = true;
   }
 
   // Extract user data for message interpolation
@@ -73,7 +86,7 @@ export async function GET(request: NextRequest) {
 
       try {
         // Initial connection message
-        send('connected', { message: 'Genesis Demo started', shareId });
+        send('connected', { message: 'Genesis Demo started', shareId, personalized: !sessionFetchFailed });
 
         // Process each phase
         for (const phase of ORCHESTRATION_PHASES) {

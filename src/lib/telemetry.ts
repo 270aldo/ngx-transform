@@ -16,6 +16,10 @@ export type FunnelEvent =
   | "wizard_start"
   | "photo_uploaded"
   | "session_created"
+  | "auth_failed"
+  | "rate_limit_blocked"
+  | "spend_limit_blocked"
+  | "job_lock_denied"
   | "analysis_started"
   | "analysis_completed"
   | "analysis_failed"
@@ -290,6 +294,18 @@ export const telemetry = {
 
   sessionCreated: (sessionId: string) =>
     trackEvent({ sessionId, event: "session_created" }),
+
+  authFailed: (sessionId: string, metadata?: Record<string, unknown>) =>
+    trackEvent({ sessionId, event: "auth_failed", metadata }),
+
+  rateLimitBlocked: (sessionId: string, endpoint: string) =>
+    trackEvent({ sessionId, event: "rate_limit_blocked", metadata: { endpoint } }),
+
+  spendLimitBlocked: (sessionId: string, reason?: string) =>
+    trackEvent({ sessionId, event: "spend_limit_blocked", metadata: { reason } }),
+
+  jobLockDenied: (sessionId: string, jobType: string) =>
+    trackEvent({ sessionId, event: "job_lock_denied", metadata: { jobType } }),
 
   analysisStarted: (sessionId: string, model_id: string) =>
     trackEvent({ sessionId, event: "analysis_started", model_id }),

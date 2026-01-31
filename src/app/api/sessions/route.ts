@@ -64,32 +64,52 @@ export async function POST(req: Request) {
       );
     }
 
-    // Rate limit per IP per day
+    // Rate limit per IP + email per day (transaction to avoid race)
     if (ip !== "unknown") {
       const rlRef = db.collection("rate_limits").doc(ipDocId);
-      const rlSnap = await rlRef.get();
-      const current = rlSnap.exists ? rlSnap.data()?.count || 0 : 0;
-      if (current >= limit) {
-        return NextResponse.json({ error: "Rate limit exceeded. Vuelve mañana." }, { status: 429 });
-      }
-      await rlRef.set(
-        { count: FieldValue.increment(1), ip, day: today, updatedAt: FieldValue.serverTimestamp() },
-        { merge: true }
-      );
-    }
+      emailDocId = `${userEmail.toLowerCase()}-${today}`;
+      const erRef = db.collection("rate_limits_email").doc(emailDocId);
 
-    // Rate limit by email (userEmail is guaranteed to be set at this point)
-    emailDocId = `${userEmail.toLowerCase()}-${today}`;
-    const erRef = db.collection("rate_limits_email").doc(emailDocId);
-    const erSnap = await erRef.get();
-    const current = erSnap.exists ? erSnap.data()?.count || 0 : 0;
-    if (current >= emailLimit) {
-      return NextResponse.json({ error: "Demasiados intentos para este correo hoy." }, { status: 429 });
+      await db.runTransaction(async (tx) => {
+        const [rlSnap, erSnap] = await Promise.all([tx.get(rlRef), tx.get(erRef)]);
+        const ipCount = rlSnap.exists ? (rlSnap.data()?.count || 0) : 0;
+        const emailCount = erSnap.exists ? (erSnap.data()?.count || 0) : 0;
+
+        if (ipCount >= limit) {
+          throw new Error("RATE_LIMIT_IP");
+        }
+        if (emailCount >= emailLimit) {
+          throw new Error("RATE_LIMIT_EMAIL");
+        }
+
+        tx.set(
+          rlRef,
+          { count: ipCount + 1, ip, day: today, updatedAt: FieldValue.serverTimestamp() },
+          { merge: true }
+        );
+        tx.set(
+          erRef,
+          { count: emailCount + 1, email: userEmail.toLowerCase(), day: today, updatedAt: FieldValue.serverTimestamp() },
+          { merge: true }
+        );
+      });
+    } else {
+      // Rate limit by email only when IP is unknown
+      emailDocId = `${userEmail.toLowerCase()}-${today}`;
+      const erRef = db.collection("rate_limits_email").doc(emailDocId);
+      await db.runTransaction(async (tx) => {
+        const erSnap = await tx.get(erRef);
+        const emailCount = erSnap.exists ? (erSnap.data()?.count || 0) : 0;
+        if (emailCount >= emailLimit) {
+          throw new Error("RATE_LIMIT_EMAIL");
+        }
+        tx.set(
+          erRef,
+          { count: emailCount + 1, email: userEmail.toLowerCase(), day: today, updatedAt: FieldValue.serverTimestamp() },
+          { merge: true }
+        );
+      });
     }
-    await erRef.set(
-      { count: FieldValue.increment(1), email: userEmail.toLowerCase(), day: today, updatedAt: FieldValue.serverTimestamp() },
-      { merge: true }
-    );
 
     shareId = randomUUID().replace(/-/g, "").slice(0, 12);
     const deleteToken = generateDeleteToken();
@@ -103,6 +123,11 @@ export async function POST(req: Request) {
       email: userEmail,
       ownerUid: authUser.uid,
       shareOriginal: false,
+      shareScope: {
+        shareOriginal: false,
+        shareInsights: false,
+        shareProfile: false,
+      },
       input,
       photo: { originalStoragePath: photoPath },
       ai: null,
@@ -122,12 +147,12 @@ export async function POST(req: Request) {
     // Track evento de sesión creada
     await telemetry.sessionCreated(shareId);
 
-    // Fire webhook to n8n (non-blocking)
+    // Fire webhook to n8n (non-blocking, with telemetry)
     (async () => {
       try {
         const webhook = process.env.N8N_WEBHOOK_URL;
         if (!webhook) return;
-        await fetch(webhook, {
+        const res = await fetch(webhook, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -139,17 +164,21 @@ export async function POST(req: Request) {
             createdAt: new Date().toISOString(),
           }),
         });
+        if (!res.ok) {
+          console.error(`[Sessions] n8n webhook returned ${res.status}`);
+        }
       } catch (err) {
-        console.error("n8n webhook failed", err);
+        console.error("[Sessions] n8n webhook failed:", err);
       }
     })();
 
-    // Fire-and-forget email confirmation with share link
+    // Fire-and-forget email confirmation with share link (with telemetry)
     (async () => {
       try {
         const key = process.env.RESEND_API_KEY;
         if (!key) return;
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL || "http://localhost:3000";
+        const vercelUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null;
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || vercelUrl || "http://localhost:3000";
         const url = String(baseUrl).startsWith("http") ? `${baseUrl}/s/${shareId}` : `https://${baseUrl}/s/${shareId}`;
         const resend = new Resend(key);
         await resend.emails.send({
@@ -159,7 +188,7 @@ export async function POST(req: Request) {
           html: `<p>Estamos generando tu proyección. Podrás verla aquí:</p><p><a href="${url}">${url}</a></p><p>Puede tardar unos minutos.</p>`,
         });
       } catch (err) {
-        console.error("Resend preflight email failed", err);
+        console.error("[Sessions] Resend preflight email failed:", err);
       }
     })();
 
@@ -172,6 +201,12 @@ export async function POST(req: Request) {
     });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : "Unknown error";
+    if (message === "RATE_LIMIT_IP") {
+      return NextResponse.json({ error: "Rate limit exceeded. Vuelve mañana." }, { status: 429 });
+    }
+    if (message === "RATE_LIMIT_EMAIL") {
+      return NextResponse.json({ error: "Demasiados intentos para este correo hoy." }, { status: 429 });
+    }
     if (message === "UNAUTHORIZED") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

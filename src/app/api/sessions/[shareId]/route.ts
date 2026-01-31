@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/firebaseAdmin";
-import { deletePath, deletePrefix } from "@/lib/storage";
+import { deletePath, deletePrefix, getSignedUrl } from "@/lib/storage";
 import { validateDeleteToken } from "@/lib/jobManager";
 
 export async function GET(_: Request, context: { params: Promise<{ shareId: string }> }) {
@@ -12,26 +12,69 @@ export async function GET(_: Request, context: { params: Promise<{ shareId: stri
     if (!snap.exists) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
-    const data = snap.data()!;
+    const data = snap.data() as {
+      shareId?: string;
+      status?: string;
+      assets?: { images?: Record<string, string> };
+      photo?: { originalStoragePath?: string };
+      input?: {
+        level?: string;
+        goal?: string;
+        focusZone?: string;
+        weeklyTime?: number;
+      };
+      shareOriginal?: boolean;
+      shareScope?: {
+        shareOriginal?: boolean;
+        shareInsights?: boolean;
+        shareProfile?: boolean;
+      };
+      createdAt?: unknown;
+    };
 
-    // Allowlist input fields — strip PII (age, sex, stress, sleep, etc.)
-    const safeInput = data.input
+    const shareScope = {
+      shareOriginal: data.shareScope?.shareOriginal ?? !!data.shareOriginal,
+      shareInsights: data.shareScope?.shareInsights ?? false,
+      shareProfile: data.shareScope?.shareProfile ?? false,
+    };
+
+    const images = data.assets?.images || {};
+    const signedImages: Record<string, string> = {};
+    await Promise.all(
+      Object.entries(images).map(async ([key, path]) => {
+        try {
+          signedImages[key] = await getSignedUrl(path, { expiresInSeconds: 3600 });
+        } catch (err) {
+          console.error(`[Sessions/Public] Failed to sign ${key}:`, err);
+        }
+      })
+    );
+
+    let originalUrl: string | undefined;
+    if (shareScope.shareOriginal && data.photo?.originalStoragePath) {
+      try {
+        originalUrl = await getSignedUrl(data.photo.originalStoragePath, { expiresInSeconds: 3600 });
+      } catch (err) {
+        console.error("[Sessions/Public] Failed to sign original:", err);
+      }
+    }
+
+    const publicProfile = shareScope.shareProfile && data.input
       ? {
           level: data.input.level,
           goal: data.input.goal,
-          weightKg: data.input.weightKg,
-          bodyType: data.input.bodyType,
           focusZone: data.input.focusZone,
-          heightCm: data.input.heightCm,
+          weeklyTime: data.input.weeklyTime,
         }
       : undefined;
 
     return NextResponse.json({
-      shareId: data.shareId,
+      shareId: data.shareId || shareId,
       status: data.status,
-      input: safeInput,
-      ai: data.ai,
-      assets: data.assets,
+      assets: { images: signedImages },
+      originalUrl,
+      profile: publicProfile,
+      shareScope,
       hasPhoto: !!data.photo?.originalStoragePath,
       createdAt: data.createdAt,
     });
@@ -89,4 +132,3 @@ export async function DELETE(req: Request, context: { params: Promise<{ shareId:
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
-

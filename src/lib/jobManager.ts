@@ -145,6 +145,55 @@ export async function markJobInProgress(jobId: string): Promise<void> {
 }
 
 /**
+ * Acquire a job lock to prevent concurrent processing.
+ * Returns acquired=false if another worker is already running within staleMs.
+ */
+export async function acquireJobLock(
+  sessionId: string,
+  type: JobType,
+  staleMs: number = 10 * 60 * 1000
+): Promise<{ acquired: boolean; status?: JobStatus }> {
+  const db = getDb();
+  const jobId = `${sessionId}_${type}`;
+  let acquired = false;
+  let status: JobStatus | undefined;
+
+  await db.runTransaction(async (tx) => {
+    const ref = db.collection("jobs").doc(jobId);
+    const snap = await tx.get(ref);
+    const current = snap.data() as JobState | undefined;
+    status = current?.status;
+
+    if (current?.status === "completed") {
+      acquired = false;
+      return;
+    }
+
+    if (current?.status === "in_progress" && current.startedAt) {
+      const startedAt = current.startedAt.toDate();
+      if (Date.now() - startedAt.getTime() < staleMs) {
+        acquired = false;
+        return;
+      }
+    }
+
+    tx.set(
+      ref,
+      {
+        status: "in_progress",
+        startedAt: FieldValue.serverTimestamp(),
+        updatedAt: FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    );
+    acquired = true;
+    status = "in_progress";
+  });
+
+  return { acquired, status };
+}
+
+/**
  * Actualiza el progreso de un job (para image_generation)
  */
 export async function updateJobProgress(

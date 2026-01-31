@@ -153,6 +153,7 @@ export async function recordShareIntent(shareId: string): Promise<boolean> {
     await sessionRef.update({
       "unlockState.shareIntentOpened": true,
       "unlockState.shareTimestamp": Date.now(),
+      "unlockState.shareServerTimestamp": FieldValue.serverTimestamp(),
     });
     return true;
   } catch (error) {

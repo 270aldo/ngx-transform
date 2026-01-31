@@ -14,6 +14,8 @@ import { generatePlan, type ProfileSummary } from "@/lib/plan";
 import { FieldValue } from "firebase-admin/firestore";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 import { getAiGenerationFlag } from "@/lib/aiKillSwitch";
+import { requireAuth } from "@/lib/authServer";
+import { telemetry } from "@/lib/telemetry";
 
 // Feature flag
 const FF_PLAN_7_DIAS = process.env.FF_PLAN_7_DIAS !== "false";
@@ -61,6 +63,7 @@ export async function POST(request: NextRequest) {
     const clientIP = getClientIP(request);
     const rateLimitResult = await checkRateLimit("api:plan", clientIP);
     if (!rateLimitResult.success) {
+      telemetry.rateLimitBlocked(shareId, "api:plan");
       return NextResponse.json(
         { success: false, message: "Too many requests. Please wait a moment." },
         { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
@@ -81,6 +84,8 @@ export async function POST(request: NextRequest) {
 
     const data = snap.data() as {
       status?: string;
+      ownerUid?: string;
+      email?: string;
       input?: {
         age?: number;
         sex?: string;
@@ -95,6 +100,23 @@ export async function POST(request: NextRequest) {
       ai?: { insightsText?: string };
       plan?: unknown;
     };
+
+    // Require auth and verify ownership
+    const authUser = await requireAuth(request);
+    if (data.ownerUid && data.ownerUid !== authUser.uid) {
+      telemetry.authFailed(shareId, { reason: "owner_mismatch" });
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 403 }
+      );
+    }
+    if (!data.ownerUid && data.email && authUser.email && data.email.toLowerCase() !== authUser.email.toLowerCase()) {
+      telemetry.authFailed(shareId, { reason: "email_mismatch" });
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 403 }
+      );
+    }
 
     // Check if plan already exists
     if (data.plan) {
@@ -155,6 +177,12 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("[Plan API] Error:", error);
+    if (error instanceof Error && error.message === "UNAUTHORIZED") {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
     return NextResponse.json(
       { success: false, message: "Internal server error" },
       { status: 500 }
@@ -195,7 +223,27 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const data = snap.data() as { plan?: unknown };
+    const data = snap.data() as {
+      plan?: unknown;
+      ownerUid?: string;
+      email?: string;
+    };
+
+    const authUser = await requireAuth(request);
+    if (data.ownerUid && data.ownerUid !== authUser.uid) {
+      telemetry.authFailed(shareId, { reason: "owner_mismatch" });
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 403 }
+      );
+    }
+    if (!data.ownerUid && data.email && authUser.email && data.email.toLowerCase() !== authUser.email.toLowerCase()) {
+      telemetry.authFailed(shareId, { reason: "email_mismatch" });
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 403 }
+      );
+    }
 
     if (!data.plan) {
       return NextResponse.json(
@@ -210,6 +258,12 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("[Plan API] GET Error:", error);
+    if (error instanceof Error && error.message === "UNAUTHORIZED") {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
     return NextResponse.json(
       { success: false, message: "Internal server error" },
       { status: 500 }

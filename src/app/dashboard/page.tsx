@@ -12,6 +12,11 @@ interface SessionSummary {
   shareId: string;
   status?: string;
   shareOriginal: boolean;
+  shareScope?: {
+    shareOriginal?: boolean;
+    shareInsights?: boolean;
+    shareProfile?: boolean;
+  };
   goal?: string;
   level?: string;
   createdAt?: string | null;
@@ -59,7 +64,7 @@ export default function DashboardPage() {
     load();
   }, [user, getIdToken, addToast]);
 
-  const toggleShareOriginal = async (shareId: string, nextValue: boolean) => {
+  const updateShareSettings = async (shareId: string, updates: Record<string, boolean>) => {
     try {
       const token = await getIdToken();
       if (!token) throw new Error("No se pudo validar tu sesión");
@@ -69,14 +74,23 @@ export default function DashboardPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ shareOriginal: nextValue }),
+        body: JSON.stringify(updates),
       });
       if (!res.ok) {
         const j = await res.json().catch(() => ({}));
         throw new Error(j.error || "No se pudo actualizar");
       }
+      const json = await res.json();
       setSessions((prev) =>
-        prev.map((s) => (s.shareId === shareId ? { ...s, shareOriginal: nextValue } : s))
+        prev.map((s) =>
+          s.shareId === shareId
+            ? {
+                ...s,
+                shareOriginal: json?.shareScope?.shareOriginal ?? s.shareOriginal,
+                shareScope: json?.shareScope ?? s.shareScope,
+              }
+            : s
+        )
       );
       addToast({ variant: "success", message: "Preferencias actualizadas" });
     } catch (err) {
@@ -127,20 +141,49 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-                  <div>
-                    <p className="text-sm font-semibold">Compartir foto original</p>
-                    <p className="text-xs text-neutral-500">
-                      Si activas esto, el before se verá en el enlace público.
-                    </p>
-                  </div>
-                  <Button
-                    variant={session.shareOriginal ? "default" : "outline"}
-                    className={session.shareOriginal ? "" : "border-white/10"}
-                    onClick={() => toggleShareOriginal(session.shareId, !session.shareOriginal)}
-                  >
-                    {session.shareOriginal ? "Activo" : "Desactivado"}
-                  </Button>
+                <div className="grid gap-3">
+                  {[
+                    {
+                      key: "shareOriginal",
+                      title: "Compartir foto original",
+                      desc: "Permite mostrar tu foto inicial en el enlace público.",
+                    },
+                    {
+                      key: "shareInsights",
+                      title: "Compartir análisis",
+                      desc: "Muestra insights y texto generado en el enlace público.",
+                    },
+                    {
+                      key: "shareProfile",
+                      title: "Compartir perfil",
+                      desc: "Comparte objetivo y nivel (sin datos sensibles).",
+                    },
+                  ].map((item) => {
+                    const scope = session.shareScope || {};
+                    const current =
+                      item.key === "shareOriginal"
+                        ? scope.shareOriginal ?? session.shareOriginal
+                        : item.key === "shareInsights"
+                        ? scope.shareInsights ?? false
+                        : scope.shareProfile ?? false;
+                    return (
+                      <div key={item.key} className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3">
+                        <div>
+                          <p className="text-sm font-semibold">{item.title}</p>
+                          <p className="text-xs text-neutral-500">{item.desc}</p>
+                        </div>
+                        <Button
+                          variant={current ? "default" : "outline"}
+                          className={current ? "" : "border-white/10"}
+                          onClick={() =>
+                            updateShareSettings(session.shareId, { [item.key]: !current })
+                          }
+                        >
+                          {current ? "Activo" : "Desactivado"}
+                        </Button>
+                      </div>
+                    );
+                  })}
                 </div>
               </Card>
             ))}

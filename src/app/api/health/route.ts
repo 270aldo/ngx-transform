@@ -147,6 +147,13 @@ async function checkGemini(): Promise<ServiceHealth> {
     const hourlyUtilization = (spendStats.hourly.spend / spendStats.hourly.limit) * 100;
 
     // Warn if approaching limits
+    if (spendStats.daily.spend < 0 || spendStats.hourly.spend < 0) {
+      return {
+        status: "degraded",
+        message: "Spend stats unavailable",
+      };
+    }
+
     if (dailyUtilization > 90 || hourlyUtilization > 90) {
       return {
         status: "degraded",
@@ -258,7 +265,7 @@ export async function GET(req: Request) {
   };
 
   // Return appropriate status code
-  const statusCode = overallStatus === "healthy" ? 200 : overallStatus === "degraded" ? 200 : 503;
+  const statusCode = overallStatus === "healthy" ? 200 : overallStatus === "degraded" ? 207 : 503;
 
   return NextResponse.json(response, { status: statusCode });
 }

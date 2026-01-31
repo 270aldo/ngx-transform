@@ -60,6 +60,10 @@ export async function POST(req: NextRequest) {
     // Require API key for email sending (server-to-server)
     const expectedKey = process.env.CRON_API_KEY;
     const apiKey = req.headers.get("X-Api-Key");
+    if (!expectedKey && process.env.NODE_ENV === "production") {
+      console.error("[EMAIL_SEND] CRON_API_KEY not configured in production!");
+      return NextResponse.json({ error: "Server misconfigured" }, { status: 503 });
+    }
     if (expectedKey && apiKey !== expectedKey) {
       return NextResponse.json(
         { error: "Unauthorized - API key required" },
@@ -96,9 +100,9 @@ export async function POST(req: NextRequest) {
     if (!resend) {
       console.warn("[EMAIL_SEND] RESEND_API_KEY not configured, skipping send");
       return NextResponse.json({
-        success: true,
-        message: "Email skipped (Resend not configured)",
-        preview: true,
+        success: false,
+        skipped: true,
+        message: "Email not sent (Resend not configured)",
       });
     }
 

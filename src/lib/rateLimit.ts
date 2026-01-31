@@ -94,6 +94,68 @@ function getRateLimiters(): Map<string, Ratelimit> | null {
   return rateLimiters;
 }
 
+// In-memory fallback rate limiter for when Redis is unavailable
+const inMemoryStore = new Map<string, { count: number; resetAt: number }>();
+let lastPruneAt = 0;
+const IN_MEMORY_LIMITS: Record<string, { max: number; windowMs: number }> = {
+  "api:sessions": { max: 3, windowMs: 86400000 },    // 3/day
+  "api:email": { max: 5, windowMs: 3600000 },         // 5/hour
+  "api:analyze": { max: 10, windowMs: 3600000 },      // 10/hour
+  "api:generate-images": { max: 5, windowMs: 3600000 },// 5/hour
+  "api:generate-plan": { max: 5, windowMs: 3600000 },  // 5/hour
+  "api:plan": { max: 5, windowMs: 3600000 },           // 5/hour
+  "api:genesis-demo": { max: 10, windowMs: 60000 },    // 10/min
+  "api:general": { max: 60, windowMs: 60000 },        // 60/min
+};
+
+const CRITICAL_ENDPOINTS = new Set([
+  "api:analyze",
+  "api:generate-images",
+  "api:plan",
+  "api:generate-plan",
+]);
+
+function allowFallbackInProd(endpoint: string): boolean {
+  if (process.env.ALLOW_RATE_LIMIT_FALLBACK === "true") {
+    return true;
+  }
+  return !CRITICAL_ENDPOINTS.has(endpoint);
+}
+
+function pruneInMemoryStore(now: number) {
+  if (now - lastPruneAt < 60000 && inMemoryStore.size < 5000) return;
+  lastPruneAt = now;
+  let scanned = 0;
+  for (const [key, entry] of inMemoryStore) {
+    if (now >= entry.resetAt) {
+      inMemoryStore.delete(key);
+    }
+    if (++scanned >= 1000) break;
+  }
+}
+
+function checkInMemoryRateLimit(endpoint: string, identifier: string): RateLimitResult {
+  const config = IN_MEMORY_LIMITS[endpoint] || IN_MEMORY_LIMITS["api:general"];
+  const key = `${endpoint}:${identifier}`;
+  const now = Date.now();
+  pruneInMemoryStore(now);
+  const entry = inMemoryStore.get(key);
+
+  if (!entry || now >= entry.resetAt) {
+    inMemoryStore.set(key, { count: 1, resetAt: now + config.windowMs });
+    return { success: true, limit: config.max, remaining: config.max - 1, reset: now + config.windowMs };
+  }
+
+  entry.count++;
+  const remaining = Math.max(0, config.max - entry.count);
+  return {
+    success: entry.count <= config.max,
+    limit: config.max,
+    remaining,
+    reset: entry.resetAt,
+  };
+}
+
 export interface RateLimitResult {
   success: boolean;
   limit: number;
@@ -114,17 +176,20 @@ export async function checkRateLimit(
 ): Promise<RateLimitResult> {
   const limiters = getRateLimiters();
 
-  // If Redis is not configured, check environment
+  // If Redis is not configured, use in-memory fallback
   if (!limiters) {
-    // CRITICAL: Block requests in production if Redis is not configured
     if (process.env.NODE_ENV === "production") {
-      console.error("[RateLimit] CRITICAL: Redis not configured in production! Blocking request.");
-      return {
-        success: false,
-        limit: 0,
-        remaining: 0,
-        reset: Date.now() + 60000,
-      };
+      if (!allowFallbackInProd(endpoint)) {
+        console.error(`[RateLimit] CRITICAL: Redis not configured in production! Blocking ${endpoint}.`);
+        return {
+          success: false,
+          limit: 0,
+          remaining: 0,
+          reset: Date.now() + 60000,
+        };
+      }
+      console.error("[RateLimit] CRITICAL: Redis not configured in production! Using in-memory fallback.");
+      return checkInMemoryRateLimit(endpoint, identifier);
     }
     // Dev mode: allow all requests
     console.warn("[RateLimit] Redis not configured - allowing request (dev mode)");
@@ -149,8 +214,19 @@ export async function checkRateLimit(
       reset: result.reset,
     };
   } catch (error) {
-    console.error("[RateLimit] Error checking rate limit:", error);
-    // On error, allow the request but log it
+    console.error("[RateLimit] Redis runtime error:", error);
+    if (process.env.NODE_ENV === "production") {
+      if (!allowFallbackInProd(endpoint)) {
+        return {
+          success: false,
+          limit: 0,
+          remaining: 0,
+          reset: Date.now() + 60000,
+        };
+      }
+      return checkInMemoryRateLimit(endpoint, identifier);
+    }
+    // Dev mode: allow request
     return {
       success: true,
       limit: 999,

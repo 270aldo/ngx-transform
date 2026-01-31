@@ -27,6 +27,7 @@ interface SessionDoc {
     weeklyTime: number;
     notes?: string;
     focusZone?: string;
+    stressLevel?: number;
   };
   photo?: { originalStoragePath?: string };
   ai?: InsightsResult;
@@ -35,11 +36,17 @@ interface SessionDoc {
   // v2.0 fields
   letter_from_future?: string;
   shareOriginal?: boolean;
+  shareScope?: {
+    shareOriginal?: boolean;
+    shareInsights?: boolean;
+    shareProfile?: boolean;
+  };
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ shareId: string }> }): Promise<Metadata> {
   const { shareId } = await params;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL || "http://localhost:3000";
+  const vercelUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || vercelUrl || "http://localhost:3000";
   const absoluteBase = String(baseUrl).startsWith("http") ? baseUrl : `https://${baseUrl}`;
   const ogUrl = `${absoluteBase}/api/og/${shareId}`;
 
@@ -52,13 +59,11 @@ export async function generateMetadata({ params }: { params: Promise<{ shareId: 
   };
 }
 
-async function getUrlsLocally(data: SessionDoc) {
+async function getUrlsLocally(data: SessionDoc, allowOriginal: boolean) {
   const result: { originalUrl?: string; images?: Record<string, string> } = {};
 
   // 1. Original Photo (Always sign for the visualization page if allowed)
   const photoPath = data.photo?.originalStoragePath;
-  const allowOriginal = FF_EXPOSE_ORIGINAL || data.shareOriginal;
-
   if (photoPath && allowOriginal) {
     try {
       result.originalUrl = await getSignedUrl(photoPath, { expiresInSeconds: 3600 });
@@ -95,8 +100,64 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
   const data = snap.data() as SessionDoc | undefined;
   if (!data) return <div className="text-white p-10">Datos inválidos</div>;
 
-  const ai = data.ai;
-  const urls = await getUrlsLocally(data);
+  const shareScope = {
+    shareOriginal: data.shareScope?.shareOriginal ?? !!data.shareOriginal,
+    shareInsights: data.shareScope?.shareInsights ?? false,
+    shareProfile: data.shareScope?.shareProfile ?? false,
+  };
+
+  const allowOriginal = FF_EXPOSE_ORIGINAL && shareScope.shareOriginal;
+  const allowInsights = shareScope.shareInsights;
+  const allowProfile = shareScope.shareProfile;
+
+  const ai = allowInsights ? data.ai : undefined;
+  const urls = await getUrlsLocally(data, allowOriginal);
+
+  if (!allowInsights) {
+    const heroImage = urls.images?.m12 || urls.images?.m8 || urls.images?.m4 || urls.originalUrl;
+    return (
+      <div className="min-h-screen bg-black text-white">
+        <div className="max-w-5xl mx-auto px-6 py-12 space-y-8">
+          <div className="space-y-2">
+            <p className="text-xs tracking-[0.35em] uppercase text-[#6D00FF]">NGX Transform</p>
+            <h1 className="text-3xl font-semibold">Transformación compartida</h1>
+            <p className="text-sm text-neutral-400">
+              Este usuario decidió compartir solo las imágenes. El análisis permanece privado.
+            </p>
+          </div>
+
+          <div className="rounded-2xl overflow-hidden border border-white/10 bg-neutral-950">
+            {heroImage ? (
+              <img
+                src={heroImage}
+                alt="Transformación NGX"
+                className="w-full h-[70vh] object-cover object-center"
+              />
+            ) : (
+              <div className="flex items-center justify-center h-[60vh] text-neutral-500">
+                Imágenes en proceso...
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <a
+              href="/wizard"
+              className="px-5 py-3 rounded-full bg-[#6D00FF] text-white text-sm font-semibold text-center"
+            >
+              Crear mi transformación
+            </a>
+            <a
+              href={`/dashboard/${shareId}`}
+              className="px-5 py-3 rounded-full border border-white/10 text-sm font-semibold text-center text-neutral-200"
+            >
+              Ver en privado
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // If processing or no AI, show simple loading
   // If no AI yet, keep loading
@@ -115,7 +176,7 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
     assets: {
       ...data.assets,
       images: urls.images || data.assets?.images // Prefer signed URLs if available
-    }
+    },
   };
 
   // Sanitize for Client Component (remove Firestore Timestamps)
@@ -137,6 +198,15 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
           shareId={shareId}
           isReady={isReady}
           letterFromFuture={data.letter_from_future}
+          userProfile={
+            allowProfile
+              ? {
+                  focusZone: data.input?.focusZone as "upper" | "lower" | "abs" | "full" | undefined,
+                  goal: data.input?.goal as "definicion" | "masa" | "mixto" | undefined,
+                  stressLevel: data.input?.stressLevel,
+                }
+              : undefined
+          }
         />
         {/* Genesis Demo CTA - appears after transformation viewer */}
         {isReady && (

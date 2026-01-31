@@ -120,15 +120,26 @@ export async function checkSpendLimit(estimatedCost: number = 0): Promise<SpendC
       hourlyLimit: HOURLY_LIMIT_USD,
     };
   } catch (error) {
-    // On error, allow the request but log it (fail-open for user experience)
-    console.error("[SpendLimiter] Error checking limits, allowing request:", error);
+    // Fail CLOSED in production to prevent uncapped API bills
+    console.error("[SpendLimiter] Error checking limits:", error);
+    if (process.env.NODE_ENV === "production") {
+      return {
+        allowed: false,
+        dailySpend: 0,
+        hourlySpend: 0,
+        dailyLimit: DAILY_LIMIT_USD,
+        hourlyLimit: HOURLY_LIMIT_USD,
+        reason: "Spend limits unavailable - blocking request for cost protection",
+      };
+    }
+    // Dev mode: allow request
     return {
       allowed: true,
       dailySpend: 0,
       hourlySpend: 0,
       dailyLimit: DAILY_LIMIT_USD,
       hourlyLimit: HOURLY_LIMIT_USD,
-      reason: "Error checking limits - allowing request",
+      reason: "Error checking limits - allowing request (dev mode)",
     };
   }
 }
@@ -178,8 +189,19 @@ export async function recordSpend(cost: number, operation: string): Promise<void
 
     console.log(`[SpendLimiter] Recorded $${cost.toFixed(4)} for ${operation}`);
   } catch (error) {
-    // Don't fail the request if spend tracking fails
-    console.error("[SpendLimiter] Error recording spend:", error);
+    console.error("[SpendLimiter] Error recording spend - cost may be untracked:", error);
+    // Retry once on transient errors
+    try {
+      const db = getDb();
+      const dayKey = getDayKey();
+      await db.collection(SPEND_COLLECTION).doc(dayKey).set(
+        { totalSpend: FieldValue.increment(cost), requestCount: FieldValue.increment(1), lastUpdated: FieldValue.serverTimestamp() },
+        { merge: true }
+      );
+      console.log(`[SpendLimiter] Retry succeeded for $${cost.toFixed(4)}`);
+    } catch (retryError) {
+      console.error("[SpendLimiter] Retry also failed - spend record LOST:", retryError);
+    }
   }
 }
 
@@ -220,10 +242,10 @@ export async function getSpendStats(): Promise<{
       },
     };
   } catch (error) {
-    console.error("[SpendLimiter] Error getting stats:", error);
+    console.error("[SpendLimiter] Error getting stats - returning unavailable:", error);
     return {
-      daily: { spend: 0, limit: DAILY_LIMIT_USD, remaining: DAILY_LIMIT_USD, requests: 0 },
-      hourly: { spend: 0, limit: HOURLY_LIMIT_USD, remaining: HOURLY_LIMIT_USD, requests: 0 },
+      daily: { spend: -1, limit: DAILY_LIMIT_USD, remaining: 0, requests: -1 },
+      hourly: { spend: -1, limit: HOURLY_LIMIT_USD, remaining: 0, requests: -1 },
     };
   }
 }

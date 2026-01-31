@@ -11,7 +11,7 @@ import { requireAuth } from "@/lib/authServer";
 import { getAiGenerationFlag } from "@/lib/aiKillSwitch";
 import {
   getOrCreateJob,
-  markJobInProgress,
+  acquireJobLock,
   markJobCompleted,
   markJobFailed,
   withRetry,
@@ -56,6 +56,9 @@ export async function POST(req: Request) {
     const clientIP = getClientIP(req);
     const rateLimitResult = await checkRateLimit("api:analyze", clientIP);
     if (!rateLimitResult.success) {
+      if (parsedSessionId) {
+        telemetry.rateLimitBlocked(parsedSessionId, "api:analyze");
+      }
       return NextResponse.json(
         { error: "Too many requests. Please wait a moment." },
         { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
@@ -84,6 +87,7 @@ export async function POST(req: Request) {
     const ownerUid = (data as unknown as Record<string, unknown>).ownerUid as string | undefined;
     if (ownerUid && authUser.uid !== ownerUid) {
       console.warn(`[Analyze] Owner mismatch: Token uid=${authUser.uid} Session ownerUid=${ownerUid}`);
+      telemetry.authFailed(sessionId, { reason: "owner_mismatch" });
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
     if (data.email && authUser.email) {
@@ -91,6 +95,7 @@ export async function POST(req: Request) {
       const sessionEmail = data.email.toLowerCase().trim();
       if (tokenEmail !== sessionEmail) {
         console.warn(`[Analyze] Email mismatch: Token=${tokenEmail} Session=${sessionEmail}`);
+        telemetry.authFailed(sessionId, { reason: "email_mismatch" });
         return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
       }
     }
@@ -112,14 +117,19 @@ export async function POST(req: Request) {
     const spendCheck = await checkSpendLimit(analysisCost);
     if (!spendCheck.allowed) {
       console.error(`[Analyze] Spend limit exceeded: ${spendCheck.reason}`);
+      telemetry.spendLimitBlocked(sessionId, spendCheck.reason);
       return NextResponse.json(
         { error: "Service temporarily unavailable. Please try again later." },
         { status: 503 }
       );
     }
 
-    // Marcar job en progreso
-    await markJobInProgress(`${sessionId}_analysis`);
+    // Acquire job lock (avoid concurrent analysis)
+    const lock = await acquireJobLock(sessionId, "analysis");
+    if (!lock.acquired) {
+      telemetry.jobLockDenied(sessionId, "analysis");
+      return NextResponse.json({ ok: true, status: "in_progress" }, { status: 202 });
+    }
 
     // Track inicio de análisis
     await telemetry.analysisStarted(sessionId, MODEL_ID);

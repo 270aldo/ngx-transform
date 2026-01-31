@@ -16,6 +16,9 @@ export async function GET(req: Request, context: { params: Promise<{ shareId: st
     const data = snap.data() as {
       ownerUid?: string;
       shareOriginal?: boolean;
+      shareScope?: {
+        shareOriginal?: boolean;
+      };
       photo?: { originalStoragePath?: string };
       assets?: { images?: Record<string, string> };
     } | undefined;
@@ -26,7 +29,10 @@ export async function GET(req: Request, context: { params: Promise<{ shareId: st
 
     const authUser = await getAuthUser(req);
     const isOwner = authUser?.uid && data?.ownerUid && authUser.uid === data.ownerUid;
-    const allowPublicOriginal = FF_EXPOSE_ORIGINAL && !!data?.shareOriginal;
+    const shareScope = {
+      shareOriginal: data?.shareScope?.shareOriginal ?? !!data?.shareOriginal,
+    };
+    const allowPublicOriginal = FF_EXPOSE_ORIGINAL && shareScope.shareOriginal;
 
     if (photoPath && (isOwner || allowPublicOriginal)) {
       result.originalUrl = await getSignedUrl(photoPath, { expiresInSeconds: 3600 });

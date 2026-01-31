@@ -34,26 +34,41 @@ export async function GET(request: NextRequest) {
     let level = "intermedio";
     let trainingDays = 4;
 
+    let personalized = false;
     try {
       const db = getDb();
       const sessionDoc = await db.collection("sessions").doc(shareId).get();
 
       if (sessionDoc.exists) {
-        const data = sessionDoc.data();
-        userName = data?.name || data?.email?.split("@")[0] || "Usuario";
-        goal = data?.goal || "mixto";
-        level = data?.level || "intermedio";
-        trainingDays = data?.weeklyTime
-          ? data.weeklyTime <= 3
-            ? 3
-            : data.weeklyTime <= 5
-            ? 4
-            : 5
-          : 4;
+        const data = sessionDoc.data() as {
+          name?: string;
+          email?: string;
+          goal?: string;
+          level?: string;
+          weeklyTime?: number;
+          shareScope?: { shareProfile?: boolean };
+        };
+        const shareProfile = data?.shareScope?.shareProfile ?? false;
+        if (shareProfile) {
+          userName = data?.name || data?.email?.split("@")[0] || "Usuario";
+          goal = data?.goal || "mixto";
+          level = data?.level || "intermedio";
+          trainingDays = data?.weeklyTime
+            ? data.weeklyTime <= 3
+              ? 3
+              : data.weeklyTime <= 5
+              ? 4
+              : 5
+            : 4;
+          personalized = true;
+        }
       }
     } catch (dbError) {
-      console.warn("Could not fetch session from Firestore:", dbError);
-      // Continue with default values
+      console.error("[GeneratePlan] Firestore error - returning 503:", dbError);
+      return NextResponse.json(
+        { error: "Unable to retrieve your profile data. Please try again." },
+        { status: 503 }
+      );
     }
 
     // Generate the plan
@@ -119,17 +134,31 @@ export async function POST(request: NextRequest) {
     }
 
     // Try to get name from Firestore
+    let personalized = false;
     try {
       const db = getDb();
       const sessionDoc = await db.collection("sessions").doc(shareId).get();
 
       if (sessionDoc.exists) {
-        const data = sessionDoc.data();
-        userName = data?.name || data?.email?.split("@")[0] || "Usuario";
-        level = data?.level || "intermedio";
+        const data = sessionDoc.data() as {
+          name?: string;
+          email?: string;
+          level?: string;
+          shareScope?: { shareProfile?: boolean };
+        };
+        const shareProfile = data?.shareScope?.shareProfile ?? false;
+        if (shareProfile) {
+          userName = data?.name || data?.email?.split("@")[0] || "Usuario";
+          level = data?.level || "intermedio";
+          personalized = true;
+        }
       }
     } catch (dbError) {
-      console.warn("Could not fetch session from Firestore:", dbError);
+      console.error("[GeneratePlan] Firestore error on POST:", dbError);
+      return NextResponse.json(
+        { error: "Unable to retrieve your profile data. Please try again." },
+        { status: 503 }
+      );
     }
 
     // Generate plan data
@@ -137,6 +166,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
+      personalized,
       plan,
     });
   } catch (error) {

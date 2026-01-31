@@ -26,10 +26,13 @@ async function getSessionImages(shareId: string): Promise<SessionImages | null> 
     photo?: { originalStoragePath?: string };
     assets?: { images?: Record<string, string> };
     input?: { goal?: string; level?: string };
+    shareOriginal?: boolean;
+    shareScope?: { shareOriginal?: boolean };
   } | undefined;
   if (!data) return null;
 
-  const originalPath = data.photo?.originalStoragePath;
+  const allowOriginal = data.shareScope?.shareOriginal ?? !!data.shareOriginal;
+  const originalPath = allowOriginal ? data.photo?.originalStoragePath : undefined;
   const m12Path = data.assets?.images?.m12;
 
   const [originalUrl, m12Url] = await Promise.all([
@@ -54,10 +57,17 @@ async function getBestImage(shareId: string) {
     photo?: { originalStoragePath?: string };
     assets?: { images?: Record<string, string> };
     input?: { goal?: string; level?: string };
+    shareOriginal?: boolean;
+    shareScope?: { shareOriginal?: boolean };
   } | undefined;
   if (!data) return null;
 
-  const targetPath = data.assets?.images?.m12 || data.assets?.images?.m8 || data.assets?.images?.m4 || data.photo?.originalStoragePath;
+  const allowOriginal = data.shareScope?.shareOriginal ?? !!data.shareOriginal;
+  const targetPath =
+    data.assets?.images?.m12 ||
+    data.assets?.images?.m8 ||
+    data.assets?.images?.m4 ||
+    (allowOriginal ? data.photo?.originalStoragePath : undefined);
   if (!targetPath) return null;
   const imageUrl = await getSignedUrl(targetPath, { expiresInSeconds: 604800 }); // 7 días para social media crawlers
   return {

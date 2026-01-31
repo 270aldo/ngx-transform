@@ -20,13 +20,24 @@ export async function GET(req: Request) {
         shareId: string;
         status?: string;
         shareOriginal?: boolean;
+        shareScope?: {
+          shareOriginal?: boolean;
+          shareInsights?: boolean;
+          shareProfile?: boolean;
+        };
         input?: { goal?: string; level?: string };
         createdAt?: Timestamp;
+      };
+      const shareScope = {
+        shareOriginal: data.shareScope?.shareOriginal ?? !!data.shareOriginal,
+        shareInsights: data.shareScope?.shareInsights ?? false,
+        shareProfile: data.shareScope?.shareProfile ?? false,
       };
       return {
         shareId: data.shareId,
         status: data.status,
-        shareOriginal: !!data.shareOriginal,
+        shareOriginal: shareScope.shareOriginal,
+        shareScope,
         goal: data.input?.goal,
         level: data.input?.level,
         createdAt: data.createdAt?.toDate?.() ?? null,

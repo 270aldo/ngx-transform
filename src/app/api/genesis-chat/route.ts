@@ -1,11 +1,13 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
 import { getDb } from "@/lib/firebaseAdmin";
+import { FieldValue } from "firebase-admin/firestore";
 import {
   generateChatSequence,
   ChatStreamEvent,
 } from "@/lib/genesis-orchestrator";
 import { DemoUserResponses } from "@/types/demo";
+import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 
 // Request schema
 const requestSchema = z.object({
@@ -36,6 +38,16 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { shareId, responses, action } = requestSchema.parse(body);
 
+    // Rate limit by IP to prevent abuse
+    const clientIP = getClientIP(req);
+    const rateLimitResult = await checkRateLimit("api:genesis-demo", clientIP);
+    if (!rateLimitResult.success) {
+      return new Response(
+        JSON.stringify({ error: "Too many requests. Please wait a moment." }),
+        { status: 429, headers: { "Content-Type": "application/json", ...getRateLimitHeaders(rateLimitResult) } }
+      );
+    }
+
     // Validate session exists
     const db = getDb();
     const snap = await db.collection("sessions").doc(shareId).get();
@@ -47,8 +59,33 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const sessionData = snap.data() as { email?: string };
+    const sessionData = snap.data() as { email?: string; demoInteractions?: number };
     const userName = sessionData.email?.split("@")[0] || "Usuario";
+
+    // Server-side interaction limit (max 5 demo interactions)
+    const MAX_DEMO_INTERACTIONS = 5;
+    const sessionRef = db.collection("sessions").doc(shareId);
+    let remaining = 0;
+    let allowed = false;
+
+    await db.runTransaction(async (tx) => {
+      const doc = await tx.get(sessionRef);
+      const current = (doc.data()?.demoInteractions as number | undefined) || 0;
+      if (current >= MAX_DEMO_INTERACTIONS) {
+        remaining = 0;
+        return;
+      }
+      tx.update(sessionRef, { demoInteractions: FieldValue.increment(1) });
+      allowed = true;
+      remaining = Math.max(0, MAX_DEMO_INTERACTIONS - (current + 1));
+    });
+
+    if (!allowed) {
+      return new Response(
+        JSON.stringify({ error: "Demo limit reached", remaining }),
+        { status: 429, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
     // Create SSE stream
     const encoder = new TextEncoder();

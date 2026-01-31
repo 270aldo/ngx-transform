@@ -122,7 +122,8 @@ async function getTranscript(shareId: string): Promise<string> {
       data.input?.level || "intermedio",
       data.input?.goal || "mixto"
     );
-  } catch {
+  } catch (err) {
+    console.error("[GenesisVoice] getTranscript failed:", err instanceof Error ? err.message : err);
     return "";
   }
 }
