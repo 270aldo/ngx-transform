@@ -1,98 +1,238 @@
-# NGX Transform - Gemini Context
+# NGX Transform — AI Pipeline
 
-## Project Overview
-**NGX Transform** is a Next.js 16 web application designed to visualize fitness progress using AI. It takes a user's current photo and physical profile, analyzes it using **Gemini 2.5 Flash**, and generates realistic future projections (at 4, 8, and 12 months) using **Gemini 2.5 Flash Image** (internally aliased as "NanoBanana").
+Full documentation of the AI pipeline powering NGX Transform: analysis, image generation, quality validation, and plan generation.
 
-The application features a "Dark Premium" aesthetic (Electric Violet accents) and is built for performance and scalability using serverless functions and Firebase.
+## Overview
 
-## Tech Stack
-- **Framework:** Next.js 16.0.7 (App Router), React 19
-- **Language:** TypeScript 5
-- **Styling:** Tailwind CSS v4, shadcn/ui v4 (Radix Primitives)
-- **Database:** Firebase Firestore
-- **Storage:** Firebase Storage (Google Cloud Storage)
-- **AI:** 
-  - **Analysis:** Google Gemini 2.5 Flash (via `@google/generative-ai`)
-  - **Image Generation:** Gemini 2.5 Flash Image (via direct REST API, alias "NanoBanana")
-- **Email:** Resend
-- **Validation:** Zod
-- **Image Processing:** Sharp (for watermarking)
+```
+Photo + Profile
+    ↓
+gemini.ts (Gemini 2.5 Flash)
+    ├── InsightsResult (timeline, stats, mental notes)
+    ├── user_visual_anchor (facial identity description)
+    └── style_profile (lighting, wardrobe, background, color_grade)
+    ↓
+promptBuilder.ts
+    └── Identity Lock prompt per milestone (m4/m8/m12)
+    ↓
+nanobanana.ts (Gemini Image API)
+    ├── Reference Chaining (original → styleRef → previous step)
+    └── Generated images with quality scores
+    ↓
+qualityGates.ts
+    ├── Face visible? Single subject? No artifacts?
+    └── QualityCheckResult (score, issues, canRetry)
+    ↓
+plan/ (Gemini 2.0 Flash Lite)
+    └── SevenDayPlan (workout, nutrition, habits, mindset × 7 days)
+```
 
-## Architecture & Data Flow
+## 1. Profile Analysis — `gemini.ts`
 
-### 1. User Input (Wizard)
-- **Location:** `app/src/app/wizard`
-- Users provide physical stats (age, weight, goal, etc.) and upload a photo.
-- Photo is uploaded directly to Firebase Storage via client-side SDK.
-- A session document is created in Firestore with status `processing`.
+**Model:** Gemini 2.5 Flash (configurable via `GEMINI_MODEL`)
 
-### 2. Analysis Phase
-- **Endpoint:** `POST /api/analyze`
-- **Logic:** `app/src/app/api/analyze/route.ts`
-- Fetches the session data and signed URL for the photo.
-- Calls Gemini 2.5 Flash (`app/src/lib/gemini.ts`) to analyze the physique and generate a JSON object containing:
-  - **Insights:** Textual analysis of current state.
-  - **Timeline:** Milestones for months 0, 4, 8, and 12, including visual prompts (`image_prompt`) for the image generator.
-  - **Overlays:** Coordinate points for UI hotspots.
-- Updates Firestore with the analysis results.
+**Exported functions:**
 
-### 3. Image Generation Phase
-- **Endpoint:** `POST /api/generate-images`
-- **Logic:** `app/src/app/api/generate-images/route.ts`
-- Triggered after analysis.
-- Iterates through steps (m4, m8, m12).
-- Calls **NanoBanana** (`app/src/lib/nanobanana.ts`) using the specific `image_prompt` generated in the previous step and the original photo as input (Image-to-Image).
-- **NanoBanana** constructs a sophisticated prompt ("NIKE ADVERTISEMENT", "CINEMATIC LIGHTING") to guide the transformation based on the user's goal (definition, mass, mixed).
-- Generated images are watermarked using `sharp`.
-- Images are uploaded to Firebase Storage (`sessions/{sessionId}/generated/`).
-- Firestore is updated with paths to the generated assets.
+| Function | Purpose |
+|----------|---------|
+| `generateInsightsV2(params)` | Main analysis — returns full `AnalysisOutput` (v2.0 schema) |
+| `generateInsightsFromImage(params)` | Legacy analysis entry point |
+| `extractVisualAnchor(analysis, fallback?)` | Extracts `user_visual_anchor` string from analysis |
+| `extractStyleProfile(analysis)` | Extracts `style_profile` object |
+| `extractLetterFromFuture(analysis)` | Extracts optional m12 motivational letter |
 
-### 4. Results Display
-- **Location:** `app/src/app/s/[shareId]`
-- Public-facing page displaying the interactive transformation timeline, overlays, and insights.
-- Uses `CinematicViewer`, `TimelineViewer`, and other components in `app/src/components`.
+**Analysis output (v2.0 schema):**
 
-## Key Directories & Files
+- `user_visual_anchor` — Forensic-level facial description (100-400 words) for identity preservation across milestones. Covers bone structure, nose/lip/eye shape, skin tone, hair details, distinguishing marks.
+- `style_profile` — Object with `lighting`, `wardrobe`, `background`, `color_grade` fields describing the visual style for image generation.
+- `timeline` — Object with m0/m4/m8/m12 phases, each containing:
+  - `title`: Phase name (e.g., "GENESIS", "METAMORFOSIS")
+  - `description`: Clinical summary of changes
+  - `stats`: Scores (0-100) for Strength, Aesthetics, Endurance, Mental
+  - `image_prompt`: English prompt for image generation
+  - `mental`: Stoic mindset shift note (Spanish)
+  - `risks` / `expectations` (m0 only)
+- `letter_from_future` — Optional m12 motivational letter
 
-### Core
-- `app/src/app/`: Next.js App Router pages and API routes.
-- `app/src/lib/`: Utility functions.
-  - `nanobanana.ts`: **CRITICAL**. Handles interaction with Gemini Image API. Defines the "Cinematic/Nike" prompt strategy.
-  - `gemini.ts`: Handles text/JSON analysis with Gemini.
-  - `firebaseAdmin.ts`: Server-side Firebase initialization.
-  - `validators.ts`: Zod schemas (`AnalyzeSchema`, `GenerateImagesSchema`).
-- `app/src/types/ai.ts`: TypeScript definitions for AI responses (TimelineEntry, InsightsResult).
+**Persona:** "Elite High-Performance Coach & Futurist" — stoic, clinical, motivational tone.
 
-### UI Components
-- `app/src/components/shadcn/ui/`: Reusable primitive components.
-- `app/src/components/results/`: specialized components for the results page.
+## 2. Prompt Construction — `promptBuilder.ts`
 
-## Development & Conventions
+**Exported functions:**
 
-### Environment Variables (`app/.env.local`)
-Required keys include:
-- `GEMINI_API_KEY`: For both text and image generation.
-- `FIREBASE_*`: Service account details for admin access.
-- `NEXT_PUBLIC_FIREBASE_*`: Client-side Firebase config.
-- `GEMINI_IMAGE_MODEL`: Defaults to `gemini-2.5-flash-image-preview`.
+| Function | Purpose |
+|----------|---------|
+| `buildImagePrompt(context)` | Builds complete image generation prompt with Identity Lock |
+| `buildCorrectivePrompt(context, failureReason)` | Retry prompt after quality gate failure |
+| `getVisualAnchorSystemPrompt()` | System prompt for generating `user_visual_anchor` |
+| `getStyleProfileSystemPrompt()` | System prompt for generating `style_profile` |
 
-### Commands
-All commands should be run from the `app/` directory:
-- **Dev Server:** `npm run dev`
-- **Build:** `npm run build`
-- **Start:** `npm start`
-- **Lint:** `npm run lint`
+**Identity Lock mechanism:**
 
-### Styling
-- Uses **Tailwind v4**. Configuration is largely in CSS variables (`app/src/app/globals.css`).
-- Colors:
-  - Primary: Electric Violet (`#6D00FF`)
-  - Accent: Deep Purple (`#5B21B6`)
-  - Background: Dark (`#0A0A0A`)
+```
+[IDENTITY LOCK]
+Subject: {user_visual_anchor}
+PRESERVE: exact facial features, skin tone, hair color/style, distinguishing marks
 
-### "NanoBanana" Prompt Strategy
-The image generation uses a specific prompting strategy found in `app/src/lib/nanobanana.ts`:
-- **Role:** "MASTERPIECE of fitness photography".
-- **Style:** "NIKE ADVERTISEMENT", "CINEMATIC LIGHTING", "HIGH CONTRAST".
-- **Progression:** 40% (Foundation), 70% (Transformation), 100% (Peak Form).
-- **Goal-specific keywords:** e.g., "shredded" for definition, "massive muscle" for mass.
+[TRANSFORMATION: {step} - {percent}%]
+Environment:
+- m4: gritty underground gym (40% progress)
+- m8: lifestyle setting (70% progress)
+- m12: editorial studio (100% peak form)
+
+[NEGATIVE]
+NO: CGI, cartoon, plastic skin, extra limbs, face drift, multiple subjects
+```
+
+**Reference chaining per milestone:**
+- m4: `[original, styleRef]`
+- m8: `[original, styleRef, m4]`
+- m12: `[original, styleRef, m8]`
+
+## 3. Image Generation — `nanobanana.ts`
+
+**Model support:**
+- `gemini-3-pro-image-preview` — Identity Chain enabled (when `FF_NB_PRO=true`)
+- `gemini-2.5-flash-image-preview` — Legacy mode
+- Configurable via `GEMINI_IMAGE_MODEL` env var
+
+**Exported functions:**
+
+| Function | Purpose |
+|----------|---------|
+| `generateTransformedImage(params)` | Main generation with Identity Chain + quality scoring |
+| `generateTransformedImageLegacy(params)` | Legacy generation (buffer + contentType only) |
+
+**Generation result:**
+
+```typescript
+{
+  buffer: Buffer              // Generated image data
+  contentType: string         // MIME type
+  qualityScore: number        // 0-100
+  degraded: boolean           // Failed gates but continues
+  model: string               // Which model was used
+  usedIdentityChain: boolean  // Whether references were loaded
+}
+```
+
+**Generation steps (NanoStep):**
+
+| Step | Progress | Environment |
+|------|----------|-------------|
+| m4 | 40% | Underground gym |
+| m8 | 70% | Lifestyle setting |
+| m12 | 100% | Editorial studio (MID-WORKOUT intensity) |
+
+**Prompt strategy:** "NIKE ADVERTISEMENT", "CINEMATIC LIGHTING", "HIGH CONTRAST" with goal-specific keywords (e.g., "shredded" for definition, "massive muscle" for mass).
+
+## 4. Quality Validation — `qualityGates.ts`
+
+**Exported functions:**
+
+| Function | Purpose |
+|----------|---------|
+| `isQualityGatesEnabled()` | Checks `FF_QUALITY_GATES` flag |
+| `validateImageBasics(buffer, contentType)` | Validates buffer, size, MIME type |
+| `checkApiResponse(response)` | Checks for safety blocks, missing data |
+| `runQualityGates(buffer, contentType, apiResponse?)` | Full validation pipeline |
+| `getCorrectionMessage(issues)` | Human-readable correction for retry |
+| `formatQualityReport(result)` | Formatted quality report string |
+
+**Quality checks:**
+
+1. Image data exists and has content
+2. File size between 10KB and 20MB
+3. MIME type is `image/jpeg`, `image/png`, or `image/webp`
+4. API response not blocked by SAFETY or RECITATION
+5. Inline image data present in response
+
+**Issue types:**
+
+```
+no_image_data | image_too_small | blocked_by_safety |
+generation_failed | api_error | unknown_format |
+face_not_visible | multiple_subjects | severe_artifacts |
+identity_drift | low_resolution | wrong_aspect_ratio
+```
+
+**Result:**
+
+```typescript
+{
+  passed: boolean     // true if score >= 50 and no errors
+  score: number       // 0-100
+  issues: QualityIssue[]
+  canRetry: boolean   // true if retry might help
+  degraded: boolean   // true if passed despite issues
+}
+```
+
+## 5. Plan Generation — `plan/`
+
+**Files:**
+
+| File | Purpose |
+|------|---------|
+| `planTypes.ts` | Type definitions: `SevenDayPlan`, `DayPlan`, `Exercise`, `ProfileSummary` |
+| `planGenerator.ts` | AI-first plan generation with template fallback |
+| `planTemplates.ts` | Exercise templates by zone, nutrition by goal, habits, mindset notes |
+| `index.ts` | Re-exports all above |
+
+**Model:** Gemini 2.0 Flash Lite (fallback: Gemini 2.5 Flash, configurable via `PLAN_GENERATION_MODEL`)
+
+**Generation strategy:**
+
+1. AI-first: Gemini generates 7 days with workout, habits, nutrition, mindset
+2. Validation: Zod schema checks structure
+3. Fallback: Template-based generation if API fails or no API key
+
+**Plan structure:**
+
+```typescript
+SevenDayPlan {
+  sessionId: string
+  profile: ProfileSummary
+  days: DayPlan[] // 7 days
+  generatedAt: Date
+  insightsUsed?: string
+}
+
+DayPlan {
+  day: 1-7
+  workout: { focus, exercises[], duration, intensity }
+  habits: { morning[], evening[] }
+  nutrition: { calories, protein, meals[] }
+  mindset: string // Stoic daily note
+}
+```
+
+**Template data (fallback):**
+- `EXERCISES_BY_ZONE`: upper, lower, abs, full
+- `NUTRITION_BY_GOAL`: definicion (26 cal/kg deficit), masa (35 cal/kg surplus), mixto (30 cal/kg maintenance)
+- `MINDSET_NOTES`: 7 stoic daily reminders
+- `INTENSITY_BY_LEVEL`: novato→low, intermedio→medium, avanzado→high
+
+## 6. Feature Flags
+
+| Flag | Default | Controls |
+|------|---------|----------|
+| `FF_IDENTITY_CHAIN` | true | Identity chain for consistent faces across milestones |
+| `FF_QUALITY_GATES` | true | Output validation gates |
+| `FF_NB_PRO` | false | Nano Banana Pro (Gemini 3 Pro Image model) |
+| `FF_CINEMATIC_AUTOPLAY` | true | Animated reveal m0 through m12 |
+| `FF_COMPARE_SLIDER` | true | Before/after comparison slider |
+| `FF_LETTER_FROM_FUTURE` | true | m12 motivational letter modal |
+| `FF_PLAN_7_DIAS` | true | 7-day plan generation with AI |
+
+## Key Source Files
+
+| File | Location | Lines |
+|------|----------|-------|
+| `gemini.ts` | `src/lib/` | Profile analysis + visual anchor extraction |
+| `promptBuilder.ts` | `src/lib/` | Identity Lock prompt construction |
+| `nanobanana.ts` | `src/lib/` | Image generation with reference chaining |
+| `qualityGates.ts` | `src/lib/` | Output validation pipeline |
+| `planGenerator.ts` | `src/lib/plan/` | AI + template plan generation |
+| `planTemplates.ts` | `src/lib/plan/` | Exercise/nutrition/habit templates |
+| `planTypes.ts` | `src/lib/plan/` | TypeScript type definitions |

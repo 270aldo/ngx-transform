@@ -141,6 +141,12 @@ pnpm lint         # ESLint
 | `/api/genesis-voice` | POST | Voice agent responses via ElevenLabs (v3.0) |
 | `/api/remarketing` | POST/GET | Remarketing leads (POST: register, GET: admin lookup) |
 | `/api/generate-plan` | GET/POST | PDF plan generation with rate limiting |
+| `/api/csp-report` | POST | CSP violation reports |
+| `/api/sessions/[shareId]/private` | GET | Authenticated session data (full PII) |
+| `/api/sessions/[shareId]/share-settings` | POST | Update share scope (shareOriginal, shareInsights, shareProfile) |
+| `/api/sessions/me` | GET | List sessions for authenticated user |
+| `/api/cron/cleanup` | POST | Cleanup expired sessions/orphaned assets |
+| `/api/health` | GET | Uptime health check |
 
 ### Type Definitions
 
@@ -328,6 +334,9 @@ NO: CGI, cartoon, plastic skin, extra limbs, face drift, multiple subjects
 | `FF_NB_PRO` | false | Enable Nano Banana Pro (Gemini 3 Pro Image) |
 | `FF_IDENTITY_CHAIN` | true | Enable identity chain for consistent faces |
 | `FF_QUALITY_GATES` | true | Enable output validation gates |
+| `FF_CINEMATIC_AUTOPLAY` | true | Auto-play cinematic reveal on results |
+| `FF_COMPARE_SLIDER` | true | Enable before/after comparison slider |
+| `FF_LETTER_FROM_FUTURE` | true | Enable m12 motivational letter modal |
 
 ### Page Routes
 
@@ -339,6 +348,15 @@ NO: CGI, cartoon, plastic skin, extra limbs, face drift, multiple subjects
 | `/s/[shareId]/demo` | Genesis Experience demo (agent orchestration + chat) ⭐ v3.0 |
 | `/s/[shareId]/plan` | Plan preview (Day 1 free, Days 2-7 locked) ⭐ v3.0 |
 | `/plan/[shareId]` | Legacy: 7-day personalized plan viewer |
+| `/auth` | Firebase auth callback |
+| `/dashboard` | User dashboard (session history) |
+| `/dashboard/[shareId]` | Individual session management |
+| `/account` | Account settings |
+| `/loading/[shareId]` | Loading experience with progress animation |
+| `/demo/[shareId]` | Legacy demo route |
+| `/j` | Short link redirect |
+| `/m` | Marketing redirect |
+| `/email/preview` | Email template preview (dev only) |
 
 ## Environment Variables
 
@@ -379,7 +397,7 @@ NEXT_PUBLIC_BOOKING_URL=         # CTA link
 
 **CSS Variables**: Defined in `globals.css`, exposed via `--primary`, `--accent`, `--ngx-electric-violet`
 
-**Fonts**: Neue Haas Grotesk (body), United Sans (display) - fallback to Inter via next/font
+**Fonts**: Space Grotesk (primary, via next/font), Neue Haas Grotesk Text Pro (self-hosted fallback), United Sans (display headings)
 
 **Components**: shadcn/ui in `src/components/ui/` and `src/components/shadcn/ui/`
 
@@ -435,6 +453,30 @@ Implemented in `src/middleware.ts`:
 | `X-XSS-Protection` | `1; mode=block` |
 | `Referrer-Policy` | `origin-when-cross-origin` |
 | `Permissions-Policy` | `camera=(), microphone=(), geolocation=()` |
+
+### Share Scope System
+
+Sessions support granular share scopes:
+- `shareOriginal` — allow sharing of original uploaded photo
+- `shareInsights` — allow sharing of AI analysis insights
+- `shareProfile` — allow sharing of profile data
+
+Managed via `POST /api/sessions/[shareId]/share-settings`. Public `GET /api/sessions/[shareId]` strips PII to allowlisted fields only.
+
+### Authentication & Authorization
+
+- `requireAuth()` mandatory on `/api/analyze` and `/api/generate-images`
+- `acquireJobLock()` for atomic job concurrency (prevents duplicate image generation)
+- Delete token validation via `X-Delete-Token` header or `?token=` query param
+
+### Telemetry Events
+
+| Event | Trigger |
+|-------|---------|
+| `rateLimitBlocked` | Request exceeds Upstash rate limit |
+| `authFailed` | Missing/invalid auth on protected endpoint |
+| `spendLimitBlocked` | AI spend limit exceeded |
+| `jobLockDenied` | Concurrent job lock acquisition failed |
 
 ### Delete Token Flow
 

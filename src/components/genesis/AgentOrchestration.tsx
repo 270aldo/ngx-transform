@@ -1,7 +1,8 @@
 'use client';
 
 /**
- * AgentOrchestration - Grid de 13 agentes con animación de análisis
+ * AgentOrchestration - GENESIS central con 4 capacidades
+ * v11.0: GENESIS es la única entidad visible, los módulos son internos
  * Consume SSE desde /api/genesis-demo
  */
 
@@ -10,37 +11,49 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Brain,
   Flame,
-  Move,
-  Heart,
-  Activity,
   Leaf,
-  PieChart,
-  Zap,
+  Activity,
   Sparkles,
-  Sun,
-  BarChart2,
-  Moon,
-  BookOpen,
   Check,
   Loader2,
+  Timer,
   type LucideIcon,
 } from 'lucide-react';
 import type { AgentType, AgentStatus, AgentState } from '@/types/genesis';
 import { AGENT_META, ORCHESTRATION_PHASES } from '@/lib/genesis-demo/agents';
 import { ProgressBar } from '@/components/widgets/ProgressBar';
 
-const ICON_MAP: Record<string, LucideIcon> = {
-  Brain, Flame, Move, Heart, Activity, Leaf, PieChart,
-  Zap, Sparkles, Sun, BarChart2, Moon, BookOpen,
-};
-
-// All agents in grid order
-const GRID_AGENTS: (AgentType | null)[] = [
-  'GENESIS', 'STELLA', 'LOGOS', 'BLAZE',
-  'TEMPO', 'ATLAS', 'SAGE', 'MACRO',
-  'METABOL', 'WAVE', 'SPARK', 'NOVA',
-  'LUNA', null, null, null,
-];
+// v11.0: 4 capacidades de GENESIS (mapean a módulos internos)
+const GENESIS_CAPABILITIES = [
+  {
+    key: 'entrenamiento',
+    label: 'Entrenamiento',
+    icon: Flame,
+    color: '#fb923c',
+    legacyAgents: ['BLAZE', 'ATLAS', 'TEMPO'], // módulos internos
+  },
+  {
+    key: 'nutricion',
+    label: 'Nutrición',
+    icon: Leaf,
+    color: '#34d399',
+    legacyAgents: ['SAGE', 'MACRO', 'METABOL'],
+  },
+  {
+    key: 'recuperacion',
+    label: 'Recuperación',
+    icon: Timer,
+    color: '#60a5fa',
+    legacyAgents: ['WAVE', 'NOVA', 'LUNA'],
+  },
+  {
+    key: 'habitos',
+    label: 'Hábitos',
+    icon: Sparkles,
+    color: '#a78bfa',
+    legacyAgents: ['SPARK', 'STELLA', 'LOGOS'],
+  },
+] as const;
 
 interface AgentOrchestrationProps {
   shareId: string;
@@ -54,10 +67,19 @@ interface FeedMessage {
 }
 
 export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationProps) {
+  // v11.0: Track capability states instead of individual agents
+  const [capabilityStates, setCapabilityStates] = useState<Record<string, AgentStatus>>({
+    entrenamiento: 'pending',
+    nutricion: 'pending',
+    recuperacion: 'pending',
+    habitos: 'pending',
+  });
+
+  // Legacy agent states for SSE compatibility
   const [agentStates, setAgentStates] = useState<Record<AgentType, AgentStatus>>(() => {
     const initial: Record<string, AgentStatus> = {};
-    GRID_AGENTS.forEach((agent) => {
-      if (agent) initial[agent] = 'pending';
+    ['GENESIS', 'BLAZE', 'ATLAS', 'TEMPO', 'SAGE', 'MACRO', 'METABOL', 'WAVE', 'NOVA', 'LUNA', 'SPARK', 'STELLA', 'LOGOS'].forEach((agent) => {
+      initial[agent] = 'pending';
     });
     return initial as Record<AgentType, AgentStatus>;
   });
@@ -68,12 +90,32 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
   const [progress, setProgress] = useState<number>(0);
   const [isComplete, setIsComplete] = useState(false);
 
-  // Calculate progress based on completed agents
+  // v11.0: Calculate progress based on capabilities (4 total)
   const calculateProgress = useCallback((states: Record<AgentType, AgentStatus>) => {
-    const totalAgents = 13;
-    const completedAgents = Object.values(states).filter((s) => s === 'complete').length;
-    return Math.round((completedAgents / totalAgents) * 100);
+    // Map legacy agents to capabilities and calculate
+    let completedCapabilities = 0;
+    GENESIS_CAPABILITIES.forEach((cap) => {
+      const allComplete = cap.legacyAgents.every((agent) => states[agent] === 'complete');
+      if (allComplete) completedCapabilities++;
+    });
+    return Math.round((completedCapabilities / 4) * 100);
   }, []);
+
+  // Update capability states when agent states change
+  useEffect(() => {
+    const newCapStates: Record<string, AgentStatus> = {};
+    GENESIS_CAPABILITIES.forEach((cap) => {
+      const statuses = cap.legacyAgents.map((agent) => agentStates[agent]);
+      if (statuses.every((s) => s === 'complete')) {
+        newCapStates[cap.key] = 'complete';
+      } else if (statuses.some((s) => s === 'analyzing')) {
+        newCapStates[cap.key] = 'analyzing';
+      } else {
+        newCapStates[cap.key] = 'pending';
+      }
+    });
+    setCapabilityStates(newCapStates);
+  }, [agentStates]);
 
   const [hasError, setHasError] = useState(false);
   const completionTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -169,115 +211,131 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
           />
         </motion.div>
 
-        {/* Agent Grid */}
+        {/* v11.0: GENESIS Central + 4 Capacidades */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.3 }}
-          className="grid grid-cols-4 gap-2 mb-6"
+          className="flex flex-col items-center mb-6"
         >
-          {GRID_AGENTS.map((agent, index) => {
-            if (!agent) {
-              return <div key={`empty-${index}`} className="aspect-square" />;
-            }
-
-            const meta = AGENT_META[agent];
-            const status = agentStates[agent];
-            const IconComponent = ICON_MAP[meta.icon] || Brain;
-
-            return (
+          {/* GENESIS Nucleus */}
+          <motion.div
+            className="relative w-24 h-24 mb-6"
+            animate={{
+              boxShadow: isComplete
+                ? '0 0 40px rgba(109, 0, 255, 0.5)'
+                : '0 0 20px rgba(109, 0, 255, 0.3)'
+            }}
+            style={{
+              borderRadius: '50%',
+              background: 'radial-gradient(circle, #6D00FF 0%, #4B0082 100%)',
+              border: '2px solid rgba(109, 0, 255, 0.6)',
+            }}
+          >
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Brain size={32} className="text-white" />
+            </div>
+            {!isComplete && (
               <motion.div
-                key={agent}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.1 * index }}
-                className="aspect-square rounded-xl p-2 flex flex-col items-center justify-center relative overflow-hidden"
+                className="absolute inset-0 rounded-full"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
                 style={{
-                  backgroundColor:
-                    status === 'complete'
-                      ? `${meta.color}20`
-                      : status === 'analyzing'
-                      ? `${meta.color}10`
-                      : 'rgba(255,255,255,0.03)',
-                  border: `1px solid ${
-                    status === 'complete'
-                      ? `${meta.color}40`
-                      : status === 'analyzing'
-                      ? `${meta.color}30`
-                      : 'rgba(255,255,255,0.05)'
-                  }`,
+                  border: '2px dashed rgba(255,255,255,0.2)',
                 }}
-              >
-                {/* Status indicator */}
-                <div className="mb-1">
-                  {status === 'complete' ? (
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      className="w-5 h-5 rounded-full flex items-center justify-center"
-                      style={{ backgroundColor: meta.color }}
-                    >
-                      <Check size={12} className="text-white" />
-                    </motion.div>
-                  ) : status === 'analyzing' ? (
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                    >
-                      <Loader2 size={16} style={{ color: meta.color }} />
-                    </motion.div>
-                  ) : (
-                    <div
-                      className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
-                    />
-                  )}
-                </div>
+              />
+            )}
+          </motion.div>
 
-                {/* Agent icon */}
-                <IconComponent
-                  size={14}
-                  style={{
-                    color:
-                      status === 'pending'
-                        ? 'rgba(255,255,255,0.3)'
-                        : meta.color,
-                  }}
-                />
+          {/* 4 Capability Nodes */}
+          <div className="grid grid-cols-2 gap-4 w-full max-w-xs">
+            {GENESIS_CAPABILITIES.map((cap, index) => {
+              const status = capabilityStates[cap.key];
+              const IconComponent = cap.icon;
 
-                {/* Agent name */}
-                <span
-                  className="text-[8px] font-bold uppercase mt-1 text-center"
+              return (
+                <motion.div
+                  key={cap.key}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 + index * 0.1 }}
+                  className="rounded-xl p-4 flex flex-col items-center justify-center relative overflow-hidden"
                   style={{
-                    color:
-                      status === 'pending'
-                        ? 'rgba(255,255,255,0.3)'
-                        : meta.color,
+                    backgroundColor:
+                      status === 'complete'
+                        ? `${cap.color}20`
+                        : status === 'analyzing'
+                        ? `${cap.color}10`
+                        : 'rgba(255,255,255,0.03)',
+                    border: `1px solid ${
+                      status === 'complete'
+                        ? `${cap.color}40`
+                        : status === 'analyzing'
+                        ? `${cap.color}30`
+                        : 'rgba(255,255,255,0.05)'
+                    }`,
                   }}
                 >
-                  {meta.name}
-                </span>
+                  {/* Status indicator */}
+                  <div className="mb-2">
+                    {status === 'complete' ? (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="w-6 h-6 rounded-full flex items-center justify-center"
+                        style={{ backgroundColor: cap.color }}
+                      >
+                        <Check size={14} className="text-white" />
+                      </motion.div>
+                    ) : status === 'analyzing' ? (
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                      >
+                        <Loader2 size={20} style={{ color: cap.color }} />
+                      </motion.div>
+                    ) : (
+                      <IconComponent
+                        size={20}
+                        style={{ color: 'rgba(255,255,255,0.3)' }}
+                      />
+                    )}
+                  </div>
 
-                {/* Pulse animation for analyzing */}
-                {status === 'analyzing' && (
-                  <motion.div
-                    className="absolute inset-0 rounded-xl"
-                    animate={{
-                      boxShadow: [
-                        `0 0 0 0 ${meta.color}00`,
-                        `0 0 0 4px ${meta.color}30`,
-                        `0 0 0 0 ${meta.color}00`,
-                      ],
+                  {/* Capability label */}
+                  <span
+                    className="text-xs font-semibold text-center"
+                    style={{
+                      color:
+                        status === 'pending'
+                          ? 'rgba(255,255,255,0.4)'
+                          : cap.color,
                     }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                  />
-                )}
-              </motion.div>
-            );
-          })}
+                  >
+                    {cap.label}
+                  </span>
+
+                  {/* Pulse animation for analyzing */}
+                  {status === 'analyzing' && (
+                    <motion.div
+                      className="absolute inset-0 rounded-xl"
+                      animate={{
+                        boxShadow: [
+                          `0 0 0 0 ${cap.color}00`,
+                          `0 0 0 4px ${cap.color}30`,
+                          `0 0 0 0 ${cap.color}00`,
+                        ],
+                      }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                    />
+                  )}
+                </motion.div>
+              );
+            })}
+          </div>
         </motion.div>
 
-        {/* Feed Messages */}
+        {/* Feed Messages - v11.0: GENESIS habla, módulos son internos */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -289,16 +347,33 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
           }}
         >
           <div className="flex items-center gap-2 mb-3">
-            <Activity size={12} className="text-white/50" />
+            <Activity size={12} className="text-[#6D00FF]" />
             <span className="text-[10px] font-bold uppercase tracking-widest text-white/50">
-              Feed en tiempo real
+              GENESIS en tiempo real
             </span>
           </div>
 
           <div className="space-y-2 min-h-[100px]">
             <AnimatePresence mode="popLayout">
               {feedMessages.map((msg, index) => {
-                const meta = AGENT_META[msg.agent];
+                // v11.0: Map agent to capability label
+                const capabilityMap: Record<string, { label: string; color: string }> = {
+                  BLAZE: { label: 'Entrenamiento', color: '#fb923c' },
+                  ATLAS: { label: 'Entrenamiento', color: '#fb923c' },
+                  TEMPO: { label: 'Entrenamiento', color: '#fb923c' },
+                  SAGE: { label: 'Nutrición', color: '#34d399' },
+                  MACRO: { label: 'Nutrición', color: '#34d399' },
+                  METABOL: { label: 'Nutrición', color: '#34d399' },
+                  WAVE: { label: 'Recuperación', color: '#60a5fa' },
+                  NOVA: { label: 'Recuperación', color: '#60a5fa' },
+                  LUNA: { label: 'Recuperación', color: '#60a5fa' },
+                  SPARK: { label: 'Hábitos', color: '#a78bfa' },
+                  STELLA: { label: 'Hábitos', color: '#a78bfa' },
+                  LOGOS: { label: 'Hábitos', color: '#a78bfa' },
+                  GENESIS: { label: 'GENESIS', color: '#6D00FF' },
+                };
+                const cap = capabilityMap[msg.agent] || { label: 'GENESIS', color: '#6D00FF' };
+
                 return (
                   <motion.div
                     key={msg.timestamp}
@@ -309,9 +384,9 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
                   >
                     <span
                       className="font-bold mr-2"
-                      style={{ color: meta.color }}
+                      style={{ color: cap.color }}
                     >
-                      [{meta.name}]
+                      GENESIS • {cap.label}:
                     </span>
                     <span className="text-white/70">{msg.message}</span>
                   </motion.div>
@@ -340,14 +415,16 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
                 <span className="text-sm font-bold">Conexión perdida</span>
               </div>
               <p className="text-[10px] text-white/50 mt-1 mb-3">
-                Se interrumpió la conexión con los agentes.
+                Se interrumpió la conexión con GENESIS.
               </p>
               <button
                 onClick={() => {
                   setHasError(false);
                   setAgentStates(() => {
                     const initial: Record<string, AgentStatus> = {};
-                    GRID_AGENTS.forEach((agent) => { if (agent) initial[agent] = 'pending'; });
+                    ['GENESIS', 'BLAZE', 'ATLAS', 'TEMPO', 'SAGE', 'MACRO', 'METABOL', 'WAVE', 'NOVA', 'LUNA', 'SPARK', 'STELLA', 'LOGOS'].forEach((agent) => {
+                      initial[agent] = 'pending';
+                    });
                     return initial as Record<AgentType, AgentStatus>;
                   });
                   setProgress(0);
@@ -362,7 +439,7 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
           )}
         </AnimatePresence>
 
-        {/* Completion indicator */}
+        {/* Completion indicator - v11.0: GENESIS es la única entidad */}
         <AnimatePresence>
           {isComplete && (
             <motion.div
@@ -375,7 +452,7 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
                 <span className="text-sm font-bold">Análisis completado</span>
               </div>
               <p className="text-[10px] text-white/50 mt-1">
-                Preparando tu chat con los agentes...
+                Preparando tu conversación con GENESIS...
               </p>
             </motion.div>
           )}

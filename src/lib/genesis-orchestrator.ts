@@ -10,21 +10,22 @@ import { DemoUserResponses } from "@/types/demo";
 // GENESIS Messages - Centralized message templates
 // ============================================================================
 
+// v11.0: GENESIS habla en primera persona - NO menciona agentes internos
 export const GENESIS_MESSAGES = {
   // Intro messages
   greeting: "Hola {name}. Soy GENESIS, tu coach de inteligencia artificial.",
-  analyzing: "Estoy analizando tu perfil y consultando con mis agentes especializados...",
+  analyzing: "Estoy analizando tu perfil para diseñar tu plan personalizado...",
 
-  // Agent coordination
-  consulting_agents: "Déjame consultar con mis agentes para diseñar tu plan óptimo.",
-  blaze_consulting: "BLAZE está analizando la mejor estructura de entrenamiento para ti...",
-  sage_consulting: "SAGE está calculando el volumen y progresión ideal...",
-  tempo_consulting: "TEMPO está calibrando los tiempos de descanso y ejecución...",
+  // v11.0: GENESIS habla en primera persona sobre sus capacidades
+  consulting_agents: "Déjame analizar todos los aspectos de tu transformación.",
+  blaze_consulting: "Estoy analizando la mejor estructura de entrenamiento para ti...",
+  sage_consulting: "Estoy calculando el volumen y progresión ideal...",
+  tempo_consulting: "Estoy calibrando los tiempos de descanso y ejecución...",
 
-  // Agent reports (GENESIS reports what agents said)
-  blaze_report: "BLAZE me reporta: \"{message}\"",
-  sage_report: "SAGE me indica: \"{message}\"",
-  tempo_report: "TEMPO confirma: \"{message}\"",
+  // v11.0: GENESIS reporta en primera persona (módulos son internos)
+  blaze_report: "He determinado tu estructura de entrenamiento: {message}",
+  sage_report: "He calculado tu progresión óptima: {message}",
+  tempo_report: "He calibrado tus tiempos de recuperación: {message}",
 
   // Plan ready
   plan_ready: "Tu plan de la Semana 1 está listo. He diseñado {days} días de entrenamiento optimizados para {goal}.",
@@ -47,27 +48,28 @@ export interface AgentConfig {
   specialty: string;
 }
 
+// v11.0: Módulos internos de GENESIS (no expuestos al usuario)
 export const AGENTS: Record<string, AgentConfig> = {
   blaze: {
     id: "blaze",
-    name: "BLAZE",
-    role: "Arquitecto de Estructura",
+    name: "Entrenamiento", // v11.0: Capacidad, no agente
+    role: "Módulo de Estructura",
     color: "orange",
-    specialty: "Diseña la estructura óptima de entrenamiento (splits, frecuencia, ejercicios)",
+    specialty: "Estructura óptima de entrenamiento (splits, frecuencia, ejercicios)",
   },
   sage: {
     id: "sage",
-    name: "SAGE",
-    role: "Estratega de Progresión",
+    name: "Nutrición", // v11.0: Capacidad, no agente
+    role: "Módulo de Progresión",
     color: "emerald",
-    specialty: "Calcula volumen, intensidad y progresión para resultados óptimos",
+    specialty: "Volumen, intensidad y progresión para resultados óptimos",
   },
   tempo: {
     id: "tempo",
-    name: "TEMPO",
-    role: "Calibrador de Tiempos",
+    name: "Recuperación", // v11.0: Capacidad, no agente
+    role: "Módulo de Tiempos",
     color: "blue",
-    specialty: "Optimiza tiempos de descanso, tempo de ejecución y recuperación",
+    specialty: "Tiempos de descanso, tempo de ejecución y recuperación",
   },
 };
 
@@ -286,6 +288,7 @@ export function* generateChatSequence(
 // Gemini Prompt Builder for Enhanced Chat
 // ============================================================================
 
+// v11.0: GENESIS es la ÚNICA voz - no menciona agentes/módulos
 export function buildGenesisSystemPrompt(): string {
   return `Eres GENESIS, el coach de inteligencia artificial de NGX. Tu personalidad es:
 
@@ -294,19 +297,21 @@ export function buildGenesisSystemPrompt(): string {
 - Científico en tu enfoque
 - Empático pero exigente
 
-REGLAS IMPORTANTES:
-1. NUNCA permitas que los agentes (BLAZE, SAGE, TEMPO) hablen directamente al usuario
-2. Tú REPORTAS lo que los agentes dicen: "BLAZE me indica que..."
-3. Usa español latinoamericano neutro
-4. Sé conciso - máximo 2-3 oraciones por mensaje
-5. Enfócate en acción, no en teoría
+REGLAS v11.0 - MUY IMPORTANTES:
+1. Tú eres la ÚNICA voz que el usuario escucha
+2. NUNCA menciones "agentes", "módulos" o nombres como BLAZE, SAGE, TEMPO
+3. Habla siempre en PRIMERA PERSONA: "He analizado...", "Estoy calculando...", "Determino que..."
+4. Usa español latinoamericano neutro
+5. Sé conciso - máximo 2-3 oraciones por mensaje
+6. Enfócate en acción, no en teoría
 
-Los agentes que coordinas:
-- BLAZE: Estructura de entrenamiento (splits, ejercicios, frecuencia)
-- SAGE: Volumen, intensidad y progresión
-- TEMPO: Tiempos de descanso y ejecución
+Tus 4 capacidades (internas, no las menciones):
+- Entrenamiento de Precisión
+- Estrategia Nutricional
+- Biohacking y Recuperación
+- Arquitectura de Hábitos
 
-Tu objetivo es guiar al usuario a crear y ejecutar su plan de entrenamiento.`;
+Tu objetivo es guiar al usuario a crear y ejecutar su plan de transformación.`;
 }
 
 export function buildChatPrompt(

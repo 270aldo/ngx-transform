@@ -73,45 +73,45 @@ export default function D7Conversion({
                 </Text>
               </Section>
 
-              {/* The offer */}
+              {/* The offer - v11.0: Capacidades de GENESIS */}
               <Text className="text-white font-semibold mb-4">
-                El sistema NGX incluye:
+                GENESIS te ofrece:
               </Text>
 
               <Section className="space-y-3">
                 {[
                   {
                     icon: "🔥",
-                    title: "BLAZE",
-                    desc: "Tu coach de entrenamiento personal",
+                    title: "Entrenamiento de Precisión",
+                    desc: "Optimización de carga y volumen en tiempo real",
                   },
                   {
-                    icon: "🗺️",
-                    title: "ATLAS",
-                    desc: "Estratega de progresión y métricas",
+                    icon: "🥗",
+                    title: "Estrategia Nutricional",
+                    desc: "Timing de nutrientes para salud muscular",
                   },
                   {
                     icon: "⚡",
-                    title: "SPARK",
-                    desc: "Coach de bienestar y recuperación",
+                    title: "Biohacking y Recuperación",
+                    desc: "Monitoreo de HRV y ciclos de sueño",
                   },
                   {
                     icon: "🧠",
-                    title: "NEXUS",
-                    desc: "Director de tu transformación completa",
+                    title: "Arquitectura de Hábitos",
+                    desc: "Sistemas de consistencia 24/7",
                   },
-                ].map((agent, i) => (
+                ].map((capability, i) => (
                   <Section
                     key={i}
                     className="flex items-center gap-3 p-3 bg-neutral-800/50 rounded-lg"
                   >
-                    <Text className="text-2xl m-0">{agent.icon}</Text>
+                    <Text className="text-2xl m-0">{capability.icon}</Text>
                     <div>
                       <Text className="text-white font-semibold text-sm m-0">
-                        {agent.title}
+                        {capability.title}
                       </Text>
                       <Text className="text-neutral-500 text-xs m-0">
-                        {agent.desc}
+                        {capability.desc}
                       </Text>
                     </div>
                   </Section>
@@ -119,8 +119,8 @@ export default function D7Conversion({
               </Section>
 
               <Text className="text-neutral-400 text-sm mt-4">
-                + 9 agentes más especializados en nutrición, mindset, hábitos y
-                más.
+                Un sistema unificado de Performance & Longevity para tu
+                transformación completa.
               </Text>
 
               {/* CTA Button */}

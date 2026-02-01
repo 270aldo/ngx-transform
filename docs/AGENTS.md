@@ -1,65 +1,187 @@
-# AGENTS — NGX Transform
+# NGX Transform — GENESIS Architecture (v11.0)
 
-Guía rápida para agentes. Última actualización: 2025-12-25.
+GENESIS is the sole AI entity visible to the user. Internally, 13 specialized modules power 4 capabilities. Users never see module names — only "GENESIS" and its capabilities.
 
-## Qué cambió / estado
-- gcloud/gsutil instalados y bucket `gs://ngx-transformation.firebasestorage.app` verificado.
-- `.env.local` ya incluye bucket, client email, GEMINI_API_KEY y modelo de imagen `gemini-2.5-flash-image-preview`.
-- Integrado "NanoBanana" en `app/src/lib/nanobanana.ts` usando la API oficial de Gemini v1beta para image-to-image.
-- Build de Next.js pasa; corregidos warnings de `use client` y refs duplicados en wizard/demo.
-- Flujo end-to-end listo para pruebas con imagen real (<8MB), pero requiere cuotas/modelo preview habilitado.
+## v11.0 Doctrine
 
-## Estructura del repo
-- `app/` proyecto Next.js (App Router)
-- `app/src/app` rutas, páginas y API (`.../api/*/route.ts`)
-- `app/src/components` UI (OverlayImage, Minimap, Tabs, ui/*)
-- `app/src/lib` servicios/helpers (Firebase, Gemini, Storage)
-- `app/src/emails` templates React Email
-- `app/public` assets; `app/next.config.ts` imágenes remotas; `app/eslint.config.mjs`, `app/tsconfig.json`
+**GENESIS es la UNICA entidad visible al usuario.**
 
-## Stack y servicios
-- Next.js 16.0.7 + React 19 + Tailwind v4.
-- IA texto: Gemini 2.5 Flash (`GEMINI_MODEL` opcional).
-- IA imágenes: Gemini 2.5 Flash Image preview (`gemini-2.5-flash-image-preview`, alias NanoBanana).
-- Datos/archivos: Firebase (Firestore + Storage bucket `ngx-transformation` / `firebasestorage.app`).
-- Emails: Resend.
+- No existen "agentes" desde la perspectiva del usuario
+- Los 13 modulos son internos, agrupados en 4 capacidades
+- Toda comunicacion es en primera persona: "Estoy analizando..." (no "BLAZE reporta...")
+- El usuario interactua exclusivamente con GENESIS
 
-## Comandos (ejecutar desde `app/`)
-- `pnpm dev` (o `npm run dev`) — dev server.
-- `pnpm build` — build prod.
-- `pnpm start -p 3003` — servidor prod local.
-- `pnpm lint` — ESLint.
+## The 4 Capabilities
 
-## Variables de entorno mínimas (`app/.env.local`)
-- Cliente Firebase: `NEXT_PUBLIC_FIREBASE_*` (API key, auth domain, project id, storage bucket, messaging sender, app id).
-- Admin Firebase: `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY` (escapar saltos de línea con `\n`).
-- Gemini: `GEMINI_API_KEY`, opcional `GEMINI_MODEL=gemini-2.5-flash`, `GEMINI_IMAGE_MODEL=gemini-2.5-flash-image-preview`.
-- Email: `RESEND_API_KEY` (opcional), `NEXT_PUBLIC_BASE_URL`.
+| Capability | Icon | Color | Internal Modules |
+|------------|------|-------|------------------|
+| Entrenamiento | Flame | `#fb923c` | BLAZE, ATLAS, TEMPO |
+| Nutricion | Leaf | `#34d399` | SAGE, MACRO, METABOL |
+| Recuperacion | Timer | `#60a5fa` | WAVE, NOVA, LUNA |
+| Habitos | Sparkles | `#a78bfa` | SPARK, STELLA, LOGOS |
 
-## Endpoints y rutas clave
-- `POST /api/analyze` → insights Gemini; usa `src/lib/gemini.ts`.
-- `POST /api/generate-images` → transforma imagen (m4/m8/m12) con NanoBanana; `src/lib/nanobanana.ts`.
-- `POST /api/email` → envía resultados; requiere `RESEND_API_KEY`.
-- Páginas: `/` landing, `/wizard` formulario, `/demo/result` demo full UI (sin APIs), `/s/[shareId]` resultados compartidos, `/email/preview` template.
+**GENESIS core**: `#6D00FF` (Electric Violet) — Brain icon
 
-## Flujo funcional
-1) Usuario sube foto + datos → Storage/Firestore.
-2) `/api/analyze` genera timeline e insights con Gemini 2.5 Flash.
-3) `/api/generate-images` produce m4/m8/m12 (image-to-image) y guarda en Storage.
-4) UI muestra OverlayImage/Minimap/Tabs; opcionalmente `/api/email` envía enlace compartible.
+## Internal Modules (Not User-Facing)
 
-## Diseño NGX
-- Colores: Electric Violet `#6D00FF`, Deep Purple `#5B21B6`, fondo `#0A0A0A`, texto `#E5E5E5`.
-- Fuentes: Josefin Sans (display) + Inter (body) cargadas en `app/src/app/layout.tsx` como `--font-ngx-sans` y `--font-ngx-alt`.
-- Estilos globales en `app/src/app/globals.css`; componentes clave (OverlayImage, Minimap, Tabs) ya usan la paleta.
+Configured in `src/lib/genesis-demo/agents.ts`. These exist for orchestration logic only:
 
-## Pendientes inmediatos
-- Manejo robusto de errores/cargas en UI, toasts y polling de resultados.
-- Moderación de imágenes y mejores prompts/config en NanoBanana.
-- Ajustar `/api/generate-images` para timeouts/retries.
-- Mejorar template de email y usar `next/image` en wizard preview.
+| Module | Color | Domain | Capability |
+|--------|-------|--------|------------|
+| BLAZE | `#FF4500` | Strength training | Entrenamiento |
+| ATLAS | `#F59E0B` | Mobility & injury prevention | Entrenamiento |
+| TEMPO | `#8B5CF6` | Cardio & HIIT | Entrenamiento |
+| SAGE | `#10B981` | Nutrition strategy | Nutricion |
+| MACRO | `#FF6347` | Macronutrient calculation | Nutricion |
+| METABOL | `#14B8A6` | Metabolic analysis | Nutricion |
+| WAVE | `#0EA5E9` | Recovery & HRV | Recuperacion |
+| NOVA | `#D946EF` | Supplement advisory | Recuperacion |
+| LUNA | `#6366F1` | Hormonal analysis | Recuperacion |
+| SPARK | `#FBBF24` | Habits & mindset | Habitos |
+| STELLA | `#A855F7` | Biometric analysis | Habitos |
+| LOGOS | `#6D00FF` | Education & mentoring | Habitos |
 
-## Tips de seguridad
-- No subir secretos al repo; usa `app/.env.local` (ver `.env.example`).
-- Claves de Firebase admin deben escapar `\n`.
-- Hosts de imágenes remotas ya whitelisted en `next.config.ts` (Firebase Storage, GCS); añade otros si es necesario.
+## Types
+
+From `src/types/genesis.ts`:
+
+- `GenesisCapability`: `'entrenamiento' | 'nutricion' | 'recuperacion' | 'habitos'`
+- `AgentType`: Internal module identifiers (legacy, not user-facing)
+
+## Orchestration Phases
+
+SSE from `/api/genesis-demo` drives the animation. The UI shows **capability progress**, not individual module names:
+
+```
+Phase 1: "Analizando tu perfil" (~6s)
+    Modules: GENESIS, STELLA, LOGOS
+    User sees: GENESIS analyzing
+
+Phase 2: "Disenando tu transformacion" (~10s)
+    Modules: BLAZE, TEMPO, ATLAS, SAGE, MACRO, METABOL
+    User sees: Entrenamiento ████ Nutricion ████
+
+Phase 3: "Personalizando experiencia" (~6s)
+    Modules: WAVE, SPARK, NOVA, LUNA
+    User sees: Recuperacion ████ Habitos ████
+
+Total: ~22 seconds
+```
+
+Each capability transitions: `pending` (gray) -> `analyzing` (pulse) -> `complete` (check).
+
+## UI Components
+
+### `AgentOrchestration` (v11.0)
+
+Located in `src/components/genesis/AgentOrchestration.tsx`:
+
+- GENESIS central avatar with 4 capability cards
+- Capability states derived from internal module progress
+- Phase title and progress bar (0-100%)
+- Real-time feed shows "GENESIS * Entrenamiento" (not "BLAZE reporta:")
+- SSE compatibility layer maps legacy module events to capability states
+
+### `AgentStatusBar` (v11.0)
+
+Located in `src/components/demo/AgentStatusBar.tsx`:
+
+- Shows "GENESIS: Optimizando entrenamiento" (not "BLAZE: analyzing")
+- 3 capability indicators (Entrenamiento, Nutricion, Recuperacion)
+- Compact inline variant available
+
+### `GenesisChat` (v11.0)
+
+Located in `src/components/demo/GenesisChat.tsx`:
+
+- All messages attributed to GENESIS
+- Agent reports display as "GENESIS * Entrenamiento" capability labels
+- Legacy module keys used internally for SSE parsing only
+
+### `D7Conversion` (v11.0)
+
+Located in `src/emails/sequence/D7Conversion.tsx`:
+
+- Email lists 4 capabilities, not 13 agent names
+- "Entrenamiento de Precision, Estrategia Nutricional, Biohacking y Recuperacion, Arquitectura de Habitos"
+
+### `PlanPreview`
+
+7-day plan viewer with progressive unlock (Day 1 full, Days 2-7 locked).
+
+### `GenesisDemo`
+
+Main flow wrapper: AgentOrchestration -> DemoChat -> PlanPreview -> Conversion CTA
+
+## API Endpoints
+
+### `GET /api/genesis-demo` — SSE Orchestration
+
+| Event | Data | Purpose |
+|-------|------|---------|
+| `connected` | `{ shareId, personalized }` | Initial connection |
+| `phase` | `{ phase, title }` | Phase start |
+| `agent` | `{ agent, status, message }` | Module status (internal) |
+| `complete` | `{ message, redirect: "chat" }` | Orchestration finished |
+| `error` | `{ message }` | Stream error |
+
+### `POST /api/genesis-chat` — Chat with A2UI Widgets
+
+5 interactions per session. SSE events: `genesis_message`, `agent_status`, `agent_report`, `plan_ready`, `done`, `error`.
+
+### `POST /api/genesis-voice` — Voice
+
+ElevenLabs TTS. Caches 1 hour per shareId. Falls back to text-only.
+
+## A2UI Widget System
+
+Located in `src/components/widgets/`:
+
+**Base**: GlassCard, AgentBadge, ActionButton, ProgressBar
+**Feature**: WorkoutCard, MealPlan, InsightCard, ChecklistWidget
+**Orchestrator**: A2UIMediator
+
+## User Journey
+
+```
+Results (/s/[shareId])
+    -> CTA: "Ver como GENESIS crea tu plan"
+         |
+Genesis Demo (/s/[shareId]/demo)
+    |-- Phase 1: AgentOrchestration (GENESIS + 4 capabilities)
+    |-- Phase 2: DemoChat (5 interactions, GENESIS voice)
+    +-- Phase 3: Redirect to plan
+         |
+Plan Preview (/s/[shareId]/plan)
+    |-- Day 1: Full content (WorkoutCard + MealPlan + Checklist)
+    |-- Days 2-7: Blurred + locked
+    +-- ComparisonCTA ("Sin GENESIS vs Con GENESIS")
+         |
+Conversion
+    +-- "DESBLOQUEAR MI PLAN COMPLETO"
+```
+
+## Key Source Files
+
+| File | Location |
+|------|----------|
+| Module config | `src/lib/genesis-demo/agents.ts` |
+| Genesis types | `src/types/genesis.ts` |
+| SSE endpoint | `src/app/api/genesis-demo/route.ts` |
+| Chat endpoint | `src/app/api/genesis-chat/route.ts` |
+| Voice endpoint | `src/app/api/genesis-voice/route.ts` |
+| AgentOrchestration | `src/components/genesis/AgentOrchestration.tsx` |
+| AgentStatusBar | `src/components/demo/AgentStatusBar.tsx` |
+| GenesisChat | `src/components/demo/GenesisChat.tsx` |
+| DemoChat (legacy) | `src/components/genesis/DemoChat.tsx` |
+| PlanPreview | `src/components/genesis/PlanPreview.tsx` |
+| Orchestrator | `src/lib/genesis-orchestrator.ts` |
+| A2UI widgets | `src/components/widgets/` |
+
+## Remaining v11.0 Migration Notes
+
+These files still contain user-facing agent name references that may need a follow-up pass:
+
+- `src/lib/elevenlabs-voice.ts:113` — Voice text mentions BLAZE, SAGE, TEMPO
+- `src/components/AgentBridgeCTA.tsx` — Shows BLAZE/NEXUS names to users
+- `src/components/genesis/DemoChat.tsx` — Chat messages from individual agents

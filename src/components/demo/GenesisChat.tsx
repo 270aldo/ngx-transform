@@ -222,64 +222,34 @@ function MessageBubble({ message }: { message: ChatMessage }) {
     );
   }
 
+  // v11.0: GENESIS habla en primera persona, los "agentes" ahora son módulos
   if (isAgentReport) {
-    const agentConfig = {
-      blaze: { icon: Flame, color: "orange", label: "BLAZE" },
-      sage: { icon: Brain, color: "emerald", label: "SAGE" },
-      tempo: { icon: Timer, color: "blue", label: "TEMPO" },
+    const moduleConfig = {
+      blaze: { icon: Flame, color: "#fb923c", label: "Entrenamiento" },
+      sage: { icon: Brain, color: "#34d399", label: "Nutrición" },
+      tempo: { icon: Timer, color: "#60a5fa", label: "Recuperación" },
     }[message.agent || "blaze"];
 
-    const Icon = agentConfig.icon;
+    const Icon = moduleConfig.icon;
 
     return (
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
-        className={`bg-${agentConfig.color}-500/10 border border-${agentConfig.color}-500/20 rounded-xl p-4`}
-        style={{
-          backgroundColor: `var(--${agentConfig.color}-bg, rgba(251, 146, 60, 0.1))`,
-          borderColor: `var(--${agentConfig.color}-border, rgba(251, 146, 60, 0.2))`,
-        }}
+        className="bg-white/5 rounded-xl border border-white/10 p-4"
       >
         <div className="flex items-start gap-3">
           <div
-            className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0`}
-            style={{
-              backgroundColor:
-                message.agent === "blaze"
-                  ? "rgba(251, 146, 60, 0.2)"
-                  : message.agent === "sage"
-                  ? "rgba(52, 211, 153, 0.2)"
-                  : "rgba(96, 165, 250, 0.2)",
-            }}
+            className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+            style={{ backgroundColor: `${moduleConfig.color}20` }}
           >
-            <Icon
-              className="w-4 h-4"
-              style={{
-                color:
-                  message.agent === "blaze"
-                    ? "#fb923c"
-                    : message.agent === "sage"
-                    ? "#34d399"
-                    : "#60a5fa",
-              }}
-            />
+            <Icon className="w-4 h-4" style={{ color: moduleConfig.color }} />
           </div>
           <div>
-            <p
-              className="text-sm font-medium mb-1"
-              style={{
-                color:
-                  message.agent === "blaze"
-                    ? "#fb923c"
-                    : message.agent === "sage"
-                    ? "#34d399"
-                    : "#60a5fa",
-              }}
-            >
-              {agentConfig.label} reporta:
+            <p className="text-sm font-medium mb-1 text-[#B98CFF]">
+              GENESIS • {moduleConfig.label}
             </p>
-            <p className="text-neutral-300 text-sm">&quot;{message.content}&quot;</p>
+            <p className="text-neutral-300 text-sm">{message.content}</p>
           </div>
         </div>
       </motion.div>

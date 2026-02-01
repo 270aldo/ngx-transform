@@ -1,26 +1,38 @@
 /**
  * Genesis Demo Types
- * Tipos para el sistema de 13 agentes IA y widgets A2UI
+ * v11.0: GENESIS es la única entidad visible al usuario
+ * Los "agentes" son módulos internos agrupados en 4 capacidades
  */
 
 // ============================================
-// AGENTES
+// v11.0: CAPACIDADES DE GENESIS
+// ============================================
+
+export type GenesisCapability =
+  | 'entrenamiento'  // Entrenamiento de Precisión
+  | 'nutricion'      // Estrategia Nutricional
+  | 'recuperacion'   // Biohacking y Recuperación
+  | 'habitos';       // Arquitectura de Hábitos
+
+// ============================================
+// MÓDULOS INTERNOS (legacy: "agentes")
+// No expuestos al usuario en v11.0
 // ============================================
 
 export type AgentType =
-  | 'GENESIS'
-  | 'BLAZE'
-  | 'ATLAS'
-  | 'TEMPO'
-  | 'WAVE'
-  | 'SAGE'
-  | 'MACRO'
-  | 'METABOL'
-  | 'NOVA'
-  | 'SPARK'
-  | 'STELLA'
-  | 'LUNA'
-  | 'LOGOS';
+  | 'GENESIS'   // La única entidad visible
+  | 'BLAZE'     // → Entrenamiento
+  | 'ATLAS'     // → Entrenamiento
+  | 'TEMPO'     // → Entrenamiento
+  | 'WAVE'      // → Recuperación
+  | 'SAGE'      // → Nutrición
+  | 'MACRO'     // → Nutrición
+  | 'METABOL'   // → Nutrición
+  | 'NOVA'      // → Recuperación
+  | 'SPARK'     // → Hábitos
+  | 'STELLA'    // → Hábitos
+  | 'LUNA'      // → Recuperación
+  | 'LOGOS';    // → Hábitos
 
 export type AgentStatus = 'pending' | 'analyzing' | 'complete';
 
