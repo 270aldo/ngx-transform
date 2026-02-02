@@ -4,12 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Versión:** 3.0 (Genesis Experience)
+**Versión:** 11.0 (Genesis Doctrine)
 **Stack:** Next.js 16.0.7 + React 19 + TypeScript + Firebase + Tailwind CSS v4 + Upstash Redis
 
 NGX Transform is a **premium viral lead magnet** that creates realistic 12-month physical transformation projections. Users upload a photo, provide profile data, and receive AI-generated insights with visualized progress images at m0/m4/m8/m12 milestones, plus a personalized 7-day fitness plan.
 
-**v3.0 Genesis Experience** introduces an interactive demo of the **13 GENESIS AI Agents** that power NGX's main subscription app, converting users through an immersive orchestration experience.
+**v11.0 Genesis Doctrine**: GENESIS is the **sole AI entity visible to the user**. Internally, 13 specialized modules power 4 capabilities (Entrenamiento, Nutricion, Recuperacion, Habitos). Users never see module names — only "GENESIS" and its capabilities.
 
 ## Business Context
 
@@ -53,20 +53,20 @@ Results (/s/[shareId])
     ├── NeonRadar stats visualization
     └── CTA: "Ver cómo GENESIS crea tu plan"
     ↓
-Genesis Demo (/s/[shareId]/demo) ⭐ NEW v3.0
-    ├── AgentOrchestration (13 AI agents animation)
-    │   ├── Phase 1: GENESIS, STELLA, LOGOS (analyzing)
-    │   ├── Phase 2: BLAZE, TEMPO, ATLAS, SAGE, MACRO, METABOL (designing)
-    │   └── Phase 3: WAVE, SPARK, NOVA, LUNA (personalizing)
-    └── DemoChat (5 limited interactions with A2UI widgets)
+Genesis Demo (/s/[shareId]/demo) — v11.0
+    ├── AgentOrchestration (GENESIS central + 4 capability cards)
+    │   ├── Phase 1: Analyzing profile (internal: GENESIS, STELLA, LOGOS)
+    │   ├── Phase 2: Entrenamiento + Nutricion progress (internal: BLAZE, TEMPO, ATLAS, SAGE, MACRO, METABOL)
+    │   └── Phase 3: Recuperacion + Habitos progress (internal: WAVE, SPARK, NOVA, LUNA)
+    └── DemoChat (5 interactions, all from GENESIS with capability labels)
     ↓
 Plan Preview (/s/[shareId]/plan)
     ├── Day 1: Complete and functional (WorkoutCard, MealPlan, Checklist)
     ├── Days 2-7: Blurred + locked
-    └── ComparisonCTA ("Sin Agentes vs GENESIS")
+    └── ComparisonCTA ("Sin GENESIS vs Con GENESIS")
     ↓
 Conversion
-    └── CTA: "🚀 DESBLOQUEAR MI PLAN COMPLETO"
+    └── CTA: "DESBLOQUEAR MI PLAN COMPLETO"
 ```
 
 ## Development Commands
@@ -115,7 +115,7 @@ pnpm lint         # ESLint
 | `watermark.ts` | `src/lib/` | Image watermarking with Sharp |
 | `utils.ts` | `src/lib/` | General utility functions (cn, formatters) |
 | `rateLimit.ts` | `src/lib/` | Distributed rate limiting with Upstash Redis (v3.0) |
-| `genesis-demo/agents.ts` | `src/lib/` | 13 GENESIS agents config, colors, phases (v3.0) |
+| `genesis-demo/agents.ts` | `src/lib/` | Internal module config, capability mapping, orchestration phases |
 
 ### API Routes
 
@@ -221,19 +221,21 @@ The **Mental Logs** are fed to Gemini's "Elite Coach" prompt to personalize reco
 | `DramaticReveal` | `src/components/results/` | Countdown + slow morph reveal (m0→m4→m8→m12) |
 | `ShareToUnlockModal` | `src/components/viral/` | Modal for share-to-unlock premium content |
 | `SocialCounter` | `src/components/` | Weekly transformation counter with social proof |
-| `AgentBridgeCTA` | `src/components/` | Contextual CTA with NGX agent selection |
+| `AgentBridgeCTA` | `src/components/` | GENESIS CTA with capability-based context selection |
 | `ReferralCard` | `src/components/` | Referral code UI with copy functionality |
 
-### Genesis Experience Components (v3.0) ⭐ NEW
+### Genesis Experience Components (v11.0)
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| `AgentOrchestration` | `src/components/genesis/` | 13-agent grid with SSE-driven animation (3 phases) |
-| `DemoChat` | `src/components/genesis/` | Limited chat (5 interactions) with quick actions |
+| `AgentOrchestration` | `src/components/genesis/` | GENESIS central + 4 capability cards with SSE-driven animation |
+| `DemoChat` | `src/components/genesis/` | Chat (5 interactions) — all messages from GENESIS with capability labels |
 | `PlanPreview` | `src/components/genesis/` | Day 1 visible, Days 2-7 blurred/locked |
 | `GenesisDemo` | `src/components/genesis/` | Main wrapper for demo experience |
+| `AgentStatusBar` | `src/components/demo/` | GENESIS capability progress indicators |
+| `GenesisChat` | `src/components/demo/` | SSE chat — messages as "GENESIS: Optimizando entrenamiento" |
 | `TransformationSummary` | `src/components/results/` | Timeline + stats delta after CinematicViewer |
-| `ComparisonCTA` | `src/components/results/` | "Sin Agentes vs GENESIS" comparison table |
+| `ComparisonCTA` | `src/components/results/` | "Sin GENESIS vs Con GENESIS" comparison table |
 
 ### A2UI Widgets (v3.0) ⭐ NEW
 
@@ -241,35 +243,36 @@ Ported from genesis_A2UI for consistent agent-style UI:
 
 | Widget | Location | Purpose |
 |--------|----------|---------|
-| `GlassCard` | `src/components/widgets/` | Base card with glassmorphism + agent accent |
-| `AgentBadge` | `src/components/widgets/` | Agent identifier (colored uppercase badge) |
+| `GlassCard` | `src/components/widgets/` | Base card with glassmorphism + capability accent |
+| `AgentBadge` | `src/components/widgets/` | GENESIS capability badge (colored uppercase pill) |
 | `ActionButton` | `src/components/widgets/` | Full-width gradient CTA button |
-| `ProgressBar` | `src/components/widgets/` | Animated progress with agent color |
+| `ProgressBar` | `src/components/widgets/` | Animated progress with capability color |
 | `WorkoutCard` | `src/components/widgets/` | Exercise display with sets/reps/rest |
 | `MealPlan` | `src/components/widgets/` | Nutrition plan with macros |
-| `InsightCard` | `src/components/widgets/` | Agent insight with icon + message |
+| `InsightCard` | `src/components/widgets/` | GENESIS insight with icon + message |
 | `ChecklistWidget` | `src/components/widgets/` | Interactive checklist with completion |
 | `A2UIMediator` | `src/components/widgets/` | Widget orchestrator for chat responses |
 
-### GENESIS Agents (v3.0)
+### GENESIS Architecture (v11.0)
 
-The 13 AI agents that power the subscription app:
+**GENESIS** (`#6D00FF`, Brain icon) is the sole user-facing AI entity. Internally, 13 modules are grouped into 4 capabilities:
 
-| Agent | Color | Domain |
-|-------|-------|--------|
-| GENESIS | `#6D00FF` | Core orchestrator |
-| BLAZE | `#FF4500` | Workout design |
-| TEMPO | `#8B5CF6` | Training periodization |
-| ATLAS | `#F59E0B` | Strength programming |
-| WAVE | `#0EA5E9` | Recovery & mobility |
-| SAGE | `#10B981` | Mindset coaching |
-| MACRO | `#FF6347` | Nutrition planning |
-| METABOL | `#14B8A6` | Metabolism optimization |
-| NOVA | `#D946EF` | Habit formation |
-| SPARK | `#FBBF24` | Motivation & energy |
-| STELLA | `#A855F7` | Sleep optimization |
-| LUNA | `#6366F1` | Circadian rhythms |
-| LOGOS | `#6D00FF` | Analytics & tracking |
+| Capability | Color | Icon | Internal Modules |
+|------------|-------|------|------------------|
+| Entrenamiento | `#fb923c` | Flame | BLAZE, ATLAS, TEMPO |
+| Nutricion | `#34d399` | Leaf | SAGE, MACRO, METABOL |
+| Recuperacion | `#60a5fa` | Timer | WAVE, NOVA, LUNA |
+| Habitos | `#a78bfa` | Sparkles | SPARK, STELLA, LOGOS |
+
+**Key types** (`src/types/genesis.ts`):
+- `GenesisCapability`: `'entrenamiento' | 'nutricion' | 'recuperacion' | 'habitos'`
+- `AgentType`: Internal module identifiers (legacy, not user-facing)
+
+**Rules**:
+- All user-facing communication comes from "GENESIS"
+- Messages use first person: "Estoy analizando..." (never "BLAZE reporta:")
+- Capability labels appear as context: "GENESIS · Entrenamiento"
+- Module names (BLAZE, SAGE, etc.) exist only in internal config and SSE compatibility layers
 
 ### Email Nurture Sequence (v2.1)
 
@@ -327,7 +330,7 @@ NO: CGI, cartoon, plastic skin, extra limbs, face drift, multiple subjects
 | `FF_PLAN_7_DIAS` | true | Generate 7-day plan with AI |
 | `FF_DRAMATIC_REVEAL` | true | Enable dramatic countdown reveal |
 | `FF_SOCIAL_COUNTER` | true | Show weekly transformation counter |
-| `FF_AGENT_BRIDGE_CTA` | true | Show contextual agent CTA |
+| `FF_AGENT_BRIDGE_CTA` | true | Show GENESIS capability-based CTA |
 | `FF_EMAIL_SEQUENCE` | true | Enable D0-D7 email nurture sequence |
 | `FF_TELEMETRY_ENABLED` | true | Enable funnel telemetry (v3.0) |
 | `FF_DELETE_TOKEN_REQUIRED` | true | Require delete token for session deletion (v3.0) |
@@ -345,8 +348,8 @@ NO: CGI, cartoon, plastic skin, extra limbs, face drift, multiple subjects
 | `/` | Landing page |
 | `/wizard` | Multi-step wizard (email, photo, profile) |
 | `/s/[shareId]` | Shareable results page with TransformationSummary |
-| `/s/[shareId]/demo` | Genesis Experience demo (agent orchestration + chat) ⭐ v3.0 |
-| `/s/[shareId]/plan` | Plan preview (Day 1 free, Days 2-7 locked) ⭐ v3.0 |
+| `/s/[shareId]/demo` | Genesis Experience (GENESIS + 4 capabilities orchestration + chat) |
+| `/s/[shareId]/plan` | Plan preview (Day 1 free, Days 2-7 locked) |
 | `/plan/[shareId]` | Legacy: 7-day personalized plan viewer |
 | `/auth` | Firebase auth callback |
 | `/dashboard` | User dashboard (session history) |
@@ -509,20 +512,20 @@ Managed via `POST /api/sessions/[shareId]/share-settings`. Public `GET /api/sess
 - Simple reconnection handling
 - Works through proxies/CDNs
 
-### Genesis Demo Flow
+### Genesis Demo Flow (v11.0)
 
 ```
 /api/genesis-demo (SSE)
     ├── Event: phase (phase 1 start)
-    ├── Event: agent (GENESIS analyzing)
-    ├── Event: agent (GENESIS complete)
-    ├── Event: agent (STELLA analyzing)
-    │   ... (20-25 seconds total)
+    ├── Event: agent (module status — internal)
+    │   ... (20-25 seconds, 13 modules across 3 phases)
     └── Event: complete
 
-Client → AgentOrchestration.tsx
+Client → AgentOrchestration.tsx (v11.0)
     ├── Subscribe to SSE
-    ├── Update agent states
-    ├── Animate transitions
+    ├── Map module events → capability states
+    │   (e.g., BLAZE complete → Entrenamiento progress++)
+    ├── Show GENESIS central + 4 capability progress cards
     └── Show DemoChat when complete
+         └── All messages: "GENESIS · {Capability}"
 ```
