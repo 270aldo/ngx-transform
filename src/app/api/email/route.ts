@@ -4,6 +4,7 @@ import React from "react";
 import ResultsEmail from "@/emails/ResultsEmail";
 import { getDb } from "@/lib/firebaseAdmin";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
+import { isEmailSuppressed } from "@/lib/emailSuppression";
 
 export async function POST(req: Request) {
   try {
@@ -35,6 +36,9 @@ export async function POST(req: Request) {
     const ownerEmail = sessionData?.email || sessionData?.input?.email;
     if (!ownerEmail) {
       return NextResponse.json({ error: "No email associated with this session" }, { status: 400 });
+    }
+    if (await isEmailSuppressed(ownerEmail)) {
+      return NextResponse.json({ ok: false, skipped: true, message: "Email suppressed" }, { status: 200 });
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL || "http://localhost:3000";

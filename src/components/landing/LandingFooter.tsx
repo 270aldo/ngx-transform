@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useLandingConfig } from "./LandingProvider";
 
 export function LandingFooter() {
@@ -32,6 +33,16 @@ export function LandingFooter() {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
             </span>
             <span className="text-[10px] text-slate-500">{footer.status}</span>
+          </div>
+
+          <div className="flex items-center gap-3 text-[10px] text-slate-500">
+            <Link href="/privacy" className="hover:text-white transition-colors">
+              Privacidad
+            </Link>
+            <span className="text-slate-700">•</span>
+            <Link href="/terms" className="hover:text-white transition-colors">
+              Términos
+            </Link>
           </div>
 
           <p className="text-slate-600 text-[10px]">{footer.copyright}</p>

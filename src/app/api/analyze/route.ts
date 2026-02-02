@@ -94,7 +94,7 @@ export async function POST(req: Request) {
       const tokenEmail = authUser.email.toLowerCase().trim();
       const sessionEmail = data.email.toLowerCase().trim();
       if (tokenEmail !== sessionEmail) {
-        console.warn(`[Analyze] Email mismatch: Token=${tokenEmail} Session=${sessionEmail}`);
+        console.warn("[Analyze] Email mismatch");
         telemetry.authFailed(sessionId, { reason: "email_mismatch" });
         return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
       }

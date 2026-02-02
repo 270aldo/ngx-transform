@@ -186,6 +186,15 @@ async function checkGemini(): Promise<ServiceHealth> {
 // ============================================================================
 
 export async function GET(req: Request) {
+  const isDev = process.env.NODE_ENV !== "production";
+  const expectedKey = process.env.CRON_API_KEY;
+  const apiKey = req.headers.get("X-Api-Key");
+  if (!isDev) {
+    if (!expectedKey || apiKey !== expectedKey) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  }
+
   const { searchParams } = new URL(req.url);
   const service = searchParams.get("service");
 

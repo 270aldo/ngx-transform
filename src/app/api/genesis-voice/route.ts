@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getDb } from "@/lib/firebaseAdmin";
 import { generateGenesisIntro, buildGenesisIntroScript } from "@/lib/elevenlabs-voice";
+import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
+import { getAuthUser } from "@/lib/authServer";
 
 // Rate limit: 1 audio generation per shareId
 const audioCache = new Map<string, { audioBase64: string; generatedAt: number }>();
@@ -16,15 +18,14 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { shareId } = requestSchema.parse(body);
 
-    // Check cache first
-    const cached = audioCache.get(shareId);
-    if (cached && Date.now() - cached.generatedAt < CACHE_TTL_MS) {
-      return NextResponse.json({
-        success: true,
-        audioBase64: cached.audioBase64,
-        transcript: await getTranscript(shareId),
-        cached: true,
-      });
+    // Rate limiting by IP
+    const clientIP = getClientIP(req);
+    const rateLimitResult = await checkRateLimit("api:genesis-voice", clientIP);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { success: false, error: "Too many requests. Please wait a moment." },
+        { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+      );
     }
 
     // Fetch session data
@@ -40,20 +41,40 @@ export async function POST(req: NextRequest) {
 
     const data = snap.data() as {
       email?: string;
+      ownerUid?: string;
+      shareScope?: { shareProfile?: boolean };
       input: {
         level: string;
         goal: string;
       };
     };
 
-    const userName = data.email?.split("@")[0] || "Usuario";
-    const userLevel = data.input?.level || "intermedio";
-    const userGoal = data.input?.goal || "mixto";
+    const authUser = await getAuthUser(req);
+    const isOwner = !!(authUser?.uid && data.ownerUid && authUser.uid === data.ownerUid);
+    const emailMatch = !!(authUser?.email && data.email && authUser.email.toLowerCase() === data.email.toLowerCase());
+    const allowProfile = isOwner || emailMatch || !!data.shareScope?.shareProfile;
+
+    const userName = (isOwner || emailMatch) ? (data.email?.split("@")[0] || "Usuario") : "Usuario";
+    const userLevel = allowProfile ? (data.input?.level || "intermedio") : "intermedio";
+    const userGoal = allowProfile ? (data.input?.goal || "mixto") : "mixto";
+
+    const transcript = buildGenesisIntroScript(userName, userLevel, userGoal);
+
+    // Check cache after access evaluation to avoid poisoning
+    const cacheKey = allowProfile ? shareId : `${shareId}:public`;
+    const cached = audioCache.get(cacheKey);
+    if (cached && Date.now() - cached.generatedAt < CACHE_TTL_MS) {
+      return NextResponse.json({
+        success: true,
+        audioBase64: cached.audioBase64,
+        transcript,
+        cached: true,
+      });
+    }
 
     // Check if ElevenLabs API key is configured
     if (!process.env.ELEVENLABS_API_KEY) {
       // Return transcript without audio if no API key
-      const transcript = buildGenesisIntroScript(userName, userLevel, userGoal);
       return NextResponse.json({
         success: true,
         audioBase64: null,
@@ -68,14 +89,12 @@ export async function POST(req: NextRequest) {
     const audioBase64 = audioBuffer.toString("base64");
 
     // Cache the result
-    audioCache.set(shareId, {
+    audioCache.set(cacheKey, {
       audioBase64,
       generatedAt: Date.now(),
     });
 
     // Build transcript
-    const transcript = buildGenesisIntroScript(userName, userLevel, userGoal);
-
     return NextResponse.json({
       success: true,
       audioBase64,
@@ -105,29 +124,6 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function getTranscript(shareId: string): Promise<string> {
-  try {
-    const db = getDb();
-    const snap = await db.collection("sessions").doc(shareId).get();
-    if (!snap.exists) return "";
-
-    const data = snap.data() as {
-      email?: string;
-      input: { level: string; goal: string };
-    };
-
-    const userName = data.email?.split("@")[0] || "Usuario";
-    return buildGenesisIntroScript(
-      userName,
-      data.input?.level || "intermedio",
-      data.input?.goal || "mixto"
-    );
-  } catch (err) {
-    console.error("[GenesisVoice] getTranscript failed:", err instanceof Error ? err.message : err);
-    return "";
-  }
-}
-
 // GET endpoint to check if audio is cached
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -141,7 +137,9 @@ export async function GET(req: NextRequest) {
   }
 
   const cached = audioCache.get(shareId);
-  const isCached = cached && Date.now() - cached.generatedAt < CACHE_TTL_MS;
+  const publicCached = audioCache.get(`${shareId}:public`);
+  const isCached = !!((cached && Date.now() - cached.generatedAt < CACHE_TTL_MS)
+    || (publicCached && Date.now() - publicCached.generatedAt < CACHE_TTL_MS));
 
   return NextResponse.json({
     success: true,

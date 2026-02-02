@@ -11,12 +11,16 @@ import {
   interpolateMessage,
 } from '@/lib/genesis-demo/agents';
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
+import { getAuthUser } from "@/lib/authServer";
 import type { AgentType, AgentStatus } from '@/types/genesis';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 interface SessionData {
+  ownerUid?: string;
+  email?: string;
+  shareScope?: { shareProfile?: boolean };
   input?: {
     weightKg?: number;
     level?: string;
@@ -67,12 +71,22 @@ export async function GET(request: NextRequest) {
     sessionFetchFailed = true;
   }
 
+  const authUser = await getAuthUser(request);
+  const isOwner = !!(authUser?.uid && sessionData.ownerUid && authUser.uid === sessionData.ownerUid);
+  const emailMatch = !!(authUser?.email && sessionData.email && authUser.email.toLowerCase() === sessionData.email.toLowerCase());
+  const allowProfile = isOwner || emailMatch || !!sessionData.shareScope?.shareProfile;
+
   // Extract user data for message interpolation
-  const userData = {
+  const userData = allowProfile ? {
     weight: sessionData.input?.weightKg || 75,
     level: sessionData.input?.level || 'intermedio',
     goal: sessionData.input?.goal || 'mixto',
     years: sessionData.input?.trainingHistoryYears || 2,
+  } : {
+    weight: 75,
+    level: 'intermedio',
+    goal: 'mixto',
+    years: 2,
   };
 
   // Create readable stream for SSE
@@ -86,7 +100,7 @@ export async function GET(request: NextRequest) {
 
       try {
         // Initial connection message
-        send('connected', { message: 'Genesis Demo started', shareId, personalized: !sessionFetchFailed });
+        send('connected', { message: 'Genesis Demo started', shareId, personalized: !sessionFetchFailed && allowProfile });
 
         // Process each phase
         for (const phase of ORCHESTRATION_PHASES) {

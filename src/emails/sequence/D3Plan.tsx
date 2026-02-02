@@ -22,6 +22,7 @@ export default function D3Plan({ name, shareId }: D3PlanProps) {
     process.env.NEXT_PUBLIC_BASE_URL || "https://transform.ngxgenesis.com";
   const planUrl = `${baseUrl}/plan/${shareId}`;
   const resultsUrl = `${baseUrl}/s/${shareId}`;
+  const unsubscribeUrl = `${baseUrl}/unsubscribe?shareId=${shareId}`;
 
   return (
     <Html>
@@ -118,6 +119,8 @@ export default function D3Plan({ name, shareId }: D3PlanProps) {
             <Section className="text-center mt-8">
               <Text className="text-xs text-neutral-600">
                 NGX Transform | El primer paso hacia tu mejor versión
+                <br />
+                <a href={unsubscribeUrl} className="underline text-neutral-400">Darme de baja</a>
               </Text>
             </Section>
           </Container>

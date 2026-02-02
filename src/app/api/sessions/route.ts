@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { getDb } from "@/lib/firebaseAdmin";
+import { randomBytes, randomUUID } from "crypto";
+import { getBucket, getDb } from "@/lib/firebaseAdmin";
 import { CreateSessionSchema } from "@/lib/validators";
 import { FieldValue } from "firebase-admin/firestore";
-import { randomUUID } from "crypto";
 import { Resend } from "resend";
 import { telemetry, initSessionMetrics, startTimer } from "@/lib/telemetry";
 import { getOrCreateJob } from "@/lib/jobManager";
@@ -13,12 +13,7 @@ import { requireAuth } from "@/lib/authServer";
  * Genera un token seguro para acciones destructivas
  */
 function generateDeleteToken(): string {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let token = "";
-  for (let i = 0; i < 32; i++) {
-    token += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return token;
+  return randomBytes(32).toString("base64url");
 }
 
 export async function POST(req: Request) {
@@ -46,6 +41,11 @@ export async function POST(req: Request) {
     // If both auth email and form email exist, they must match
     if (authUser.email && formEmail && formEmail.toLowerCase() !== authUser.email.toLowerCase()) {
       return NextResponse.json({ error: "Email mismatch" }, { status: 400 });
+    }
+    // Validate photo path ownership (prevent path injection)
+    const expectedPrefix = `uploads/${authUser.uid}/`;
+    if (!photoPath.startsWith(expectedPrefix)) {
+      return NextResponse.json({ error: "Invalid photo path" }, { status: 400 });
     }
     const ip = getClientIP(req);
     const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
@@ -109,6 +109,24 @@ export async function POST(req: Request) {
           { merge: true }
         );
       });
+    }
+
+    // Validate uploaded file metadata before creating session
+    try {
+      const maxBytes = Number(process.env.MAX_UPLOAD_BYTES || "10485760"); // 10MB default
+      const file = getBucket().file(photoPath);
+      const [metadata] = await file.getMetadata();
+      const size = Number(metadata.size || 0);
+      const contentType = metadata.contentType || "";
+      if (!contentType.startsWith("image/")) {
+        return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
+      }
+      if (size <= 0 || size > maxBytes) {
+        return NextResponse.json({ error: "File too large" }, { status: 400 });
+      }
+    } catch (metaError) {
+      console.error("[Sessions] Photo metadata validation failed:", metaError);
+      return NextResponse.json({ error: "Photo not found or inaccessible" }, { status: 400 });
     }
 
     shareId = randomUUID().replace(/-/g, "").slice(0, 12);

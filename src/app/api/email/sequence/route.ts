@@ -7,6 +7,7 @@ import {
   unsubscribeSequence,
   getDueSequences,
 } from "@/lib/emailScheduler";
+import { isEmailSuppressed } from "@/lib/emailSuppression";
 
 const StartSequenceSchema = z.object({
   action: z.literal("start"),
@@ -65,6 +66,12 @@ export async function POST(req: NextRequest) {
 
     switch (validated.action) {
       case "start": {
+        if (await isEmailSuppressed(validated.email)) {
+          return NextResponse.json(
+            { success: false, skipped: true, message: "Email suppressed" },
+            { status: 200 }
+          );
+        }
         const sequenceId = await startEmailSequence(
           validated.email,
           validated.shareId,

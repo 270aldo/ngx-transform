@@ -3,6 +3,7 @@ import { FieldValue } from "firebase-admin/firestore";
 import { z } from "zod";
 import { checkRateLimit, getRateLimitHeaders } from "@/lib/rateLimit";
 import { getDb } from "@/lib/firebaseAdmin";
+import { isEmailSuppressed } from "@/lib/emailSuppression";
 
 // Validation schema
 const remarketingSchema = z.object({
@@ -10,6 +11,7 @@ const remarketingSchema = z.object({
   shareId: z.string().min(1, "shareId requerido"),
   source: z.enum(["escape_valve", "demo_exit", "plan_download"]).optional().default("escape_valve"),
   reminderDays: z.number().min(1).max(30).optional().default(7),
+  consent: z.literal(true),
 });
 
 export async function POST(request: NextRequest) {
@@ -27,6 +29,13 @@ export async function POST(request: NextRequest) {
 
     const { email: rawEmail, shareId, source, reminderDays } = result.data;
     const email = rawEmail.toLowerCase().trim();
+
+    if (await isEmailSuppressed(email)) {
+      return NextResponse.json(
+        { error: "Email suppressed" },
+        { status: 200 }
+      );
+    }
 
     // Rate limiting by email (Upstash Redis)
     const rateLimitResult = await checkRateLimit("api:remarketing", email);
@@ -58,6 +67,8 @@ export async function POST(request: NextRequest) {
         reminderDate,
         updatedAt: FieldValue.serverTimestamp(),
         interactions: FieldValue.increment(1),
+        consent: true,
+        consentAt: FieldValue.serverTimestamp(),
       });
     } else {
       // Create new lead
@@ -73,6 +84,8 @@ export async function POST(request: NextRequest) {
         interactions: 1,
         emailsSent: 0,
         converted: false,
+        consent: true,
+        consentAt: FieldValue.serverTimestamp(),
       });
     }
 

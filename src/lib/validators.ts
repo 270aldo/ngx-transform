@@ -7,7 +7,7 @@ import { z } from "zod";
 export const LeadSchema = z.object({
   email: z.string().email(),
   source: z.string().optional(),
-  consent: z.boolean().default(true),
+  consent: z.literal(true),
 });
 
 // ============================================================================

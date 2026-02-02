@@ -26,6 +26,7 @@ export default function D7Conversion({
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL || "https://transform.ngxgenesis.com";
   const resultsUrl = `${baseUrl}/s/${shareId}`;
+  const unsubscribeUrl = `${baseUrl}/unsubscribe?shareId=${shareId}`;
   const ctaUrl =
     bookingUrl || process.env.NEXT_PUBLIC_BOOKING_URL || "https://ngxgenesis.com";
 
@@ -164,7 +165,12 @@ export default function D7Conversion({
               </Text>
               <Text className="text-xs text-neutral-700 mt-2">
                 Si no deseas recibir más emails de esta secuencia, simplemente
-                responde con &ldquo;UNSUBSCRIBE&rdquo;.
+                responde con &ldquo;UNSUBSCRIBE&rdquo; o
+                {" "}
+                <a href={unsubscribeUrl} className="underline text-neutral-400">
+                  da clic aquí
+                </a>
+                .
               </Text>
             </Section>
           </Container>

@@ -43,20 +43,22 @@ export async function GET(request: NextRequest) {
         const data = sessionDoc.data() as {
           name?: string;
           email?: string;
-          goal?: string;
-          level?: string;
-          weeklyTime?: number;
+          input?: {
+            goal?: string;
+            level?: string;
+            weeklyTime?: number;
+          };
           shareScope?: { shareProfile?: boolean };
         };
         const shareProfile = data?.shareScope?.shareProfile ?? false;
         if (shareProfile) {
           userName = data?.name || data?.email?.split("@")[0] || "Usuario";
-          goal = data?.goal || "mixto";
-          level = data?.level || "intermedio";
-          trainingDays = data?.weeklyTime
-            ? data.weeklyTime <= 3
+          goal = data?.input?.goal || "mixto";
+          level = data?.input?.level || "intermedio";
+          trainingDays = data?.input?.weeklyTime
+            ? data.input.weeklyTime <= 3
               ? 3
-              : data.weeklyTime <= 5
+              : data.input.weeklyTime <= 5
               ? 4
               : 5
             : 4;
@@ -143,13 +145,15 @@ export async function POST(request: NextRequest) {
         const data = sessionDoc.data() as {
           name?: string;
           email?: string;
-          level?: string;
+          input?: {
+            level?: string;
+          };
           shareScope?: { shareProfile?: boolean };
         };
         const shareProfile = data?.shareScope?.shareProfile ?? false;
         if (shareProfile) {
           userName = data?.name || data?.email?.split("@")[0] || "Usuario";
-          level = data?.level || "intermedio";
+          level = data?.input?.level || "intermedio";
           personalized = true;
         }
       }

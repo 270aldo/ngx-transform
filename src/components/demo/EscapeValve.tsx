@@ -14,6 +14,7 @@ type SubmitState = "idle" | "submitting" | "success" | "error";
 export function EscapeValve({ shareId, source = "escape_valve" }: EscapeValveProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [email, setEmail] = useState("");
+  const [consent, setConsent] = useState(false);
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -22,6 +23,12 @@ export function EscapeValve({ shareId, source = "escape_valve" }: EscapeValvePro
 
     if (!email || !email.includes("@")) {
       setErrorMessage("Ingresa un email válido");
+      setSubmitState("error");
+      return;
+    }
+
+    if (!consent) {
+      setErrorMessage("Debes aceptar recibir emails para continuar");
       setSubmitState("error");
       return;
     }
@@ -38,6 +45,7 @@ export function EscapeValve({ shareId, source = "escape_valve" }: EscapeValvePro
           shareId,
           source,
           reminderDays: 7,
+          consent: true,
         }),
       });
 
@@ -169,6 +177,19 @@ export function EscapeValve({ shareId, source = "escape_valve" }: EscapeValvePro
                   />
                 </div>
 
+                <label className="flex items-start gap-2 text-xs text-neutral-400">
+                  <input
+                    type="checkbox"
+                    className="mt-0.5 h-4 w-4 rounded border-white/20 bg-white/10"
+                    checked={consent}
+                    onChange={(e) => setConsent(e.target.checked)}
+                    disabled={submitState === "submitting"}
+                  />
+                  <span>
+                    Acepto recibir emails con recursos gratuitos y actualizaciones de NGX.
+                  </span>
+                </label>
+
                 {/* Error Message */}
                 {submitState === "error" && errorMessage && (
                   <motion.div
@@ -183,7 +204,7 @@ export function EscapeValve({ shareId, source = "escape_valve" }: EscapeValvePro
 
                 <button
                   type="submit"
-                  disabled={submitState === "submitting" || !email}
+                  disabled={submitState === "submitting" || !email || !consent}
                   className="w-full py-3 rounded-lg bg-white/10 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium transition-all flex items-center justify-center gap-2"
                 >
                   {submitState === "submitting" ? (

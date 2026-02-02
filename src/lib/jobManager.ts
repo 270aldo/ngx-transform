@@ -7,6 +7,7 @@
  * - Retry automático con exponential backoff
  */
 
+import { randomBytes } from "crypto";
 import { getDb } from "./firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
 
@@ -281,12 +282,7 @@ export async function getPendingMilestones(sessionId: string): Promise<string[]>
  * Genera un token seguro para acciones destructivas
  */
 function generateDeleteToken(): string {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let token = "";
-  for (let i = 0; i < 32; i++) {
-    token += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return token;
+  return randomBytes(32).toString("base64url");
 }
 
 /**

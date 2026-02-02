@@ -2,6 +2,17 @@ import * as React from "react";
 import { Html, Head, Body, Container, Section, Text, Button, Tailwind } from "@react-email/components";
 
 export default function ResultsEmail({ url }: { url: string }) {
+  let unsubscribeUrl = "";
+  try {
+    const parsed = new URL(url);
+    const parts = parsed.pathname.split("/");
+    const shareId = parts.length >= 3 ? parts[2] : "";
+    if (shareId) {
+      unsubscribeUrl = `${parsed.origin}/unsubscribe?shareId=${shareId}`;
+    }
+  } catch {
+    // ignore malformed URL
+  }
   return (
     <Html>
       <Head />
@@ -16,7 +27,15 @@ export default function ResultsEmail({ url }: { url: string }) {
                   Ver resultados
                 </Button>
               </Section>
-              <Text className="text-xs text-neutral-500">No es consejo médico. Si no solicitaste esto, ignora este correo.</Text>
+              <Text className="text-xs text-neutral-500">
+                No es consejo médico. Si no solicitaste esto, ignora este correo.
+                {unsubscribeUrl ? (
+                  <>
+                    {" "}
+                    <a href={unsubscribeUrl} className="underline text-neutral-400">Darme de baja</a>
+                  </>
+                ) : null}
+              </Text>
             </Section>
           </Container>
         </Body>

@@ -89,9 +89,8 @@ export async function DELETE(req: Request, context: { params: Promise<{ shareId:
   try {
     const { shareId } = await context.params;
 
-    // Extract deleteToken from header or query param
-    const url = new URL(req.url);
-    const token = req.headers.get("X-Delete-Token") || url.searchParams.get("token") || "";
+    // Extract deleteToken from header only (no query params)
+    const token = req.headers.get("X-Delete-Token") || "";
 
     // Validate token (controlled by FF_DELETE_TOKEN_REQUIRED env var)
     const isValid = await validateDeleteToken(shareId, token);

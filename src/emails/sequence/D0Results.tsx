@@ -29,6 +29,7 @@ export default function D0Results({
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL || "https://transform.ngxgenesis.com";
   const resultsUrl = `${baseUrl}/s/${shareId}`;
+  const unsubscribeUrl = `${baseUrl}/unsubscribe?shareId=${shareId}`;
 
   return (
     <Html>
@@ -124,6 +125,8 @@ export default function D0Results({
                 Este email fue enviado por NGX Transform.
                 <br />
                 Si no solicitaste esto, puedes ignorar este correo.
+                <br />
+                <a href={unsubscribeUrl} className="underline text-neutral-400">Darme de baja</a>
               </Text>
             </Section>
           </Container>

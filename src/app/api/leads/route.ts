@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getDb } from "@/lib/firebaseAdmin";
 import { LeadSchema } from "@/lib/validators";
 import { FieldValue } from "firebase-admin/firestore";
+import { isEmailSuppressed } from "@/lib/emailSuppression";
 
 export async function POST(req: Request) {
   try {
@@ -12,6 +13,9 @@ export async function POST(req: Request) {
     }
 
     const { email, source, consent } = parsed.data;
+    if (await isEmailSuppressed(email)) {
+      return NextResponse.json({ ok: true, skipped: true });
+    }
     const db = getDb();
     const ref = db.collection("leads").doc(email.toLowerCase());
     await ref.set(
@@ -19,6 +23,7 @@ export async function POST(req: Request) {
         email: email.toLowerCase(),
         source: source ?? null,
         consent: !!consent,
+        consentAt: FieldValue.serverTimestamp(),
         createdAt: FieldValue.serverTimestamp(),
         updatedAt: FieldValue.serverTimestamp(),
       },
@@ -32,4 +37,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
-

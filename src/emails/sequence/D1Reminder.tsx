@@ -21,6 +21,7 @@ export default function D1Reminder({ name, shareId }: D1ReminderProps) {
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL || "https://transform.ngxgenesis.com";
   const resultsUrl = `${baseUrl}/s/${shareId}`;
+  const unsubscribeUrl = `${baseUrl}/unsubscribe?shareId=${shareId}`;
 
   return (
     <Html>
@@ -103,6 +104,8 @@ export default function D1Reminder({ name, shareId }: D1ReminderProps) {
             <Section className="text-center mt-8">
               <Text className="text-xs text-neutral-600">
                 NGX Transform | Tu potencial visualizado
+                <br />
+                <a href={unsubscribeUrl} className="underline text-neutral-400">Darme de baja</a>
               </Text>
             </Section>
           </Container>

@@ -16,6 +16,7 @@ import {
   recordShareIntent,
   type UnlockType,
 } from "@/lib/viral/shareUnlock";
+import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 
 // Feature flag
 const FF_SHARE_TO_UNLOCK = process.env.FF_SHARE_TO_UNLOCK !== "false";
@@ -36,6 +37,16 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    // Rate limit by IP to prevent abuse
+    const clientIP = getClientIP(request);
+    const rateLimitResult = await checkRateLimit("api:unlock", clientIP);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { success: false, message: "Too many requests. Please wait a moment." },
+        { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+      );
+    }
+
     const body = await request.json();
     const validation = UnlockRequestSchema.safeParse(body);
 

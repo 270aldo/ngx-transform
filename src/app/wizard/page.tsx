@@ -178,7 +178,7 @@ export default function WizardPage() {
   const onSubmit = async (values: FormValues) => {
     try {
       setLoading(true);
-      if (!DEMO && !user) throw new Error("Necesitas iniciar sesión");
+      if (!user) throw new Error("Necesitas iniciar sesión");
       const file: File | undefined = values.photo?.[0];
       if (!file) throw new Error("Debes subir una fotografía");
 

@@ -8,6 +8,7 @@ import {
 } from "@/lib/genesis-orchestrator";
 import { DemoUserResponses } from "@/types/demo";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
+import { getAuthUser } from "@/lib/authServer";
 
 // Request schema
 const requestSchema = z.object({
@@ -40,7 +41,7 @@ export async function POST(req: NextRequest) {
 
     // Rate limit by IP to prevent abuse
     const clientIP = getClientIP(req);
-    const rateLimitResult = await checkRateLimit("api:genesis-demo", clientIP);
+    const rateLimitResult = await checkRateLimit("api:genesis-chat", clientIP);
     if (!rateLimitResult.success) {
       return new Response(
         JSON.stringify({ error: "Too many requests. Please wait a moment." }),
@@ -59,8 +60,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const sessionData = snap.data() as { email?: string; demoInteractions?: number };
-    const userName = sessionData.email?.split("@")[0] || "Usuario";
+    const sessionData = snap.data() as {
+      email?: string;
+      ownerUid?: string;
+      shareScope?: { shareProfile?: boolean };
+      demoInteractions?: number;
+    };
+
+    const authUser = await getAuthUser(req);
+    const isOwner = !!(authUser?.uid && sessionData.ownerUid && authUser.uid === sessionData.ownerUid);
+    const emailMatch = !!(authUser?.email && sessionData.email && authUser.email.toLowerCase() === sessionData.email.toLowerCase());
+    const allowProfile = isOwner || emailMatch || !!sessionData.shareScope?.shareProfile;
+    const userName = (isOwner || emailMatch) ? (sessionData.email?.split("@")[0] || "Usuario") : "Usuario";
 
     // Server-side interaction limit (max 5 demo interactions)
     const MAX_DEMO_INTERACTIONS = 5;
@@ -94,7 +105,11 @@ export async function POST(req: NextRequest) {
         try {
           if (action === "start") {
             // Generate full chat sequence
-            const events = generateChatSequence(userName, responses as DemoUserResponses);
+            const events = generateChatSequence(userName, allowProfile ? (responses as DemoUserResponses) : {
+              trainingDays: null,
+              goal: null,
+              equipment: null,
+            });
 
             for (const event of events) {
               // Send event

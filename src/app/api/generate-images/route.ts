@@ -180,7 +180,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
       }
       if (data.email && authUser.email && authUser.email.toLowerCase() !== data.email.toLowerCase()) {
-        console.warn(`[GenerateImages] Email mismatch: Token=${authUser.email} Session=${data.email}`);
+        console.warn("[GenerateImages] Email mismatch");
         telemetry.authFailed(sessionId, { reason: "email_mismatch" });
         return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
       }

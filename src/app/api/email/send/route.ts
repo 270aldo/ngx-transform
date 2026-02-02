@@ -9,6 +9,7 @@ import {
   type EmailStage,
 } from "@/lib/emailScheduler";
 import { trackEvent } from "@/lib/telemetry";
+import { isEmailSuppressed } from "@/lib/emailSuppression";
 import D0Results from "@/emails/sequence/D0Results";
 import D1Reminder from "@/emails/sequence/D1Reminder";
 import D3Plan from "@/emails/sequence/D3Plan";
@@ -92,6 +93,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: "Email not found. Start sequence first." },
         { status: 400 }
+      );
+    }
+    if (sequence?.status === "unsubscribed") {
+      return NextResponse.json(
+        { success: false, skipped: true, message: "Unsubscribed" },
+        { status: 200 }
+      );
+    }
+    if (await isEmailSuppressed(email)) {
+      return NextResponse.json(
+        { success: false, skipped: true, message: "Email suppressed" },
+        { status: 200 }
       );
     }
 
