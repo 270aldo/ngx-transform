@@ -23,7 +23,7 @@ import { CyberSlider } from "@/components/CyberSlider";
 const FormSchema = z.object({
   email: z.string().email(),
   // Stage 2: Biometrics
-  age: z.coerce.number().int().min(13).max(100),
+  age: z.coerce.number().int().min(18).max(100),
   sex: z.enum(["male", "female", "other"]),
   heightCm: z.coerce.number().min(100).max(250),
   weightKg: z.coerce.number().min(30).max(300),
@@ -109,6 +109,12 @@ export default function WizardPage() {
   // Processing States
   const [processStage, setProcessStage] = useState<"idle" | "upload" | "analyze" | "render" | "done">("idle");
   const [processProgress, setProcessProgress] = useState(0);
+
+  // Consent States
+  const [consentTerms, setConsentTerms] = useState(false);
+  const [consentAI, setConsentAI] = useState(false);
+  const [consentEmail, setConsentEmail] = useState(false);
+  const allConsent = consentTerms && consentAI && consentEmail;
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -357,11 +363,52 @@ export default function WizardPage() {
                     )}
                   </label>
 
+                  {/* Consent Checkboxes */}
+                  {previewUrl && (
+                    <div className="space-y-3 text-left max-w-md mx-auto animate-in fade-in duration-300">
+                      <label className="flex items-start gap-3 cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          checked={consentTerms}
+                          onChange={(e) => setConsentTerms(e.target.checked)}
+                          className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[#6D00FF]"
+                        />
+                        <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors leading-relaxed">
+                          Soy mayor de 18 años. He leído y acepto los{" "}
+                          <a href="/terms" target="_blank" className="text-[#6D00FF] underline">Términos de Servicio</a>{" "}y el{" "}
+                          <a href="/privacy" target="_blank" className="text-[#6D00FF] underline">Aviso de Privacidad</a>.
+                        </span>
+                      </label>
+                      <label className="flex items-start gap-3 cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          checked={consentAI}
+                          onChange={(e) => setConsentAI(e.target.checked)}
+                          className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[#6D00FF]"
+                        />
+                        <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors leading-relaxed">
+                          Autorizo que mi foto sea procesada por inteligencia artificial (Google Gemini) para generar imágenes de transformación proyectada. Mi foto será eliminada en un plazo máximo de 30 días.
+                        </span>
+                      </label>
+                      <label className="flex items-start gap-3 cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          checked={consentEmail}
+                          onChange={(e) => setConsentEmail(e.target.checked)}
+                          className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[#6D00FF]"
+                        />
+                        <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors leading-relaxed">
+                          Acepto recibir correos sobre mi transformación de NGX Transform. Puedo cancelar en cualquier momento.
+                        </span>
+                      </label>
+                    </div>
+                  )}
+
                   <div className="flex justify-center">
                     <Button
                       type="button"
                       onClick={nextStage}
-                      disabled={!previewUrl}
+                      disabled={!previewUrl || !allConsent}
                       className="px-12 py-6 rounded-full bg-white text-black hover:bg-neutral-200 font-black italic tracking-widest text-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
                     >
                       INICIAR ESCANEO <ArrowRight className="ml-2 w-5 h-5" />
@@ -384,7 +431,7 @@ export default function WizardPage() {
                     <CyberSlider
                       label="Edad"
                       {...register("age")}
-                      min={16} max={80} step={1}
+                      min={18} max={80} step={1}
                       valueDisplay={watch("age")}
                       suffix="AÑOS"
                     />

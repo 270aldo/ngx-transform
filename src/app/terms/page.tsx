@@ -44,6 +44,22 @@ export default function TermsPage() {
         </section>
 
         <section className="space-y-3">
+          <h2 className="text-xl font-semibold">Imágenes generadas por IA</h2>
+          <p className="text-sm text-neutral-300">
+            Las imágenes de transformación que genera el Servicio son{" "}
+            <strong className="text-white">creaciones de inteligencia artificial</strong>.
+            No son fotografías de resultados reales. No son predicciones de
+            resultados que vayas a obtener. Son proyecciones generadas por IA
+            con fines <strong className="text-white">motivacionales y de entretenimiento</strong>.
+          </p>
+          <p className="text-sm text-neutral-300">
+            Los resultados reales dependen de genética, alimentación, constancia,
+            calidad de entrenamiento y muchos otros factores individuales. Ningún
+            resultado específico está garantizado ni implícito.
+          </p>
+        </section>
+
+        <section className="space-y-3">
           <h2 className="text-xl font-semibold">Contenido del usuario</h2>
           <ul className="space-y-2 text-sm text-neutral-300 list-disc list-inside">
             <li>Conservas la titularidad de tus fotos y datos.</li>
@@ -90,6 +106,16 @@ export default function TermsPage() {
           <p className="text-sm text-neutral-300">
             Te comprometes a indemnizar a NGX frente a reclamaciones relacionadas con el uso indebido del Servicio o la
             infracción de estos Términos.
+          </p>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className="text-xl font-semibold">Ley aplicable y jurisdicción</h2>
+          <p className="text-sm text-neutral-300">
+            Estos Términos se rigen por las leyes aplicables de los Estados Unidos Mexicanos.
+            Para cualquier controversia derivada del uso del Servicio, las partes se someten
+            a la jurisdicción de los tribunales competentes de la Ciudad de México, renunciando
+            a cualquier otro fuero que pudiera corresponderles.
           </p>
         </section>
 

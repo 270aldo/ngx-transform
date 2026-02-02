@@ -302,11 +302,48 @@ export default function PrivacyPage() {
             IX. Conservación de datos
           </h2>
           <p className="text-sm text-neutral-300">
-            Conservamos tus datos personales únicamente durante el tiempo
-            necesario para cumplir las finalidades para las cuales fueron
-            recabados, y durante los plazos establecidos en las disposiciones
-            legales aplicables. Una vez cumplidas las finalidades, procederemos
-            a su supresión, bloqueo o disociación.
+            Conservamos tus datos personales conforme a los siguientes plazos:
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-neutral-300 border-collapse">
+              <thead>
+                <tr className="border-b border-white/10 text-left">
+                  <th className="py-2 pr-4 font-medium text-neutral-200">Dato</th>
+                  <th className="py-2 font-medium text-neutral-200">Plazo de conservación</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                <tr>
+                  <td className="py-2 pr-4">Fotografía original</td>
+                  <td className="py-2">30 días desde la generación de resultados</td>
+                </tr>
+                <tr>
+                  <td className="py-2 pr-4">Imágenes generadas por IA</td>
+                  <td className="py-2">12 meses o hasta solicitud de eliminación</td>
+                </tr>
+                <tr>
+                  <td className="py-2 pr-4">Correo electrónico</td>
+                  <td className="py-2">Hasta cancelación de suscripción + 30 días</td>
+                </tr>
+                <tr>
+                  <td className="py-2 pr-4">Datos de perfil (biométricos, objetivos)</td>
+                  <td className="py-2">12 meses o hasta solicitud de eliminación</td>
+                </tr>
+                <tr>
+                  <td className="py-2 pr-4">Indicadores de bienestar (estrés, sueño, disciplina)</td>
+                  <td className="py-2">90 días</td>
+                </tr>
+                <tr>
+                  <td className="py-2 pr-4">Página de resultados compartible</td>
+                  <td className="py-2">12 meses</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p className="text-sm text-neutral-300">
+            Una vez cumplidos estos plazos, procederemos a la supresión,
+            bloqueo o disociación de los datos conforme a la legislación
+            aplicable.
           </p>
         </section>
 

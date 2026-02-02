@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ToastProvider } from "@/components/ui/toast-provider";
 import { GlobalHeader } from "@/components/GlobalHeader";
@@ -39,6 +39,9 @@ export const metadata: Metadata = {
     description: "Visual fitness premium by NGX",
     images: ["/og-default.png"],
   },
+};
+
+export const viewport: Viewport = {
   themeColor: "#6D00FF",
 };
 
