@@ -189,7 +189,7 @@ export function PlanPreview({ shareId, onUnlock }: PlanPreviewProps) {
                       Entrenamiento
                     </span>
                   </div>
-                  <WorkoutCard data={DAY_1_WORKOUT} agent="BLAZE" />
+                  <WorkoutCard data={DAY_1_WORKOUT} agent="GENESIS" />
                 </div>
 
                 {/* Meal Plan */}
@@ -200,7 +200,7 @@ export function PlanPreview({ shareId, onUnlock }: PlanPreviewProps) {
                       Nutrición
                     </span>
                   </div>
-                  <MealPlan data={DAY_1_MEAL} agent="SAGE" />
+                  <MealPlan data={DAY_1_MEAL} agent="GENESIS" />
                 </div>
 
                 {/* Checklist */}
@@ -211,7 +211,7 @@ export function PlanPreview({ shareId, onUnlock }: PlanPreviewProps) {
                       Tareas del Día
                     </span>
                   </div>
-                  <ChecklistWidget data={DAY_1_CHECKLIST} agent="SPARK" interactive={false} />
+                  <ChecklistWidget data={DAY_1_CHECKLIST} agent="GENESIS" interactive={false} />
                 </div>
               </motion.div>
             ) : (

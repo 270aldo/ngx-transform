@@ -23,7 +23,7 @@ interface WorkoutCardProps {
 
 export function WorkoutCard({
   data,
-  agent = 'BLAZE',
+  agent = 'GENESIS',
   onAction,
   actionLabel = 'Comenzar entreno',
   maxExercises = 3,

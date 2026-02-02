@@ -34,7 +34,7 @@ interface InsightCardProps {
 
 export function InsightCard({
   data,
-  agent = 'STELLA',
+  agent = 'GENESIS',
   onAction,
   actionLabel = 'Ver más detalles',
 }: InsightCardProps) {

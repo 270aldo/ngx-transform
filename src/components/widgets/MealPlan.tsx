@@ -22,7 +22,7 @@ interface MealPlanProps {
 
 export function MealPlan({
   data,
-  agent = 'SAGE',
+  agent = 'GENESIS',
   onAction,
   actionLabel = 'Ver recetas',
 }: MealPlanProps) {

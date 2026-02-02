@@ -25,7 +25,7 @@ interface ChecklistWidgetProps {
 
 export function ChecklistWidget({
   data,
-  agent = 'SPARK',
+  agent = 'GENESIS',
   onAction,
   actionLabel = 'Marcar como completado',
   interactive = true,

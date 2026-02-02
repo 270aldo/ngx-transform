@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * ComparisonCTA - Tabla comparativa Sin Agentes vs Con GENESIS
+ * ComparisonCTA - Tabla comparativa Por tu cuenta vs Con GENESIS
  * Aparece en la página de PlanPreview
  */
 
@@ -83,7 +83,7 @@ export function ComparisonCTA({
             Aspecto
           </div>
           <div className="p-3 text-[10px] font-bold uppercase tracking-wider text-white/40 text-center border-x border-white/10">
-            Sin Agentes
+            Por tu cuenta
           </div>
           <div className="p-3 text-[10px] font-bold uppercase tracking-wider text-[#6D00FF] text-center">
             GENESIS
