@@ -42,5 +42,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# TestSprite auto-generated
+testsprite_tests/
+
 # Claude context files
 **/CLAUDE.md

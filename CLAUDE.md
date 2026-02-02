@@ -195,8 +195,6 @@ The **Mental Logs** are fed to Gemini's "Elite Coach" prompt to personalize reco
 | `CinematicViewer` | `src/components/` | Fullscreen immersive results display with Nike-style aesthetic |
 | `BiometricLoader` | `src/components/` | Animated loading screen with scanning effect and tips |
 | `NeonRadar` | `src/components/` | Radar chart for strength/aesthetics/endurance/mental stats |
-| `RadarStats` | `src/components/` | Alternative radar visualization using recharts |
-| `HolodeckViewer` | `src/components/` | Futuristic holographic display variant |
 | `TimelineViewer` | `src/components/` | Timeline navigation with milestone details |
 | `OverlayImage` | `src/components/` | Interactive image with clickable hotspots |
 
@@ -211,7 +209,6 @@ The **Mental Logs** are fed to Gemini's "Elite Coach" prompt to personalize reco
 | `ChapterView` | `src/components/results/` | Detailed milestone view with hero, narrative, stats |
 | `TransformationViewer2` | `src/components/` | Orchestrator for Results 2.0 experience |
 | `ShareToUnlock` | `src/components/viral/` | Share-to-unlock UI with countdown |
-| `BookingCTA2` | `src/components/` | Enhanced CTA with 7-day plan generation |
 | `PlanViewer` | `src/app/plan/[shareId]/` | 7-day plan viewer with day navigation and tabs |
 
 ### Viral Optimization Components (v2.1)
@@ -350,13 +347,13 @@ NO: CGI, cartoon, plastic skin, extra limbs, face drift, multiple subjects
 | `/s/[shareId]` | Shareable results page with TransformationSummary |
 | `/s/[shareId]/demo` | Genesis Experience (GENESIS + 4 capabilities orchestration + chat) |
 | `/s/[shareId]/plan` | Plan preview (Day 1 free, Days 2-7 locked) |
-| `/plan/[shareId]` | Legacy: 7-day personalized plan viewer |
+| `/plan/[shareId]` | Legacy redirect → `/s/[shareId]/plan` |
 | `/auth` | Firebase auth callback |
 | `/dashboard` | User dashboard (session history) |
 | `/dashboard/[shareId]` | Individual session management |
 | `/account` | Account settings |
 | `/loading/[shareId]` | Loading experience with progress animation |
-| `/demo/[shareId]` | Legacy demo route |
+| `/demo/[shareId]` | Legacy redirect → `/s/[shareId]/demo` |
 | `/j` | Short link redirect |
 | `/m` | Marketing redirect |
 | `/email/preview` | Email template preview (dev only) |
@@ -501,6 +498,8 @@ Managed via `POST /api/sessions/[shareId]/share-settings`. Public `GET /api/sess
 - Persists across deployments
 - Sub-50ms latency via REST API
 - Automatic cleanup (no TTL management)
+
+**Note**: Upstash Redis runs on **free tier** (10K ops/day, ~1,600 users/day). Cost: $0. The real cost protection is the Firestore `gemini_spend` limiter ($50/day, $10/hour), not Redis. If Redis goes down, non-critical endpoints fall back to in-memory; critical endpoints fail closed (fail-safe). Redis is prescindible but free, so we keep it.
 
 ### Why SSE for Agent Orchestration?
 
