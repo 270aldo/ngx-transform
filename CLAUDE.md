@@ -324,7 +324,7 @@ NO: CGI, cartoon, plastic skin, extra limbs, face drift, multiple subjects
 | Flag | Default | Purpose |
 |------|---------|---------|
 | `NEXT_PUBLIC_FF_RESULTS_2` | false | Enable Results 2.0 experience |
-| `NEXT_PUBLIC_FF_OG_SPLIT_SCREEN` | true | OG split-screen (HOY vs 12 MESES) |
+| `FF_OG_SPLIT_SCREEN` | true | OG split-screen (HOY vs 12 MESES) |
 | `FF_SHARE_TO_UNLOCK` | true | Unlock content after sharing |
 | `FF_REFERRAL_TRACKING` | true | Track referral visits/completions |
 | `FF_PLAN_7_DIAS` | true | Generate 7-day plan with AI |
