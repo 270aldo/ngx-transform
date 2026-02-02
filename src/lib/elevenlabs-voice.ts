@@ -110,7 +110,7 @@ He analizado tu perfil y tus proyecciones de transformación. Veo que estás ${l
 
 Antes de crear tu plan personalizado, necesito hacerte 3 preguntas rápidas. Esto me ayudará a calibrar exactamente lo que necesitas.
 
-Mis agentes especializados, BLAZE, SAGE y TEMPO, están listos para diseñar tu programa. BLAZE estructurará tus entrenamientos, SAGE optimizará tu progresión, y TEMPO calibrará los tiempos perfectos para ti.
+Voy a activar mis 4 capacidades: entrenamiento de precisión, estrategia nutricional, biohacking y recuperación, y arquitectura de hábitos. Todo diseñado específicamente para ti.
 
 Responde las preguntas que verás en pantalla y prepararé tu plan de la Semana 1 en menos de un minuto.
 

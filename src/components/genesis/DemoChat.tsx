@@ -2,6 +2,7 @@
 
 /**
  * DemoChat - Chat interface with quick actions and A2UI widgets
+ * v11.0: All messages from GENESIS with capability labels
  * Maximum 5 interactions before redirecting to plan
  */
 
@@ -15,14 +16,39 @@ import {
   Sun,
   Calendar,
   ChevronRight,
+  Brain,
 } from 'lucide-react';
 import type { AgentType, WidgetType, QuickAction as QuickActionType } from '@/types/genesis';
-import { AGENT_META, INITIAL_QUICK_ACTIONS, CONTEXTUAL_QUICK_ACTIONS } from '@/lib/genesis-demo/agents';
-import { GlassCard } from '@/components/widgets/GlassCard';
+import type { GenesisCapability } from '@/types/genesis';
+import { INITIAL_QUICK_ACTIONS, CONTEXTUAL_QUICK_ACTIONS } from '@/lib/genesis-demo/agents';
 import { WorkoutCard } from '@/components/widgets/WorkoutCard';
 import { MealPlan } from '@/components/widgets/MealPlan';
 import { InsightCard } from '@/components/widgets/InsightCard';
 import { ChecklistWidget } from '@/components/widgets/ChecklistWidget';
+
+// v11.0: Capability labels and colors
+const CAPABILITY_META: Record<GenesisCapability, { label: string; color: string }> = {
+  entrenamiento: { label: 'Entrenamiento', color: '#fb923c' },
+  nutricion: { label: 'Nutrición', color: '#34d399' },
+  recuperacion: { label: 'Recuperación', color: '#60a5fa' },
+  habitos: { label: 'Hábitos', color: '#a78bfa' },
+};
+
+// Map legacy agent types to capabilities for display
+const AGENT_TO_CAPABILITY: Partial<Record<AgentType, GenesisCapability>> = {
+  BLAZE: 'entrenamiento',
+  ATLAS: 'entrenamiento',
+  TEMPO: 'entrenamiento',
+  SAGE: 'nutricion',
+  MACRO: 'nutricion',
+  METABOL: 'nutricion',
+  WAVE: 'recuperacion',
+  NOVA: 'recuperacion',
+  LUNA: 'recuperacion',
+  SPARK: 'habitos',
+  STELLA: 'habitos',
+  LOGOS: 'habitos',
+};
 
 // Icon map for quick actions
 const ICON_MAP: Record<string, React.ReactNode> = {
@@ -82,6 +108,7 @@ const SAMPLE_CHECKLIST = {
 interface Message {
   id: string;
   agent: AgentType;
+  capability: GenesisCapability;
   content: string;
   widget?: {
     type: WidgetType;
@@ -100,11 +127,12 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
   const [quickActions, setQuickActions] = useState<QuickActionType[]>(INITIAL_QUICK_ACTIONS);
   const [isTyping, setIsTyping] = useState(false);
 
-  // Initial message from BLAZE
+  // v11.0: Initial message from GENESIS (Entrenamiento capability)
   useEffect(() => {
     const initialMessage: Message = {
       id: 'initial',
-      agent: 'BLAZE',
+      agent: 'GENESIS',
+      capability: 'entrenamiento',
       content: 'He diseñado tu entrenamiento del Día 1 basado en tu perfil de nivel intermedio y objetivo de definición.',
       widget: {
         type: 'workout',
@@ -129,11 +157,15 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
     let response: Message;
     let newQuickActions: QuickActionType[];
 
+    // v11.0: resolve capability from legacy agent key
+    const capability = AGENT_TO_CAPABILITY[action.agent] || 'entrenamiento';
+
     switch (action.widgetType) {
       case 'meal':
         response = {
           id: `msg-${Date.now()}`,
-          agent: 'SAGE',
+          agent: 'GENESIS',
+          capability: 'nutricion',
           content: 'Aquí está tu plan nutricional optimizado para tu objetivo de definición.',
           widget: { type: 'meal', data: SAMPLE_MEAL },
         };
@@ -143,7 +175,8 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
       case 'insight':
         response = {
           id: `msg-${Date.now()}`,
-          agent: action.agent,
+          agent: 'GENESIS',
+          capability,
           content: 'Este es el análisis de por qué tu plan está diseñado así.',
           widget: { type: 'insight', data: SAMPLE_INSIGHT },
         };
@@ -153,7 +186,8 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
       case 'checklist':
         response = {
           id: `msg-${Date.now()}`,
-          agent: 'SPARK',
+          agent: 'GENESIS',
+          capability: 'habitos',
           content: 'Tu rutina matutina para empezar el día con energía.',
           widget: { type: 'checklist', data: SAMPLE_CHECKLIST },
         };
@@ -163,7 +197,8 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
       case 'workout':
         response = {
           id: `msg-${Date.now()}`,
-          agent: 'BLAZE',
+          agent: 'GENESIS',
+          capability: 'entrenamiento',
           content: 'Aquí tienes tu entrenamiento completo del Día 1.',
           widget: { type: 'workout', data: SAMPLE_WORKOUT },
         };
@@ -220,8 +255,8 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
       <div className="sticky top-0 z-10 bg-[#050505]/80 backdrop-blur-lg border-b border-white/5 p-4">
         <div className="flex items-center justify-between max-w-lg mx-auto">
           <div className="flex items-center gap-2">
-            <MessageCircle size={16} className="text-[#6D00FF]" />
-            <span className="text-sm font-bold text-white">Chat con tus Agentes</span>
+            <Brain size={16} className="text-[#6D00FF]" />
+            <span className="text-sm font-bold text-white">GENESIS</span>
           </div>
           <div
             className="px-3 py-1 rounded-full text-[10px] font-bold"
@@ -240,7 +275,7 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
         <div className="max-w-lg mx-auto space-y-4">
           <AnimatePresence mode="popLayout">
             {messages.map((message) => {
-              const meta = AGENT_META[message.agent];
+              const capMeta = CAPABILITY_META[message.capability];
               return (
                 <motion.div
                   key={message.id}
@@ -248,23 +283,24 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                 >
-                  {/* Agent message */}
+                  {/* GENESIS message with capability label */}
                   <div className="flex items-start gap-3 mb-3">
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                      style={{ backgroundColor: `${meta.color}20` }}
-                    >
-                      <span className="text-[10px] font-bold" style={{ color: meta.color }}>
-                        {meta.name.charAt(0)}
-                      </span>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-[#6D00FF]/20">
+                      <Brain size={14} className="text-[#6D00FF]" />
                     </div>
                     <div className="flex-1">
-                      <span
-                        className="text-[10px] font-bold uppercase tracking-wider"
-                        style={{ color: meta.color }}
-                      >
-                        {meta.name}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#6D00FF]">
+                          GENESIS
+                        </span>
+                        <span className="text-[9px] text-white/30">·</span>
+                        <span
+                          className="text-[10px] font-medium uppercase tracking-wider"
+                          style={{ color: capMeta.color }}
+                        >
+                          {capMeta.label}
+                        </span>
+                      </div>
                       <p className="text-sm text-white/80 mt-1">{message.content}</p>
                     </div>
                   </div>
