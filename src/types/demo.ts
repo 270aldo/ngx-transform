@@ -105,7 +105,7 @@ export interface SubscriptionOption {
   description: string;
   features: string[];
   hasHumanCoach: boolean;
-  agentCount: 13; // Both tiers have 13 agents
+  capabilityCount: 4; // v11.0: 4 capabilities (Entrenamiento, Nutricion, Recuperacion, Habitos)
 }
 
 /** Remarketing lead for escape valve */

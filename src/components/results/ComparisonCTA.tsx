@@ -33,7 +33,7 @@ const COMPARISON_ROWS = [
   {
     feature: 'Soporte',
     without: 'FAQ',
-    with: '13 Agentes 24/7',
+    with: 'GENESIS 24/7',
   },
   {
     feature: 'Progreso',
@@ -137,7 +137,7 @@ export function ComparisonCTA({
           <ArrowRight size={18} />
         </div>
         <span className="text-[10px] text-white/60 font-normal">
-          Accede a los 7 días + 13 agentes
+          Accede a los 7 días + 4 capacidades de IA
         </span>
       </motion.button>
 

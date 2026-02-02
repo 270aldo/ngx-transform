@@ -10,7 +10,7 @@ interface SubscriptionCTAProps {
 }
 
 const ASCEND_FEATURES = [
-  { icon: Users, text: "13 agentes IA especializados" },
+  { icon: Users, text: "GENESIS con 4 capacidades de IA" },
   { icon: BarChart3, text: "Planes personalizados semanales" },
   { icon: Zap, text: "Ajustes automáticos en tiempo real" },
   { icon: MessageSquare, text: "Soporte 24/7 vía chat" },
@@ -63,7 +63,7 @@ export function SubscriptionCTA({ shareId, userName, onSelectPlan }: Subscriptio
             <p className="text-sm text-[#B98CFF] font-medium">GENESIS</p>
             <p className="text-neutral-300 leading-relaxed">
               {userName ? `${userName}, ` : ""}Acabas de experimentar una pequeña muestra de lo que puedo hacer por ti.
-              En el programa completo, tendré acceso a <span className="text-white font-medium">13 agentes especializados</span> que
+              En el programa completo, activaré mis <span className="text-white font-medium">4 capacidades especializadas</span> que
               trabajarán contigo durante <span className="text-white font-medium">12 meses</span> para lograr tu transformación.
             </p>
           </div>

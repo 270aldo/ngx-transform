@@ -1,6 +1,6 @@
 /**
- * Genesis Agents Configuration
- * Configuración de los 13 agentes IA y sus metadatos
+ * Genesis Internal Module Configuration
+ * v11.0: 13 módulos internos agrupados en 4 capacidades (no expuestos al usuario)
  */
 
 import type {

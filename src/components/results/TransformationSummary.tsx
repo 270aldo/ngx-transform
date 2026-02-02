@@ -74,7 +74,7 @@ export function TransformationSummary({
             Tu Transformación en 12 Meses
           </h2>
           <p className="text-sm text-white/50">
-            Diseñada por 13 agentes de inteligencia artificial
+            Diseñada por GENESIS, tu coach de inteligencia artificial
           </p>
         </motion.div>
 
@@ -226,7 +226,7 @@ export function TransformationSummary({
           transition={{ delay: 0.8 }}
           className="text-center text-[10px] text-white/30 mt-4"
         >
-          13 agentes especializados analizarán tu perfil en tiempo real
+          GENESIS analizará tu perfil con 4 capacidades especializadas en tiempo real
         </motion.p>
       </div>
     </motion.section>
