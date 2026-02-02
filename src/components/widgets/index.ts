@@ -14,5 +14,3 @@ export { MealPlan } from './MealPlan';
 export { InsightCard } from './InsightCard';
 export { ChecklistWidget } from './ChecklistWidget';
 
-// Mediator
-export { A2UIMediator } from './A2UIMediator';

@@ -116,6 +116,12 @@ pnpm lint         # ESLint
 | `utils.ts` | `src/lib/` | General utility functions (cn, formatters) |
 | `rateLimit.ts` | `src/lib/` | Distributed rate limiting with Upstash Redis (v3.0) |
 | `genesis-demo/agents.ts` | `src/lib/` | Internal module config, capability mapping, orchestration phases |
+| `genesis-orchestrator.ts` | `src/lib/` | GENESIS orchestration logic for chat responses |
+| `authServer.ts` | `src/lib/` | Server-side Firebase auth (requireAuth, token validation) |
+| `spendLimiter.ts` | `src/lib/` | Firestore-based AI spend limiter ($50/day, $10/hour) |
+| `aiKillSwitch.ts` | `src/lib/` | AI safety kill switch (emergency spending halt) |
+| `elevenlabs-voice.ts` | `src/lib/` | ElevenLabs TTS integration for voice agent |
+| `emailSuppression.ts` | `src/lib/` | Email opt-out/suppression management |
 
 ### API Routes
 
@@ -147,6 +153,7 @@ pnpm lint         # ESLint
 | `/api/sessions/me` | GET | List sessions for authenticated user |
 | `/api/cron/cleanup` | POST | Cleanup expired sessions/orphaned assets |
 | `/api/health` | GET | Uptime health check |
+| `/api/unsubscribe` | POST | Email suppression (unsubscribe/resubscribe) |
 
 ### Type Definitions
 
@@ -195,7 +202,6 @@ The **Mental Logs** are fed to Gemini's "Elite Coach" prompt to personalize reco
 | `CinematicViewer` | `src/components/` | Fullscreen immersive results display with Nike-style aesthetic |
 | `BiometricLoader` | `src/components/` | Animated loading screen with scanning effect and tips |
 | `NeonRadar` | `src/components/` | Radar chart for strength/aesthetics/endurance/mental stats |
-| `TimelineViewer` | `src/components/` | Timeline navigation with milestone details |
 | `OverlayImage` | `src/components/` | Interactive image with clickable hotspots |
 
 ### Results 2.0 Components (v2.0)
@@ -209,7 +215,6 @@ The **Mental Logs** are fed to Gemini's "Elite Coach" prompt to personalize reco
 | `ChapterView` | `src/components/results/` | Detailed milestone view with hero, narrative, stats |
 | `TransformationViewer2` | `src/components/` | Orchestrator for Results 2.0 experience |
 | `ShareToUnlock` | `src/components/viral/` | Share-to-unlock UI with countdown |
-| `PlanViewer` | `src/app/plan/[shareId]/` | 7-day plan viewer with day navigation and tabs |
 
 ### Viral Optimization Components (v2.1)
 
@@ -228,7 +233,6 @@ The **Mental Logs** are fed to Gemini's "Elite Coach" prompt to personalize reco
 | `AgentOrchestration` | `src/components/genesis/` | GENESIS central + 4 capability cards with SSE-driven animation |
 | `DemoChat` | `src/components/genesis/` | Chat (5 interactions) — all messages from GENESIS with capability labels |
 | `PlanPreview` | `src/components/genesis/` | Day 1 visible, Days 2-7 blurred/locked |
-| `GenesisDemo` | `src/components/genesis/` | Main wrapper for demo experience |
 | `AgentStatusBar` | `src/components/demo/` | GENESIS capability progress indicators |
 | `GenesisChat` | `src/components/demo/` | SSE chat — messages as "GENESIS: Optimizando entrenamiento" |
 | `TransformationSummary` | `src/components/results/` | Timeline + stats delta after CinematicViewer |
@@ -248,7 +252,6 @@ Ported from genesis_A2UI for consistent agent-style UI:
 | `MealPlan` | `src/components/widgets/` | Nutrition plan with macros |
 | `InsightCard` | `src/components/widgets/` | GENESIS insight with icon + message |
 | `ChecklistWidget` | `src/components/widgets/` | Interactive checklist with completion |
-| `A2UIMediator` | `src/components/widgets/` | Widget orchestrator for chat responses |
 
 ### GENESIS Architecture (v11.0)
 
@@ -337,6 +340,7 @@ NO: CGI, cartoon, plastic skin, extra limbs, face drift, multiple subjects
 | `FF_CINEMATIC_AUTOPLAY` | true | Auto-play cinematic reveal on results |
 | `FF_COMPARE_SLIDER` | true | Enable before/after comparison slider |
 | `FF_LETTER_FROM_FUTURE` | true | Enable m12 motivational letter modal |
+| `FF_EXPOSE_ORIGINAL` | true | Expose original uploaded photo in public results |
 
 ### Page Routes
 
@@ -357,6 +361,9 @@ NO: CGI, cartoon, plastic skin, extra limbs, face drift, multiple subjects
 | `/j` | Short link redirect |
 | `/m` | Marketing redirect |
 | `/email/preview` | Email template preview (dev only) |
+| `/privacy` | Privacy policy |
+| `/terms` | Terms of service |
+| `/unsubscribe` | Email unsubscribe page |
 
 ## Environment Variables
 
@@ -393,7 +400,7 @@ NEXT_PUBLIC_BOOKING_URL=         # CTA link
 
 ## Design System
 
-**Colors**: Electric Violet `#6D00FF` (primary), Deep Purple `#5B21B6` (accent), Background `#0A0A0A`
+**Colors**: Electric Violet `#6D00FF` (primary), Deep Purple `#5B21B6` (accent), Background `#030005`
 
 **CSS Variables**: Defined in `globals.css`, exposed via `--primary`, `--accent`, `--ngx-electric-violet`
 
