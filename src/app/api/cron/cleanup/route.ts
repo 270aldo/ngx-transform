@@ -64,7 +64,7 @@ async function cleanupAbandonedSessions(): Promise<CleanupResult> {
   const start = Date.now();
   let deletedCount = 0;
   let skippedCount = 0;
-  let errorCount = 0;
+  const errorCount = 0;
 
   try {
     const db = getDb();

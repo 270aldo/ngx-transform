@@ -8,94 +8,75 @@ export function LandingHowItWorks() {
   const { theme } = config;
 
   return (
-    <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mb-40">
-      <div className="text-center mb-16 animate-on-scroll">
-        <h2 className="text-3xl text-white mb-4 tracking-tight font-semibold">
-          {howItWorks.title}
+    <section id="como-funciona" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mb-32 md:mb-48 scroll-mt-32">
+      <div className="text-center mb-16 md:mb-20 animate-on-scroll">
+        <span className="inline-flex px-3 py-1 rounded-full bg-[#6D00FF]/10 border border-[#6D00FF]/20 text-[10px] text-[#B98CFF] font-mono uppercase tracking-widest mb-6">
+          Cómo funciona
+        </span>
+        <h2 className="text-4xl md:text-6xl text-white mb-4 tracking-tight font-display font-semibold leading-[1.05]">
+          3 pasos. 60 segundos.
+          <br />
+          <span className="text-[#D7C7FF]">Tu potencial revelado.</span>
         </h2>
-        <p className="text-slate-400 text-sm max-w-lg mx-auto">
-          {howItWorks.subtitle}
-        </p>
       </div>
 
       <div className="relative">
-        {/* Timeline line */}
         <div
-          className="absolute left-1/2 transform -translate-x-1/2 h-full w-px hidden md:block"
+          className="absolute left-1/2 -translate-x-1/2 top-7 bottom-7 w-[1.5px] hidden md:block"
           style={{
             background: `linear-gradient(to bottom, transparent, ${theme.primary}, ${theme.primary}, transparent)`,
+            opacity: 0.92,
           }}
         />
 
-        {/* Steps */}
-        {howItWorks.steps.map((item, i) => {
-          const Icon = item.icon;
-          const isEven = i % 2 === 0;
+        <div className="space-y-16 md:space-y-20">
+          {howItWorks.steps.map((item, i) => {
+            const Icon = item.icon;
+            const isLeftCard = i % 2 === 0;
 
-          return (
-            <div
-              key={item.step}
-              className={`relative flex flex-col md:flex-row items-center gap-8 ${
-                i < howItWorks.steps.length - 1 ? "mb-16" : ""
-              }`}
-            >
-              <div
-                className={`flex-1 ${
-                  isEven ? "md:text-right order-2 md:order-1" : ""
-                } animate-on-scroll${isEven ? "-left" : "-right"} ${
-                  i > 0 ? `delay-${i}00` : ""
-                }`}
-              >
+            return (
+              <div key={item.step} className="relative grid md:grid-cols-[1fr_auto_1fr] gap-8 items-center">
                 <div
-                  className={`glass-panel rounded-2xl p-8 border-glow-hover ${
-                    !isEven ? "md:order-3" : ""
-                  }`}
+                  className={`${isLeftCard ? "md:col-start-1 md:justify-self-end" : "md:col-start-3 md:justify-self-start"} w-full ${i === 1 ? "md:max-w-[470px]" : "md:max-w-[460px]"} animate-on-scroll${isLeftCard ? "-left" : "-right"} ${i > 0 ? `delay-${i}00` : ""}`}
                 >
+                  <article className="glass-panel rounded-3xl border border-white/10 p-8 md:p-10 border-glow-hover">
+                    <div
+                      className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-5"
+                      style={{
+                        backgroundColor: `${theme.primary}1a`,
+                        border: `1px solid ${theme.primary}33`,
+                      }}
+                    >
+                      <span className="text-[10px] font-mono uppercase tracking-widest" style={{ color: theme.accent }}>
+                        PASO {item.step}
+                      </span>
+                    </div>
+                    <h3 className="text-[2rem] md:text-4xl text-white mb-4 font-display font-medium tracking-tight leading-tight">
+                      {item.title}
+                    </h3>
+                    <p className="text-slate-400 text-sm md:text-base leading-relaxed font-body">
+                      {item.description}
+                    </p>
+                  </article>
+                </div>
+
+                <div className={`relative z-10 md:col-start-2 justify-self-center animate-on-scroll-scale ${i > 0 ? `delay-${i}00` : ""}`}>
                   <div
-                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4"
+                    className="w-[60px] h-[60px] rounded-full border border-[#8B5CF6]/45 flex items-center justify-center"
                     style={{
-                      backgroundColor: `${theme.primary}1a`,
-                      border: `1px solid ${theme.primary}33`,
+                      backgroundColor: theme.primary,
+                      boxShadow: `0 0 30px ${theme.primary}88`,
                     }}
                   >
-                    <span
-                      className="text-[10px]"
-                      style={{ color: theme.accent }}
-                    >
-                      PASO {item.step}
-                    </span>
+                    <Icon className="w-7 h-7 text-white" />
                   </div>
-                  <h3 className="text-xl text-white mb-3 font-medium">
-                    {item.title}
-                  </h3>
-                  <p className="text-slate-400 text-sm leading-relaxed">
-                    {item.description}
-                  </p>
                 </div>
-              </div>
 
-              <div
-                className={`relative z-10 ${
-                  isEven ? "order-1 md:order-2" : ""
-                } animate-on-scroll-scale delay-${i}00`}
-              >
-                <div
-                  className="w-14 h-14 rounded-full flex items-center justify-center"
-                  style={{
-                    backgroundColor: theme.primary,
-                    boxShadow: `0 0 30px ${theme.primary}66`,
-                  }}
-                >
-                  <Icon className="w-6 h-6 text-white" />
-                </div>
+                <div className={`${isLeftCard ? "md:col-start-3" : "md:col-start-1"} hidden md:block`} />
               </div>
-
-              <div
-                className={`flex-1 ${isEven ? "order-3" : ""} hidden md:block`}
-              />
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </section>
   );

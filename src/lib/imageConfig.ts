@@ -50,6 +50,29 @@ export const MODELS = {
   GEMINI_25_FLASH_IMAGE: "gemini-2.5-flash-image",
 } as const;
 
+function resolveImageModel(ffNbProEnabled: boolean): string {
+  const explicitImageModel = process.env.GEMINI_IMAGE_MODEL?.trim();
+  if (explicitImageModel) {
+    return explicitImageModel;
+  }
+
+  const genericModel = process.env.GEMINI_MODEL?.trim();
+  if (genericModel) {
+    // Compatibility: users often set GEMINI_MODEL=gemini-2.5-flash for text.
+    // For image generation we map it to the corresponding image-capable model.
+    if (genericModel === "gemini-2.5-flash") {
+      return MODELS.GEMINI_25_FLASH_IMAGE;
+    }
+    if (genericModel.includes("image")) {
+      return genericModel;
+    }
+  }
+
+  return ffNbProEnabled
+    ? MODELS.GEMINI_3_PRO_IMAGE
+    : MODELS.GEMINI_25_FLASH_IMAGE;
+}
+
 // Cost per image (USD) - Based on official Gemini pricing
 export const PRICING: Record<ImageSize, CostEstimate> = {
   "1K": { standardCost: 0.134, batchCost: 0.067 },
@@ -101,9 +124,7 @@ export function getImageConfig(): {
 } {
   const flags = getFeatureFlags();
 
-  const model = flags.FF_NB_PRO
-    ? MODELS.GEMINI_3_PRO_IMAGE
-    : (process.env.GEMINI_IMAGE_MODEL || MODELS.GEMINI_25_FLASH_IMAGE);
+  const model = resolveImageModel(flags.FF_NB_PRO);
 
   // Default config for standard generation
   const defaultConfig: ImageGenerationConfig = {

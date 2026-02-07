@@ -1,32 +1,33 @@
 @import "tailwindcss";
 
 :root {
-  --background: #030005;
-  --foreground: #e2e8f0;
+  --background: #050505;
+  --foreground: #e5e7eb;
 
   /* Surfaces */
-  --card: #0a0a0c;
+  --card: #0A0A0A;
   --card-foreground: var(--foreground);
-  --popover: #0a0a0c;
+  --popover: #111111;
   --popover-foreground: var(--foreground);
 
   /* Marca */
-  --primary: #6D00FF; /* Electric Violet */
+  --primary: #6D00FF;
   --primary-foreground: #ffffff;
-  --secondary: #111116;
-  --secondary-foreground: #d6d6d6;
-  --accent: #5B21B6; /* Deep Purple */
+  --secondary: #111111;
+  --secondary-foreground: #d1d5db;
+  --accent: #5B21B6;
   --accent-foreground: #efe9ff;
+  --primary-hover: #7D1AFF;
 
   /* Estado */
-  --muted: #111113;
-  --muted-foreground: #94a3b8;
+  --muted: #121212;
+  --muted-foreground: #9ca3af;
   --destructive: #ef4444;
   --destructive-foreground: #111111;
 
   /* Bordes/inputs/ring */
   --border: rgba(255, 255, 255, 0.08);
-  --input: #111116;
+  --input: #111111;
   --ring: #6D00FF;
 
   /* Radio */
@@ -37,15 +38,16 @@
   --ngx-deep-purple: #5B21B6;
 
   /* LiquidGlass palette */
-  --lg-background: #030005;
+  --lg-background: #050505;
   --lg-primary: #6D00FF;
   --lg-lavender: #a78bfa;
-  --lg-text: #e2e8f0;
-  --lg-text-muted: #94a3b8;
+  --lg-text: #e5e7eb;
+  --lg-text-muted: #9ca3af;
 
-  /* Fonts - Space Grotesk via next/font */
-  --font-ngx-sans: var(--font-space-grotesk), system-ui, -apple-system, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
-  --font-ngx-display: var(--font-space-grotesk), var(--font-ngx-sans);
+  /* Fonts - DM Sans + JetBrains Mono */
+  --font-body: var(--font-dm-sans), "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-jetbrains), "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-mono-stack: var(--font-jetbrains), "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 }
 
 /* Self-hosted fonts (supply files in /public/fonts) */
@@ -99,27 +101,36 @@
 
   --radius: var(--radius);
 
-  --font-sans: var(--font-ngx-sans);
-  /* Keep a sensible monospace fallback */
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-mono-stack);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-ngx-sans);
+  font-family: var(--font-body);
+  overflow-x: hidden;
 }
 
-h1, h2, h3 {
-  font-family: var(--font-ngx-display);
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  letter-spacing: -0.03em;
 }
 
-/* Utilities */
-.text-gradient {
-  background-image: linear-gradient(90deg, var(--ngx-electric-violet), var(--ngx-deep-purple));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+.font-mono {
+  font-family: var(--font-mono-stack);
 }
 
 .section-hero {
@@ -137,7 +148,7 @@ h1, h2, h3 {
 
 .card {
   background: linear-gradient(180deg, rgba(18,18,18,0.9), rgba(10,10,10,0.9));
-  border: 1px solid #1f2937; /* neutral-800 */
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 10px 30px rgba(0,0,0,0.35);
 }
@@ -193,35 +204,58 @@ h1, h2, h3 {
   transform: translateY(-2px);
 }
 
-/* Blobs Animados */
-.blob {
-  position: absolute;
-  background: #6D00FF;
-  filter: blur(90px);
-  opacity: 0.25;
-  border-radius: 50%;
-  animation: float 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+/* NGX Background System */
+.grid-bg {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(109, 0, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(109, 0, 255, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 50% at 50% 50%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 50% at 50% 50%, black 40%, transparent 100%);
   pointer-events: none;
+  z-index: 0;
 }
-.blob-1 {
-  top: -20%;
-  left: -10%;
-  width: 60vw;
-  height: 60vw;
-  background: radial-gradient(circle, #6D00FF 0%, #3b0764 100%);
+
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  opacity: 0.15;
+  z-index: 0;
 }
-.blob-2 {
-  bottom: -20%;
-  right: -10%;
-  width: 50vw;
-  height: 50vw;
-  animation-delay: -10s;
-  background: radial-gradient(circle, #4c1d95 0%, #2e1065 100%);
+
+.orb-1 {
+  width: 500px;
+  height: 500px;
+  background: #6D00FF;
+  top: 10%;
+  left: 10%;
+}
+
+.orb-2 {
+  width: 400px;
+  height: 400px;
+  background: #5B21B6;
+  bottom: 20%;
+  right: 10%;
+}
+
+.orb-3 {
+  width: 300px;
+  height: 300px;
+  background: #6D00FF;
+  top: 60%;
+  left: 50%;
 }
 
 @keyframes float {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(40px, -40px) scale(1.1); }
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(10px, -10px); }
+  50% { transform: translate(20px, 0); }
+  75% { transform: translate(10px, 10px); }
 }
 
 /* Grid Pattern */
@@ -231,14 +265,6 @@ h1, h2, h3 {
                     linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-}
-
-/* Text Gradient LiquidGlass */
-.text-gradient-lg {
-  background: linear-gradient(135deg, #fff 30%, #a78bfa 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 /* CTA Gradient Background */
@@ -384,4 +410,3 @@ h1, h2, h3 {
 .animate-glitch {
   animation: glitch 200ms cubic-bezier(.25, .46, .45, .94) both infinite;
 }
-

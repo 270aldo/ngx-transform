@@ -6,9 +6,10 @@ import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
 import { getClientAuth } from "@/lib/firebaseClient";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { Logo } from "@/components/ui/Logo";
 
 /**
- * Header global que se oculta en páginas de resultados (/s/)
+ * Header global que se oculta en flujos inmersivos (resultados, loading, wizard).
  */
 export function GlobalHeader() {
   const pathname = usePathname();
@@ -39,15 +40,24 @@ export function GlobalHeader() {
     setMenuOpen(false);
   }, [pathname]);
 
-  // Ocultar en páginas de resultados - tienen su propio header
-  if (pathname?.startsWith("/s/")) {
+  // Ocultar en páginas que renderizan su propio encabezado inmersivo
+  if (
+    pathname?.startsWith("/s/") ||
+    pathname?.startsWith("/loading/") ||
+    pathname?.startsWith("/wizard") ||
+    pathname === "/" ||
+    pathname === "/j" ||
+    pathname === "/m"
+  ) {
     return null;
   }
 
   return (
-    <header className="border-b border-border bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/50">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-        <Link href="/" className="font-semibold">NGX Transform</Link>
+    <header className="sticky top-0 z-50 border-b border-white/5 bg-[#050505]/80 backdrop-blur-xl">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+        <Link href="/" className="flex items-center">
+          <Logo variant="full" size="md" />
+        </Link>
         <nav className="flex items-center gap-3">
           <Link className="text-sm text-muted-foreground hover:text-foreground" href="/wizard">Probar</Link>
           {user && (
@@ -55,7 +65,7 @@ export function GlobalHeader() {
               Dashboard
             </Link>
           )}
-          <a className="text-sm text-muted-foreground hover:text-foreground" href="#">Contacto</a>
+          <a className="text-sm text-muted-foreground hover:text-foreground" href="#hybrid-offer">HYBRID</a>
         </nav>
         <div className="flex items-center gap-3">
           {!loading && user ? (

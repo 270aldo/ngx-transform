@@ -84,7 +84,9 @@ export function buildShareData(
   userName?: string
 ): ShareData {
   const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || "https://transform.ngxgenesis.com";
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    "https://transform.ngxgenesis.com";
 
   return {
     shareUrl: `${baseUrl}/s/${shareId}`,

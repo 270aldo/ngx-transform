@@ -5,31 +5,27 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { Logo } from "@/components/ui/Logo";
 
 const LOADING_STEPS = [
-  "Iniciando escaneo biométrico...",
-  "Analizando composición corporal...",
-  "Definiendo estética cinematográfica...",
-  "Ajustando identidad facial...",
-  "Renderizando Mes 4...",
-  "Renderizando Mes 8...",
-  "Renderizando Mes 12...",
-  "Pulido final y color grade...",
+  "Analizando tu foto...",
+  "Generando mes 4...",
+  "Generando mes 8...",
+  "Generando mes 12...",
+  "Preparando tus resultados...",
 ];
 
 const TIPS = [
-  "💡 La disciplina vence a la motivación el 100% de las veces.",
-  "💡 Tu cuerpo es el reflejo directo de tu mente.",
-  "💡 El dolor de hoy es la fuerza de mañana.",
-  "💡 No busques tiempo, créalo.",
-  "💡 La consistencia es la clave del alto rendimiento.",
+  "La salud muscular es uno de los predictores clave de longevidad.",
+  "Tu sistema GENESIS analiza 12 variables biométricas.",
+  "El 80% de los resultados depende del sistema, no de la motivación.",
 ];
 
 const PROGRESS_BY_COUNT = [12, 45, 75, 100];
 
 export function LoadingExperience({ shareId }: { shareId: string }) {
   const router = useRouter();
-  const { user, loading: authLoading, getIdToken } = useAuth();
+  const { loading: authLoading, getIdToken } = useAuth();
   const [stepIndex, setStepIndex] = useState(0);
   const [tipIndex, setTipIndex] = useState(0);
   const [status, setStatus] = useState<string>("processing");
@@ -40,10 +36,11 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
 
   const stageLabel = useMemo(() => {
     if (status === "failed") return "Proceso detenido";
-    if (imageCount >= 3) return "Listo";
-    if (imageCount === 2) return "Mes 12 en curso";
-    if (imageCount === 1) return "Mes 8 en curso";
-    return "Mes 4 en curso";
+    if (status === "ready") return "Preparando tus resultados...";
+    if (imageCount >= 3) return "Generando mes 12...";
+    if (imageCount === 2) return "Generando mes 8...";
+    if (imageCount === 1) return "Generando mes 4...";
+    return "Analizando tu foto...";
   }, [status, imageCount]);
 
   useEffect(() => {
@@ -135,7 +132,7 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
   }, [shareId, router, authLoading, getIdToken]);
 
   return (
-    <div className="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center text-white overflow-hidden">
+    <div className="fixed inset-0 bg-[#050505]/95 z-50 flex flex-col items-center justify-center text-white overflow-hidden">
       <div className="absolute inset-0 opacity-20 pointer-events-none">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
       </div>
@@ -155,9 +152,11 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
       </div>
 
       <div className="text-center z-10 max-w-xl px-6 space-y-4">
-        <p className="text-xs tracking-[0.4em] uppercase text-[#6D00FF]">NGX Transform</p>
+        <div className="flex justify-center">
+          <Logo variant="full" size="lg" />
+        </div>
         <h2 className="text-xl sm:text-2xl font-bold text-[#6D00FF] tracking-widest uppercase animate-pulse">
-          {LOADING_STEPS[stepIndex]}
+          {stageLabel || LOADING_STEPS[stepIndex]}
         </h2>
         <p className="text-sm text-neutral-300">{stageLabel}</p>
 
@@ -168,19 +167,40 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
           />
         </div>
 
-        <div className="grid grid-cols-3 gap-3 pt-4 text-xs">
-          {["Mes 4", "Mes 8", "Mes 12"].map((label, idx) => (
+        <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 pt-4 text-xs">
+          {[
+            "Analizando tu foto...",
+            "Generando mes 4...",
+            "Generando mes 8...",
+            "Generando mes 12...",
+            "Preparando tus resultados...",
+          ].map((label, idx) => (
             <div
               key={label}
               className={cn(
                 "rounded-xl border border-white/10 bg-white/5 p-3",
-                imageCount > idx && "border-[#6D00FF] bg-[#6D00FF]/10"
+                (status === "ready" && idx === 4) ||
+                (idx === 0 && imageCount === 0) ||
+                (idx === 1 && imageCount >= 1) ||
+                (idx === 2 && imageCount >= 2) ||
+                (idx === 3 && imageCount >= 3)
+                  ? "border-[#6D00FF] bg-[#6D00FF]/10"
+                  : ""
               )}
             >
-              <p className="uppercase tracking-wider text-neutral-400">{label}</p>
+              <p className="uppercase tracking-wider text-neutral-400">{label.replace("...", "")}</p>
               <p className="text-sm font-semibold">
-                {imageCount > idx ? "Listo" : "En proceso"}
+                {(status === "ready" && idx === 4) ||
+                (idx === 0 && imageCount === 0) ||
+                (idx === 1 && imageCount >= 1) ||
+                (idx === 2 && imageCount >= 2) ||
+                (idx === 3 && imageCount >= 3)
+                  ? "Listo"
+                  : "Procesando..."}
               </p>
+              <div className="mt-2 h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+                <div className="h-full w-2/3 bg-[#6D00FF] animate-pulse rounded-full" />
+              </div>
             </div>
           ))}
         </div>

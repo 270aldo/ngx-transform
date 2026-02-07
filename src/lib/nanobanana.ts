@@ -11,6 +11,9 @@
  * - m8 refs: [original, styleRef, m4]
  * - m12 refs: [original, styleRef, m8]
  */
+// TODO: [P1] Investigar fallo en generación de imágenes Identity Chain.
+// Posible causa: configuración de API key o límites de rate en Gemini 2.5 Flash.
+// Ver: src/lib/nanobanana.ts y src/app/api/generate-images/route.ts
 
 import {
   getImageConfig,
@@ -204,6 +207,10 @@ function extractImageFromResponse(json: unknown): { data: string; mimeType: stri
 export async function generateTransformedImage(
   params: GenerationParams
 ): Promise<GenerationResult> {
+  if (!process.env.GEMINI_API_KEY) {
+    throw new Error("GEMINI_API_KEY no está configurada para generar imágenes");
+  }
+
   const config = getImageConfig();
   const stepConfig = config.byStep[params.step];
   const identityConfig = getIdentityChainConfig();
@@ -230,7 +237,8 @@ export async function generateTransformedImage(
       referenceImages.push(styleRef);
       console.log("   Style ref: loaded");
     } catch (err) {
-      console.warn("   Style ref: failed to load, continuing without", err);
+      const detail = err instanceof Error ? err.message : "unknown_error";
+      console.warn(`   Style ref: failed to load (${detail}), continuing without`);
     }
   }
 
@@ -241,7 +249,8 @@ export async function generateTransformedImage(
       referenceImages.push(prevStep);
       console.log("   Previous step ref: loaded");
     } catch (err) {
-      console.warn("   Previous step ref: failed to load, continuing without", err);
+      const detail = err instanceof Error ? err.message : "unknown_error";
+      console.warn(`   Previous step ref: failed to load (${detail}), continuing without`);
     }
   }
 

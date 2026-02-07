@@ -9,11 +9,15 @@ import {
   type EmailStage,
 } from "@/lib/emailScheduler";
 import { trackEvent } from "@/lib/telemetry";
-import { isEmailSuppressed } from "@/lib/emailSuppression";
+import { isEmailSuppressed, suppressEmail } from "@/lib/emailSuppression";
+import { getDb } from "@/lib/firebaseAdmin";
 import D0Results from "@/emails/sequence/D0Results";
 import D1Reminder from "@/emails/sequence/D1Reminder";
 import D3Plan from "@/emails/sequence/D3Plan";
+import D5Ebook from "@/emails/sequence/D5Ebook";
 import D7Conversion from "@/emails/sequence/D7Conversion";
+import D10Urgency from "@/emails/sequence/D10Urgency";
+import D14Final from "@/emails/sequence/D14Final";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 
 // Lazy initialization of Resend to avoid build errors
@@ -25,10 +29,16 @@ function getResend(): Resend | null {
 
 const SendEmailSchema = z.object({
   shareId: z.string().min(1),
-  template: z.enum(["D0", "D1", "D3", "D7"]),
+  template: z.enum(["D0", "D1", "D3", "D5", "D7", "D10", "D14"]),
   name: z.string().optional(),
   m0ImageUrl: z.string().url().optional(),
   m12ImageUrl: z.string().url().optional(),
+  bookingUrl: z.string().url().optional(),
+  cohortLabel: z.string().optional(),
+  spotsLeft: z.number().int().positive().optional(),
+  spotsTotal: z.number().int().positive().optional(),
+  closeDateLabel: z.string().optional(),
+  waitlistUrl: z.string().url().optional(),
 });
 
 type SendEmailRequest = z.infer<typeof SendEmailSchema>;
@@ -40,6 +50,12 @@ function getEmailComponent(
     shareId: string;
     m0ImageUrl?: string;
     m12ImageUrl?: string;
+    bookingUrl?: string;
+    cohortLabel?: string;
+    spotsLeft?: number;
+    spotsTotal?: number;
+    closeDateLabel?: string;
+    waitlistUrl?: string;
   }
 ) {
   switch (template) {
@@ -49,8 +65,14 @@ function getEmailComponent(
       return D1Reminder(props);
     case "D3":
       return D3Plan(props);
+    case "D5":
+      return D5Ebook(props);
     case "D7":
       return D7Conversion(props);
+    case "D10":
+      return D10Urgency(props);
+    case "D14":
+      return D14Final(props);
     default:
       throw new Error(`Unknown template: ${template}`);
   }
@@ -108,6 +130,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Suppress nurture emails after conversion to HYBRID
+    const sessionSnap = await getDb().collection("sessions").doc(validated.shareId).get();
+    const sessionData = sessionSnap.data() as
+      | { hybridStatus?: string; hybridConvertedAt?: unknown }
+      | undefined;
+    const hasConverted =
+      sessionData?.hybridStatus === "converted" || Boolean(sessionData?.hybridConvertedAt);
+    if (hasConverted) {
+      await suppressEmail(email, "hybrid_converted", { shareId: validated.shareId });
+      return NextResponse.json(
+        { success: false, skipped: true, message: "Hybrid converted" },
+        { status: 200 }
+      );
+    }
+
     // Check if Resend is configured
     const resend = getResend();
     if (!resend) {
@@ -125,11 +162,20 @@ export async function POST(req: NextRequest) {
       shareId: validated.shareId,
       m0ImageUrl: validated.m0ImageUrl,
       m12ImageUrl: validated.m12ImageUrl,
+      bookingUrl: validated.bookingUrl,
+      cohortLabel: validated.cohortLabel,
+      spotsLeft: validated.spotsLeft,
+      spotsTotal: validated.spotsTotal,
+      closeDateLabel: validated.closeDateLabel,
+      waitlistUrl: validated.waitlistUrl,
     };
 
     // Send email
     const { data, error: resendError } = await resend.emails.send({
-      from: process.env.EMAIL_FROM || "NGX Transform <transform@ngxgenesis.com>",
+      from:
+        process.env.RESEND_FROM_EMAIL ||
+        process.env.EMAIL_FROM ||
+        "NGX Transform <transform@ngxgenesis.com>",
       to: email,
       subject: getEmailSubject(validated.template),
       react: getEmailComponent(validated.template, emailProps),

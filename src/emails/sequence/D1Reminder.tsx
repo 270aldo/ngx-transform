@@ -10,6 +10,7 @@ import {
   Tailwind,
   Preview,
   Hr,
+  Img,
 } from "@react-email/components";
 
 interface D1ReminderProps {
@@ -19,9 +20,12 @@ interface D1ReminderProps {
 
 export default function D1Reminder({ name, shareId }: D1ReminderProps) {
   const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || "https://transform.ngxgenesis.com";
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    "https://transform.ngxgenesis.com";
   const resultsUrl = `${baseUrl}/s/${shareId}`;
   const unsubscribeUrl = `${baseUrl}/unsubscribe?shareId=${shareId}`;
+  const logoUrl = `${baseUrl}/images/brand/logo.svg`;
 
   return (
     <Html>
@@ -32,9 +36,7 @@ export default function D1Reminder({ name, shareId }: D1ReminderProps) {
           <Container className="mx-auto my-8 max-w-xl">
             {/* Header */}
             <Section className="text-center mb-8">
-              <Text className="text-2xl font-bold text-white m-0">
-                NGX TRANSFORM
-              </Text>
+              <Img src={logoUrl} alt="NGX Genesis" width="140" className="mx-auto mb-3" />
             </Section>
 
             {/* Main Card */}
@@ -62,16 +64,16 @@ export default function D1Reminder({ name, shareId }: D1ReminderProps) {
                 </Text>
                 <ul className="text-sm text-neutral-400 pl-4 m-0">
                   <li className="mb-2">
-                    📊 Análisis detallado de tu potencial físico
+                    Análisis detallado de tu potencial físico
                   </li>
                   <li className="mb-2">
-                    🧠 Evaluación de tu estado mental y recomendaciones
+                    Evaluación de tu estado mental y recomendaciones
                   </li>
                   <li className="mb-2">
-                    🎯 Timeline interactivo mes a mes
+                    Timeline interactivo mes a mes
                   </li>
                   <li>
-                    📝 Vista previa de tu plan de entrenamiento
+                    Vista previa de tu plan de entrenamiento
                   </li>
                 </ul>
               </Section>

@@ -15,7 +15,7 @@
  * - Hides automatically if no videoUrl provided
  */
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Play, Pause, Volume2, VolumeX } from "lucide-react";
 import { useLandingConfig } from "./LandingProvider";
@@ -81,10 +81,10 @@ export function LandingExplainerVideo() {
     <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mb-40">
       {/* Section Header */}
       <div className="text-center mb-12 animate-on-scroll">
-        <h2 className="text-3xl text-white mb-4 tracking-tight font-semibold">
+        <h2 className="text-3xl text-white mb-4 tracking-tight font-display font-semibold">
           {explainerVideo.title}
         </h2>
-        <p className="text-slate-400 text-sm max-w-lg mx-auto">
+        <p className="text-slate-400 text-sm max-w-lg mx-auto font-body">
           {explainerVideo.subtitle}
         </p>
       </div>
@@ -198,7 +198,7 @@ export function LandingExplainerVideo() {
 
               {/* Duration Badge */}
               {explainerVideo.duration && (
-                <span className="text-xs text-white/60 font-medium">
+                <span className="text-xs text-white/60 font-mono uppercase tracking-widest">
                   {explainerVideo.duration}
                 </span>
               )}

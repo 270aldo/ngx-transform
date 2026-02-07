@@ -7,9 +7,14 @@ export { LandingProvider, useLandingConfig, useThemeStyles } from "./LandingProv
 
 // Page sections
 export { LandingHero } from "./LandingHero";
+export { LandingTopNav } from "./LandingTopNav";
+export { LandingProblem } from "./LandingProblem";
 export { LandingStats } from "./LandingStats";
 export { LandingFeatures } from "./LandingFeatures";
 export { LandingHowItWorks } from "./LandingHowItWorks";
+export { LandingValueStack } from "./LandingValueStack";
+export { LandingBridge } from "./LandingBridge";
+export { LandingFAQ } from "./LandingFAQ";
 export { LandingExplainerVideo } from "./LandingExplainerVideo";
 export { LandingTestimonials } from "./LandingTestimonials";
 export { LandingCTA } from "./LandingCTA";

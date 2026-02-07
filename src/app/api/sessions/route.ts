@@ -8,6 +8,7 @@ import { telemetry, initSessionMetrics, startTimer } from "@/lib/telemetry";
 import { getOrCreateJob } from "@/lib/jobManager";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 import { requireAuth } from "@/lib/authServer";
+import { sendN8NWebhook } from "@/lib/n8nWebhook";
 
 /**
  * Genera un token seguro para acciones destructivas
@@ -140,6 +141,8 @@ export async function POST(req: Request) {
       shareId,
       email: userEmail,
       ownerUid: authUser.uid,
+      hybridStatus: "prospect",
+      hybridConvertedAt: null,
       shareOriginal: false,
       shareScope: {
         shareOriginal: false,
@@ -155,6 +158,7 @@ export async function POST(req: Request) {
       source: {
         variant: landingVariant || "general",
       },
+      lastActivityAt: FieldValue.serverTimestamp(),
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     });
@@ -165,30 +169,11 @@ export async function POST(req: Request) {
     // Track evento de sesión creada
     await telemetry.sessionCreated(shareId);
 
-    // Fire webhook to n8n (non-blocking, with telemetry)
-    (async () => {
-      try {
-        const webhook = process.env.N8N_WEBHOOK_URL;
-        if (!webhook) return;
-        const res = await fetch(webhook, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            type: "ngx_session_created",
-            shareId,
-            email: userEmail,
-            input,
-            source: "wizard",
-            createdAt: new Date().toISOString(),
-          }),
-        });
-        if (!res.ok) {
-          console.error(`[Sessions] n8n webhook returned ${res.status}`);
-        }
-      } catch (err) {
-        console.error("[Sessions] n8n webhook failed:", err);
-      }
-    })();
+    void sendN8NWebhook("lead_captured", {
+      shareId,
+      email: userEmail,
+      source: landingVariant || "general",
+    });
 
     // Fire-and-forget email confirmation with share link (with telemetry)
     (async () => {
@@ -196,7 +181,11 @@ export async function POST(req: Request) {
         const key = process.env.RESEND_API_KEY;
         if (!key) return;
         const vercelUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null;
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || vercelUrl || "http://localhost:3000";
+        const baseUrl =
+          process.env.NEXT_PUBLIC_APP_URL ||
+          process.env.NEXT_PUBLIC_BASE_URL ||
+          vercelUrl ||
+          "http://localhost:3000";
         const url = String(baseUrl).startsWith("http") ? `${baseUrl}/s/${shareId}` : `https://${baseUrl}/s/${shareId}`;
         const resend = new Resend(key);
         await resend.emails.send({

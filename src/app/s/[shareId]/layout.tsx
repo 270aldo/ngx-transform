@@ -8,7 +8,7 @@ export default function ResultsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-transparent">
       {children}
     </div>
   );

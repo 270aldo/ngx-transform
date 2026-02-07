@@ -1,48 +1,46 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/firebaseAdmin";
-import { FieldValue } from "firebase-admin/firestore";
+import { FieldValue, Timestamp } from "firebase-admin/firestore";
 
 const COUNTER_DOC = "counters/global_transforms";
-const SEED_COUNT = 8547;
-const WEEKLY_SEED = 2341;
+const SEED_COUNT = Number(process.env.SOCIAL_COUNTER_SEED_TOTAL || "8547");
+const WEEKLY_SEED = Number(process.env.SOCIAL_COUNTER_SEED_WEEKLY || "2341");
 
 export async function GET() {
   try {
     const db = getDb();
-    const docRef = db.doc(COUNTER_DOC);
-    const doc = await docRef.get();
+    const now = new Date();
+    const weekStart = new Date(now);
+    weekStart.setUTCDate(weekStart.getUTCDate() - 7);
 
-    if (!doc.exists) {
-      // Initialize counter
-      const initialData = {
-        count: SEED_COUNT,
-        weeklyCount: WEEKLY_SEED,
-        lastReset: new Date(),
-        seed: SEED_COUNT,
-      };
-      await docRef.set(initialData);
-      return NextResponse.json(initialData);
-    }
+    const totalAggPromise = db.collection("sessions").where("status", "==", "ready").count().get();
+    const weeklyAggPromise = db
+      .collection("sessions")
+      .where("status", "==", "ready")
+      .where("generatedAt", ">=", Timestamp.fromDate(weekStart))
+      .count()
+      .get();
 
-    const data = doc.data()!;
+    const [totalAgg, weeklyAgg] = await Promise.all([
+      totalAggPromise,
+      weeklyAggPromise.catch(async (error) => {
+        console.warn("[COUNTER_GET] weekly count fallback:", error);
+        const fallbackSnap = await db.collection("sessions").where("status", "==", "ready").get();
+        const weeklyCount = fallbackSnap.docs.filter((doc) => {
+          const generatedAt = doc.data().generatedAt as Timestamp | undefined;
+          if (!generatedAt) return false;
+          return generatedAt.toDate().getTime() >= weekStart.getTime();
+        }).length;
+        return { data: () => ({ count: weeklyCount }) };
+      }),
+    ]);
 
-    // Check weekly reset
-    const lastReset = data.lastReset?.toDate() || new Date(0);
-    const daysSinceReset =
-      (Date.now() - lastReset.getTime()) / (1000 * 60 * 60 * 24);
-
-    if (daysSinceReset >= 7) {
-      // Reset weekly count
-      await docRef.update({
-        weeklyCount: WEEKLY_SEED,
-        lastReset: new Date(),
-      });
-      data.weeklyCount = WEEKLY_SEED;
-    }
+    const totalCount = Number(totalAgg.data().count || 0) + SEED_COUNT;
+    const weeklyCount = Number(weeklyAgg.data().count || 0) + WEEKLY_SEED;
 
     return NextResponse.json({
-      count: data.count,
-      weeklyCount: data.weeklyCount,
+      count: totalCount,
+      weeklyCount,
     });
   } catch (error) {
     console.error("[COUNTER_GET]", error);

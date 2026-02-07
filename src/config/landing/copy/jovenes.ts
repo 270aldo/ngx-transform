@@ -18,8 +18,8 @@ import type { VariantCopy } from "../types";
 export const jovenesCopy: VariantCopy = {
   hero: {
     badge: {
-      aiLabel: "Powered by Gemini AI",
-      version: "v2.1",
+      aiLabel: "Potenciado por GENESIS AI",
+      version: "HYBRID",
     },
     headline: {
       line1: "Desbloquea tu",
@@ -29,8 +29,8 @@ export const jovenesCopy: VariantCopy = {
       "IA que proyecta tu potencial físico en 12 meses. Tu mejor yo está a una foto de distancia.",
     cta: "Empezar Ahora",
     socialProof: {
-      count: "+10,000 atletas",
-      label: "Esta semana en NGX",
+      count: "Análisis en <3 min",
+      label: "Privacidad total de tus datos",
     },
     // Before/After transformation demo
     transformationDemo: {
@@ -42,10 +42,10 @@ export const jovenesCopy: VariantCopy = {
   },
 
   stats: [
-    { value: "99.9", suffix: "%", label: "Precisión IA" },
-    { value: "<3", suffix: "min", label: "Análisis" },
-    { value: "1M", suffix: "+", label: "Transformaciones" },
-    { value: "186", suffix: "+", label: "Países" },
+    { value: "<3", suffix: " min", label: "De foto a resultados" },
+    { value: "12", suffix: " meses", label: "Proyección personalizada" },
+    { value: "100", suffix: "%", label: "Privacidad tras entrega" },
+    { value: "IA +", suffix: " Coach", label: "Sistema HYBRID" },
   ],
 
   features: [
@@ -119,7 +119,7 @@ export const jovenesCopy: VariantCopy = {
         text: "Como coach, mis atletas ven su proyección y se comprometen al 100%. La visualización es power.",
         name: "Marcos T.",
         role: "Strength Coach",
-        gradient: "from-blue-400 to-cyan-400",
+        gradient: "from-violet-400 to-fuchsia-400",
       },
     ],
   },

@@ -9,7 +9,6 @@ import {
   Brain,
   Shield,
   Camera,
-  User,
   Sparkles,
 } from "lucide-react";
 import type { VariantCopy } from "../types";
@@ -17,19 +16,19 @@ import type { VariantCopy } from "../types";
 export const generalCopy: VariantCopy = {
   hero: {
     badge: {
-      aiLabel: "Powered by Gemini AI",
-      version: "v2.1",
+      aiLabel: "Potenciado por GENESIS AI",
+      version: "HYBRID",
     },
     headline: {
       line1: "Visualiza tu",
-      line2: "transformación.",
+      line2: "transformación física.",
     },
     subtitle:
-      "IA que proyecta tu evolución física en 12 meses. Sube tu foto, recibe tu timeline personalizado. Gratis.",
-    cta: "Comenzar Gratis",
+      "Sube una foto. La IA analiza tu composición corporal, identifica tu potencial y genera una proyección visual realista de lo que tu cuerpo puede lograr en 12 semanas.",
+    cta: "Descubre Tu Potencial",
     socialProof: {
-      count: "+10,000 transformaciones",
-      label: "Esta semana en NGX",
+      count: "Análisis en <3 min",
+      label: "Privacidad total de tus datos",
     },
     // Before/After transformation demo
     transformationDemo: {
@@ -41,10 +40,10 @@ export const generalCopy: VariantCopy = {
   },
 
   stats: [
-    { value: "99.9", suffix: "%", label: "Precisión IA" },
-    { value: "<3", suffix: "min", label: "Análisis" },
-    { value: "1M", suffix: "+", label: "Transformaciones" },
-    { value: "186", suffix: "+", label: "Países" },
+    { value: "<3", suffix: " min", label: "De foto a resultados" },
+    { value: "12", suffix: " meses", label: "Proyección personalizada" },
+    { value: "100", suffix: "%", label: "Privacidad tras entrega" },
+    { value: "IA +", suffix: " Coach", label: "Sistema HYBRID" },
   ],
 
   features: [
@@ -72,28 +71,28 @@ export const generalCopy: VariantCopy = {
   ],
 
   howItWorks: {
-    title: "Cómo Funciona",
-    subtitle: "De foto a proyección en menos de 3 minutos.",
+    title: "3 pasos. 60 segundos. Tu potencial revelado.",
+    subtitle: "",
     steps: [
       {
         step: "01",
-        title: "Sube tu Foto",
+        title: "Sube tu foto",
         description:
-          "Una foto actual de cuerpo completo. Frontal, buena iluminación.",
+          "Una foto de cuerpo completo. Privada y segura. Se elimina después del análisis. Sin trucos, sin filtros.",
         icon: Camera,
       },
       {
         step: "02",
-        title: "Completa tu Perfil",
+        title: "GENESIS analiza tu cuerpo",
         description:
-          "Datos biométricos, objetivos y estilo de vida. 2 minutos máximo.",
-        icon: User,
+          "La IA evalúa tu composición corporal, identifica áreas de oportunidad y calcula tu potencial real basado en ciencia y datos.",
+        icon: Brain,
       },
       {
         step: "03",
-        title: "Recibe tu Timeline",
+        title: "Visualiza tu transformación",
         description:
-          "IA genera tu proyección personalizada con 4 etapas de transformación.",
+          "Recibe una proyección visual realista de tu potencial a 12 semanas, junto con un análisis detallado y tu plan de acción personalizado.",
         icon: Sparkles,
       },
     ],
@@ -106,29 +105,29 @@ export const generalCopy: VariantCopy = {
         text: "Increíble la precisión. Mi proyección de mes 12 se parece mucho a mi progreso real después de entrenar 8 meses.",
         name: "Carlos M.",
         role: "Usuario verificado",
-        gradient: "from-blue-400 to-cyan-300",
+        gradient: "from-violet-400 to-fuchsia-300",
       },
       {
         text: "Lo usé para motivarme. Ver mi potencial me dio la disciplina que necesitaba para empezar a entrenar en serio.",
         name: "Ana R.",
         role: "Usuario verificado",
-        gradient: "from-emerald-400 to-green-300",
+        gradient: "from-emerald-400 to-lime-300",
       },
       {
         text: "Como entrenador, lo uso con mis clientes para mostrarles su potencial. La visualización es poderosísima.",
         name: "Diego L.",
         role: "Personal Trainer",
-        gradient: "from-purple-400 to-pink-300",
+        gradient: "from-purple-400 to-rose-300",
       },
     ],
   },
 
   cta: {
-    headline: "¿Listo para ver tu potencial?",
+    headline: "Tu cuerpo tiene más potencial del que crees.",
     subtitle:
-      "Únete a miles de personas que ya visualizaron su transformación. Gratis, sin registro, sin compromisos.",
-    buttonText: "Comenzar Ahora",
-    footnote: "Análisis en menos de 3 minutos",
+      "Deja de adivinar. Deja de seguir planes genéricos. Descubre lo que es posible para ti con un análisis real de GENESIS.",
+    buttonText: "Descubre Tu Potencial",
+    footnote: "Gratis · Sin tarjeta · Resultados en 60 segundos",
   },
 
   footer: {

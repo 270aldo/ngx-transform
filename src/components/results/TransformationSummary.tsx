@@ -7,7 +7,6 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ArrowRight, TrendingDown, TrendingUp, Sparkles } from 'lucide-react';
 import type { InsightsResult } from '@/types/ai';
@@ -26,8 +25,6 @@ export function TransformationSummary({
   imageUrls,
   shareId,
 }: TransformationSummaryProps) {
-  const router = useRouter();
-
   // Extract stats from timeline
   const m0Stats = ai.timeline?.m0?.stats;
   const m12Stats = ai.timeline?.m12?.stats;
@@ -52,17 +49,36 @@ export function TransformationSummary({
   ];
 
   const handleCTAClick = () => {
-    router.push(`/s/${shareId}/demo`);
+    const offer = document.getElementById("hybrid-offer");
+    if (offer) {
+      offer.scrollIntoView({ behavior: "smooth", block: "start" });
+      const nextUrl = new URL(window.location.href);
+      nextUrl.searchParams.set("section", "offer");
+      window.history.replaceState({}, "", nextUrl.toString());
+      return;
+    }
+    window.location.href = `/s/${shareId}?section=offer`;
   };
 
   return (
     <motion.section
+      id="results-summary"
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.3 }}
-      className="w-full bg-[#050505] py-12 px-4"
+      className="relative w-full py-12 px-4 scroll-mt-24"
     >
+      <div
+        className="absolute inset-0 opacity-20"
+        style={{
+          backgroundImage: "url('/images/backgrounds/results-abstract.svg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0A0A0A]/60 to-[#0A0A0A]/95" />
       <div className="max-w-2xl mx-auto">
+        <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#0A0A0A]/75 backdrop-blur-xl p-4 sm:p-6 md:p-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -115,8 +131,8 @@ export function TransformationSummary({
                   />
                 ) : (
                   <div className="w-full h-full bg-white/5 flex items-center justify-center">
-                    <span className="text-[10px] text-white/30">
-                      {item.key.toUpperCase()}
+                    <span className="text-[10px] text-white/50 uppercase tracking-wider font-medium">
+                      Procesando...
                     </span>
                   </div>
                 )}
@@ -166,7 +182,7 @@ export function TransformationSummary({
             {/* Weight */}
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 mb-1">
-                <TrendingDown size={12} className="text-[#00FF88]" />
+                <TrendingDown size={12} className="text-emerald-400" />
                 <span className="text-lg md:text-xl font-bold text-white">
                   {weightDelta > 0 ? '+' : ''}{weightDelta}kg
                 </span>
@@ -177,7 +193,7 @@ export function TransformationSummary({
             {/* Body fat */}
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 mb-1">
-                <TrendingDown size={12} className="text-[#00FF88]" />
+                <TrendingDown size={12} className="text-emerald-400" />
                 <span className="text-lg md:text-xl font-bold text-white">
                   {fatDelta}%
                 </span>
@@ -188,7 +204,7 @@ export function TransformationSummary({
             {/* Muscle */}
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 mb-1">
-                <TrendingUp size={12} className="text-[#00FF88]" />
+                <TrendingUp size={12} className="text-emerald-400" />
                 <span className="text-lg md:text-xl font-bold text-white">
                   +{muscleDelta}%
                 </span>
@@ -206,7 +222,7 @@ export function TransformationSummary({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={handleCTAClick}
-          className="w-full py-4 px-6 rounded-2xl font-bold text-white flex items-center justify-center gap-3 transition-all"
+          className="w-full min-h-[44px] py-4 px-6 rounded-2xl font-bold text-white flex items-center justify-center gap-3 transition-all"
           style={{
             background: 'linear-gradient(135deg, #6D00FF 0%, #5B21B6 100%)',
             boxShadow: '0 8px 32px rgba(109, 0, 255, 0.4)',
@@ -214,7 +230,7 @@ export function TransformationSummary({
         >
           <Sparkles size={18} />
           <span className="text-sm uppercase tracking-wider">
-            Ver cómo GENESIS crea tu plan
+            ¿Quieres el camino exacto de 12 semanas para llegar ahí?
           </span>
           <ArrowRight size={18} />
         </motion.button>
@@ -228,6 +244,7 @@ export function TransformationSummary({
         >
           GENESIS analizará tu perfil con 4 capacidades especializadas en tiempo real
         </motion.p>
+        </div>
       </div>
     </motion.section>
   );

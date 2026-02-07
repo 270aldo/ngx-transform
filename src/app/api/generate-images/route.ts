@@ -8,6 +8,9 @@
  * - Quality gates: Validates outputs and retries if needed
  * - Graceful degradation: Continues on partial failures
  */
+// TODO: [P1] Investigar fallo en generación de imágenes Identity Chain.
+// Posible causa: configuración de API key o límites de rate en Gemini 2.5 Flash.
+// Ver: src/lib/nanobanana.ts y src/app/api/generate-images/route.ts
 
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/firebaseAdmin";
@@ -38,6 +41,7 @@ import {
 } from "@/lib/jobManager";
 import type { SessionDocument, AnalysisOutput, InsightsResult } from "@/types/ai";
 import { completeReferral } from "@/lib/viral/referralTracking";
+import { sendN8NWebhook } from "@/lib/n8nWebhook";
 
 // ============================================================================
 // Config
@@ -414,6 +418,11 @@ export async function POST(req: Request) {
       completeReferral(sessionId).catch((err) =>
         console.warn("[GenerateImages] Referral completion failed (non-blocking):", err)
       );
+      void sendN8NWebhook("transform_completed", {
+        shareId: sessionId,
+        email: data.email || null,
+        status: "ready",
+      });
     } else if (failedSteps.length === stepsToProcess.length) {
       await markJobFailed(
         `${sessionId}_image_generation`,

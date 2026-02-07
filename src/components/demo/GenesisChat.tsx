@@ -227,7 +227,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
     const moduleConfig = {
       blaze: { icon: Flame, color: "#fb923c", label: "Entrenamiento" },
       sage: { icon: Brain, color: "#34d399", label: "Nutrición" },
-      tempo: { icon: Timer, color: "#60a5fa", label: "Recuperación" },
+      tempo: { icon: Timer, color: "#7D1AFF", label: "Recuperación" },
     }[message.agent || "blaze"];
 
     const Icon = moduleConfig.icon;

@@ -4,7 +4,9 @@ import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 
 export function BookingCTA() {
-  const bookingUrl = process.env.NEXT_PUBLIC_BOOKING_URL;
+  const bookingUrl =
+    process.env.NEXT_PUBLIC_CALENDLY_URL ||
+    process.env.NEXT_PUBLIC_BOOKING_URL;
 
   // Don't render if no booking URL configured
   if (!bookingUrl) return null;
@@ -39,7 +41,7 @@ export function BookingCTA() {
             </h3>
 
             <p className="text-white/70 text-xs sm:text-sm lg:text-base mb-4 sm:mb-6">
-              Únete a NGX y convierte esta visión en realidad con entrenamiento personalizado.
+              Activa NGX HYBRID y convierte esta visión en un sistema ejecutable de 12 semanas.
             </p>
 
             <motion.div

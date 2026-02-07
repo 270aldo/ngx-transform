@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -49,9 +50,9 @@ function UnsubscribeContent() {
       <h1 className="text-2xl font-semibold">Preferencias de Email</h1>
       <p className="text-sm text-neutral-400">{message}</p>
       {status === "success" && (
-        <a href="/" className="inline-block text-sm text-[#6D00FF] underline underline-offset-4">
+        <Link href="/" className="inline-block text-sm text-[#6D00FF] underline underline-offset-4">
           Volver al inicio
-        </a>
+        </Link>
       )}
     </>
   );

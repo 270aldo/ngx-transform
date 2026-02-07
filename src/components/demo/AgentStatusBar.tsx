@@ -30,8 +30,8 @@ const moduleConfigs = [
     key: "tempo" as const,
     name: "Recuperación",
     icon: Timer,
-    activeColor: "text-blue-400",
-    bgColor: "bg-blue-400",
+    activeColor: "text-violet-400",
+    bgColor: "bg-violet-400",
     description: "Programando",
   },
 ];

@@ -68,7 +68,7 @@ export const AGENTS: Record<string, AgentConfig> = {
     id: "tempo",
     name: "Recuperación", // v11.0: Capacidad, no agente
     role: "Módulo de Tiempos",
-    color: "blue",
+    color: "violet",
     specialty: "Tiempos de descanso, tempo de ejecución y recuperación",
   },
 };

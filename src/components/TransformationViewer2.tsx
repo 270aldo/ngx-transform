@@ -74,6 +74,7 @@ interface TransformationViewer2Props {
     FF_SOCIAL_COUNTER?: boolean;
     FF_AGENT_BRIDGE_CTA?: boolean;
     FF_SHARE_TO_UNLOCK?: boolean;
+    FF_SHARE_UNLOCK?: boolean;
     FF_REFERRAL_TRACKING?: boolean;
   };
 }
@@ -98,8 +99,10 @@ export function TransformationViewer2({
     FF_SOCIAL_COUNTER = true,
     FF_AGENT_BRIDGE_CTA = true,
     FF_SHARE_TO_UNLOCK = true,
+    FF_SHARE_UNLOCK,
     FF_REFERRAL_TRACKING = true,
   } = featureFlags;
+  const shareUnlockEnabled = FF_SHARE_UNLOCK ?? FF_SHARE_TO_UNLOCK;
 
   // State
   const [showDramaticReveal, setShowDramaticReveal] = useState(FF_DRAMATIC_REVEAL);
@@ -161,10 +164,10 @@ export function TransformationViewer2({
     localStorage.setItem(`ngx-dramatic-seen-${shareId}`, "true");
 
     // Show share modal if enabled
-    if (FF_SHARE_TO_UNLOCK && unlockedContent.length === 0) {
+    if (shareUnlockEnabled && unlockedContent.length === 0) {
       setShowShareModal(true);
     }
-  }, [shareId, FF_SHARE_TO_UNLOCK, unlockedContent.length]);
+  }, [shareId, shareUnlockEnabled, unlockedContent.length]);
 
   // Content unlock handler
   const handleContentUnlock = useCallback(
@@ -276,7 +279,7 @@ export function TransformationViewer2({
   const hasNext = currentIndex < STEPS.length - 1;
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-transparent text-white">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 px-4 py-3">
         <div className="flex items-center justify-between">
@@ -359,7 +362,7 @@ export function TransformationViewer2({
                   }}
                   className="mt-8 px-6 py-3 rounded-full text-neutral-400 hover:text-white transition-colors text-sm"
                 >
-                  🎬 Reproducir experiencia cinematográfica
+                  Reproducir experiencia cinematográfica
                 </motion.button>
               )}
             </div>
@@ -470,7 +473,7 @@ export function TransformationViewer2({
       />
 
       {/* v2.1: Share to Unlock Modal */}
-      {FF_SHARE_TO_UNLOCK && (
+      {shareUnlockEnabled && (
         <ShareToUnlockModal
           isOpen={showShareModal}
           onClose={() => setShowShareModal(false)}

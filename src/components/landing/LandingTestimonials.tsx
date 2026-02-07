@@ -10,7 +10,7 @@ export function LandingTestimonials() {
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-40">
-      <h2 className="animate-on-scroll text-sm text-slate-500 mb-10 uppercase tracking-widest pl-2">
+      <h2 className="animate-on-scroll text-sm text-slate-500 mb-10 uppercase tracking-widest pl-2 font-mono">
         {testimonials.sectionLabel}
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -28,7 +28,7 @@ export function LandingTestimonials() {
                 <Star key={j} className="w-3 h-3 fill-current" />
               ))}
             </div>
-            <p className="text-slate-300 text-sm leading-relaxed mb-6">
+            <p className="text-slate-300 text-sm leading-relaxed mb-6 font-body">
               &ldquo;{testimonial.text}&rdquo;
             </p>
             <div className="flex items-center gap-3">
@@ -36,10 +36,10 @@ export function LandingTestimonials() {
                 className={`w-8 h-8 rounded-full bg-gradient-to-br ${testimonial.gradient}`}
               />
               <div>
-                <div className="text-white text-xs font-medium">
+                <div className="text-white text-xs font-display font-medium">
                   {testimonial.name}
                 </div>
-                <div className="text-slate-500 text-[10px]">
+                <div className="text-slate-500 text-[10px] font-mono uppercase tracking-widest">
                   {testimonial.role}
                 </div>
               </div>

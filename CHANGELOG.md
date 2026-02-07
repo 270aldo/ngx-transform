@@ -1,5 +1,18 @@
 # Changelog
 
+## v3.2 — HYBRID Launch Ready (2026-02-07)
+- **BREAKING:** Eliminadas todas las referencias a ASCEND. Funnel ahora apunta 100% a HYBRID.
+- **Nuevo:** `HybridOfferSection` con triple vía de cierre (Calendly + WhatsApp + Chat).
+- **Nuevo:** `DramaticReveal` integrado en flujo de resultados con puente directo a oferta.
+- **Nuevo:** Emails `D5Ebook`, `D10Urgency`, `D14Final`.
+- **Modificado:** `D7Conversion` refactorizado para HYBRID.
+- **Modificado:** Landing copy actualizado y stats inflados eliminados.
+- **Nuevo:** NPS quick post-resultados (`NPSQuick` + `/api/feedback`).
+- **Integrado:** Share-to-Unlock y SocialCounter en UI principal.
+- **Nuevo:** Endpoint `/api/telemetry` y eventos de oferta híbrida.
+- **Nuevo:** Variables de entorno para cierre híbrido, Sentry y N8N.
+- **Ops:** Preparación de Vercel (`vercel.json`), migración `middleware.ts` → `proxy.ts`, y configuración Sentry.
+
 ## v3.1 — Security Hardening & Infrastructure
 
 ### Rate Limiting & Security

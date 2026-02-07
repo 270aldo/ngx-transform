@@ -17,8 +17,8 @@ import type { VariantCopy } from "../types";
 export const mayoresCopy: VariantCopy = {
   hero: {
     badge: {
-      aiLabel: "Tecnología Gemini AI",
-      version: "v2.1",
+      aiLabel: "Potenciado por GENESIS AI",
+      version: "HYBRID",
     },
     headline: {
       line1: "Recupera tu",
@@ -28,8 +28,8 @@ export const mayoresCopy: VariantCopy = {
       "Visualiza cómo puedes mejorar tu bienestar físico en 12 meses. Análisis personalizado y seguro.",
     cta: "Ver Mi Proyección",
     socialProof: {
-      count: "+10,000 usuarios satisfechos",
-      label: "Esta semana",
+      count: "Análisis en <3 min",
+      label: "Privacidad total de tus datos",
     },
     // Before/After transformation demo - images for wellness/vitality
     transformationDemo: {
@@ -41,10 +41,10 @@ export const mayoresCopy: VariantCopy = {
   },
 
   stats: [
-    { value: "99.9", suffix: "%", label: "Precisión" },
-    { value: "<3", suffix: "min", label: "Tiempo" },
-    { value: "1M", suffix: "+", label: "Usuarios" },
-    { value: "186", suffix: "+", label: "Países" },
+    { value: "<3", suffix: " min", label: "De foto a resultados" },
+    { value: "12", suffix: " meses", label: "Proyección personalizada" },
+    { value: "100", suffix: "%", label: "Privacidad tras entrega" },
+    { value: "IA +", suffix: " Coach", label: "Sistema HYBRID" },
   ],
 
   features: [
@@ -106,13 +106,13 @@ export const mayoresCopy: VariantCopy = {
         text: "A mis 58 años, pensé que era tarde para mejorar. Esta proyección me mostró que aún tengo mucho potencial. Muy motivador.",
         name: "Roberto G.",
         role: "Usuario verificado",
-        gradient: "from-teal-400 to-emerald-400",
+        gradient: "from-violet-400 to-emerald-400",
       },
       {
         text: "Lo más útil fue ver el progreso gradual. No promesas irreales, sino una evolución que puedo lograr con constancia.",
         name: "María Elena P.",
         role: "Usuario verificado",
-        gradient: "from-blue-400 to-indigo-400",
+        gradient: "from-purple-400 to-fuchsia-400",
       },
       {
         text: "Como médico, aprecio que muestre proyecciones realistas. Mis pacientes lo usan para visualizar sus metas de salud.",

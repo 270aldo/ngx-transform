@@ -95,7 +95,7 @@ export function hasCompletedVoiceIntro(responses: DemoUserResponses): boolean {
 }
 
 /** Subscription tier types */
-export type SubscriptionTier = 'ascend' | 'hybrid';
+export type SubscriptionTier = 'hybrid';
 
 export interface SubscriptionOption {
   tier: SubscriptionTier;

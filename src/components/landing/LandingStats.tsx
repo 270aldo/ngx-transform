@@ -17,11 +17,11 @@ export function LandingStats() {
               i > 0 ? `delay-${i}00` : ""
             } glass-panel rounded-2xl p-8 text-center border-glow-hover`}
           >
-            <div className="text-4xl md:text-5xl text-white font-semibold tracking-tight mb-2">
+            <div className="text-4xl md:text-5xl text-white font-display font-semibold tracking-tight mb-2">
               {stat.value}
               <span style={{ color: theme.accent }}>{stat.suffix}</span>
             </div>
-            <div className="text-xs text-slate-500 uppercase tracking-widest">
+            <div className="text-xs text-slate-500 uppercase tracking-widest font-mono">
               {stat.label}
             </div>
           </div>

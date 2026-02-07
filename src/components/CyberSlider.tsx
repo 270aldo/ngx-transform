@@ -23,7 +23,7 @@ export function CyberSlider({
         violet: "accent-[#6D00FF]",
         emerald: "accent-emerald-500",
         amber: "accent-amber-500",
-        blue: "accent-blue-500",
+        blue: "accent-[#7D1AFF]",
         red: "accent-red-500",
     };
 
@@ -31,7 +31,7 @@ export function CyberSlider({
         violet: "text-[#6D00FF]",
         emerald: "text-emerald-500",
         amber: "text-amber-500",
-        blue: "text-blue-500",
+        blue: "text-[#7D1AFF]",
         red: "text-red-500",
     };
 

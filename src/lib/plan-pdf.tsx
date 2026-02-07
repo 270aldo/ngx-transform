@@ -40,7 +40,7 @@ const COLORS = {
   accent: {
     orange: "#FB923C",
     emerald: "#34D399",
-    blue: "#60A5FA",
+    blue: "#7D1AFF",
   },
 };
 
@@ -405,7 +405,7 @@ const DayPage = ({ day }: { day: PlanDay }) => {
               {day.agentNotes.agent.toUpperCase()}
             </Text>
           </View>
-          <Text style={styles.agentNoteText}>"{day.agentNotes.note}"</Text>
+          <Text style={styles.agentNoteText}>{`"${day.agentNotes.note}"`}</Text>
         </View>
       )}
 

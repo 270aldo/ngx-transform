@@ -21,7 +21,7 @@ Aplicación Next.js con Tailwind v4, shadcn/ui v4, Firebase y Gemini (texto + im
 - Cliente Firebase (NEXT_PUBLIC_*): API_KEY, AUTH_DOMAIN, PROJECT_ID, STORAGE_BUCKET, MESSAGING_SENDER_ID, APP_ID
 - Admin Firebase: FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY
 - Gemini: GEMINI_API_KEY, GEMINI_IMAGE_MODEL (opcional)
-- App: NEXT_PUBLIC_BASE_URL, NEXT_PUBLIC_BOOKING_URL (opcional), NEXT_PUBLIC_DEMO_MODE
+- App: NEXT_PUBLIC_APP_URL (canónica), NEXT_PUBLIC_BASE_URL (fallback legacy), NEXT_PUBLIC_BOOKING_URL (opcional), NEXT_PUBLIC_DEMO_MODE
 
 Consejos:
 - Demo: `NEXT_PUBLIC_DEMO_MODE=1` (sin llamadas reales; flujo simulado para demos)
@@ -46,12 +46,18 @@ Consejos:
   - `src/components/TimelineViewer.tsx`: tabs 0/4/8/12 con overlay/minimap
 
 ## Estilo NGX (dark premium)
-- Tipografía: Inter (texto y títulos: minimal tech)
+- Tipografía: JetBrains Mono (display/métricas), DM Sans (body/UI)
 - Colores tokens (globals.css):
   - `--primary: #6D00FF` (Electric Violet)
   - `--accent: #5B21B6` (Deep Purple)
   - Superficies/border/ring definidos en :root y mapeados a @theme inline
 - Componentes pills (rounded-full), focus ring violeta, Cards rounded-2xl
+
+## Branding / Logos
+- Path oficial esperado:
+  - `public/images/brand/logo.svg`
+  - `public/images/brand/logo-mark.svg`
+- Mientras no se carguen assets oficiales, `src/components/ui/Logo.tsx` usa fallback tipográfico.
 
 ## Flujo de datos (resumen)
 1) Wizard: sube foto (storage) + crea sesión (Firestore)

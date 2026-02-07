@@ -4,7 +4,9 @@ import { motion } from "framer-motion";
 import { Calendar } from "lucide-react";
 
 export function BookingHeaderButton() {
-  const bookingUrl = process.env.NEXT_PUBLIC_BOOKING_URL;
+  const bookingUrl =
+    process.env.NEXT_PUBLIC_CALENDLY_URL ||
+    process.env.NEXT_PUBLIC_BOOKING_URL;
 
   // Don't render if no booking URL configured
   if (!bookingUrl) return null;

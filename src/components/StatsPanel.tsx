@@ -79,7 +79,7 @@ const phaseContent: Record<TimelineStep, {
     focusTitle: "Fase de Consolidación",
     focusDescription: "Los meses 4 al 8 son donde los cambios se vuelven evidentes. Tu cuerpo ya está adaptado y ahora responde con mayor eficiencia. Es el momento de incrementar intensidad y volumen para acelerar la transformación.",
     focusIcon: TrendingUp,
-    focusColor: "text-cyan-400",
+    focusColor: "text-violet-400",
     milestones: [
       "Ganancia muscular significativa",
       "Reducción notable de grasa corporal",
@@ -136,7 +136,7 @@ const itemVariants = {
 const statConfig = [
   { key: "strength", label: "Fuerza", color: "#FF6B6B", icon: Dumbbell },
   { key: "aesthetics", label: "Estética", color: "#6D00FF", icon: Sparkles },
-  { key: "endurance", label: "Resistencia", color: "#00D9FF", icon: Flame },
+  { key: "endurance", label: "Resistencia", color: "#7D1AFF", icon: Flame },
   { key: "mental", label: "Mental", color: "#00FF94", icon: Brain },
 ] as const;
 

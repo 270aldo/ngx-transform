@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type FieldErrors, type Resolver } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getClientStorage } from "@/lib/firebaseClient";
@@ -50,18 +50,29 @@ const FormSchema = z.object({
   specificGoals: z.array(z.string()).default([]),
   focusAreas: z.array(z.string()).default([]),
   notes: z.string().optional(),
-  photo: z.any(),
+  photo: z.custom<FileList>().optional(),
 });
 
 type FormValues = z.infer<typeof FormSchema>;
 
-// STAGES DEFINITION
-const STAGES = [
-  { id: 1, title: "Sincronización de Identidad", sub: "Biometría Visual", icon: Eye },
-  { id: 2, title: "Análisis de Hardware", sub: "Datos Corporales", icon: Cpu },
-  { id: 3, title: "Objetivo de Misión", sub: "Definición de Target", icon: Target },
-  { id: 4, title: "Calibración de Software", sub: "Mentalidad y Estilo", icon: Activity },
-];
+const STAGE_LABELS: Record<number, { title: string; subtitle: string }> = {
+  1: {
+    title: "Sincronización visual",
+    subtitle: "Carga y validación inicial de identidad",
+  },
+  2: {
+    title: "Perfil corporal",
+    subtitle: "Definiendo parámetros físicos base",
+  },
+  3: {
+    title: "Objetivo de misión",
+    subtitle: "Selecciona tu protocolo de transformación",
+  },
+  4: {
+    title: "Calibración mental",
+    subtitle: "Ajuste de parámetros psicométricos",
+  },
+};
 
 export const dynamic = "force-dynamic";
 
@@ -115,10 +126,10 @@ export default function WizardPage() {
   const [consentAI, setConsentAI] = useState(false);
   const [consentEmail, setConsentEmail] = useState(false);
   const allConsent = consentTerms && consentAI && consentEmail;
+  const stageMeta = STAGE_LABELS[currentStage] ?? STAGE_LABELS[1];
 
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(FormSchema) as any,
+  const { register, handleSubmit, watch, setValue } = useForm<FormValues>({
+    resolver: zodResolver(FormSchema) as Resolver<FormValues>,
     defaultValues: {
       sex: "male",
       level: "novato",
@@ -126,14 +137,14 @@ export default function WizardPage() {
       weeklyTime: 5,
       bodyType: "mesomorph",
       bodyFatLevel: "medio",
-      interest: "cinematic",
+      aestheticPreference: "cinematic",
       disciplineRating: 7,
       stressLevel: 5,
       sleepQuality: 7,
       age: 25,
       heightCm: 175,
       weightKg: 75,
-    } as any,
+    },
   });
 
   const photoFile = watch("photo");
@@ -149,11 +160,15 @@ export default function WizardPage() {
     if (user?.email) setValue("email", user.email);
   }, [user?.email, setValue]);
 
-  const onFormError = (errs: any) => {
+  const onFormError = (errs: FieldErrors<FormValues>) => {
     console.log("Validation Errors:", errs);
-    const firstError = Object.values(errs)[0] as any;
+    const firstError = Object.values(errs)[0];
+    const message =
+      firstError && typeof firstError === "object" && "message" in firstError
+        ? String(firstError.message || "Verifica los datos de calibración")
+        : "Verifica los datos de calibración";
     if (firstError) {
-      addToast({ variant: "error", message: `Error: ${firstError.message || "Verifica los datos de calibración"}` });
+      addToast({ variant: "error", message: `Error: ${message}` });
     }
   };
 
@@ -166,6 +181,25 @@ export default function WizardPage() {
   const prevStage = () => {
     if (currentStage > 1) setCurrentStage(c => c - 1);
   };
+
+  const goBack = useCallback(() => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+      return;
+    }
+
+    const variant = getStoredVariant();
+    if (variant === "jovenes") {
+      router.push("/j");
+      return;
+    }
+    if (variant === "mayores") {
+      router.push("/m");
+      return;
+    }
+
+    router.push("/");
+  }, [router]);
 
   const inputRef = useRef<HTMLInputElement | null>(null);
   const onDrop = useCallback((e: React.DragEvent<HTMLLabelElement>) => {
@@ -246,24 +280,34 @@ export default function WizardPage() {
   // --- RENDER STAGES ---
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans selection:bg-[#6D00FF]/30">
+    <div className="min-h-screen bg-transparent text-white selection:bg-[#6D00FF]/30 font-[var(--font-body)]">
 
       {/* TOP HEADER */}
       <div className="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center pointer-events-none">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 pointer-events-auto">
+          <button
+            type="button"
+            onClick={goBack}
+            className="h-10 px-3 rounded-full bg-black/45 border border-white/10 backdrop-blur-md text-white/80 hover:text-white hover:bg-black/60 transition-colors inline-flex items-center gap-2 text-[10px] uppercase tracking-widest font-medium"
+          >
+            <ChevronLeft size={14} />
+            Atrás
+          </button>
           <div className="w-10 h-10 bg-white/5 backdrop-blur-md rounded-full border border-white/10 flex items-center justify-center">
             <Activity size={18} className="text-[#6D00FF]" />
           </div>
           <div>
-            <h1 className="text-xs font-black uppercase tracking-widest text-white/50">Protocolo Elite</h1>
+            <h1 className="text-xs font-mono uppercase tracking-widest text-white/60">Protocolo Elite</h1>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-white">CALIBRACIÓN DE SISTEMA</span>
+              <span className="text-sm font-display font-semibold text-white uppercase tracking-tight">Calibración de sistema</span>
               <div className="flex gap-1">
                 {[1, 2, 3, 4].map(s => (
-                  <div key={s} className={cn("w-1.5 h-1.5 rounded-full transition-colors", currentStage >= s ? "bg-[#00FF94]" : "bg-white/10")} />
+                  <div key={s} className={cn("w-1.5 h-1.5 rounded-full transition-colors", currentStage >= s ? "bg-[#B98CFF]" : "bg-white/10")} />
                 ))}
               </div>
             </div>
+            <p className="text-[10px] text-white/45 font-mono uppercase tracking-widest mt-1">{stageMeta.title}</p>
+            <p className="text-[10px] text-white/35 font-body mt-0.5">{stageMeta.subtitle}</p>
           </div>
         </div>
         {DEMO && <div className="px-3 py-1 bg-[#6D00FF]/20 text-[#6D00FF] text-[10px] font-bold rounded-full border border-[#6D00FF]/30 backdrop-blur-md">DEMO MODE</div>}
@@ -356,7 +400,7 @@ export default function WizardPage() {
                           <Upload className="w-8 h-8 text-[#6D00FF]" />
                         </div>
                         <div>
-                          <p className="font-bold text-white uppercase tracking-widest text-sm">Arrastra o Click</p>
+                          <p className="font-bold text-white uppercase tracking-widest text-sm">Arrastra o haz clic</p>
                           <p className="text-neutral-500 text-xs mt-1">MAX 8MB • JPG/PNG</p>
                         </div>
                       </div>
@@ -422,8 +466,8 @@ export default function WizardPage() {
             {currentStage === 2 && (
               <div className="w-full max-w-4xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 space-y-12">
                 <div className="text-center mb-8">
-                  <h2 className="text-3xl font-black italic tracking-tighter text-white">HARDWARE <span className="text-neutral-500">CORPOREAL</span></h2>
-                  <p className="text-sm text-neutral-400 uppercase tracking-widest mt-2">Definiendo parámetros físicos base</p>
+                  <h2 className="text-3xl font-display font-semibold tracking-tight text-white">PERFIL <span className="text-neutral-500">CORPORAL</span></h2>
+                  <p className="text-sm text-neutral-400 uppercase tracking-widest mt-2 font-mono">Definiendo parámetros físicos base</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -449,17 +493,17 @@ export default function WizardPage() {
                       min={40} max={150} step={0.5}
                       valueDisplay={watch("weightKg")}
                       suffix="KG"
-                      trackColor="blue"
+                      trackColor="violet"
                     />
 
                     <div className="pt-4 border-t border-white/5">
                       <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-[0.2em] mb-3 block">Género Biológico</label>
                       <div className="flex gap-4">
-                        {["male", "female"].map((s) => (
+                        {(["male", "female"] as const).map((s) => (
                           <button
                             key={s}
                             type="button"
-                            onClick={() => setValue("sex", s as any)}
+                            onClick={() => setValue("sex", s)}
                             className={cn(
                               "flex-1 py-3 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all",
                               watch("sex") === s
@@ -514,28 +558,41 @@ export default function WizardPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <EliteOptionCard
-                    className="h-64 justify-end"
+                    className="h-64"
                     title="DEFINICIÓN EXTREMA"
-                    description="Maximizar cortes musculares, reducir grasa corporal a un dígito. Look 'Shredded'."
+                    description="Maximiza la definición muscular y reduce grasa corporal a un dígito."
                     selected={watch("goal") === "definicion"}
                     onClick={() => setValue("goal", "definicion")}
                     idx={1}
+                    imageSrc="/images/backgrounds/goal-definicion.svg"
+                    imageAlt="Definición extrema"
+                    icon={Target}
+                    iconLabel="Precisión metabólica"
+                    overlayTone="deep"
                   />
                   <EliteOptionCard
-                    className="h-64 justify-end"
+                    className="h-64"
                     title="HIPERTROFIA MASIVA"
-                    description="Volumen muscular máximo, densidad y tamaño. Look 'Mass Monster'."
+                    description="Prioriza volumen muscular, densidad y ganancia de tamaño total."
                     selected={watch("goal") === "masa"}
                     onClick={() => setValue("goal", "masa")}
                     idx={2}
+                    imageSrc="/images/backgrounds/goal-hipertrofia.svg"
+                    imageAlt="Hipertrofia masiva"
+                    icon={Activity}
+                    iconLabel="Densidad y volumen"
                   />
                   <EliteOptionCard
-                    className="h-64 justify-end"
+                    className="h-64"
                     title="HÍBRIDO ATLÉTICO"
-                    description="Balance perfecto entre rendimiento, estética y funcionalidad. Look 'Athlete'."
+                    description="Equilibrio entre rendimiento, estética y funcionalidad en todo el cuerpo."
                     selected={watch("goal") === "mixto"}
                     onClick={() => setValue("goal", "mixto")}
                     idx={3}
+                    imageSrc="/images/backgrounds/goal-hibrido.svg"
+                    imageAlt="Híbrido atlético"
+                    icon={Cpu}
+                    iconLabel="Rendimiento total"
                   />
                 </div>
 
@@ -591,7 +648,7 @@ export default function WizardPage() {
                     {([
                       { id: "upper", l: "Tren Superior" }, { id: "lower", l: "Tren Inferior" },
                       { id: "abs", l: "Core & Abs" }, { id: "full", l: "Full Body" }
-                    ] as const).map((z, i) => (
+                    ] as const).map((z) => (
                       <div
                         key={z.id}
                         onClick={() => setValue("focusZone", z.id)}
@@ -614,8 +671,8 @@ export default function WizardPage() {
             {currentStage === 4 && (
               <div className="w-full max-w-3xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 flex flex-col items-center justify-center h-full">
                 <div className="text-center mb-12">
-                  <h2 className="text-3xl font-black italic tracking-tighter text-white">CALIBRACIÓN <span className="text-amber-500">MENTAL</span></h2>
-                  <p className="text-sm text-neutral-400 uppercase tracking-widest mt-2 bg-amber-500/10 inline-block px-3 py-1 rounded text-amber-500 border border-amber-500/20">Ajuste de parámetros psicométricos</p>
+                  <h2 className="text-3xl font-display font-semibold tracking-tight text-white">CALIBRACIÓN <span className="text-amber-500">MENTAL</span></h2>
+                  <p className="text-sm text-neutral-400 uppercase tracking-widest mt-2 bg-amber-500/10 inline-block px-3 py-1 rounded text-amber-500 border border-amber-500/20 font-mono">Ajuste de parámetros psicométricos</p>
                 </div>
 
                 <div className="w-full space-y-8 bg-black/40 p-8 rounded-3xl border border-white/10 backdrop-blur-sm">
@@ -631,7 +688,7 @@ export default function WizardPage() {
                     {...register("sleepQuality")}
                     min={1} max={10}
                     valueDisplay={watch("sleepQuality") + "/10"}
-                    trackColor="blue"
+                    trackColor="violet"
                   />
                   <CyberSlider
                     label="Carga de Estrés"

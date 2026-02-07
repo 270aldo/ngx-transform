@@ -4,13 +4,20 @@ import { TransformationViewer } from "@/components/TransformationViewer";
 import { TransformationViewer2 } from "@/components/TransformationViewer2";
 import { BiometricLoader } from "@/components/BiometricLoader";
 import { TransformationSummary } from "@/components/results/TransformationSummary";
+import { HybridOfferSection } from "@/components/results/HybridOfferSection";
+import { NPSQuick } from "@/components/results/NPSQuick";
 import RefreshClient from "./refresh-client";
+import ScrollToSection from "./scroll-to-section";
 import { Metadata } from "next";
 import { getSignedUrl } from "@/lib/storage";
 
 // Feature flag for Results 2.0 experience
 const FF_RESULTS_2 = process.env.NEXT_PUBLIC_FF_RESULTS_2 === "true";
 const FF_EXPOSE_ORIGINAL = process.env.FF_EXPOSE_ORIGINAL !== "false";
+const FF_DRAMATIC_REVEAL = process.env.FF_DRAMATIC_REVEAL !== "false";
+const FF_SOCIAL_COUNTER = process.env.FF_SOCIAL_COUNTER !== "false";
+const FF_SHARE_UNLOCK =
+  process.env.FF_SHARE_UNLOCK === "true" || process.env.FF_SHARE_TO_UNLOCK !== "false";
 
 export const dynamic = "force-dynamic";
 
@@ -46,7 +53,11 @@ interface SessionDoc {
 export async function generateMetadata({ params }: { params: Promise<{ shareId: string }> }): Promise<Metadata> {
   const { shareId } = await params;
   const vercelUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || vercelUrl || "http://localhost:3000";
+  const baseUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    vercelUrl ||
+    "http://localhost:3000";
   const absoluteBase = String(baseUrl).startsWith("http") ? baseUrl : `https://${baseUrl}`;
   const ogUrl = `${absoluteBase}/api/og/${shareId}`;
 
@@ -116,7 +127,7 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
   if (!allowInsights) {
     const heroImage = urls.images?.m12 || urls.images?.m8 || urls.images?.m4 || urls.originalUrl;
     return (
-      <div className="min-h-screen bg-black text-white">
+      <div className="min-h-screen bg-transparent text-white">
         <div className="max-w-5xl mx-auto px-6 py-12 space-y-8">
           <div className="space-y-2">
             <p className="text-xs tracking-[0.35em] uppercase text-[#6D00FF]">NGX Transform</p>
@@ -126,7 +137,7 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
             </p>
           </div>
 
-          <div className="rounded-2xl overflow-hidden border border-white/10 bg-neutral-950">
+          <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#0A0A0A]/80 backdrop-blur-xl">
             {heroImage ? (
               <img
                 src={heroImage}
@@ -192,6 +203,7 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
   if (FF_RESULTS_2) {
     return (
       <>
+        <ScrollToSection />
         <TransformationViewer2
           ai={ai}
           imageUrls={urls}
@@ -207,14 +219,24 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
                 }
               : undefined
           }
+          featureFlags={{
+            FF_DRAMATIC_REVEAL,
+            FF_SOCIAL_COUNTER,
+            FF_SHARE_TO_UNLOCK: FF_SHARE_UNLOCK,
+            FF_AGENT_BRIDGE_CTA: false,
+          }}
         />
         {/* Genesis Demo CTA - appears after transformation viewer */}
         {isReady && (
-          <TransformationSummary
-            ai={ai}
-            imageUrls={urls}
-            shareId={shareId}
-          />
+          <>
+            <TransformationSummary
+              ai={ai}
+              imageUrls={urls}
+              shareId={shareId}
+            />
+            <HybridOfferSection shareId={shareId} />
+            <NPSQuick shareId={shareId} />
+          </>
         )}
         <RefreshClient shareId={shareId} active={stillGenerating} />
       </>
@@ -224,14 +246,19 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
   // Legacy experience
   return (
     <>
+      <ScrollToSection />
       <TransformationViewer ai={ai} imageUrls={urls} shareId={shareId} isReady={isReady} />
       {/* Genesis Demo CTA - appears after transformation viewer */}
       {isReady && (
-        <TransformationSummary
-          ai={ai}
-          imageUrls={urls}
-          shareId={shareId}
-        />
+        <>
+          <TransformationSummary
+            ai={ai}
+            imageUrls={urls}
+            shareId={shareId}
+          />
+          <HybridOfferSection shareId={shareId} />
+          <NPSQuick shareId={shareId} />
+        </>
       )}
       <RefreshClient shareId={shareId} active={stillGenerating} />
     </>

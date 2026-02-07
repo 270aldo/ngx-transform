@@ -45,7 +45,7 @@ export function TransformationViewer({ ai, imageUrls, shareId, isReady = true }:
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-transparent text-white">
       {/* Header - Actions only */}
       <header className="fixed top-0 right-0 z-50 px-3 sm:px-6 py-3 sm:py-4 pointer-events-auto">
         <div className="flex items-center gap-2 sm:gap-3">
