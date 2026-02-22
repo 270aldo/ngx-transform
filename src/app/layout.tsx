@@ -28,12 +28,12 @@ const baseUrl =
 const metadataBase = new URL(String(baseUrl).startsWith("http") ? baseUrl : `https://${baseUrl}`);
 
 export const metadata: Metadata = {
-  title: "NGX Transform",
-  description: "Visual fitness premium by NGX",
+  title: "NGX Transform — Tu salud muscular revelada por IA",
+  description: "Descubre tu Muscle Health Score. Visualiza tu transformación física a 4, 8 y 12 meses basada en ciencia muscular. Gratis.",
   metadataBase,
   openGraph: {
-    title: "NGX Transform",
-    description: "Visual fitness premium by NGX",
+    title: "NGX Transform — Tu salud muscular revelada por IA",
+    description: "Descubre tu Muscle Health Score. Visualiza tu transformación física a 4, 8 y 12 meses basada en ciencia muscular. Gratis.",
     siteName: "NGX Transform",
     locale: "es_ES",
     type: "website",
@@ -48,8 +48,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "NGX Transform",
-    description: "Visual fitness premium by NGX",
+    title: "NGX Transform — Tu salud muscular revelada por IA",
+    description: "Descubre tu Muscle Health Score. Visualiza tu transformación física a 4, 8 y 12 meses basada en ciencia muscular. Gratis.",
     images: ["/og-default.png"],
   },
 };
