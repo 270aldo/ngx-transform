@@ -4,6 +4,7 @@ import { TransformationViewer } from "@/components/TransformationViewer";
 import { TransformationViewer2 } from "@/components/TransformationViewer2";
 import { BiometricLoader } from "@/components/BiometricLoader";
 import { TransformationSummary } from "@/components/results/TransformationSummary";
+import { MuscleHealthScore } from "@/components/results/MuscleHealthScore";
 import { HybridOfferSection } from "@/components/results/HybridOfferSection";
 import { NPSQuick } from "@/components/results/NPSQuick";
 import RefreshClient from "./refresh-client";
@@ -229,6 +230,7 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
         {/* Genesis Demo CTA - appears after transformation viewer */}
         {isReady && (
           <>
+            <MuscleHealthScore />
             <TransformationSummary
               ai={ai}
               imageUrls={urls}
@@ -251,6 +253,7 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
       {/* Genesis Demo CTA - appears after transformation viewer */}
       {isReady && (
         <>
+          <MuscleHealthScore />
           <TransformationSummary
             ai={ai}
             imageUrls={urls}
