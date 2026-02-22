@@ -33,14 +33,14 @@ export function LandingHero() {
 
         {/* Title */}
         <h1 className={`animate-on-scroll delay-100 text-4xl md:text-6xl lg:text-7xl leading-[1.05] text-white tracking-[-0.03em] mb-6 font-display font-semibold ${textScaleClass} origin-center`}>
-          Visualiza tu
+          Tu salud muscular
           <br />
-          <span className="text-[#EDE9FE]">transformación física.</span>
+          <span className="text-[#EDE9FE]">es el predictor más práctico de tu futuro.</span>
         </h1>
 
         {/* Subtitle */}
         <p className={`animate-on-scroll delay-200 text-base md:text-lg text-slate-400 leading-relaxed max-w-2xl mb-6 font-body font-normal ${textScaleClass} origin-center`}>
-          Sube una foto. La IA analiza tu composición corporal, identifica tu potencial y genera una proyección visual realista de lo que tu cuerpo puede lograr en 12 semanas.
+          IA que analiza tu composición, proyecta tu transformación y diseña tu protocolo. Basado en la ciencia del músculo como órgano de la longevidad.
         </p>
         <p className="animate-on-scroll delay-200 text-xs text-slate-500 mb-10 md:mb-14 font-body">
           Desarrollado por <span className="text-[#B98CFF]">GENESIS</span> — el sistema de IA de NGX con 3 años de desarrollo especializado en salud muscular.
@@ -58,7 +58,7 @@ export function LandingHero() {
           >
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out" />
             <span className="relative flex items-center gap-2 font-body">
-              Descubre Tu Potencial
+              Descubre tu potencial muscular
               <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </span>
           </Link>
