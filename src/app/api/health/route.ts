@@ -9,6 +9,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { secureCompare } from "@/lib/crypto";
 import { getDb } from "@/lib/firebaseAdmin";
 import { getSpendStats } from "@/lib/spendLimiter";
 
@@ -190,7 +191,7 @@ export async function GET(req: Request) {
   const expectedKey = process.env.CRON_API_KEY;
   const apiKey = req.headers.get("X-Api-Key");
   if (!isDev) {
-    if (!expectedKey || apiKey !== expectedKey) {
+    if (!expectedKey || !secureCompare(apiKey, expectedKey)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
   }
