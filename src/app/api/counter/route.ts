@@ -1,3 +1,4 @@
+import { secureCompare } from "@/lib/crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
@@ -59,7 +60,7 @@ export async function POST(req: NextRequest) {
 
     // SECURITY: Require API key for counter manipulation
     const expectedKey = process.env.CRON_API_KEY;
-    if (!expectedKey || apiKey !== expectedKey) {
+    if (!expectedKey || !secureCompare(apiKey, expectedKey)) {
       return NextResponse.json(
         { error: "Unauthorized - API key required" },
         { status: 401 }

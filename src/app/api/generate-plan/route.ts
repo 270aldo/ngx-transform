@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
 
     // Get user data
     let userName = "Usuario";
-    let goal = responses?.goal || "mixto";
+    const goal = responses?.goal || "mixto";
     let level = "intermedio";
     let trainingDays = 4;
 

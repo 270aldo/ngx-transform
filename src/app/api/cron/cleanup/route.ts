@@ -13,6 +13,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { secureCompare } from "@/lib/crypto";
 import { getDb } from "@/lib/firebaseAdmin";
 import { Timestamp } from "firebase-admin/firestore";
 import { deletePath, deletePrefix } from "@/lib/storage";
@@ -53,7 +54,7 @@ function validateCronKey(req: Request): boolean {
 
   const providedKey = req.headers.get("x-cron-key") || req.headers.get("authorization")?.replace("Bearer ", "");
 
-  return providedKey === cronKey;
+  return secureCompare(providedKey, cronKey);
 }
 
 // ============================================================================
@@ -64,7 +65,7 @@ async function cleanupAbandonedSessions(): Promise<CleanupResult> {
   const start = Date.now();
   let deletedCount = 0;
   let skippedCount = 0;
-  let errorCount = 0;
+  const errorCount = 0;
 
   try {
     const db = getDb();

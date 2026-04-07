@@ -1,3 +1,4 @@
+import { secureCompare } from "@/lib/crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { Resend } from "resend";
@@ -65,7 +66,7 @@ export async function POST(req: NextRequest) {
       console.error("[EMAIL_SEND] CRON_API_KEY not configured in production!");
       return NextResponse.json({ error: "Server misconfigured" }, { status: 503 });
     }
-    if (expectedKey && apiKey !== expectedKey) {
+    if (expectedKey && !secureCompare(apiKey, expectedKey)) {
       return NextResponse.json(
         { error: "Unauthorized - API key required" },
         { status: 401 }

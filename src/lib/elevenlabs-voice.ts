@@ -7,8 +7,10 @@ import { ElevenLabsClient } from "@elevenlabs/elevenlabs-js";
 
 // Initialize ElevenLabs client
 const client = new ElevenLabsClient({
-  apiKey: process.env.ELEVENLABS_API_KEY,
+  apiKey: process.env.ELEVENLABS_API_KEY || "dummy-key-for-build",
 });
+/*
+*/
 
 // Default voice ID for GENESIS (Spanish, authoritative, warm)
 const DEFAULT_GENESIS_VOICE_ID = process.env.ELEVENLABS_GENESIS_VOICE_ID || "lxw1m2gBwmWTLxjGCVJO";
