@@ -7,12 +7,12 @@ const faqItems = [
   {
     question: "¿Es realmente gratis?",
     answer:
-      "Sí. NGX Transform es 100% gratuito. Sin tarjeta de crédito, sin compromisos. Recibes tu análisis completo y tu proyección visual sin pagar nada. Es nuestra forma de demostrarte lo que GENESIS puede hacer.",
+      "Sí. El acceso a NGX Transform no tiene costo y no pedimos tarjeta. Actualmente te pediremos crear o iniciar sesión para proteger tu sesión, tus resultados y tus controles de privacidad.",
   },
   {
     question: "¿Qué pasa con mi foto? ¿Es segura?",
     answer:
-      "Tu privacidad es prioridad. La foto se procesa de forma segura, se usa únicamente para generar tu análisis, y se elimina después. No la almacenamos, no la compartimos, no la usamos para entrenar modelos.",
+      "Tu privacidad es prioridad. La foto se procesa de forma segura y se conserva solo mientras sea necesario para prestarte el servicio y mantener tus resultados disponibles. No la compartimos públicamente sin tu configuración y no la usamos para entrenar modelos propios.",
   },
   {
     question: "¿La proyección es realista?",

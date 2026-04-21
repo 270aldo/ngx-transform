@@ -27,8 +27,8 @@ export const generalCopy: VariantCopy = {
       "Sube una foto. La IA analiza tu composición corporal, identifica tu potencial y genera una proyección visual realista de lo que tu cuerpo puede lograr en 12 semanas.",
     cta: "Descubre Tu Potencial",
     socialProof: {
-      count: "Análisis en <3 min",
-      label: "Privacidad total de tus datos",
+      count: "Procesamiento en minutos",
+      label: "Procesamiento seguro y controlado",
     },
     // Before/After transformation demo
     transformationDemo: {
@@ -40,9 +40,9 @@ export const generalCopy: VariantCopy = {
   },
 
   stats: [
-    { value: "<3", suffix: " min", label: "De foto a resultados" },
+    { value: "4", suffix: " etapas", label: "De análisis a resultados" },
     { value: "12", suffix: " meses", label: "Proyección personalizada" },
-    { value: "100", suffix: "%", label: "Privacidad tras entrega" },
+    { value: "Acceso", suffix: "", label: "Privado con cuenta" },
     { value: "IA +", suffix: " Coach", label: "Sistema HYBRID" },
   ],
 
@@ -56,8 +56,9 @@ export const generalCopy: VariantCopy = {
     },
     {
       icon: Shield,
-      title: "Privacidad Total",
-      description: "Tu foto se procesa y elimina. Zero almacenamiento.",
+      title: "Privacidad Segura",
+      description:
+        "Tu foto se procesa de forma segura y se conserva solo mientras es necesaria para operar el servicio y mostrar tus resultados.",
       size: "medium",
       badge: "Encriptación E2E",
     },
@@ -71,14 +72,14 @@ export const generalCopy: VariantCopy = {
   ],
 
   howItWorks: {
-    title: "3 pasos. 60 segundos. Tu potencial revelado.",
+    title: "3 pasos. Acceso privado. Tu potencial revelado.",
     subtitle: "",
     steps: [
       {
         step: "01",
         title: "Sube tu foto",
         description:
-          "Una foto de cuerpo completo. Privada y segura. Se elimina después del análisis. Sin trucos, sin filtros.",
+          "Una foto de cuerpo completo. Privada y segura. Requiere acceso para generar y resguardar tus resultados.",
         icon: Camera,
       },
       {
@@ -92,7 +93,7 @@ export const generalCopy: VariantCopy = {
         step: "03",
         title: "Visualiza tu transformación",
         description:
-          "Recibe una proyección visual realista de tu potencial a 12 semanas, junto con un análisis detallado y tu plan de acción personalizado.",
+          "Recibe una proyección visual realista de tu potencial, junto con un análisis detallado y tu plan de acción personalizado.",
         icon: Sparkles,
       },
     ],
@@ -127,7 +128,7 @@ export const generalCopy: VariantCopy = {
     subtitle:
       "Deja de adivinar. Deja de seguir planes genéricos. Descubre lo que es posible para ti con un análisis real de GENESIS.",
     buttonText: "Descubre Tu Potencial",
-    footnote: "Gratis · Sin tarjeta · Resultados en 60 segundos",
+    footnote: "Sin costo · Requiere cuenta · Proceso guiado",
   },
 
   footer: {
@@ -139,7 +140,7 @@ export const generalCopy: VariantCopy = {
   // Optional: Explainer video section (hidden if no videoUrl)
   explainerVideo: {
     title: "¿Cómo Funciona NGX?",
-    subtitle: "Mira cómo la IA analiza y proyecta tu transformación en menos de 3 minutos.",
+    subtitle: "Mira cómo la IA analiza y proyecta tu transformación paso a paso.",
     videoUrl: "", // Empty = section hidden. Add video URL when ready.
     posterUrl: "/images/video-poster.jpg",
     duration: "45s",

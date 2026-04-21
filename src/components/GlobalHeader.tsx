@@ -59,7 +59,7 @@ export function GlobalHeader() {
           <Logo variant="full" size="md" />
         </Link>
         <nav className="flex items-center gap-3">
-          <Link className="text-sm text-muted-foreground hover:text-foreground" href="/wizard">Probar</Link>
+          <Link className="text-sm text-muted-foreground hover:text-foreground" href="/auth?next=/wizard">Probar</Link>
           {user && (
             <Link className="text-sm text-muted-foreground hover:text-foreground" href="/dashboard">
               Dashboard

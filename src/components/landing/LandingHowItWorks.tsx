@@ -14,7 +14,7 @@ export function LandingHowItWorks() {
           Cómo funciona
         </span>
         <h2 className="text-4xl md:text-6xl text-white mb-4 tracking-tight font-display font-semibold leading-[1.05]">
-          3 pasos. 60 segundos.
+          3 pasos. Acceso privado.
           <br />
           <span className="text-[#D7C7FF]">Tu potencial revelado.</span>
         </h2>

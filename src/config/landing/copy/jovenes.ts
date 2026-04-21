@@ -29,8 +29,8 @@ export const jovenesCopy: VariantCopy = {
       "IA que proyecta tu potencial físico en 12 meses. Tu mejor yo está a una foto de distancia.",
     cta: "Empezar Ahora",
     socialProof: {
-      count: "Análisis en <3 min",
-      label: "Privacidad total de tus datos",
+      count: "Procesamiento en minutos",
+      label: "Procesamiento seguro y controlado",
     },
     // Before/After transformation demo
     transformationDemo: {
@@ -42,9 +42,9 @@ export const jovenesCopy: VariantCopy = {
   },
 
   stats: [
-    { value: "<3", suffix: " min", label: "De foto a resultados" },
+    { value: "4", suffix: " etapas", label: "De análisis a resultados" },
     { value: "12", suffix: " meses", label: "Proyección personalizada" },
-    { value: "100", suffix: "%", label: "Privacidad tras entrega" },
+    { value: "Acceso", suffix: "", label: "Privado con cuenta" },
     { value: "IA +", suffix: " Coach", label: "Sistema HYBRID" },
   ],
 
@@ -58,8 +58,9 @@ export const jovenesCopy: VariantCopy = {
     },
     {
       icon: Shield,
-      title: "100% Privado",
-      description: "Tu foto se procesa y elimina. Cero rastro digital.",
+      title: "Privacidad Segura",
+      description:
+        "Tu foto se procesa de forma segura y se conserva solo mientras es necesaria para operar el servicio y entregarte resultados.",
       size: "medium",
       badge: "Encriptación E2E",
     },
@@ -74,20 +75,20 @@ export const jovenesCopy: VariantCopy = {
 
   howItWorks: {
     title: "Así de Simple",
-    subtitle: "De foto a proyección en menos de 3 minutos.",
+    subtitle: "De foto a proyección con seguimiento guiado.",
     steps: [
       {
         step: "01",
         title: "Sube tu Foto",
         description:
-          "Cuerpo completo, frontal. Una foto real, sin filtros.",
+          "Cuerpo completo, frontal. Una foto real, sin filtros. Necesitas acceso para guardar tus resultados.",
         icon: Camera,
       },
       {
         step: "02",
         title: "Cuéntanos tu Meta",
         description:
-          "Objetivos, nivel de entrenamiento, tiempo disponible. 2 minutos.",
+          "Objetivos, nivel de entrenamiento y tiempo disponible. Unos minutos.",
         icon: User,
       },
       {
@@ -127,9 +128,9 @@ export const jovenesCopy: VariantCopy = {
   cta: {
     headline: "¿Listo para ver tu potencial?",
     subtitle:
-      "Miles ya desbloquearon su proyección. Gratis, sin registro, sin excusas.",
+      "Accede sin costo, crea tu sesión y recibe tu proyección con controles reales de privacidad.",
     buttonText: "Ver Mi Potencial",
-    footnote: "Análisis en menos de 3 minutos",
+    footnote: "Sin costo · Requiere cuenta · Proceso guiado",
   },
 
   footer: {

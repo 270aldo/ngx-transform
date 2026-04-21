@@ -31,7 +31,7 @@ export function LandingTopNav() {
 
             <div className="flex items-center gap-3">
               <a href="#cta-final" className="hidden md:inline-flex px-6 py-2.5 rounded-full bg-[#6D00FF] text-white text-xs font-semibold font-body shadow-[0_0_20px_-5px_rgba(109,0,255,0.5)] hover:shadow-[0_0_30px_-5px_rgba(109,0,255,0.7)] transition-shadow">
-                Empezar Gratis
+                Crear cuenta
               </a>
               <button
                 type="button"
@@ -63,7 +63,7 @@ export function LandingTopNav() {
             <a href="#como-funciona" className="text-2xl text-white font-display" onClick={closeMenu}>Cómo Funciona</a>
             <a href="#que-recibes" className="text-2xl text-white font-display" onClick={closeMenu}>Qué Recibes</a>
             <a href="#faq" className="text-2xl text-white font-display" onClick={closeMenu}>FAQ</a>
-            <a href="#cta-final" className="px-8 py-4 rounded-full bg-[#6D00FF] text-white font-semibold text-lg font-body" onClick={closeMenu}>Empezar Gratis</a>
+            <a href="#cta-final" className="px-8 py-4 rounded-full bg-[#6D00FF] text-white font-semibold text-lg font-body" onClick={closeMenu}>Crear cuenta</a>
           </div>
         </div>
       )}

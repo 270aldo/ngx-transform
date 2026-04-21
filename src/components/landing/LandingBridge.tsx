@@ -61,7 +61,7 @@ export function LandingBridge() {
           <div className="text-center">
             <p className="text-xs text-slate-500 mb-4 font-mono uppercase tracking-widest">Cupos limitados por cohorte · Capacidad de coaches</p>
             <a href="#cta-final" className="inline-flex px-8 py-4 rounded-full bg-[#6D00FF] text-white font-semibold font-body shadow-[0_0_30px_-5px_rgba(109,0,255,0.6)] hover:bg-[#5B21B6] transition-colors">
-              Empieza con Transform (Gratis)
+              Crea tu acceso a Transform
             </a>
           </div>
         </div>

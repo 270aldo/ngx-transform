@@ -20,8 +20,14 @@ import { getStoredVariant } from "@/hooks/useVariantTracking";
 import { EliteOptionCard } from "@/components/EliteOptionCard";
 import { CyberSlider } from "@/components/CyberSlider";
 
+const OptionalEmailSchema = z.preprocess((value) => {
+  if (typeof value !== "string") return value;
+  const trimmed = value.trim();
+  return trimmed === "" ? undefined : trimmed;
+}, z.string().email("Ingresa un correo valido").optional());
+
 const FormSchema = z.object({
-  email: z.string().email(),
+  email: OptionalEmailSchema,
   // Stage 2: Biometrics
   age: z.coerce.number().int().min(18).max(100),
   sex: z.enum(["male", "female", "other"]),
@@ -109,10 +115,54 @@ function LoadingMessages({ stage }: { stage: string }) {
   );
 }
 
+function withTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  message: string
+): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timeoutId = setTimeout(() => reject(new Error(message)), timeoutMs);
+
+    promise.then(
+      (value) => {
+        clearTimeout(timeoutId);
+        resolve(value);
+      },
+      (error) => {
+        clearTimeout(timeoutId);
+        reject(error);
+      }
+    );
+  });
+}
+
+async function readErrorMessage(response: Response, fallback: string) {
+  const contentType = response.headers.get("content-type") || "";
+
+  if (contentType.includes("application/json")) {
+    try {
+      const data = await response.json();
+      if (typeof data?.error === "string") return data.error;
+      return fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
+  try {
+    const text = (await response.text()).trim();
+    return text || fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export default function WizardPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [currentStage, setCurrentStage] = useState(1);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const { addToast } = useToast();
   const DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "1";
   const { user, loading: authLoading, getIdToken } = useAuth();
@@ -125,12 +175,13 @@ export default function WizardPage() {
   const [consentTerms, setConsentTerms] = useState(false);
   const [consentAI, setConsentAI] = useState(false);
   const [consentEmail, setConsentEmail] = useState(false);
-  const allConsent = consentTerms && consentAI && consentEmail;
+  const requiredConsentsAccepted = consentTerms && consentAI;
   const stageMeta = STAGE_LABELS[currentStage] ?? STAGE_LABELS[1];
 
-  const { register, handleSubmit, watch, setValue } = useForm<FormValues>({
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(FormSchema) as Resolver<FormValues>,
     defaultValues: {
+      email: "",
       sex: "male",
       level: "novato",
       goal: "definicion",
@@ -148,7 +199,11 @@ export default function WizardPage() {
   });
 
   const photoFile = watch("photo");
-  const previewUrl = photoFile && photoFile[0] ? URL.createObjectURL(photoFile[0]) : null;
+  const watchedEmail = watch("email");
+  const selectedPhoto = photoFile?.[0] ?? null;
+  const resolvedEmail = (watchedEmail || user?.email || "").trim();
+  const canAdvancePastIdentity = Boolean(previewUrl && requiredConsentsAccepted && resolvedEmail);
+  const canSubmitWizard = canAdvancePastIdentity;
 
   useEffect(() => {
     if (!DEMO && !authLoading && !user) {
@@ -157,8 +212,25 @@ export default function WizardPage() {
   }, [DEMO, authLoading, user, router]);
 
   useEffect(() => {
-    if (user?.email) setValue("email", user.email);
-  }, [user?.email, setValue]);
+    if (user?.email && watchedEmail !== user.email) {
+      setValue("email", user.email, { shouldValidate: true, shouldDirty: false });
+    }
+  }, [user?.email, watchedEmail, setValue]);
+
+  useEffect(() => {
+    setFormError(null);
+  }, [currentStage]);
+
+  useEffect(() => {
+    if (!selectedPhoto) {
+      setPreviewUrl(null);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(selectedPhoto);
+    setPreviewUrl(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [selectedPhoto]);
 
   const onFormError = (errs: FieldErrors<FormValues>) => {
     console.log("Validation Errors:", errs);
@@ -168,6 +240,7 @@ export default function WizardPage() {
         ? String(firstError.message || "Verifica los datos de calibración")
         : "Verifica los datos de calibración";
     if (firstError) {
+      setFormError(message);
       addToast({ variant: "error", message: `Error: ${message}` });
     }
   };
@@ -175,6 +248,17 @@ export default function WizardPage() {
   // --- ACTIONS ---
   const nextStage = () => {
     // Ideally validate current step fields here before moving
+    if (currentStage === 1 && !canAdvancePastIdentity) {
+      const message = !previewUrl
+        ? "Sube una foto para continuar."
+        : !resolvedEmail
+          ? "No pudimos resolver el correo de tu cuenta. Vuelve a sincronizar el acceso antes de continuar."
+        : "Debes aceptar los consentimientos obligatorios antes de continuar.";
+      setFormError(message);
+      addToast({ variant: "error", message });
+      return;
+    }
+
     if (currentStage < 4) setCurrentStage(c => c + 1);
   };
 
@@ -219,8 +303,13 @@ export default function WizardPage() {
     try {
       setLoading(true);
       if (!user) throw new Error("Necesitas iniciar sesión");
-      const file: File | undefined = values.photo?.[0];
+      const file: File | null = selectedPhoto;
       if (!file) throw new Error("Debes subir una fotografía");
+      const submissionEmail = (values.email || user.email || "").trim();
+      if (!submissionEmail) {
+        setCurrentStage(1);
+        throw new Error("Confirma el correo vinculado a tu cuenta antes de ejecutar la simulación.");
+      }
 
       // FAKE PROCESSING FOR DEMO/MVP VISUALS
       setProcessStage("upload"); setProcessProgress(20); await new Promise(r => setTimeout(r, 800));
@@ -231,7 +320,11 @@ export default function WizardPage() {
       const storagePath = `uploads/${uid}/${sessionSeed}/original.${ext}`;
 
       const storageRef = ref(getClientStorage(), storagePath);
-      await uploadBytes(storageRef, file, { contentType: file.type || "image/jpeg" });
+      await withTimeout(
+        uploadBytes(storageRef, file, { contentType: file.type || "image/jpeg" }),
+        45000,
+        "La carga de la fotografía tardó demasiado. Intenta de nuevo."
+      );
 
       setProcessStage("analyze"); setProcessProgress(50);
 
@@ -241,36 +334,69 @@ export default function WizardPage() {
       // Get landing variant for analytics tracking
       const landingVariant = getStoredVariant();
 
-      const createRes = await fetch("/api/sessions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ email: values.email, input: profile, photoPath: storagePath, landingVariant }),
-      });
+      const createRes = await withTimeout(
+        fetch("/api/sessions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify({
+            email: submissionEmail,
+            input: profile,
+            photoPath: storagePath,
+            consents: {
+              terms: consentTerms,
+              aiProcessing: consentAI,
+              marketingEmailOptIn: consentEmail,
+              captureSource: "wizard",
+            },
+            landingVariant,
+          }),
+        }),
+        30000,
+        "No pudimos crear tu sesión. Intenta de nuevo."
+      );
+      if (!createRes.ok) {
+        throw new Error(
+          await readErrorMessage(createRes, "No pudimos crear tu sesión. Intenta de nuevo.")
+        );
+      }
       const createJson = await createRes.json();
-      if (!createRes.ok) throw new Error(createJson.error);
       const sessionId = createJson.sessionId as string;
 
       setProcessStage("render"); setProcessProgress(80);
-
-      const analyzeRes = await fetch("/api/analyze", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ sessionId }),
-      });
-
-      if (!analyzeRes.ok) {
-        const analyzeJson = await analyzeRes.json();
-        throw new Error(analyzeJson.error || "Fallo en el análisis de vectores");
-      }
-
-      setProcessStage("done"); setProcessProgress(100);
       router.push(`/loading/${sessionId}`);
+
+      void (async () => {
+        try {
+          const analyzeRes = await withTimeout(
+            fetch("/api/analyze", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+              },
+              body: JSON.stringify({ sessionId }),
+            }),
+            45000,
+            "El análisis tardó demasiado. Reintenta desde la pantalla de progreso."
+          );
+
+          if (!analyzeRes.ok) {
+            const message = await readErrorMessage(
+              analyzeRes,
+              "No pudimos iniciar el análisis inicial."
+            );
+            console.error("[Wizard] Analyze bootstrap failed:", message);
+          }
+        } catch (bootstrapError) {
+          console.error("[Wizard] Analyze bootstrap error:", bootstrapError);
+        }
+      })();
+
+      return;
 
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Error desconocido";
+      setFormError(msg);
       addToast({ variant: "error", message: msg });
       setLoading(false);
       setProcessStage("idle");
@@ -315,6 +441,22 @@ export default function WizardPage() {
 
       {/* MAIN CONTENT AREA */}
       <form onSubmit={handleSubmit(onSubmit, onFormError)} className="min-h-screen flex flex-col pt-24 pb-24 px-6 max-w-5xl mx-auto">
+        <input
+          type="file"
+          accept="image/*"
+          className="sr-only"
+          {...register("photo")}
+          ref={(el) => {
+            inputRef.current = el;
+            register("photo").ref(el);
+          }}
+        />
+
+        {formError && !loading ? (
+          <div className="mx-auto mb-6 w-full max-w-3xl rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
+            {formError}
+          </div>
+        ) : null}
 
         {loading ? (
           <div className="flex-1 flex flex-col items-center justify-center animate-in fade-in zoom-in duration-500 max-w-md mx-auto text-center px-6">
@@ -333,17 +475,17 @@ export default function WizardPage() {
                 <div className="mt-1 w-2 h-2 rounded-full bg-[#6D00FF] animate-pulse shrink-0" />
                 <div className="space-y-1">
                   <p className="text-white font-bold text-xs uppercase tracking-wider">
-                    Generando Proyecciones
+                    Preparando tu sesión segura
                   </p>
                   <p className="text-neutral-400 text-[10px] leading-relaxed">
-                    Estamos procesando 3 simulaciones de tu futuro físico (Mes 4, 8 y 12). Este proceso requiere alta potencia de cálculo y puede tomar unos momentos.
+                    Estamos subiendo tu foto, creando tu sesión privada y preparando el panel de progreso. En cuanto quede listo te llevaremos a la vista donde podrás seguir cada etapa.
                   </p>
                 </div>
               </div>
             </div>
 
             <p className="text-neutral-600 text-[10px] uppercase tracking-widest mt-6 animate-pulse">
-              No cierres esta ventana
+              Mantén esta ventana abierta unos momentos
             </p>
           </div>
         ) : (
@@ -362,20 +504,38 @@ export default function WizardPage() {
                   </div>
 
                   <div className="max-w-md mx-auto w-full space-y-4">
-                    <div className="relative">
-                      <Input
-                        {...register("email")}
-                        placeholder="tu@email.com"
-                        className="bg-white/5 border-white/10 rounded-xl py-6 pl-12 focus:border-[#6D00FF] transition-all"
-                      />
-                      <Eye className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" size={18} />
-                    </div>
+                    {user?.email ? (
+                      <div className="rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-4 text-left">
+                        <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-emerald-300/80">Cuenta conectada</p>
+                        <p className="mt-2 text-sm font-medium text-white">{user.email}</p>
+                        <Input
+                          {...register("email")}
+                          readOnly
+                          className="sr-only"
+                          aria-hidden="true"
+                          tabIndex={-1}
+                        />
+                      </div>
+                    ) : (
+                      <div className="relative">
+                        <Input
+                          {...register("email")}
+                          placeholder="tu@email.com"
+                          className="bg-white/5 border-white/10 rounded-xl py-6 pl-12 focus:border-[#6D00FF] transition-all"
+                        />
+                        <Eye className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" size={18} />
+                      </div>
+                    )}
+                    {errors.email ? (
+                      <p className="text-left text-xs text-red-300">{errors.email.message}</p>
+                    ) : null}
                   </div>
 
                   <label
                     onDrop={onDrop}
                     onDragOver={onDrag}
                     onDragEnter={onDrag}
+                    onClick={() => inputRef.current?.click()}
                     className={cn(
                       "group relative flex flex-col items-center justify-center w-full aspect-[4/3] md:aspect-[16/9] rounded-3xl border-2 border-dashed transition-all cursor-pointer overflow-hidden",
                       previewUrl
@@ -383,8 +543,6 @@ export default function WizardPage() {
                         : "border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/30"
                     )}
                   >
-                    <input type="file" accept="image/*" className="hidden" {...register("photo")} ref={(el) => { inputRef.current = el; register("photo").ref(el); }} />
-
                     {previewUrl ? (
                       <>
                         <Image src={previewUrl} alt="Preview" fill className="object-contain p-4 z-10" />
@@ -431,7 +589,7 @@ export default function WizardPage() {
                           className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[#6D00FF]"
                         />
                         <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors leading-relaxed">
-                          Autorizo que mi foto sea procesada por inteligencia artificial (Google Gemini) para generar imágenes de transformación proyectada. Mi foto será eliminada en un plazo máximo de 30 días.
+                          Autorizo que mi foto sea procesada por inteligencia artificial (Google Gemini) para generar mis resultados. Entiendo que se almacena de forma segura solo mientras sea necesario para prestar el servicio y conforme al Aviso de Privacidad publicado.
                         </span>
                       </label>
                       <label className="flex items-start gap-3 cursor-pointer group">
@@ -442,7 +600,7 @@ export default function WizardPage() {
                           className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[#6D00FF]"
                         />
                         <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors leading-relaxed">
-                          Acepto recibir correos sobre mi transformación de NGX Transform. Puedo cancelar en cualquier momento.
+                          Quiero recibir correos de seguimiento y novedades de NGX Transform. Es opcional y puedo cancelar en cualquier momento.
                         </span>
                       </label>
                     </div>
@@ -452,7 +610,7 @@ export default function WizardPage() {
                     <Button
                       type="button"
                       onClick={nextStage}
-                      disabled={!previewUrl || !allConsent}
+                      disabled={!canAdvancePastIdentity}
                       className="px-12 py-6 rounded-full bg-white text-black hover:bg-neutral-200 font-black italic tracking-widest text-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
                     >
                       INICIAR ESCANEO <ArrowRight className="ml-2 w-5 h-5" />
@@ -699,9 +857,45 @@ export default function WizardPage() {
                   />
                 </div>
 
+                <div className="mt-8 grid w-full grid-cols-1 gap-3 rounded-3xl border border-white/10 bg-white/5 p-5 md:grid-cols-2">
+                  <div>
+                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/45">Cuenta</p>
+                    <p className="mt-1 text-sm text-white">{resolvedEmail || "Pendiente de confirmar"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/45">Foto</p>
+                    <p className="mt-1 text-sm text-white">{previewUrl ? "Cargada y lista para procesarse" : "No detectada"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/45">Objetivo</p>
+                    <p className="mt-1 text-sm text-white">
+                      {watch("goal") === "definicion" ? "Definición extrema" : watch("goal") === "masa" ? "Hipertrofia masiva" : "Híbrido atlético"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/45">Enfoque</p>
+                    <p className="mt-1 text-sm text-white">
+                      {watch("focusZone") === "upper"
+                        ? "Tren superior"
+                        : watch("focusZone") === "lower"
+                          ? "Tren inferior"
+                          : watch("focusZone") === "abs"
+                            ? "Core & abs"
+                            : "Full body"}
+                    </p>
+                  </div>
+                </div>
+
+                {!canSubmitWizard ? (
+                  <p className="mt-4 text-center text-xs text-amber-300">
+                    Antes de ejecutar la simulación debemos confirmar tu correo vinculado y conservar la foto cargada del paso 1.
+                  </p>
+                ) : null}
+
                 <div className="mt-12 w-full">
                   <Button
                     type="submit"
+                    disabled={!canSubmitWizard || loading}
                     className="w-full py-8 text-xl font-black italic tracking-widest bg-[#6D00FF] hover:bg-[#5800cc] text-white rounded-2xl shadow-[0_0_40px_rgba(109,0,255,0.4)] transition-transform hover:scale-[1.02] active:scale-[0.98]"
                   >
                     EJECUTAR SIMULACIÓN DE FUTURO

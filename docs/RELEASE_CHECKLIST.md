@@ -8,8 +8,11 @@
 - [ ] `shareScope` respetado en endpoints públicos
 - [ ] Reglas de Storage desplegadas (solo owner en `uploads/{uid}`, bloquear `sessions/**`)
 - [ ] Consentimiento requerido en leads/remarketing (UI + API)
+- [ ] Consentimiento requerido y persistido en la sesión principal (`terms` + `aiProcessing`)
+- [ ] `marketingEmailOptIn` separado de consentimientos necesarios
 - [ ] Política de Privacidad y Términos publicados
 - [ ] `NEXT_PUBLIC_SUPPORT_EMAIL` configurado para contacto legal
+- [ ] `NEXT_PUBLIC_LEGAL_RESPONSIBLE_NAME` y `NEXT_PUBLIC_LEGAL_RESPONSIBLE_ADDRESS` configurados
 
 ## Costos y límites
 - [ ] `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN`
@@ -36,3 +39,4 @@
 - [ ] `npm run test:auth` (si hay tokens)
 - [ ] `npm run test:smoke`
 - [ ] Smoke manual de wizard y share
+- [ ] Landing y CTAs alineados con auth-before-wizard (`/auth?next=/wizard`)

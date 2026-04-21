@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 const UPDATED_AT = "2 de febrero de 2026";
-const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL;
+const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "hola@ngxgenesis.com";
 
 export const metadata: Metadata = {
   title: "Términos de Servicio | NGX Transform",
@@ -11,11 +11,15 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <main className="min-h-screen bg-black text-white">
+    <div
+      role="document"
+      aria-labelledby="terms-title"
+      className="min-h-screen bg-black text-white"
+    >
       <div className="max-w-3xl mx-auto px-6 py-16 space-y-10">
         <header className="space-y-3">
           <p className="text-xs tracking-[0.35em] uppercase text-[#6D00FF]">NGX Transform</p>
-          <h1 className="text-3xl font-semibold">Términos de Servicio</h1>
+          <h1 id="terms-title" className="text-3xl font-semibold">Términos de Servicio</h1>
           <p className="text-sm text-neutral-400">Última actualización: {UPDATED_AT}</p>
         </header>
 
@@ -31,6 +35,7 @@ export default function TermsPage() {
           <ul className="space-y-2 text-sm text-neutral-300 list-disc list-inside">
             <li>Debes ser mayor de 18 años o contar con autorización legal.</li>
             <li>La información que compartes debe ser veraz y de tu propiedad o con permiso.</li>
+            <li>Actualmente necesitas crear o iniciar sesión para acceder al wizard y resguardar tus resultados privados.</li>
           </ul>
         </section>
 
@@ -64,6 +69,8 @@ export default function TermsPage() {
           <ul className="space-y-2 text-sm text-neutral-300 list-disc list-inside">
             <li>Conservas la titularidad de tus fotos y datos.</li>
             <li>Nos otorgas una licencia limitada para procesar tu contenido y generar resultados.</li>
+            <li>Podemos almacenar tu contenido y resultados mientras sea necesario para operar el Servicio conforme al Aviso de Privacidad.</li>
+            <li>No utilizamos tus fotos para entrenar modelos fundacionales propios.</li>
             <li>No debes subir contenido ilegal, ofensivo o que viole derechos de terceros.</li>
           </ul>
         </section>
@@ -141,6 +148,6 @@ export default function TermsPage() {
           </div>
         </footer>
       </div>
-    </main>
+    </div>
   );
 }

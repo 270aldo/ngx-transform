@@ -115,7 +115,7 @@ export function HybridOfferSection({ shareId, cohorteInfo }: HybridOfferSectionP
           <div className="rounded-2xl border border-white/10 bg-[#0A0A0A]/70 p-5 flex items-start gap-3">
             <ShieldCheck className="h-5 w-5 text-emerald-400 mt-0.5" />
             <p className="text-sm sm:text-base text-white/85">
-              Garantía: Progreso medible en 30 días o +4 semanas sin costo.
+              Acompañamiento cercano para ayudarte a medir progreso desde las primeras semanas.
             </p>
           </div>
 
@@ -184,4 +184,3 @@ export function HybridOfferSection({ shareId, cohorteInfo }: HybridOfferSectionP
     </section>
   );
 }
-

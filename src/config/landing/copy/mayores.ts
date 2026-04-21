@@ -28,8 +28,8 @@ export const mayoresCopy: VariantCopy = {
       "Visualiza cómo puedes mejorar tu bienestar físico en 12 meses. Análisis personalizado y seguro.",
     cta: "Ver Mi Proyección",
     socialProof: {
-      count: "Análisis en <3 min",
-      label: "Privacidad total de tus datos",
+      count: "Procesamiento en minutos",
+      label: "Procesamiento seguro y controlado",
     },
     // Before/After transformation demo - images for wellness/vitality
     transformationDemo: {
@@ -41,9 +41,9 @@ export const mayoresCopy: VariantCopy = {
   },
 
   stats: [
-    { value: "<3", suffix: " min", label: "De foto a resultados" },
+    { value: "4", suffix: " etapas", label: "De análisis a resultados" },
     { value: "12", suffix: " meses", label: "Proyección personalizada" },
-    { value: "100", suffix: "%", label: "Privacidad tras entrega" },
+    { value: "Acceso", suffix: "", label: "Privado con cuenta" },
     { value: "IA +", suffix: " Coach", label: "Sistema HYBRID" },
   ],
 
@@ -58,7 +58,8 @@ export const mayoresCopy: VariantCopy = {
     {
       icon: Shield,
       title: "Privacidad Garantizada",
-      description: "Tu foto se procesa de forma segura y se elimina automáticamente.",
+      description:
+        "Tu foto se procesa de forma segura y se conserva solo mientras es necesaria para operar el servicio y mantener disponibles tus resultados.",
       size: "medium",
       badge: "Datos protegidos",
     },
@@ -79,14 +80,14 @@ export const mayoresCopy: VariantCopy = {
         step: "01",
         title: "Comparte tu Foto",
         description:
-          "Una foto de cuerpo completo. Frontal y con buena iluminación.",
+          "Una foto de cuerpo completo. Frontal y con buena iluminación. El acceso es privado para resguardar tus resultados.",
         icon: Camera,
       },
       {
         step: "02",
         title: "Indica tus Objetivos",
         description:
-          "Cuéntanos sobre tu salud, actividad física y metas. Toma solo 2 minutos.",
+          "Cuéntanos sobre tu salud, actividad física y metas. Toma unos minutos.",
         icon: User,
       },
       {
@@ -126,9 +127,9 @@ export const mayoresCopy: VariantCopy = {
   cta: {
     headline: "Tu bienestar comienza aquí",
     subtitle:
-      "Descubre cómo puedes mejorar tu salud física. Gratuito, confidencial y sin compromisos.",
+      "Descubre cómo puedes mejorar tu salud física. Acceso sin costo, resultados privados y control sobre tus datos.",
     buttonText: "Comenzar Ahora",
-    footnote: "Proceso simple de 3 minutos",
+    footnote: "Sin costo · Requiere cuenta · Proceso guiado",
   },
 
   footer: {

@@ -103,8 +103,10 @@ export function proxy(request: NextRequest) {
 
         // In production, validate origin matches host
         if (!isDev && origin) {
+            const isLocalHost = Boolean(host && /^(localhost|127\.0\.0\.1)(:\d+)?$/.test(host));
             const allowedOrigins = [
                 `https://${host}`,
+                ...(isLocalHost ? [`http://${host}`, `https://${host}`] : []),
                 "https://ngx-transform.vercel.app",
                 // Add your production domains here
             ];

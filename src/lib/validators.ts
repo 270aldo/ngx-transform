@@ -48,10 +48,18 @@ export type Profile = z.infer<typeof ProfileSchema>;
 // Session Management
 // ============================================================================
 
+export const SessionConsentsSchema = z.object({
+  terms: z.literal(true),
+  aiProcessing: z.literal(true),
+  marketingEmailOptIn: z.boolean().default(false),
+  captureSource: z.enum(["wizard"]).default("wizard"),
+});
+
 export const CreateSessionSchema = z.object({
   email: z.string().email().optional(),
   input: ProfileSchema,
   photoPath: z.string(),
+  consents: SessionConsentsSchema,
   /** Landing page variant for A/B testing analytics */
   landingVariant: z.enum(["general", "jovenes", "mayores"]).optional(),
 });

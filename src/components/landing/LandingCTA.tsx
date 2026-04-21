@@ -34,7 +34,7 @@ export function LandingCTA() {
           </p>
           <div className="flex justify-center">
             <Link
-              href="/wizard"
+              href="/auth?next=/wizard"
               className="group relative px-10 md:px-12 py-4 md:py-5 rounded-full text-white text-base md:text-lg font-semibold tracking-wide overflow-hidden transition-all duration-300 hover:-translate-y-0.5"
               style={{
                 backgroundColor: theme.primary,

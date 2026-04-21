@@ -24,11 +24,11 @@ export function LandingHero() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
           </span>
-          <span className="text-[11px] text-slate-300 tracking-wide font-mono">Gratis</span>
+          <span className="text-[11px] text-slate-300 tracking-wide font-mono">Sin costo</span>
           <span className="h-3 w-px bg-white/20" />
-          <span className="text-[11px] text-slate-300 tracking-wide font-mono">Sin tarjeta</span>
+          <span className="text-[11px] text-slate-300 tracking-wide font-mono">Requiere cuenta</span>
           <span className="h-3 w-px bg-white/20" />
-          <span className="text-[11px] tracking-wide font-mono" style={{ color: theme.accent }}>60 segundos</span>
+          <span className="text-[11px] tracking-wide font-mono" style={{ color: theme.accent }}>Proceso guiado</span>
         </div>
 
         {/* Title */}
@@ -42,6 +42,12 @@ export function LandingHero() {
         <p className={`animate-on-scroll delay-200 text-base md:text-lg text-slate-400 leading-relaxed max-w-2xl mb-6 font-body font-normal ${textScaleClass} origin-center`}>
           IA que analiza tu composición, proyecta tu transformación y diseña tu protocolo. Basado en la ciencia del músculo como órgano de la longevidad.
         </p>
+        <p className="animate-on-scroll delay-200 text-xs text-slate-500 mb-3 font-body">
+          El acceso al análisis requiere crear o iniciar sesión para resguardar tus resultados y controles de privacidad.
+        </p>
+        <p className="animate-on-scroll delay-200 text-xs text-slate-500 mb-3 font-body">
+          La entrega se procesa por etapas y puede tomar varios minutos según la demanda y el procesamiento de IA.
+        </p>
         <p className="animate-on-scroll delay-200 text-xs text-slate-500 mb-10 md:mb-14 font-body">
           Desarrollado por <span className="text-[#B98CFF]">GENESIS</span> — el sistema de IA de NGX con 3 años de desarrollo especializado en salud muscular.
         </p>
@@ -49,7 +55,7 @@ export function LandingHero() {
         {/* CTAs */}
         <div className="animate-on-scroll delay-300 flex flex-col sm:flex-row justify-center gap-4 mb-16">
           <Link
-            href="/wizard"
+            href="/auth?next=/wizard"
             className="group relative w-full sm:w-auto px-8 md:px-10 py-4 md:py-5 rounded-full text-white text-base font-semibold tracking-wide overflow-hidden transition-all duration-300 hover:-translate-y-0.5 min-h-[52px] inline-flex items-center justify-center"
             style={{
               backgroundColor: theme.primary,
@@ -58,7 +64,7 @@ export function LandingHero() {
           >
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out" />
             <span className="relative flex items-center gap-2 font-body">
-              Descubre tu potencial muscular
+              Crear cuenta y empezar
               <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </span>
           </Link>

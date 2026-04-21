@@ -75,8 +75,8 @@ export default function D7Conversion({
               </Section>
 
               <Section className="my-6 border border-emerald-500/25 rounded-xl p-5 bg-emerald-500/5">
-                <Text className="text-emerald-300 text-sm font-semibold m-0 mb-1">Garantía de progreso</Text>
-                <Text className="text-neutral-300 text-sm m-0">Progreso medible en 30 días o +4 semanas sin costo.</Text>
+                <Text className="text-emerald-300 text-sm font-semibold m-0 mb-1">Seguimiento cercano</Text>
+                <Text className="text-neutral-300 text-sm m-0">Diseñado para ayudarte a medir progreso desde las primeras semanas.</Text>
               </Section>
 
               <Section className="text-center my-8">
@@ -98,7 +98,7 @@ export default function D7Conversion({
               </Section>
 
               <Section className="text-center mt-4">
-                <Text className="text-xs text-neutral-500 m-0">Garantía de progreso • Coach humano incluido • Cancela cuando quieras</Text>
+                <Text className="text-xs text-neutral-500 m-0">Seguimiento cercano • Coach humano incluido • Cancela cuando quieras</Text>
               </Section>
 
               <Hr className="border-neutral-800 my-6" />

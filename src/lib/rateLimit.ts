@@ -136,6 +136,41 @@ const IN_MEMORY_LIMITS: Record<string, { max: number; windowMs: number }> = {
   "api:general": { max: 60, windowMs: 60000 },        // 60/min
 };
 
+function isLoopbackHostname(hostname: string): boolean {
+  return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
+}
+
+function isLocalRuntime(): boolean {
+  const candidates = [
+    process.env.NEXT_PUBLIC_BASE_URL,
+    process.env.NEXT_PUBLIC_APP_URL,
+  ].filter(Boolean) as string[];
+
+  for (const candidate of candidates) {
+    try {
+      if (isLoopbackHostname(new URL(candidate).hostname)) {
+        return true;
+      }
+    } catch {
+      continue;
+    }
+  }
+
+  return false;
+}
+
+export function shouldBypassRateLimit(): boolean {
+  if (process.env.DISABLE_RATE_LIMITS === "true") return true;
+  if (process.env.RATE_LIMIT_MODE === "off") return true;
+  if (isLocalRuntime() && process.env.ENFORCE_RATE_LIMITS_ON_LOCALHOST !== "true") {
+    return true;
+  }
+  if (process.env.NODE_ENV !== "production" && process.env.ENFORCE_RATE_LIMITS_IN_DEV !== "true") {
+    return true;
+  }
+  return false;
+}
+
 const CRITICAL_ENDPOINTS = new Set([
   "api:analyze",
   "api:generate-images",
@@ -202,6 +237,15 @@ export async function checkRateLimit(
   endpoint: string,
   identifier: string
 ): Promise<RateLimitResult> {
+  if (shouldBypassRateLimit()) {
+    return {
+      success: true,
+      limit: 999999,
+      remaining: 999999,
+      reset: Date.now() + 60000,
+    };
+  }
+
   const limiters = getRateLimiters();
 
   // If Redis is not configured, use in-memory fallback
