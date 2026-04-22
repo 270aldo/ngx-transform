@@ -1,16 +1,20 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { MessageSquareText, Send } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowRight, CheckCircle2, MessageSquareText, Send, Share2 } from "lucide-react";
 
 interface NPSQuickProps {
   shareId: string;
 }
 
 const LOW_SCORE_OPTIONS = [
-  "No entendí el plan exacto",
-  "Me faltó claridad en el siguiente paso",
+  "No entendí el siguiente paso",
+  "Me faltó claridad en el roadmap",
+  "Se sintió demasiado general",
 ];
+
+const SCORE_SCALE = Array.from({ length: 10 }, (_, index) => index + 1);
 
 export function NPSQuick({ shareId }: NPSQuickProps) {
   const [score, setScore] = useState<number | null>(null);
@@ -22,8 +26,9 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
   const highIntent = useMemo(() => (score ?? 0) >= 9, [score]);
 
   async function submitFeedback() {
-    if (score === null || loading) return;
+    if (score === null || loading || sent) return false;
     setLoading(true);
+
     const payload = {
       shareId,
       score,
@@ -52,103 +57,209 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
 
     setLoading(false);
     setSent(true);
+    return true;
   }
 
   async function onShare() {
     const url = `${window.location.origin}/s/${shareId}`;
-    if (navigator.share) {
-      await navigator.share({
-        title: "Mi resultado en NGX Transform",
-        text: "Mira mi proyección de 12 meses en NGX Transform.",
-        url,
-      });
-      return;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: "Mi visualización en NGX Transform",
+          text: "Mira mi visualización de potencial en NGX Transform.",
+          url,
+        });
+        return;
+      }
+
+      await navigator.clipboard.writeText(url);
+    } catch {
+      // Ignora cancelaciones de share sheet o permisos del clipboard.
     }
-    await navigator.clipboard.writeText(url);
+  }
+
+  async function onShareAndSave() {
+    await submitFeedback();
+    await onShare();
   }
 
   return (
-    <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-      <div className="rounded-2xl border border-white/10 bg-[#0A0A0A]/80 backdrop-blur-xl p-6 sm:p-8">
-        <div className="flex items-center gap-2 mb-4">
-          <MessageSquareText className="h-4 w-4 text-[#6D00FF]" />
-          <p className="text-xs uppercase tracking-widest text-white/70">Feedback rápido</p>
-        </div>
-        <h3 className="text-lg sm:text-xl font-semibold text-white mb-4">
-          ¿Qué tan claro te quedó lo que es posible?
-        </h3>
+    <section className="mx-auto max-w-4xl px-4 pb-14">
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="relative overflow-hidden rounded-[32px] landing-surface-strong p-6 md:p-8 lg:p-10"
+      >
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(109,0,255,0.12),transparent_32%),radial-gradient(circle_at_82%_80%,rgba(184,148,255,0.08),transparent_24%)]" />
 
-        <div className="grid grid-cols-5 sm:grid-cols-10 gap-2 mb-6">
-          {Array.from({ length: 10 }).map((_, idx) => {
-            const value = idx + 1;
-            const active = score === value;
-            return (
-              <button
-                key={value}
-                onClick={() => setScore(value)}
-                className={`min-h-[44px] rounded-lg border text-sm font-medium transition ${
-                  active
-                    ? "border-[#6D00FF] bg-[#6D00FF]/20 text-white"
-                    : "border-white/15 bg-white/5 text-white/70 hover:bg-white/10"
-                }`}
-              >
-                {value}
-              </button>
-            );
-          })}
-        </div>
+        <div className="relative z-10">
+          <div className="mb-4 flex items-center gap-2">
+            <MessageSquareText className="h-4 w-4 text-[#C8A5FF]" />
+            <p className="landing-kicker !mb-0">Cierre rápido</p>
+          </div>
 
-        {score !== null && !sent && (
-          <div className="space-y-4">
-            {highIntent ? (
-              <button
-                onClick={onShare}
-                className="w-full sm:w-auto min-h-[44px] rounded-lg bg-white text-black font-semibold px-4 py-2 hover:brightness-95 transition"
-              >
-                Compartir mi resultado
-              </button>
-            ) : (
-              <>
-                <div className="grid gap-2">
-                  {LOW_SCORE_OPTIONS.map((opt) => (
-                    <button
-                      key={opt}
-                      onClick={() => setSelectedReason(opt)}
-                      className={`text-left min-h-[44px] rounded-lg border px-3 py-2 text-sm transition ${
-                        selectedReason === opt
-                          ? "border-[#6D00FF] bg-[#6D00FF]/15 text-white"
-                          : "border-white/15 bg-white/5 text-white/70"
-                      }`}
-                    >
-                      {opt}
-                    </button>
+          <h3 className="landing-heading text-[2rem] leading-[0.95] text-white md:text-[2.7rem]">
+            ¿El siguiente paso
+            <br />
+            ya te quedó claro?
+          </h3>
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/60 md:text-base">
+            No estamos midiendo satisfacción vacía. Estamos validando si el flujo realmente te llevó de impacto visual a dirección concreta.
+          </p>
+
+          <div className="mt-6 rounded-[28px] landing-surface p-5 md:p-6">
+            <div className="grid grid-cols-5 gap-2 sm:grid-cols-10">
+              {SCORE_SCALE.map((value) => {
+                const active = score === value;
+                return (
+                  <button
+                    key={value}
+                    onClick={() => setScore(value)}
+                    className={[
+                      "min-h-[48px] rounded-2xl border text-sm font-semibold transition-all",
+                      active
+                        ? "border-[#6D00FF] bg-[#6D00FF]/18 text-white shadow-[0_0_18px_rgba(109,0,255,0.16)]"
+                        : "border-white/10 bg-white/[0.03] text-white/68 hover:border-white/18 hover:bg-white/[0.05]",
+                    ].join(" ")}
+                  >
+                    {value}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="mt-3 flex items-center justify-between text-[10px] uppercase tracking-[0.18em] text-white/30">
+              <span>Nada claro</span>
+              <span>Muy claro</span>
+            </div>
+
+            <div className="mt-5">
+              {sent ? (
+                <div className="rounded-[24px] border border-white/8 bg-white/[0.03] p-5 md:p-6">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-emerald-500/25 bg-emerald-500/10">
+                      <CheckCircle2 className="h-5 w-5 text-emerald-300" />
+                    </div>
+                    <div>
+                      <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em] !text-emerald-200/80">Feedback guardado</p>
+                      <p className="mt-3 text-base font-semibold text-white">
+                        {highIntent ? "Perfecto. Ya hay claridad suficiente para avanzar." : "Gracias. Esto ayuda a afinar el puente hacia el siguiente paso."}
+                      </p>
+                      <p className="mt-2 text-sm leading-relaxed text-white/60">
+                        {highIntent
+                          ? "Si quieres, ahora puedes compartir tu visualización o seguir con tu roadmap."
+                          : "Tu señal ya quedó registrada y la usaremos para hacer el flujo más claro y más útil."}
+                      </p>
+                    </div>
+                  </div>
+
+                  {highIntent ? (
+                    <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                      <button
+                        onClick={onShare}
+                        className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm font-medium text-white/86 transition-all hover:bg-white/[0.06]"
+                      >
+                        <Share2 className="h-4 w-4" />
+                        Compartir resultado
+                      </button>
+                      <a
+                        href={`/s/${shareId}/plan`}
+                        className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl bg-[#6D00FF] px-5 py-4 text-sm font-semibold text-white shadow-[0_0_28px_rgba(109,0,255,0.26)] transition-all hover:bg-[#5F00DE]"
+                      >
+                        Ver roadmap
+                        <ArrowRight className="h-4 w-4" />
+                      </a>
+                    </div>
+                  ) : null}
+                </div>
+              ) : score === null ? (
+                <div className="grid gap-3 md:grid-cols-3">
+                  {[
+                    "Si el paso siguiente se entiende con fricción cero.",
+                    "Si el salto entre visualización, roadmap e HYBRID se siente lógico.",
+                    "Si algo sigue viéndose bonito, pero no convincente.",
+                  ].map((item) => (
+                    <div key={item} className="rounded-[22px] border border-white/8 bg-white/[0.03] px-4 py-4">
+                      <div className="flex items-start gap-3">
+                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#C8A5FF]" />
+                        <p className="text-sm leading-relaxed text-white/68">{item}</p>
+                      </div>
+                    </div>
                   ))}
                 </div>
-                <textarea
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  placeholder="¿Qué te faltó? (opcional)"
-                  className="w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40 min-h-[96px]"
-                />
-              </>
-            )}
+              ) : highIntent ? (
+                <div className="rounded-[24px] border border-white/8 bg-white/[0.03] p-5 md:p-6">
+                  <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">Lectura del resultado</p>
+                  <p className="mt-3 text-lg font-semibold text-white">Se siente suficientemente claro como para avanzar.</p>
+                  <p className="mt-2 text-sm leading-relaxed text-white/60">
+                    Si el flujo ya te dejó claro qué hacer después, guarda ese feedback y, si quieres, comparte tu resultado.
+                  </p>
 
-            <button
-              onClick={submitFeedback}
-              disabled={loading}
-              className="w-full sm:w-auto min-h-[44px] rounded-lg bg-[#6D00FF] text-white font-semibold px-4 py-2 hover:bg-[#7D1AFF] disabled:opacity-70 transition inline-flex items-center justify-center gap-2"
-            >
-              <Send className="h-4 w-4" />
-              Enviar feedback
-            </button>
+                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                    <button
+                      onClick={onShareAndSave}
+                      disabled={loading}
+                      className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm font-medium text-white/86 transition-all hover:bg-white/[0.06] disabled:opacity-70"
+                    >
+                      <Share2 className="h-4 w-4" />
+                      Compartir resultado
+                    </button>
+                    <button
+                      onClick={submitFeedback}
+                      disabled={loading}
+                      className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl bg-[#6D00FF] px-5 py-4 text-sm font-semibold text-white shadow-[0_0_28px_rgba(109,0,255,0.26)] transition-all hover:bg-[#5F00DE] disabled:opacity-70"
+                    >
+                      <Send className="h-4 w-4" />
+                      Guardar feedback
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-[24px] border border-white/8 bg-white/[0.03] p-5 md:p-6">
+                  <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">Qué faltó para cerrar</p>
+                  <p className="mt-3 text-base font-semibold text-white">Marca lo que rompió claridad.</p>
+
+                  <div className="mt-4 grid gap-3">
+                    {LOW_SCORE_OPTIONS.map((opt) => (
+                      <button
+                        key={opt}
+                        onClick={() => setSelectedReason(opt)}
+                        className={[
+                          "min-h-[52px] rounded-2xl border px-4 py-3 text-left text-sm transition-all",
+                          selectedReason === opt
+                            ? "border-[#6D00FF] bg-[#6D00FF]/15 text-white"
+                            : "border-white/10 bg-white/[0.03] text-white/68 hover:border-white/18 hover:bg-white/[0.05]",
+                        ].join(" ")}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+
+                  <textarea
+                    value={comment}
+                    onChange={(event) => setComment(event.target.value)}
+                    placeholder="¿Qué te faltó para que el siguiente paso se sintiera obvio? (opcional)"
+                    className="mt-4 min-h-[120px] w-full rounded-[24px] border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white placeholder:text-white/34 focus:border-[#6D00FF]/45 focus:outline-none"
+                  />
+
+                  <button
+                    onClick={submitFeedback}
+                    disabled={loading}
+                    className="mt-4 inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl bg-[#6D00FF] px-5 py-4 text-sm font-semibold text-white shadow-[0_0_28px_rgba(109,0,255,0.26)] transition-all hover:bg-[#5F00DE] disabled:opacity-70"
+                  >
+                    <Send className="h-4 w-4" />
+                    Enviar feedback
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-        )}
-
-        {sent && (
-          <p className="text-sm text-emerald-400">Gracias. Tu feedback quedó guardado.</p>
-        )}
-      </div>
+        </div>
+      </motion.div>
     </section>
   );
 }
-

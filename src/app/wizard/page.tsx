@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm, type FieldErrors, type Resolver } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { getClientStorage } from "@/lib/firebaseClient";
+import { ensureAnonymousSession, getClientStorage } from "@/lib/firebaseClient";
 import { ref, uploadBytes } from "firebase/storage";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -13,7 +13,7 @@ import { Input } from "@/components/shadcn/ui/input"; // Kept for text fields
 import { useToast } from "@/components/ui/toast-provider";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { cn } from "@/lib/utils";
-import { Eye, Target, Activity, Cpu, ArrowRight, Upload, ChevronRight, ChevronLeft } from "lucide-react";
+import { Eye, Target, Activity, Cpu, ArrowRight, Upload, ChevronRight, ChevronLeft, Lock, Mail, ShieldCheck, Sparkles } from "lucide-react";
 import { getStoredVariant } from "@/hooks/useVariantTracking";
 
 // New Components
@@ -64,7 +64,7 @@ type FormValues = z.infer<typeof FormSchema>;
 const STAGE_LABELS: Record<number, { title: string; subtitle: string }> = {
   1: {
     title: "Sincronización visual",
-    subtitle: "Carga y validación inicial de identidad",
+    subtitle: "Carga y validación privada de imagen",
   },
   2: {
     title: "Perfil corporal",
@@ -72,7 +72,7 @@ const STAGE_LABELS: Record<number, { title: string; subtitle: string }> = {
   },
   3: {
     title: "Objetivo de misión",
-    subtitle: "Selecciona tu protocolo de transformación",
+    subtitle: "Define el objetivo de esta visualización",
   },
   4: {
     title: "Calibración mental",
@@ -80,17 +80,24 @@ const STAGE_LABELS: Record<number, { title: string; subtitle: string }> = {
   },
 };
 
+const WIZARD_STAGE_TABS = [
+  { id: 1, short: "Foto" },
+  { id: 2, short: "Perfil" },
+  { id: 3, short: "Objetivo" },
+  { id: 4, short: "Cierre" },
+] as const;
+
 export const dynamic = "force-dynamic";
 
 function LoadingMessages({ stage }: { stage: string }) {
   const [msgIndex, setMsgIndex] = useState(0);
 
   const analyzeMessages = [
-    "ANALIZANDO ESTRUCTURA FÍSICA...",
-    "CALCULANDO VECTORES DE HIPERTROFIA...",
-    "PROCESANDO BIOMETRÍA...",
-    "GENERANDO LÍNEA DE TIEMPO...",
-    "OPTIMIZANDO PARÁMETROS..."
+    "VALIDANDO TU IMAGEN...",
+    "PREPARANDO TU SESIÓN PRIVADA...",
+    "CONSTRUYENDO TU VISUALIZACIÓN...",
+    "ORDENANDO EL SIGUIENTE PASO...",
+    "DEJANDO LISTO TU PANEL PRIVADO..."
   ];
 
   useEffect(() => {
@@ -103,13 +110,13 @@ function LoadingMessages({ stage }: { stage: string }) {
   }, [stage, analyzeMessages.length]);
 
   let text = "";
-  if (stage === 'upload') text = "SUBIENDO DATOS...";
-  else if (stage === 'render') text = "INICIANDO SIMULACIÓN...";
-  else if (stage === 'done') text = "COMPLETADO.";
+  if (stage === 'upload') text = "SUBIENDO TU FOTO...";
+  else if (stage === 'render') text = "INICIANDO TU VISUALIZACIÓN...";
+  else if (stage === 'done') text = "LISTO.";
   else text = analyzeMessages[msgIndex];
 
   return (
-    <h2 key={text} className="text-2xl font-black italic tracking-tighter mb-2 min-h-[2rem] animate-in fade-in slide-in-from-bottom-2 duration-300">
+    <h2 key={text} className="landing-heading text-[2rem] md:text-[2.4rem] leading-[0.94] mb-2 min-h-[2rem] animate-in fade-in slide-in-from-bottom-2 duration-300">
       {text}
     </h2>
   );
@@ -159,13 +166,15 @@ async function readErrorMessage(response: Response, fallback: string) {
 
 export default function WizardPage() {
   const router = useRouter();
+  const DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "1";
   const [loading, setLoading] = useState(false);
   const [currentStage, setCurrentStage] = useState(1);
   const [formError, setFormError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [accessReady, setAccessReady] = useState(DEMO);
+  const [accessError, setAccessError] = useState<string | null>(null);
   const { addToast } = useToast();
-  const DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "1";
-  const { user, loading: authLoading, getIdToken } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
   // Processing States
   const [processStage, setProcessStage] = useState<"idle" | "upload" | "analyze" | "render" | "done">("idle");
@@ -202,14 +211,65 @@ export default function WizardPage() {
   const watchedEmail = watch("email");
   const selectedPhoto = photoFile?.[0] ?? null;
   const resolvedEmail = (watchedEmail || user?.email || "").trim();
-  const canAdvancePastIdentity = Boolean(previewUrl && requiredConsentsAccepted && resolvedEmail);
-  const canSubmitWizard = canAdvancePastIdentity;
+  const usingAnonymousAccess = Boolean(user?.isAnonymous);
+  const canAdvancePastIdentity = Boolean(previewUrl && requiredConsentsAccepted && accessReady);
+  const canSubmitWizard = Boolean(previewUrl && requiredConsentsAccepted && resolvedEmail && accessReady);
+  const selectedGoalLabel =
+    watch("goal") === "definicion"
+      ? "Definición extrema"
+      : watch("goal") === "masa"
+        ? "Hipertrofia masiva"
+        : "Híbrido atlético";
+  const selectedFocusLabel =
+    watch("focusZone") === "upper"
+      ? "Tren superior"
+      : watch("focusZone") === "lower"
+        ? "Tren inferior"
+        : watch("focusZone") === "abs"
+          ? "Core & abs"
+          : "Full body";
 
   useEffect(() => {
-    if (!DEMO && !authLoading && !user) {
-      router.push("/auth?next=/wizard");
+    if (DEMO) {
+      setAccessReady(true);
+      setAccessError(null);
+      return;
     }
-  }, [DEMO, authLoading, user, router]);
+
+    if (authLoading) return;
+
+    let cancelled = false;
+
+    if (user) {
+      setAccessReady(true);
+      setAccessError(null);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    setAccessReady(false);
+    setAccessError(null);
+
+    void ensureAnonymousSession()
+      .then(() => {
+        if (cancelled) return;
+        setAccessReady(true);
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        const message =
+          error instanceof Error
+            ? error.message
+            : "No pudimos preparar tu acceso privado.";
+        setAccessError(message);
+        setFormError("No pudimos preparar tu acceso privado. Intenta de nuevo o entra con Google.");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [DEMO, authLoading, user]);
 
   useEffect(() => {
     if (user?.email && watchedEmail !== user.email) {
@@ -251,8 +311,8 @@ export default function WizardPage() {
     if (currentStage === 1 && !canAdvancePastIdentity) {
       const message = !previewUrl
         ? "Sube una foto para continuar."
-        : !resolvedEmail
-          ? "No pudimos resolver el correo de tu cuenta. Vuelve a sincronizar el acceso antes de continuar."
+        : !accessReady
+          ? "Todavía estamos preparando tu acceso privado. Espera unos segundos."
         : "Debes aceptar los consentimientos obligatorios antes de continuar.";
       setFormError(message);
       addToast({ variant: "error", message });
@@ -302,21 +362,22 @@ export default function WizardPage() {
   const onSubmit = async (values: FormValues) => {
     try {
       setLoading(true);
-      if (!user) throw new Error("Necesitas iniciar sesión");
+      const authUser = user ?? (DEMO ? null : await ensureAnonymousSession());
+      if (!authUser) throw new Error("No pudimos preparar tu acceso privado");
       const file: File | null = selectedPhoto;
       if (!file) throw new Error("Debes subir una fotografía");
-      const submissionEmail = (values.email || user.email || "").trim();
+      const submissionEmail = (values.email || authUser.email || "").trim();
       if (!submissionEmail) {
-        setCurrentStage(1);
-        throw new Error("Confirma el correo vinculado a tu cuenta antes de ejecutar la simulación.");
+        setCurrentStage(4);
+        throw new Error("Confirma el correo donde quieres recibir tu acceso privado antes de ejecutar la visualización.");
       }
 
-      // FAKE PROCESSING FOR DEMO/MVP VISUALS
+      // Staged processing states for the private visualization flow
       setProcessStage("upload"); setProcessProgress(20); await new Promise(r => setTimeout(r, 800));
 
       const sessionSeed = (typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)).replace(/-/g, "").slice(0, 12);
       const ext = file.name.split(".").pop() || "jpg";
-      const uid = user?.uid || "anonymous";
+      const uid = authUser.uid;
       const storagePath = `uploads/${uid}/${sessionSeed}/original.${ext}`;
 
       const storageRef = ref(getClientStorage(), storagePath);
@@ -329,7 +390,7 @@ export default function WizardPage() {
       setProcessStage("analyze"); setProcessProgress(50);
 
       const profile = { ...values, notes: values.notes || "" };
-      const token = await getIdToken();
+      const token = DEMO ? null : await authUser.getIdToken();
 
       // Get landing variant for analytics tracking
       const landingVariant = getStoredVariant();
@@ -406,41 +467,68 @@ export default function WizardPage() {
   // --- RENDER STAGES ---
 
   return (
-    <div className="min-h-screen bg-transparent text-white selection:bg-[#6D00FF]/30 font-[var(--font-body)]">
+    <div className="relative min-h-screen bg-transparent text-white selection:bg-[#6D00FF]/30 font-[var(--font-body)]">
 
       {/* TOP HEADER */}
-      <div className="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center pointer-events-none">
-        <div className="flex items-center gap-3 pointer-events-auto">
-          <button
-            type="button"
-            onClick={goBack}
-            className="h-10 px-3 rounded-full bg-black/45 border border-white/10 backdrop-blur-md text-white/80 hover:text-white hover:bg-black/60 transition-colors inline-flex items-center gap-2 text-[10px] uppercase tracking-widest font-medium"
-          >
-            <ChevronLeft size={14} />
-            Atrás
-          </button>
-          <div className="w-10 h-10 bg-white/5 backdrop-blur-md rounded-full border border-white/10 flex items-center justify-center">
-            <Activity size={18} className="text-[#6D00FF]" />
-          </div>
-          <div>
-            <h1 className="text-xs font-mono uppercase tracking-widest text-white/60">Protocolo Elite</h1>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-display font-semibold text-white uppercase tracking-tight">Calibración de sistema</span>
-              <div className="flex gap-1">
-                {[1, 2, 3, 4].map(s => (
-                  <div key={s} className={cn("w-1.5 h-1.5 rounded-full transition-colors", currentStage >= s ? "bg-[#B98CFF]" : "bg-white/10")} />
-                ))}
-              </div>
+      <div className="fixed inset-x-0 top-0 z-50 px-4 pt-4 md:px-6 md:pt-6">
+        <div className="mx-auto flex max-w-6xl items-start justify-between gap-3 md:items-center pointer-events-none">
+          <div className="landing-surface pointer-events-auto flex min-w-0 items-center gap-3 rounded-[28px] px-3 py-3 md:px-4 md:py-3.5">
+            <button
+              type="button"
+              onClick={goBack}
+              className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full border border-white/10 bg-black/35 px-3 text-[10px] font-medium uppercase tracking-[0.22em] text-white/75 transition-colors hover:bg-black/55 hover:text-white"
+            >
+              <ChevronLeft size={14} />
+              <span className="hidden sm:inline">Atrás</span>
+            </button>
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[#6D00FF]/25 bg-gradient-to-br from-[#6D00FF]/30 to-[#B98CFF]/10">
+              <Sparkles size={18} className="text-[#C6A4FF]" />
             </div>
-            <p className="text-[10px] text-white/45 font-mono uppercase tracking-widest mt-1">{stageMeta.title}</p>
-            <p className="text-[10px] text-white/35 font-body mt-0.5">{stageMeta.subtitle}</p>
+            <div className="min-w-0">
+              <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">Wizard privado</p>
+              <div className="mt-1 flex flex-wrap items-center gap-2">
+                <span className="truncate text-sm font-body font-semibold uppercase tracking-[0.04em] text-white md:text-base">
+                  Configuración privada
+                </span>
+                <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] text-white/55">
+                  Paso {currentStage} / 4
+                </span>
+              </div>
+              <p className="mt-1 text-xs leading-relaxed text-white/40">
+                {stageMeta.subtitle}
+              </p>
+            </div>
+          </div>
+
+          <div className="pointer-events-auto flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-2 rounded-full landing-surface px-2 py-2">
+              {WIZARD_STAGE_TABS.map((tab) => (
+                <div
+                  key={tab.id}
+                  className={cn(
+                    "rounded-full px-3 py-2 text-[10px] uppercase tracking-[0.18em] transition-all",
+                    currentStage === tab.id
+                      ? "bg-[#6D00FF] text-white shadow-[0_0_18px_rgba(109,0,255,0.25)]"
+                      : currentStage > tab.id
+                        ? "bg-[#6D00FF]/12 text-[#C9A9FF]"
+                        : "bg-white/[0.03] text-white/32"
+                  )}
+                >
+                  {tab.short}
+                </div>
+              ))}
+            </div>
+            {DEMO ? (
+              <div className="rounded-full border border-[#6D00FF]/30 bg-[#6D00FF]/15 px-3 py-2 text-[10px] font-mono uppercase tracking-[0.22em] text-[#C6A4FF]">
+                Demo mode
+              </div>
+            ) : null}
           </div>
         </div>
-        {DEMO && <div className="px-3 py-1 bg-[#6D00FF]/20 text-[#6D00FF] text-[10px] font-bold rounded-full border border-[#6D00FF]/30 backdrop-blur-md">DEMO MODE</div>}
       </div>
 
       {/* MAIN CONTENT AREA */}
-      <form onSubmit={handleSubmit(onSubmit, onFormError)} className="min-h-screen flex flex-col pt-24 pb-24 px-6 max-w-5xl mx-auto">
+      <form onSubmit={handleSubmit(onSubmit, onFormError)} className="mx-auto flex min-h-screen max-w-6xl flex-col px-4 pb-24 pt-32 md:px-6 md:pb-28 md:pt-36">
         <input
           type="file"
           accept="image/*"
@@ -453,183 +541,294 @@ export default function WizardPage() {
         />
 
         {formError && !loading ? (
-          <div className="mx-auto mb-6 w-full max-w-3xl rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
+          <div className="mx-auto mb-6 w-full max-w-3xl rounded-[24px] border border-red-500/25 bg-red-500/10 px-4 py-4 text-sm text-red-100 backdrop-blur-sm">
             {formError}
           </div>
         ) : null}
 
         {loading ? (
-          <div className="flex-1 flex flex-col items-center justify-center animate-in fade-in zoom-in duration-500 max-w-md mx-auto text-center px-6">
-            <div className="relative w-32 h-32 mb-8">
-              <div className="absolute inset-0 border-4 border-[#6D00FF]/20 rounded-full animate-spin-slow" />
-              <div className="absolute inset-2 border-4 border-t-[#6D00FF] border-r-[#6D00FF] border-b-transparent border-l-transparent rounded-full animate-spin" />
-              <div className="absolute inset-0 flex items-center justify-center font-black text-2xl italic text-[#6D00FF]">
-                {processProgress}%
-              </div>
-            </div>
-
-            <LoadingMessages stage={processStage} />
-
-            <div className="mt-8 bg-white/5 border border-white/10 rounded-xl p-4 backdrop-blur-sm">
-              <div className="flex items-start gap-3 text-left">
-                <div className="mt-1 w-2 h-2 rounded-full bg-[#6D00FF] animate-pulse shrink-0" />
-                <div className="space-y-1">
-                  <p className="text-white font-bold text-xs uppercase tracking-wider">
-                    Preparando tu sesión segura
-                  </p>
-                  <p className="text-neutral-400 text-[10px] leading-relaxed">
-                    Estamos subiendo tu foto, creando tu sesión privada y preparando el panel de progreso. En cuanto quede listo te llevaremos a la vista donde podrás seguir cada etapa.
-                  </p>
+          <div className="flex flex-1 items-center justify-center animate-in fade-in zoom-in duration-500">
+            <div className="w-full max-w-2xl rounded-[32px] landing-surface-strong px-6 py-10 text-center md:px-10 md:py-12">
+              <p className="landing-kicker mb-5">Procesamiento privado en curso</p>
+              <div className="relative mx-auto mb-8 h-32 w-32">
+                <div className="absolute inset-0 rounded-full border-4 border-[#6D00FF]/20 animate-spin-slow" />
+                <div className="absolute inset-2 rounded-full border-4 border-r-[#6D00FF] border-t-[#6D00FF] border-b-transparent border-l-transparent animate-spin" />
+                <div className="absolute inset-0 flex items-center justify-center text-2xl font-black italic text-[#6D00FF]">
+                  {processProgress}%
                 </div>
               </div>
-            </div>
 
-            <p className="text-neutral-600 text-[10px] uppercase tracking-widest mt-6 animate-pulse">
-              Mantén esta ventana abierta unos momentos
-            </p>
+              <LoadingMessages stage={processStage} />
+              <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-white/60 md:text-base">
+                Estamos creando tu sesión privada, ordenando tu contexto y dejando lista la experiencia donde verás la visualización y el siguiente paso.
+              </p>
+
+              <div className="mx-auto mt-8 h-2 max-w-md overflow-hidden rounded-full border border-white/8 bg-white/6">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-[#6D00FF] to-[#B98CFF] transition-all duration-500"
+                  style={{ width: `${processProgress}%` }}
+                />
+              </div>
+
+              <div className="mx-auto mt-8 max-w-lg rounded-[24px] landing-surface px-5 py-4 text-left">
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[#6D00FF] animate-pulse" />
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-mono uppercase tracking-[0.22em] text-[#C8A5FF]">
+                      Sesión segura
+                    </p>
+                    <p className="text-sm leading-relaxed text-white/75">
+                      Mantén esta ventana abierta unos momentos. En cuanto quede listo te llevaremos a la vista donde podrás seguir cada etapa.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <p className="mt-6 text-[11px] uppercase tracking-[0.22em] text-white/30">
+                No cierres esta pestaña todavía
+              </p>
+            </div>
+          </div>
+        ) : !accessReady ? (
+          <div className="flex flex-1 items-center justify-center">
+            <div className="w-full max-w-xl rounded-[32px] landing-surface px-6 py-10 text-center md:px-8 md:py-12">
+              <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#6D00FF]/25 bg-[#6D00FF]/10">
+                <Lock className="h-6 w-6 text-[#C8A5FF]" />
+              </div>
+              <p className="landing-kicker mb-4">Acceso privado</p>
+              <h2 className="landing-heading text-[2.2rem] leading-[0.94] text-white md:text-[2.8rem]">
+                Preparamos tu sesión segura.
+              </h2>
+              <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-white/60 md:text-base">
+                Estamos creando el acceso temporal para que puedas subir tu foto y generar tu visualización sin meter login antes de tiempo.
+              </p>
+            {accessError ? (
+              <div className="mx-auto mt-6 max-w-md rounded-[22px] border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
+                {accessError}
+              </div>
+            ) : null}
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                className="border-white/10 bg-white/5 text-white hover:bg-white/10"
+                onClick={() => window.location.reload()}
+              >
+                Reintentar
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="border-white/10 bg-white/5 text-white hover:bg-white/10"
+                onClick={() => router.push("/auth?next=/wizard")}
+              >
+                Entrar con Google
+              </Button>
+            </div>
+            </div>
           </div>
         ) : (
           <>
             {/* STAGE 1: IDENTITY */}
             {currentStage === 1 && (
-              <div className="flex items-center justify-center h-full animate-in slide-in-from-right-8 fade-in duration-500">
-                <div className="w-full max-w-2xl text-center space-y-8">
-                  <div>
-                    <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter mb-4 text-white">
-                      SINCRONIZACIÓN <span className="text-[#6D00FF]">VISUAL</span>
-                    </h1>
-                    <p className="text-neutral-400 text-lg max-w-md mx-auto leading-relaxed">
-                      Sube una foto de cuerpo completo para establecer tu ancla biométrica inicial y confirma tu acceso.
-                    </p>
-                  </div>
+              <div className="w-full animate-in slide-in-from-right-8 fade-in duration-500">
+                <section className="rounded-[32px] landing-surface-strong p-6 md:p-8 lg:p-10">
+                  <div className="grid gap-8 lg:grid-cols-[minmax(0,0.84fr)_minmax(0,1.16fr)] lg:gap-10">
+                    <div className="flex flex-col">
+                      <p className="landing-kicker mb-4">Paso 1 · foto base</p>
+                      <h1 className="landing-heading text-[2.7rem] leading-[0.9] text-white md:text-[4rem] lg:text-[4.5rem]">
+                        Sube tu foto.
+                        <br />
+                        Activamos tu acceso privado.
+                      </h1>
+                      <p className="mt-5 max-w-xl text-base leading-relaxed text-white/65 md:text-[1.05rem]">
+                        Este paso no intenta venderte nada todavía. Primero validamos imagen, privacidad y consentimiento para que la experiencia se sienta seria desde el inicio.
+                      </p>
 
-                  <div className="max-w-md mx-auto w-full space-y-4">
-                    {user?.email ? (
-                      <div className="rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-4 text-left">
-                        <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-emerald-300/80">Cuenta conectada</p>
-                        <p className="mt-2 text-sm font-medium text-white">{user.email}</p>
-                        <Input
-                          {...register("email")}
-                          readOnly
-                          className="sr-only"
-                          aria-hidden="true"
-                          tabIndex={-1}
-                        />
+                      <div className="mt-7 rounded-[24px] landing-surface px-5 py-5 text-left">
+                        <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">Contrato de experiencia</p>
+                        <p className="mt-3 text-sm leading-relaxed text-white/80 md:text-[0.95rem]">
+                          Esto no es un diagnóstico médico ni una predicción exacta. Es una visualización privada y motivacional generada con IA para ayudarte a imaginar tu potencial y abrir una conversación más seria sobre lo que te acercaría a él.
+                        </p>
                       </div>
-                    ) : (
-                      <div className="relative">
-                        <Input
-                          {...register("email")}
-                          placeholder="tu@email.com"
-                          className="bg-white/5 border-white/10 rounded-xl py-6 pl-12 focus:border-[#6D00FF] transition-all"
-                        />
-                        <Eye className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" size={18} />
-                      </div>
-                    )}
-                    {errors.email ? (
-                      <p className="text-left text-xs text-red-300">{errors.email.message}</p>
-                    ) : null}
-                  </div>
 
-                  <label
-                    onDrop={onDrop}
-                    onDragOver={onDrag}
-                    onDragEnter={onDrag}
-                    onClick={() => inputRef.current?.click()}
-                    className={cn(
-                      "group relative flex flex-col items-center justify-center w-full aspect-[4/3] md:aspect-[16/9] rounded-3xl border-2 border-dashed transition-all cursor-pointer overflow-hidden",
-                      previewUrl
-                        ? "border-[#6D00FF] bg-[#6D00FF]/5"
-                        : "border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/30"
-                    )}
-                  >
-                    {previewUrl ? (
-                      <>
-                        <Image src={previewUrl} alt="Preview" fill className="object-contain p-4 z-10" />
-                        <Image src={previewUrl} alt="Blur" fill className="object-cover blur-2xl opacity-20 z-0" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10" />
-                        <div className="absolute bottom-6 z-20 flex items-center gap-2 bg-[#6D00FF] px-4 py-2 rounded-full shadow-[0_0_20px_#6D00FF]">
-                          <Upload size={16} /> <span className="text-xs font-bold">CAMBIAR ARCHIVO</span>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="space-y-4 group-hover:scale-105 transition-transform">
-                        <div className="w-20 h-20 rounded-full bg-[#6D00FF]/10 flex items-center justify-center mx-auto border border-[#6D00FF]/30 shadow-[0_0_30px_rgba(109,0,255,0.2)]">
-                          <Upload className="w-8 h-8 text-[#6D00FF]" />
-                        </div>
-                        <div>
-                          <p className="font-bold text-white uppercase tracking-widest text-sm">Arrastra o haz clic</p>
-                          <p className="text-neutral-500 text-xs mt-1">MAX 8MB • JPG/PNG</p>
-                        </div>
+                      <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                        {[
+                          {
+                            icon: ShieldCheck,
+                            label: "Privado por diseño",
+                            text: "Tu foto se usa sólo para operar esta experiencia.",
+                          },
+                          {
+                            icon: Sparkles,
+                            label: "Salida aproximada",
+                            text: "Es motivacional, no clínica ni exacta.",
+                          },
+                          {
+                            icon: Mail,
+                            label: "Correo al final",
+                            text: "Primero avanzas sin fricción. El acceso llega después.",
+                          },
+                        ].map((item) => {
+                          const Icon = item.icon;
+                          return (
+                            <div key={item.label} className="rounded-[22px] landing-surface px-4 py-4">
+                              <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl border border-[#6D00FF]/20 bg-[#6D00FF]/10">
+                                <Icon className="h-4 w-4 text-[#C6A4FF]" />
+                              </div>
+                              <p className="text-sm font-semibold text-white">{item.label}</p>
+                              <p className="mt-2 text-xs leading-relaxed text-white/45">{item.text}</p>
+                            </div>
+                          );
+                        })}
                       </div>
-                    )}
-                  </label>
 
-                  {/* Consent Checkboxes */}
-                  {previewUrl && (
-                    <div className="space-y-3 text-left max-w-md mx-auto animate-in fade-in duration-300">
-                      <label className="flex items-start gap-3 cursor-pointer group">
-                        <input
-                          type="checkbox"
-                          checked={consentTerms}
-                          onChange={(e) => setConsentTerms(e.target.checked)}
-                          className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[#6D00FF]"
-                        />
-                        <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors leading-relaxed">
-                          Soy mayor de 18 años. He leído y acepto los{" "}
-                          <a href="/terms" target="_blank" className="text-[#6D00FF] underline">Términos de Servicio</a>{" "}y el{" "}
-                          <a href="/privacy" target="_blank" className="text-[#6D00FF] underline">Aviso de Privacidad</a>.
-                        </span>
-                      </label>
-                      <label className="flex items-start gap-3 cursor-pointer group">
-                        <input
-                          type="checkbox"
-                          checked={consentAI}
-                          onChange={(e) => setConsentAI(e.target.checked)}
-                          className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[#6D00FF]"
-                        />
-                        <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors leading-relaxed">
-                          Autorizo que mi foto sea procesada por inteligencia artificial (Google Gemini) para generar mis resultados. Entiendo que se almacena de forma segura solo mientras sea necesario para prestar el servicio y conforme al Aviso de Privacidad publicado.
-                        </span>
-                      </label>
-                      <label className="flex items-start gap-3 cursor-pointer group">
-                        <input
-                          type="checkbox"
-                          checked={consentEmail}
-                          onChange={(e) => setConsentEmail(e.target.checked)}
-                          className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[#6D00FF]"
-                        />
-                        <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors leading-relaxed">
-                          Quiero recibir correos de seguimiento y novedades de NGX Transform. Es opcional y puedo cancelar en cualquier momento.
-                        </span>
-                      </label>
+                      <div className="mt-6 rounded-[22px] border border-white/10 bg-white/[0.03] px-4 py-4 text-sm leading-relaxed text-white/50">
+                        Si la imagen no está lista, no te pediremos el resto. Primero resolvemos la base.
+                      </div>
                     </div>
-                  )}
 
-                  <div className="flex justify-center">
-                    <Button
-                      type="button"
-                      onClick={nextStage}
-                      disabled={!canAdvancePastIdentity}
-                      className="px-12 py-6 rounded-full bg-white text-black hover:bg-neutral-200 font-black italic tracking-widest text-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
-                    >
-                      INICIAR ESCANEO <ArrowRight className="ml-2 w-5 h-5" />
-                    </Button>
+                    <div className="rounded-[28px] landing-surface p-4 md:p-5">
+                      <div className="flex items-center justify-between gap-3 border-b border-white/8 pb-4">
+                        <div>
+                          <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">Foto base</p>
+                          <p className="mt-2 text-lg font-semibold text-white">Carga privada de imagen</p>
+                        </div>
+                        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-white/45">
+                          {previewUrl ? "Archivo listo" : "Cuerpo completo"}
+                        </span>
+                      </div>
+
+                      <label
+                        onDrop={onDrop}
+                        onDragOver={onDrag}
+                        onDragEnter={onDrag}
+                        onClick={() => inputRef.current?.click()}
+                        className={cn(
+                          "group relative mt-5 flex min-h-[360px] md:min-h-[420px] w-full flex-col items-center justify-center overflow-hidden rounded-[28px] border border-dashed transition-all cursor-pointer",
+                          previewUrl
+                            ? "border-[#6D00FF]/45 bg-[#6D00FF]/6"
+                            : "border-white/12 bg-white/[0.03] hover:border-white/25 hover:bg-white/[0.05]"
+                        )}
+                      >
+                        {previewUrl ? (
+                          <>
+                            <Image src={previewUrl} alt="Preview" fill className="z-10 object-contain p-4 md:p-5" />
+                            <Image src={previewUrl} alt="Blur" fill className="z-0 object-cover blur-2xl opacity-20 scale-110" />
+                            <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+                            <div className="absolute left-5 top-5 z-20 rounded-full border border-white/10 bg-black/45 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-white/70 backdrop-blur-md">
+                              Vista previa protegida
+                            </div>
+                            <div className="absolute bottom-5 left-5 right-5 z-20 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                              <div>
+                                <p className="text-sm font-semibold text-white">Imagen detectada y lista para validarse</p>
+                                <p className="mt-1 text-xs leading-relaxed text-white/55">
+                                  Si quieres, puedes reemplazarla antes de pasar al perfil corporal.
+                                </p>
+                              </div>
+                              <div className="inline-flex items-center gap-2 rounded-full bg-[#6D00FF] px-4 py-2 text-xs font-semibold text-white shadow-[0_0_20px_rgba(109,0,255,0.35)]">
+                                <Upload size={16} />
+                                Cambiar archivo
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <div className="max-w-sm px-6 text-center transition-transform group-hover:scale-[1.02]">
+                            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-[#6D00FF]/25 bg-[#6D00FF]/10 shadow-[0_0_30px_rgba(109,0,255,0.18)]">
+                              <Upload className="h-8 w-8 text-[#6D00FF]" />
+                            </div>
+                            <h3 className="mt-6 text-[1.45rem] font-black italic uppercase tracking-[-0.05em] text-white">
+                              Arrastra tu foto o haz clic
+                            </h3>
+                            <p className="mt-3 text-sm leading-relaxed text-white/50">
+                              JPG o PNG, máximo 8MB. Idealmente cuerpo completo, buena luz y una pose simple.
+                            </p>
+                            <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+                              {["Privado", "Aproximado", "Sin login aún"].map((item) => (
+                                <span
+                                  key={item}
+                                  className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-white/45"
+                                >
+                                  {item}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </label>
+
+                      {previewUrl ? (
+                        <div className="mt-5 animate-in fade-in duration-300">
+                          <div className="space-y-3 rounded-[24px] border border-white/10 bg-white/[0.03] p-4 text-left">
+                            <label className="flex items-start gap-3 cursor-pointer group">
+                              <input
+                                type="checkbox"
+                                checked={consentTerms}
+                                onChange={(e) => setConsentTerms(e.target.checked)}
+                                className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[#6D00FF]"
+                              />
+                              <span className="text-xs leading-relaxed text-white/55 transition-colors group-hover:text-white/75">
+                                Soy mayor de 18 años. He leído y acepto los{" "}
+                                <a href="/terms" target="_blank" className="text-[#B98CFF] underline">Términos de Servicio</a>{" "}y el{" "}
+                                <a href="/privacy" target="_blank" className="text-[#B98CFF] underline">Aviso de Privacidad</a>.
+                              </span>
+                            </label>
+                            <label className="flex items-start gap-3 cursor-pointer group">
+                              <input
+                                type="checkbox"
+                                checked={consentAI}
+                                onChange={(e) => setConsentAI(e.target.checked)}
+                                className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[#6D00FF]"
+                              />
+                              <span className="text-xs leading-relaxed text-white/55 transition-colors group-hover:text-white/75">
+                                Autorizo que mi foto sea procesada por inteligencia artificial (Google Gemini) para generar mi visualización privada y el contexto inicial del siguiente paso. Entiendo que se almacena de forma segura solo mientras sea necesario para prestar el servicio.
+                              </span>
+                            </label>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="mt-5 text-xs leading-relaxed text-white/35">
+                          Cuando detectemos una imagen válida, te pediremos los consentimientos obligatorios para desbloquear el perfil corporal.
+                        </p>
+                      )}
+
+                      <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <p className="max-w-sm text-xs leading-relaxed text-white/42">
+                          El correo se confirma al final, justo antes de generar tu visualización privada. Aquí no te pediremos contraseña.
+                        </p>
+                        <Button
+                          type="button"
+                          onClick={nextStage}
+                          disabled={!canAdvancePastIdentity}
+                          className="h-auto rounded-full bg-[#6D00FF] px-7 py-4 text-sm font-semibold uppercase tracking-[0.14em] text-white shadow-[0_0_30px_rgba(109,0,255,0.32)] transition-all hover:scale-[1.01] hover:bg-[#5f00de] disabled:bg-white/8 disabled:text-white/30 disabled:shadow-none"
+                        >
+                          Continuar al perfil
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                </section>
               </div>
             )}
 
             {/* STAGE 2: BIOMETRICS */}
             {currentStage === 2 && (
-              <div className="w-full max-w-4xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 space-y-12">
-                <div className="text-center mb-8">
-                  <h2 className="text-3xl font-display font-semibold tracking-tight text-white">PERFIL <span className="text-neutral-500">CORPORAL</span></h2>
-                  <p className="text-sm text-neutral-400 uppercase tracking-widest mt-2 font-mono">Definiendo parámetros físicos base</p>
+              <div className="w-full max-w-5xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 space-y-8">
+                <div className="text-center">
+                  <p className="landing-kicker mb-4">Paso 2 · Perfil corporal</p>
+                  <h2 className="landing-heading text-[2.4rem] leading-[0.92] text-white md:text-[3.4rem]">
+                    Le damos contexto
+                    <br />
+                    a tu punto de partida.
+                  </h2>
+                  <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/55 md:text-base">
+                    Estos datos no sustituyen una medición clínica. Sólo calibran el rango de la visualización para que no se sienta como un juguete genérico.
+                  </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                  <div className="space-y-8 p-6 bg-white/5 rounded-3xl border border-white/10">
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] items-start">
+                  <div className="space-y-5 rounded-[30px] landing-surface-strong p-5 md:p-6">
                     <CyberSlider
                       label="Edad"
                       {...register("age")}
@@ -654,19 +853,19 @@ export default function WizardPage() {
                       trackColor="violet"
                     />
 
-                    <div className="pt-4 border-t border-white/5">
-                      <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-[0.2em] mb-3 block">Género Biológico</label>
-                      <div className="flex gap-4">
+                    <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-4">
+                      <label className="text-[10px] font-mono uppercase tracking-[0.22em] text-white/45 block">Género biológico</label>
+                      <div className="mt-4 grid grid-cols-2 gap-3">
                         {(["male", "female"] as const).map((s) => (
                           <button
                             key={s}
                             type="button"
                             onClick={() => setValue("sex", s)}
                             className={cn(
-                              "flex-1 py-3 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all",
+                              "py-3 rounded-xl border text-[10px] font-mono uppercase tracking-[0.18em] transition-all",
                               watch("sex") === s
-                                ? "bg-white text-black border-white"
-                                : "bg-white/5 text-neutral-500 border-white/10 hover:border-white/20"
+                                ? "bg-[#6D00FF] text-white border-[#6D00FF] shadow-[0_0_18px_rgba(109,0,255,0.22)]"
+                                : "bg-white/[0.03] text-white/45 border-white/10 hover:border-white/20 hover:text-white/70"
                             )}
                           >
                             {s === "male" ? "Masculino" : "Femenino"}
@@ -674,32 +873,46 @@ export default function WizardPage() {
                         ))}
                       </div>
                     </div>
+
+                    <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-4 text-sm leading-relaxed text-white/45">
+                      Mientras más honestos sean estos datos, mejor se sentirá el puente entre la visualización y el roadmap.
+                    </div>
                   </div>
 
                   <div className="space-y-4">
-                    <label className="text-xs font-bold text-neutral-500 uppercase tracking-widest pl-1">Tipo Somático</label>
-                    <div className="grid grid-cols-1 gap-3">
-                      <EliteOptionCard
-                        title="ECTOMORFO"
-                        description="Estructura ligera, metabolismo rápido, dificultad para ganar masa."
-                        selected={watch("bodyType") === "ectomorph"}
-                        onClick={() => setValue("bodyType", "ectomorph")}
-                        idx={1}
-                      />
-                      <EliteOptionCard
-                        title="MESOMORFO"
-                        description="Atlético natural, gana músculo y pierde grasa con facilidad."
-                        selected={watch("bodyType") === "mesomorph"}
-                        onClick={() => setValue("bodyType", "mesomorph")}
-                        idx={2}
-                      />
-                      <EliteOptionCard
-                        title="ENDOMORFO"
-                        description="Estructura sólida y ancha, gana fuerza fácilmente."
-                        selected={watch("bodyType") === "endomorph"}
-                        onClick={() => setValue("bodyType", "endomorph")}
-                        idx={3}
-                      />
+                    <div className="rounded-[30px] landing-surface p-5 md:p-6">
+                      <label className="text-[10px] font-mono uppercase tracking-[0.22em] text-white/45 block">Tipo somático</label>
+                      <div className="mt-4 grid grid-cols-1 gap-3">
+                        <EliteOptionCard
+                          title="ECTOMORFO"
+                          description="Estructura ligera, metabolismo rápido, dificultad para ganar masa."
+                          selected={watch("bodyType") === "ectomorph"}
+                          onClick={() => setValue("bodyType", "ectomorph")}
+                          idx={1}
+                        />
+                        <EliteOptionCard
+                          title="MESOMORFO"
+                          description="Atlético natural, gana músculo y pierde grasa con facilidad."
+                          selected={watch("bodyType") === "mesomorph"}
+                          onClick={() => setValue("bodyType", "mesomorph")}
+                          idx={2}
+                        />
+                        <EliteOptionCard
+                          title="ENDOMORFO"
+                          description="Estructura sólida y ancha, gana fuerza fácilmente."
+                          selected={watch("bodyType") === "endomorph"}
+                          onClick={() => setValue("bodyType", "endomorph")}
+                          idx={3}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="rounded-[24px] landing-surface px-5 py-5">
+                      <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">Lectura inicial</p>
+                      <p className="mt-3 text-base font-semibold text-white">Todavía no estamos diagnosticando.</p>
+                      <p className="mt-2 text-sm leading-relaxed text-white/50">
+                        Sólo estamos construyendo una base más útil para que la visualización y el siguiente paso tengan coherencia entre sí.
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -708,10 +921,17 @@ export default function WizardPage() {
 
             {/* STAGE 3: MISSION */}
             {currentStage === 3 && (
-              <div className="w-full max-w-5xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 space-y-12">
-                <div className="text-center mb-8">
-                  <h2 className="text-3xl font-black italic tracking-tighter text-white">OBJETIVO DE <span className="text-[#6D00FF]">MISIÓN</span></h2>
-                  <p className="text-sm text-neutral-400 uppercase tracking-widest mt-2">Selecciona tu protocolo de transformación</p>
+              <div className="w-full max-w-5xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 space-y-8">
+                <div className="text-center">
+                  <p className="landing-kicker mb-4">Paso 3 · objetivo</p>
+                  <h2 className="landing-heading text-[2.4rem] leading-[0.92] text-white md:text-[3.4rem]">
+                    Define la dirección
+                    <br />
+                    de tu visualización.
+                  </h2>
+                  <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/55 md:text-base">
+                    Aquí decidimos qué versión de ti estamos intentando visualizar para que el resultado tenga una intención clara, no sólo un efecto bonito.
+                  </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -755,8 +975,8 @@ export default function WizardPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-white/5 p-6 rounded-3xl border border-white/10">
-                    <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-[0.2em] mb-4 block">Nivel de Experiencia</label>
+                  <div className="rounded-[28px] landing-surface p-6">
+                    <label className="text-[10px] font-mono uppercase tracking-[0.22em] text-white/45 mb-4 block">Nivel de experiencia</label>
                     <div className="grid grid-cols-3 gap-2">
                       {([{ id: "novato", l: "Novato" }, { id: "intermedio", l: "Pro" }, { id: "avanzado", l: "Elite" }] as const).map((lv) => (
                         <button
@@ -764,10 +984,10 @@ export default function WizardPage() {
                           type="button"
                           onClick={() => setValue("level", lv.id)}
                           className={cn(
-                            "py-3 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all",
+                            "py-3 rounded-xl border text-[10px] font-mono uppercase tracking-[0.18em] transition-all",
                             watch("level") === lv.id
-                              ? "bg-white text-black border-white"
-                              : "bg-white/5 text-neutral-500 border-white/10 hover:border-white/20"
+                              ? "bg-[#6D00FF] text-white border-[#6D00FF] shadow-[0_0_18px_rgba(109,0,255,0.22)]"
+                              : "bg-white/[0.03] text-white/45 border-white/10 hover:border-white/20 hover:text-white/70"
                           )}
                         >
                           {lv.l}
@@ -776,8 +996,8 @@ export default function WizardPage() {
                     </div>
                   </div>
 
-                  <div className="bg-white/5 p-6 rounded-3xl border border-white/10">
-                    <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-[0.2em] mb-4 block">Días de Entrenamiento</label>
+                  <div className="rounded-[28px] landing-surface p-6">
+                    <label className="text-[10px] font-mono uppercase tracking-[0.22em] text-white/45 mb-4 block">Días disponibles por semana</label>
                     <div className="grid grid-cols-5 gap-2">
                       {[1, 2, 3, 4, 5].map((d) => (
                         <button
@@ -785,10 +1005,10 @@ export default function WizardPage() {
                           type="button"
                           onClick={() => setValue("weeklyTime", d)}
                           className={cn(
-                            "py-3 rounded-xl border text-xs font-black transition-all",
+                            "py-3 rounded-xl border text-xs font-mono uppercase tracking-[0.14em] transition-all",
                             watch("weeklyTime") === d
-                              ? "bg-white text-black border-white"
-                              : "bg-white/5 text-neutral-500 border-white/10 hover:border-white/20"
+                              ? "bg-[#6D00FF] text-white border-[#6D00FF] shadow-[0_0_18px_rgba(109,0,255,0.22)]"
+                              : "bg-white/[0.03] text-white/45 border-white/10 hover:border-white/20 hover:text-white/70"
                           )}
                         >
                           {d}d
@@ -798,9 +1018,9 @@ export default function WizardPage() {
                   </div>
                 </div>
 
-                <div className="bg-white/5 p-8 rounded-3xl border border-white/10">
+                <div className="rounded-[30px] landing-surface-strong p-6 md:p-8">
                   <div className="mb-6 flex justify-between items-center">
-                    <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-[0.2em]">Zona de Enfoque Principal</label>
+                    <label className="text-[10px] font-mono uppercase tracking-[0.22em] text-white/45">Zona de enfoque principal</label>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {([
@@ -813,11 +1033,11 @@ export default function WizardPage() {
                         className={cn(
                           "p-4 rounded-xl border text-center cursor-pointer transition-all hover:scale-105 active:scale-95",
                           watch("focusZone") === z.id
-                            ? "bg-[#6D00FF] border-[#6D00FF] text-white shadow-[0_0_20px_#6D00FF]"
-                            : "bg-black/40 border-white/10 text-neutral-400 hover:text-white"
+                            ? "bg-[#6D00FF] border-[#6D00FF] text-white shadow-[0_0_20px_rgba(109,0,255,0.28)]"
+                            : "bg-black/30 border-white/10 text-white/45 hover:text-white/80 hover:border-white/20"
                         )}
                       >
-                        <div className="text-xs font-black uppercase tracking-widest">{z.l}</div>
+                        <div className="text-xs font-mono uppercase tracking-[0.16em]">{z.l}</div>
                       </div>
                     ))}
                   </div>
@@ -827,13 +1047,20 @@ export default function WizardPage() {
 
             {/* STAGE 4: SOFTWARE (MENTAL) */}
             {currentStage === 4 && (
-              <div className="w-full max-w-3xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 flex flex-col items-center justify-center h-full">
-                <div className="text-center mb-12">
-                  <h2 className="text-3xl font-display font-semibold tracking-tight text-white">CALIBRACIÓN <span className="text-amber-500">MENTAL</span></h2>
-                  <p className="text-sm text-neutral-400 uppercase tracking-widest mt-2 bg-amber-500/10 inline-block px-3 py-1 rounded text-amber-500 border border-amber-500/20 font-mono">Ajuste de parámetros psicométricos</p>
+              <div className="w-full max-w-4xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 flex flex-col items-center justify-center h-full space-y-8">
+                <div className="text-center">
+                  <p className="landing-kicker mb-4">Paso 4 · cierre</p>
+                  <h2 className="landing-heading text-[2.4rem] leading-[0.92] text-white md:text-[3.2rem]">
+                    Cerramos la calibración
+                    <br />
+                    y activamos tu acceso.
+                  </h2>
+                  <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/55 md:text-base">
+                    Un último ajuste mental y el correo donde quieres recibir tu acceso privado. Después sí generamos la visualización y el siguiente paso.
+                  </p>
                 </div>
 
-                <div className="w-full space-y-8 bg-black/40 p-8 rounded-3xl border border-white/10 backdrop-blur-sm">
+                <div className="w-full space-y-5 rounded-[30px] landing-surface-strong p-6 md:p-8">
                   <CyberSlider
                     label="Nivel de Disciplina"
                     {...register("disciplineRating")}
@@ -857,9 +1084,57 @@ export default function WizardPage() {
                   />
                 </div>
 
-                <div className="mt-8 grid w-full grid-cols-1 gap-3 rounded-3xl border border-white/10 bg-white/5 p-5 md:grid-cols-2">
+                <div className="grid w-full grid-cols-1 gap-4 rounded-[28px] landing-surface p-5 md:p-6">
                   <div>
-                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/45">Cuenta</p>
+                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/45">Acceso privado</p>
+                    {user?.email && !usingAnonymousAccess ? (
+                      <>
+                        <p className="mt-2 text-sm text-white">{user.email}</p>
+                        <Input
+                          {...register("email")}
+                          readOnly
+                          className="sr-only"
+                          aria-hidden="true"
+                          tabIndex={-1}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <div className="relative mt-3">
+                          <Input
+                            {...register("email")}
+                            type="email"
+                            placeholder="tu@email.com"
+                            className="bg-white/5 border-white/10 rounded-2xl py-6 pl-12 text-white focus:border-[#6D00FF] transition-all"
+                          />
+                          <Eye className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" size={18} />
+                        </div>
+                        <p className="mt-2 text-xs text-white/45 leading-relaxed">
+                          Te enviaremos aquí el enlace privado a tu visualización y a tu roadmap inicial. No te pediremos contraseña en este paso.
+                        </p>
+                      </>
+                    )}
+                    {errors.email ? (
+                      <p className="mt-2 text-left text-xs text-red-300">{errors.email.message}</p>
+                    ) : null}
+                  </div>
+
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      checked={consentEmail}
+                      onChange={(e) => setConsentEmail(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[#6D00FF]"
+                    />
+                    <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors leading-relaxed">
+                      Quiero recibir correos de seguimiento y novedades de NGX Transform. Es opcional y puedo cancelar en cualquier momento.
+                    </span>
+                  </label>
+                </div>
+
+                <div className="grid w-full grid-cols-1 gap-3 rounded-[28px] landing-surface p-5 md:grid-cols-2">
+                  <div>
+                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/45">Acceso</p>
                     <p className="mt-1 text-sm text-white">{resolvedEmail || "Pendiente de confirmar"}</p>
                   </div>
                   <div>
@@ -868,37 +1143,31 @@ export default function WizardPage() {
                   </div>
                   <div>
                     <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/45">Objetivo</p>
-                    <p className="mt-1 text-sm text-white">
-                      {watch("goal") === "definicion" ? "Definición extrema" : watch("goal") === "masa" ? "Hipertrofia masiva" : "Híbrido atlético"}
-                    </p>
+                    <p className="mt-1 text-sm text-white">{selectedGoalLabel}</p>
                   </div>
                   <div>
                     <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/45">Enfoque</p>
-                    <p className="mt-1 text-sm text-white">
-                      {watch("focusZone") === "upper"
-                        ? "Tren superior"
-                        : watch("focusZone") === "lower"
-                          ? "Tren inferior"
-                          : watch("focusZone") === "abs"
-                            ? "Core & abs"
-                            : "Full body"}
-                    </p>
+                    <p className="mt-1 text-sm text-white">{selectedFocusLabel}</p>
                   </div>
                 </div>
 
                 {!canSubmitWizard ? (
                   <p className="mt-4 text-center text-xs text-amber-300">
-                    Antes de ejecutar la simulación debemos confirmar tu correo vinculado y conservar la foto cargada del paso 1.
+                    Antes de generar tu visualización necesitamos un correo válido y conservar la foto cargada del paso 1.
                   </p>
                 ) : null}
 
-                <div className="mt-12 w-full">
+                <p className="mt-6 max-w-2xl text-center text-xs text-white/45 leading-relaxed">
+                  En el siguiente paso generaremos una visualización aproximada de tu potencial con IA. Después podrás ver un roadmap inicial para entender qué necesitarías construir antes de pensar en un sistema más serio.
+                </p>
+
+                <div className="w-full">
                   <Button
                     type="submit"
                     disabled={!canSubmitWizard || loading}
-                    className="w-full py-8 text-xl font-black italic tracking-widest bg-[#6D00FF] hover:bg-[#5800cc] text-white rounded-2xl shadow-[0_0_40px_rgba(109,0,255,0.4)] transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                    className="w-full rounded-[22px] bg-[#6D00FF] py-7 text-base font-semibold uppercase tracking-[0.14em] text-white shadow-[0_0_40px_rgba(109,0,255,0.32)] transition-transform hover:scale-[1.01] hover:bg-[#5800cc] active:scale-[0.99]"
                   >
-                    EJECUTAR SIMULACIÓN DE FUTURO
+                    GENERAR VISUALIZACIÓN Y SIGUIENTE PASO
                   </Button>
                 </div>
               </div>
@@ -906,23 +1175,28 @@ export default function WizardPage() {
 
             {/* NAVIGATION FOOTER */}
             {currentStage > 1 && (
-              <div className="fixed bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black via-black/90 to-transparent z-40 pointer-events-none">
-                <div className="max-w-5xl mx-auto flex justify-between pointer-events-auto">
+              <div className="fixed bottom-0 left-0 w-full px-4 pb-5 pt-10 bg-gradient-to-t from-black via-black/90 to-transparent z-40 pointer-events-none md:px-6">
+                <div className="max-w-5xl mx-auto flex items-center justify-between gap-3 rounded-full landing-surface px-3 py-3 pointer-events-auto">
                   <button
                     type="button"
                     onClick={prevStage}
-                    className="flex items-center gap-2 text-neutral-500 hover:text-white px-4 py-2 rounded-full hover:bg-white/5 transition-colors text-xs font-bold uppercase tracking-widest"
+                    className="flex items-center gap-2 rounded-full px-4 py-2 text-[10px] font-mono uppercase tracking-[0.18em] text-white/45 transition-colors hover:bg-white/5 hover:text-white"
                   >
                     <ChevronLeft size={14} /> Anterior
                   </button>
+
+                  <div className="hidden md:block text-center">
+                    <p className="landing-kicker !text-[0.58rem] !tracking-[0.2em]">Paso {currentStage} de 4</p>
+                    <p className="mt-1 text-sm text-white/65">{stageMeta.title}</p>
+                  </div>
 
                   {currentStage < 4 && (
                     <button
                       type="button"
                       onClick={nextStage}
-                      className="flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full hover:scale-105 transition-transform text-xs font-bold uppercase tracking-widest shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+                      className="flex items-center gap-2 rounded-full bg-[#6D00FF] px-6 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-white shadow-[0_0_24px_rgba(109,0,255,0.25)] transition-transform hover:scale-[1.01] hover:bg-[#5f00de]"
                     >
-                      Siguiente Fase <ChevronRight size={14} />
+                      Siguiente fase <ChevronRight size={14} />
                     </button>
                   )}
                 </div>

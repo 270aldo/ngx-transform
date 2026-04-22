@@ -38,10 +38,10 @@ export function EliteOptionCard({
       role="button"
       aria-label={imageAlt || title}
       className={cn(
-        "relative group cursor-pointer overflow-hidden rounded-xl border transition-all duration-300 active:scale-95 animate-in fade-in zoom-in slide-in-from-bottom-4 fill-mode-backwards",
+        "relative group cursor-pointer overflow-hidden rounded-[24px] border transition-all duration-300 active:scale-95 animate-in fade-in zoom-in slide-in-from-bottom-4 fill-mode-backwards",
         selected
-          ? "border-[#6D00FF] shadow-[0_0_30px_rgba(109,0,255,0.4)] scale-[1.02]"
-          : "border-white/10 hover:border-white/30 hover:scale-[1.01]",
+          ? "border-[#6D00FF]/55 bg-[#11081C] shadow-[0_0_30px_rgba(109,0,255,0.22)] scale-[1.01]"
+          : "border-white/10 bg-white/[0.04] hover:border-white/20 hover:bg-white/[0.06] hover:scale-[1.01]",
         className
       )}
       style={{ animationDelay: `${idx * 50}ms` }}
@@ -66,7 +66,7 @@ export function EliteOptionCard({
       <div
         className={cn(
           "absolute inset-0 pointer-events-none",
-          selected ? "bg-[#6D00FF]/18" : "bg-white/5 group-hover:bg-white/10"
+          selected ? "bg-[#6D00FF]/14" : "bg-transparent"
         )}
       />
 
@@ -74,10 +74,10 @@ export function EliteOptionCard({
 
       <div
         className={cn(
-          "absolute top-3 right-3 w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-300",
+          "absolute top-4 right-4 w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-300",
           selected
             ? "bg-[#6D00FF] border-[#6D00FF] opacity-100 scale-100"
-            : "border-white/20 bg-black/20 opacity-0 scale-75 group-hover:opacity-100"
+            : "border-white/15 bg-black/20 opacity-0 scale-75 group-hover:opacity-100"
         )}
       >
         <Check size={12} className="text-white" />
@@ -90,9 +90,14 @@ export function EliteOptionCard({
         )}
       >
         <div>
+          {idx ? (
+            <p className="mb-4 text-[10px] font-mono uppercase tracking-[0.22em] text-white/38">
+              Opción {String(idx).padStart(2, "0")}
+            </p>
+          ) : null}
           <h3
             className={cn(
-              "font-display text-lg font-semibold uppercase tracking-tight leading-none transition-colors duration-300",
+              "font-body text-[1.3rem] font-black italic uppercase tracking-[-0.05em] leading-[0.95] transition-colors duration-300",
               selected ? "text-white" : "text-white/80 group-hover:text-white"
             )}
           >
@@ -107,7 +112,7 @@ export function EliteOptionCard({
 
         <div className="mt-4 flex flex-col gap-3">
           {Icon ? (
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/35 px-3 py-1.5 text-[10px] tracking-widest uppercase font-mono text-white/80">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/35 px-3 py-1.5 text-[10px] tracking-[0.18em] uppercase font-mono text-white/80">
               <Icon size={14} className="text-[#B98CFF]" />
               <span>{iconLabel ?? "Misión elite"}</span>
             </div>
@@ -115,8 +120,8 @@ export function EliteOptionCard({
 
           <div
             className={cn(
-              "h-0.5 w-full transition-all duration-500 rounded-full",
-              selected ? "bg-[#6D00FF] shadow-[0_0_10px_#6D00FF]" : "bg-white/10 group-hover:bg-white/20"
+              "h-px w-full transition-all duration-500 rounded-full",
+              selected ? "bg-[#6D00FF]/80 shadow-[0_0_10px_#6D00FF]" : "bg-white/10 group-hover:bg-white/20"
             )}
           />
         </div>
