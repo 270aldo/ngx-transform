@@ -5,13 +5,13 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { useLandingConfig } from "./LandingProvider";
 
 export function LandingCTA() {
-  const { config } = useLandingConfig();
+  const { config, trackCta } = useLandingConfig();
   const { cta } = config.copy;
   const { theme } = config;
 
   return (
     <section id="cta-final" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 scroll-mt-32">
-      <div className="animate-on-scroll-scale relative glass-panel rounded-3xl p-12 md:p-16 text-center overflow-hidden">
+      <div className="animate-on-scroll-scale relative landing-surface-strong rounded-[32px] p-8 md:p-14 text-center overflow-hidden">
         <div
           className="absolute inset-0"
           style={{
@@ -26,7 +26,7 @@ export function LandingCTA() {
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#6D00FF] to-[#5B21B6] flex items-center justify-center mx-auto mb-8 shadow-[0_0_40px_rgba(109,0,255,0.3)]">
             <Sparkles className="w-8 h-8 text-white" />
           </div>
-          <h2 className="text-3xl md:text-4xl text-white mb-4 tracking-tight font-display font-semibold">
+          <h2 className="landing-heading text-[2.2rem] leading-[0.94] md:text-[3.2rem] text-white mb-4">
             {cta.headline}
           </h2>
           <p className="text-slate-400 text-sm md:text-base mb-8 md:mb-10 max-w-lg mx-auto leading-relaxed font-body">
@@ -34,7 +34,8 @@ export function LandingCTA() {
           </p>
           <div className="flex justify-center">
             <Link
-              href="/auth?next=/wizard"
+              href="/wizard"
+              onClick={() => trackCta("final_cta", cta.intent, cta.buttonText)}
               className="group relative px-10 md:px-12 py-4 md:py-5 rounded-full text-white text-base md:text-lg font-semibold tracking-wide overflow-hidden transition-all duration-300 hover:-translate-y-0.5"
               style={{
                 backgroundColor: theme.primary,
@@ -48,7 +49,7 @@ export function LandingCTA() {
               </span>
             </Link>
           </div>
-          <p className="text-xs text-slate-600 mt-6 font-body">{cta.footnote}</p>
+          <p className="text-xs text-slate-500 mt-6 font-body uppercase tracking-[0.2em]">{cta.footnote}</p>
         </div>
       </div>
     </section>

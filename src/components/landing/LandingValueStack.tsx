@@ -1,64 +1,64 @@
 "use client";
 
-import { Image as ImageIcon, ScanFace, Share2, Target } from "lucide-react";
-
-const items = [
-  {
-    icon: ScanFace,
-    title: "Análisis Biométrico por IA",
-    description:
-      "Evaluación de composición corporal estimada, proporción muscular y áreas de oportunidad. No adivinanzas: datos.",
-  },
-  {
-    icon: ImageIcon,
-    title: "Proyección Visual Realista",
-    description:
-      "Una imagen generada por IA de tu potencial físico a 12 semanas. Basada en ciencia, no en fantasía.",
-  },
-  {
-    icon: Target,
-    title: "Plan de Acción Personalizado",
-    description:
-      "Recomendaciones específicas para tu caso: qué priorizar, qué evitar, y por dónde empezar. No plantillas genéricas.",
-  },
-  {
-    icon: Share2,
-    title: "Social Pack (Compartible)",
-    description:
-      "Tu resultado en formato optimizado para compartir en redes. Comparte y desbloquea contenido adicional exclusivo.",
-  },
-];
+import { useLandingConfig } from "./LandingProvider";
 
 export function LandingValueStack() {
+  const { config } = useLandingConfig();
+  const { valueStack } = config.copy;
+
   return (
-    <section id="que-recibes" className="max-w-5xl mx-auto px-4 mb-32 md:mb-48 scroll-mt-32">
-      <div className="animate-on-scroll text-center mb-12 md:mb-16">
-        <span className="inline-flex px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] text-emerald-400 font-mono uppercase tracking-widest mb-6">
-          Qué recibes gratis
-        </span>
-        <h2 className="text-3xl md:text-4xl text-white font-display font-semibold mb-4 tracking-tight">
-          No es solo una foto bonita.
-          <br />
-          <span className="text-[#EDE9FE]">Es tu diagnóstico completo.</span>
-        </h2>
+    <section id="que-recibes" className="max-w-6xl mx-auto px-4 mb-32 md:mb-48 scroll-mt-32">
+      <div className="grid gap-8 mb-10 md:mb-16 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-end">
+        <div className="animate-on-scroll">
+          <span className="inline-flex px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] text-emerald-400 font-mono uppercase tracking-widest mb-6">
+            {valueStack.sectionLabel}
+          </span>
+          <h2 className="landing-heading text-[2.1rem] leading-[0.94] sm:text-[2.6rem] md:text-[3.4rem] text-white">
+            {valueStack.title}
+            <br />
+            <span className="text-[#EDE9FE]">{valueStack.highlight}</span>
+          </h2>
+        </div>
+        <p className="animate-on-scroll delay-100 text-slate-400 text-sm md:text-base max-w-2xl leading-relaxed font-body lg:ml-auto">
+          {valueStack.subtitle}
+        </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        {items.map((item, index) => {
+      <div className="grid gap-5 md:grid-cols-2 md:gap-6">
+        {valueStack.items.map((item, index) => {
           const Icon = item.icon;
+          const isFeatured = index === 0;
           return (
             <div
               key={item.title}
-              className={`animate-on-scroll ${index > 0 ? `delay-${index}00` : ""} glass-panel rounded-2xl p-6 md:p-8 border-glow-hover`}
+              className={`animate-on-scroll ${index > 0 ? `delay-${index}00` : ""} ${isFeatured ? "md:col-span-2" : ""} landing-surface rounded-[24px] p-5 md:p-8 border-glow-hover`}
             >
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-[#6D00FF]/10 border border-[#6D00FF]/20 flex items-center justify-center flex-shrink-0">
-                  <Icon className="w-6 h-6 text-[#B98CFF]" />
+              <div className={`flex ${isFeatured ? "flex-col gap-6 md:flex-row md:items-center md:justify-between" : "items-start gap-4"}`}>
+                <div className={`flex ${isFeatured ? "items-center gap-5" : "items-start gap-4"}`}>
+                  <div className={`rounded-2xl bg-[#6D00FF]/10 border border-[#6D00FF]/20 flex items-center justify-center flex-shrink-0 ${isFeatured ? "w-14 h-14" : "w-12 h-12"}`}>
+                    <Icon className={`${isFeatured ? "w-7 h-7" : "w-6 h-6"} text-[#B98CFF]`} />
+                  </div>
+                  <div>
+                    <span className="landing-kicker !text-[0.62rem] !tracking-[0.22em] block mb-3">
+                      {isFeatured ? "activo central" : `activo 0${index + 1}`}
+                    </span>
+                    <h3 className={`text-white mb-2 ${isFeatured ? "text-[1.7rem] md:text-[2rem] leading-[0.98] font-body font-bold italic tracking-[-0.05em] uppercase" : "font-body font-semibold text-[1.2rem] leading-[1.05] tracking-[-0.03em]"}`}>
+                      {item.title}
+                    </h3>
+                    <p className={`text-slate-400 leading-relaxed font-body ${isFeatured ? "text-base max-w-2xl" : "text-sm"}`}>
+                      {item.description}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-white font-display font-medium mb-2">{item.title}</h3>
-                  <p className="text-slate-400 text-sm leading-relaxed font-body">{item.description}</p>
-                </div>
+                {isFeatured ? (
+                  <div className="grid gap-2 sm:grid-cols-3 md:max-w-[360px]">
+                    {["Privado", "Aproximado", "Compartible"].map((pill) => (
+                      <div key={pill} className="rounded-xl border border-white/8 bg-white/[0.03] px-3 py-2 text-center text-[11px] uppercase tracking-[0.18em] text-slate-400">
+                        {pill}
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
               </div>
             </div>
           );

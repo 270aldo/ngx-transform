@@ -2,54 +2,29 @@
 
 import { Plus } from "lucide-react";
 import { useState } from "react";
-
-const faqItems = [
-  {
-    question: "¿Es realmente gratis?",
-    answer:
-      "Sí. El acceso a NGX Transform no tiene costo y no pedimos tarjeta. Actualmente te pediremos crear o iniciar sesión para proteger tu sesión, tus resultados y tus controles de privacidad.",
-  },
-  {
-    question: "¿Qué pasa con mi foto? ¿Es segura?",
-    answer:
-      "Tu privacidad es prioridad. La foto se procesa de forma segura y se conserva solo mientras sea necesario para prestarte el servicio y mantener tus resultados disponibles. No la compartimos públicamente sin tu configuración y no la usamos para entrenar modelos propios.",
-  },
-  {
-    question: "¿La proyección es realista?",
-    answer:
-      "Sí. GENESIS no genera imágenes de fantasía. La proyección se basa en lo que es fisiológicamente alcanzable para tu tipo de cuerpo en 12 semanas con un sistema de entrenamiento y nutrición adecuado. Es ambiciosa pero realista.",
-  },
-  {
-    question: "¿Qué es NGX HYBRID?",
-    answer:
-      "NGX HYBRID es nuestro programa de transformación de 12 semanas que combina inteligencia artificial (GENESIS) con coaching humano. La IA diseña y ajusta tu plan; el coach valida, corrige técnica y te acompaña. Es el siguiente paso natural después de ver tu potencial con Transform.",
-  },
-  {
-    question: "¿Funciona para mayores de 40?",
-    answer:
-      "Está diseñado especialmente para personas de 30 a 60 años. De hecho, es donde más impacto tiene: después de los 30, la salud muscular se convierte en el factor más importante para tu energía, metabolismo y longevidad. GENESIS entiende tu contexto y adapta todo a tu realidad.",
-  },
-];
+import { useLandingConfig } from "./LandingProvider";
 
 export function LandingFAQ() {
+  const { config } = useLandingConfig();
+  const { faq } = config.copy;
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
     <section id="faq" className="max-w-3xl mx-auto px-4 mb-32 md:mb-48 scroll-mt-32">
       <div className="animate-on-scroll text-center mb-12 md:mb-16">
         <span className="inline-flex px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] text-slate-400 font-mono uppercase tracking-widest mb-6">
-          FAQ
+          {faq.sectionLabel}
         </span>
-        <h2 className="text-3xl md:text-4xl text-white font-display font-semibold tracking-tight">Preguntas frecuentes</h2>
+        <h2 className="landing-heading text-[2.1rem] leading-[0.94] md:text-[3rem] text-white">{faq.title}</h2>
       </div>
 
       <div className="space-y-4">
-        {faqItems.map((item, index) => {
+        {faq.items.map((item, index) => {
           const isOpen = openIndex === index;
           return (
             <div
               key={item.question}
-              className={`animate-on-scroll ${index > 0 ? `delay-${index}00` : ""} glass-panel rounded-2xl border border-white/10 overflow-hidden`}
+              className={`animate-on-scroll ${index > 0 ? `delay-${index}00` : ""} landing-surface rounded-2xl border border-white/10 overflow-hidden`}
             >
               <button
                 type="button"

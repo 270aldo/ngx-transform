@@ -9,9 +9,9 @@ export function LandingFooter() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-gradient-to-br from-[#6D00FF] to-[#5B21B6] rounded-lg flex items-center justify-center">
-              <span className="text-white font-display font-semibold text-xs">N</span>
+              <span className="text-white font-body font-bold text-xs">N</span>
             </div>
-            <span className="text-white/60 text-sm font-display">NGX GENESIS</span>
+            <span className="text-white/60 text-sm font-body font-medium tracking-[0.03em]">NGX Transform <span className="text-white/30">by GENESIS</span></span>
           </div>
 
           <div className="flex items-center gap-6">

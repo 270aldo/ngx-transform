@@ -9,15 +9,18 @@ export function LandingHowItWorks() {
 
   return (
     <section id="como-funciona" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mb-32 md:mb-48 scroll-mt-32">
-      <div className="text-center mb-16 md:mb-20 animate-on-scroll">
+      <div className="text-center mb-14 md:mb-20 animate-on-scroll">
         <span className="inline-flex px-3 py-1 rounded-full bg-[#6D00FF]/10 border border-[#6D00FF]/20 text-[10px] text-[#B98CFF] font-mono uppercase tracking-widest mb-6">
           Cómo funciona
         </span>
-        <h2 className="text-4xl md:text-6xl text-white mb-4 tracking-tight font-display font-semibold leading-[1.05]">
-          3 pasos. Acceso privado.
-          <br />
-          <span className="text-[#D7C7FF]">Tu potencial revelado.</span>
+        <h2 className="landing-heading text-[2.3rem] leading-[0.94] sm:text-[2.9rem] md:text-[4.6rem] text-white mb-4">
+          {howItWorks.title}
         </h2>
+        {howItWorks.subtitle ? (
+          <p className="text-slate-400 text-sm md:text-base max-w-2xl mx-auto leading-relaxed font-body">
+            {howItWorks.subtitle}
+          </p>
+        ) : null}
       </div>
 
       <div className="relative">
@@ -29,7 +32,7 @@ export function LandingHowItWorks() {
           }}
         />
 
-        <div className="space-y-16 md:space-y-20">
+        <div className="space-y-12 md:space-y-20">
           {howItWorks.steps.map((item, i) => {
             const Icon = item.icon;
             const isLeftCard = i % 2 === 0;
@@ -39,7 +42,7 @@ export function LandingHowItWorks() {
                 <div
                   className={`${isLeftCard ? "md:col-start-1 md:justify-self-end" : "md:col-start-3 md:justify-self-start"} w-full ${i === 1 ? "md:max-w-[470px]" : "md:max-w-[460px]"} animate-on-scroll${isLeftCard ? "-left" : "-right"} ${i > 0 ? `delay-${i}00` : ""}`}
                 >
-                  <article className="glass-panel rounded-3xl border border-white/10 p-8 md:p-10 border-glow-hover">
+                  <article className="landing-surface rounded-3xl border border-white/10 p-6 md:p-10 border-glow-hover">
                     <div
                       className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-5"
                       style={{
@@ -51,7 +54,7 @@ export function LandingHowItWorks() {
                         PASO {item.step}
                       </span>
                     </div>
-                    <h3 className="text-[2rem] md:text-4xl text-white mb-4 font-display font-medium tracking-tight leading-tight">
+                    <h3 className="text-[1.7rem] leading-[0.96] sm:text-[1.95rem] md:text-[2.3rem] text-white mb-4 font-body font-bold italic tracking-[-0.05em] uppercase">
                       {item.title}
                     </h3>
                     <p className="text-slate-400 text-sm md:text-base leading-relaxed font-body">

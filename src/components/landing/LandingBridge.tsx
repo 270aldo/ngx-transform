@@ -1,68 +1,62 @@
 "use client";
 
-import { BookOpen, Brain, Users } from "lucide-react";
-
-const bridgeCards = [
-  {
-    icon: Brain,
-    title: "IA que se adapta",
-    description:
-      "GENESIS diseña tu season de 12 semanas con progresión y ajustes semanales basados en tus datos reales.",
-  },
-  {
-    icon: Users,
-    title: "Coach que valida",
-    description:
-      "Un humano revisa, ajusta y te acompaña. La IA propone, el coach valida. Eso es control de calidad.",
-  },
-  {
-    icon: BookOpen,
-    title: "Bonus: Ebook IA",
-    description:
-      "\"El Músculo: Tu Órgano de Longevidad\" — un ebook conversacional con IA que te educa y responde tus dudas en tiempo real.",
-  },
-];
+import { useLandingConfig } from "./LandingProvider";
 
 export function LandingBridge() {
+  const { config, trackCta } = useLandingConfig();
+  const { bridge } = config.copy;
+
   return (
-    <section className="max-w-5xl mx-auto px-4 mb-32 md:mb-48">
-      <div className="animate-on-scroll glass-panel rounded-2xl md:rounded-3xl p-6 md:p-12 border border-white/10 relative overflow-hidden">
+    <section className="max-w-6xl mx-auto px-4 mb-32 md:mb-48">
+      <div className="animate-on-scroll landing-surface-strong rounded-[28px] md:rounded-[36px] p-6 md:p-10 border border-white/10 relative overflow-hidden">
         <div className="absolute inset-0 cta-gradient" />
         <div className="absolute inset-0 opacity-[0.18] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay pointer-events-none" />
 
-        <div className="relative z-10">
-          <div className="text-center mb-8 md:mb-12">
-            <span className="inline-flex px-3 py-1 rounded-full bg-[#6D00FF]/10 border border-[#6D00FF]/20 text-[10px] text-[#B98CFF] font-mono uppercase tracking-widest mb-6">
-              El siguiente paso
-            </span>
-            <h2 className="text-2xl md:text-4xl text-white font-display font-semibold mb-4 tracking-tight">
-              Visualizar es el primer paso.
-              <br />
-              <span className="text-[#EDE9FE]">Transformarte es el segundo.</span>
-            </h2>
-            <p className="text-slate-400 text-sm md:text-base max-w-2xl mx-auto leading-relaxed font-body">
-              NGX HYBRID es una cohorte de 12 semanas donde la IA propone y un coach humano valida. No es una app. Es un sistema completo de transformación diseñado para tu vida real.
-            </p>
+        <div className="relative z-10 grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-10">
+          <div className="flex flex-col justify-between">
+            <div>
+              <span className="inline-flex px-3 py-1 rounded-full bg-[#6D00FF]/10 border border-[#6D00FF]/20 text-[10px] text-[#B98CFF] font-mono uppercase tracking-widest mb-6">
+              {bridge.sectionLabel}
+              </span>
+              <h2 className="landing-heading text-[2.2rem] leading-[0.94] text-white sm:text-[2.7rem] md:text-[3.3rem]">
+                {bridge.title}
+                <br />
+                <span className="text-[#EDE9FE]">{bridge.highlight}</span>
+              </h2>
+              <p className="mt-5 text-slate-300 text-sm md:text-base max-w-xl leading-relaxed font-body">
+                {bridge.subtitle}
+              </p>
+            </div>
+
+            <div className="mt-8 lg:mt-10">
+              <p className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-slate-400 mb-5 font-mono uppercase tracking-[0.22em]">
+                {bridge.footnote}
+              </p>
+              <div>
+                <a
+                  href="#cta-final"
+                  onClick={() => trackCta("bridge_primary", bridge.buttonIntent, bridge.buttonText)}
+                  className="inline-flex px-8 py-4 rounded-full bg-[#6D00FF] text-white font-semibold font-body shadow-[0_0_30px_-5px_rgba(109,0,255,0.6)] hover:bg-[#5B21B6] transition-colors"
+                >
+                  {bridge.buttonText}
+                </a>
+              </div>
+            </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-10">
-            {bridgeCards.map((card) => {
+          <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+            {bridge.cards.map((card) => {
               const Icon = card.icon;
               return (
-                <div key={card.title} className="glass-panel rounded-xl p-5 md:p-6 text-center border-glow-hover">
-                  <Icon className="w-8 h-8 text-[#B98CFF] mx-auto mb-3" />
-                  <h4 className="text-white text-sm font-display font-medium mb-2">{card.title}</h4>
-                  <p className="text-slate-400 text-xs leading-relaxed font-body">{card.description}</p>
+                <div key={card.title} className="landing-surface rounded-[24px] p-5 md:p-6 border-glow-hover">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-[#6D00FF]/20 bg-[#6D00FF]/10">
+                    <Icon className="w-6 h-6 text-[#B98CFF]" />
+                  </div>
+                  <h4 className="text-white text-[1.2rem] leading-[1.04] font-body font-semibold tracking-[-0.03em] mb-2">{card.title}</h4>
+                  <p className="text-slate-400 text-sm leading-relaxed font-body">{card.description}</p>
                 </div>
               );
             })}
-          </div>
-
-          <div className="text-center">
-            <p className="text-xs text-slate-500 mb-4 font-mono uppercase tracking-widest">Cupos limitados por cohorte · Capacidad de coaches</p>
-            <a href="#cta-final" className="inline-flex px-8 py-4 rounded-full bg-[#6D00FF] text-white font-semibold font-body shadow-[0_0_30px_-5px_rgba(109,0,255,0.6)] hover:bg-[#5B21B6] transition-colors">
-              Crea tu acceso a Transform
-            </a>
           </div>
         </div>
       </div>
