@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/shadcn/ui/tooltip";
 
 type Point = { x: number; y: number; label: string };
@@ -9,9 +10,16 @@ export function OverlayImage({ src, points }: { src?: string; points?: Point[] }
   const hasImage = !!src;
   return (
 <div className="relative w-full max-w-xl rounded-2xl border border-border overflow-hidden bg-card">
-      {hasImage ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={src} alt="preview" className="w-full h-auto" />
+      {hasImage && src ? (
+        <Image
+          src={src}
+          alt="preview"
+          width={1024}
+          height={1280}
+          sizes="(max-width: 768px) 100vw, 576px"
+          unoptimized
+          className="w-full h-auto"
+        />
       ) : (
         <div className="aspect-[4/5] w-full bg-[radial-gradient(circle_at_30%_20%,rgba(109,0,255,0.15),transparent_60%),radial-gradient(circle_at_80%_10%,rgba(91,33,182,0.2),transparent_50%)] flex items-center justify-center">
           <div className="text-center">

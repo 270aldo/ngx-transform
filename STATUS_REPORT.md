@@ -12,7 +12,7 @@
 
 | Componente | Tecnología | Versión |
 |------------|-----------|---------|
-| Frontend | Next.js (App Router) | 15.5.2 |
+| Frontend | Next.js (App Router) | 16.0.7 |
 | React | React + React DOM | 19.1.0 |
 | Styling | Tailwind CSS + shadcn/ui | v4 |
 | Forms | React Hook Form + Zod | 7.62 + 4.1.5 |

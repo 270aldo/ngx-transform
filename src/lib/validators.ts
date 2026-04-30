@@ -15,7 +15,7 @@ export const LeadSchema = z.object({
 // ============================================================================
 
 export const ProfileSchema = z.object({
-  age: z.number().int().min(13).max(100),
+  age: z.number().int().min(18).max(100),
   sex: z.enum(["male", "female", "other"]),
   heightCm: z.number().min(100).max(250),
   weightKg: z.number().min(30).max(300),
@@ -48,12 +48,23 @@ export type Profile = z.infer<typeof ProfileSchema>;
 // Session Management
 // ============================================================================
 
+export const ConsentSchema = z.object({
+  terms: z.literal(true),
+  aiProcessing: z.literal(true),
+  marketing: z.boolean(),
+  acceptedAt: z.string().datetime().optional(),
+});
+
 export const CreateSessionSchema = z.object({
   email: z.string().email().optional(),
   input: ProfileSchema,
   photoPath: z.string(),
   /** Landing page variant for A/B testing analytics */
   landingVariant: z.enum(["general", "jovenes", "mayores"]).optional(),
+  /** Explicit consent record (terms + AI required, marketing optional). */
+  consent: ConsentSchema.optional(),
+  /** Marketing opt-in convenience flag (mirrors consent.marketing). */
+  marketingConsent: z.boolean().optional(),
 });
 
 export const AnalyzeSchema = z.object({
@@ -132,6 +143,19 @@ export const TelemetryEventSchema = z.object({
     "agent_cta_viewed",
     "agent_cta_clicked",
     "referral_code_copied",
+    // Trust & Compliance Sprint
+    "scan_started",
+    "scan_completed",
+    "readiness_viewed",
+    "pdf_requested",
+    "pdf_downloaded",
+    "hybrid_recommended",
+    "ascend_recommended",
+    "coach_validation_clicked",
+    "ascend_clicked",
+    "disclaimer_viewed",
+    "marketing_consent_checked",
+    "marketing_consent_skipped",
   ]),
   stage: z.string().optional(),
   model_id: z.string().optional(),

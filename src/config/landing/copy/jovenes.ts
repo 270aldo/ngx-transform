@@ -18,19 +18,19 @@ import type { VariantCopy } from "../types";
 export const jovenesCopy: VariantCopy = {
   hero: {
     badge: {
-      aiLabel: "Powered by Gemini AI",
-      version: "v2.1",
+      aiLabel: "Powered by GENESIS",
+      version: "Future Body Scan",
     },
     headline: {
       line1: "Desbloquea tu",
       line2: "mejor versión.",
     },
     subtitle:
-      "IA que proyecta tu potencial físico en 12 meses. Tu mejor yo está a una foto de distancia.",
+      "Visualiza una versión posible de tu transformación en 12 meses. Una simulación aspiracional generada con IA, acompañada de un plan de acción inicial.",
     cta: "Empezar Ahora",
     socialProof: {
-      count: "+10,000 atletas",
-      label: "Esta semana en NGX",
+      count: "NGX Future Body Scan",
+      label: "Lead magnet oficial de NGX GENESIS",
     },
     // Before/After transformation demo
     transformationDemo: {
@@ -42,26 +42,26 @@ export const jovenesCopy: VariantCopy = {
   },
 
   stats: [
-    { value: "99.9", suffix: "%", label: "Precisión IA" },
-    { value: "<3", suffix: "min", label: "Análisis" },
-    { value: "1M", suffix: "+", label: "Transformaciones" },
-    { value: "186", suffix: "+", label: "Países" },
+    { value: "3", suffix: "min", label: "Escaneo inicial" },
+    { value: "4", suffix: "", label: "Etapas visuales" },
+    { value: "7", suffix: "días", label: "Plan inicial" },
+    { value: "1", suffix: "", label: "Sistema: GENESIS" },
   ],
 
   features: [
     {
       icon: Brain,
-      title: "Análisis Biométrico IA",
+      title: "Análisis Biométrico GENESIS",
       description:
-        "Gemini escanea tu estructura muscular, distribución de grasa y potencial genético. Sin excusas, solo datos.",
+        "GENESIS escanea tu estructura muscular, distribución de grasa y respuestas para crear una proyección aspiracional. Sin excusas, solo datos.",
       size: "large",
     },
     {
       icon: Shield,
-      title: "100% Privado",
-      description: "Tu foto se procesa y elimina. Cero rastro digital.",
+      title: "Privacidad clara",
+      description: "Tu foto se procesa con consentimiento explícito. Almacenamiento temporal mientras generamos tu resultado y puedes solicitar eliminación.",
       size: "medium",
-      badge: "Encriptación E2E",
+      badge: "Datos en tránsito cifrados",
     },
     {
       icon: Zap,
@@ -127,9 +127,9 @@ export const jovenesCopy: VariantCopy = {
   cta: {
     headline: "¿Listo para ver tu potencial?",
     subtitle:
-      "Miles ya desbloquearon su proyección. Gratis, sin registro, sin excusas.",
+      "Genera tu Future Body Scan gratis. La imagen inspira, el sistema transforma.",
     buttonText: "Ver Mi Potencial",
-    footnote: "Análisis en menos de 3 minutos",
+    footnote: "Visualización aspiracional, no garantía de resultado",
   },
 
   footer: {

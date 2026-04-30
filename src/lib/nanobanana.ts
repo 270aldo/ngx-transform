@@ -347,32 +347,3 @@ Preserve exact facial features, skin tone, hair color and style, and any disting
 The subject must be clearly recognizable as the same person throughout all images.`;
 }
 
-// ============================================================================
-// Legacy Export (Backward Compatibility)
-// ============================================================================
-
-/**
- * Legacy function signature for backward compatibility
- * @deprecated Use generateTransformedImage with full params instead
- */
-export async function generateTransformedImageLegacy(params: {
-  imageUrl: string;
-  profile: {
-    age: number;
-    sex: "male" | "female" | "other";
-    heightCm: number;
-    weightKg: number;
-    level: "novato" | "intermedio" | "avanzado";
-    goal: "definicion" | "masa" | "mixto";
-    weeklyTime: number;
-    notes?: string;
-  };
-  step: NanoStep;
-  aiPrompt?: string;
-}): Promise<{ buffer: Buffer; contentType: string }> {
-  const result = await generateTransformedImage(params);
-  return {
-    buffer: result.buffer,
-    contentType: result.contentType,
-  };
-}

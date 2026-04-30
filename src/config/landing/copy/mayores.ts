@@ -17,19 +17,19 @@ import type { VariantCopy } from "../types";
 export const mayoresCopy: VariantCopy = {
   hero: {
     badge: {
-      aiLabel: "Tecnología Gemini AI",
-      version: "v2.1",
+      aiLabel: "Tecnología GENESIS",
+      version: "Future Body Scan",
     },
     headline: {
       line1: "Recupera tu",
       line2: "vitalidad.",
     },
     subtitle:
-      "Visualiza cómo puedes mejorar tu bienestar físico en 12 meses. Análisis personalizado y seguro.",
+      "Visualiza una versión posible de tu evolución física en 12 meses. Una simulación aspiracional generada con IA, acompañada de un plan de acción inicial.",
     cta: "Ver Mi Proyección",
     socialProof: {
-      count: "+10,000 usuarios satisfechos",
-      label: "Esta semana",
+      count: "NGX Future Body Scan",
+      label: "Lead magnet oficial de NGX GENESIS",
     },
     // Before/After transformation demo - images for wellness/vitality
     transformationDemo: {
@@ -41,10 +41,10 @@ export const mayoresCopy: VariantCopy = {
   },
 
   stats: [
-    { value: "99.9", suffix: "%", label: "Precisión" },
-    { value: "<3", suffix: "min", label: "Tiempo" },
-    { value: "1M", suffix: "+", label: "Usuarios" },
-    { value: "186", suffix: "+", label: "Países" },
+    { value: "3", suffix: "min", label: "Escaneo inicial" },
+    { value: "4", suffix: "", label: "Etapas visuales" },
+    { value: "7", suffix: "días", label: "Plan inicial" },
+    { value: "1", suffix: "", label: "Sistema: GENESIS" },
   ],
 
   features: [
@@ -57,10 +57,10 @@ export const mayoresCopy: VariantCopy = {
     },
     {
       icon: Shield,
-      title: "Privacidad Garantizada",
-      description: "Tu foto se procesa de forma segura y se elimina automáticamente.",
+      title: "Privacidad clara",
+      description: "Tu foto se procesa con consentimiento explícito. Almacenamiento temporal mientras generamos tu resultado y puedes solicitar eliminación.",
       size: "medium",
-      badge: "Datos protegidos",
+      badge: "Datos en tránsito cifrados",
     },
     {
       icon: Heart,
