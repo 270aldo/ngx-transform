@@ -15,7 +15,7 @@ export const LeadSchema = z.object({
 // ============================================================================
 
 export const ProfileSchema = z.object({
-  age: z.number().int().min(13).max(100),
+  age: z.number().int().min(18).max(100),
   sex: z.enum(["male", "female", "other"]),
   heightCm: z.number().min(100).max(250),
   weightKg: z.number().min(30).max(300),
