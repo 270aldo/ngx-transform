@@ -38,9 +38,6 @@ import { AgentBridgeCTA } from "./AgentBridgeCTA";
 import { ReferralCard } from "./ReferralCard";
 import { cn } from "@/lib/utils";
 import { DISCLAIMERS } from "@/config/ngxTransformCopy";
-import { ReadinessReport } from "./results/ReadinessReport";
-import { generateReadinessReport } from "@/lib/readiness";
-import type { Profile } from "@/lib/validators";
 
 export type TimelineStep = "m0" | "m4" | "m8" | "m12";
 
@@ -69,16 +66,6 @@ interface TransformationViewer2Props {
     goal?: "definicion" | "masa" | "mixto";
     stressLevel?: number;
   };
-  /** Full profile for Readiness Report (Sprint 2). Optional — falls back to skipping the section. */
-  profile?: Partial<Profile> & {
-    age: number;
-    sex: "male" | "female" | "other";
-    heightCm: number;
-    weightKg: number;
-    level: "novato" | "intermedio" | "avanzado";
-    goal: "definicion" | "masa" | "mixto";
-    weeklyTime: number;
-  };
   referralCode?: string;
   referralCount?: number;
   sessionId?: string;
@@ -101,7 +88,6 @@ export function TransformationViewer2({
   // v2.1 Viral props
   userName,
   userProfile,
-  profile,
   referralCode,
   referralCount = 0,
   sessionId,
@@ -416,23 +402,6 @@ export function TransformationViewer2({
             <div className="text-center">
               <SocialCounter variant="results" sessionId={sessionId} />
             </div>
-          )}
-
-          {/* GENESIS Readiness Report (Sprint 2 — Funnel HYBRID) */}
-          {profile && (
-            <ReadinessReport
-              report={generateReadinessReport(profile as Profile)}
-              shareId={shareId}
-              sessionId={sessionId}
-              onValidateWithCoach={() => {
-                const url = process.env.NEXT_PUBLIC_BOOKING_URL || "#";
-                window.open(url, "_blank");
-              }}
-              onAscendClick={() => {
-                const url = process.env.NEXT_PUBLIC_BOOKING_URL || "#";
-                window.open(url, "_blank");
-              }}
-            />
           )}
 
           {/* Agent Bridge CTA (replaces BookingCTA when enabled) */}
