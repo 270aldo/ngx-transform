@@ -4,9 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { getClientAuth, getClientStorage } from "@/lib/firebaseClient";
+import { getClientStorage } from "@/lib/firebaseClient";
 import { ref, uploadBytes } from "firebase/storage";
-import { signInAnonymously } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/shadcn/ui/button";
@@ -115,7 +114,7 @@ export default function WizardPage() {
   const [consentTerms, setConsentTerms] = useState(false);
   const [consentAI, setConsentAI] = useState(false);
   const [consentEmail, setConsentEmail] = useState(false);
-  const requiredConsent = consentTerms && consentAI;
+  const allConsent = consentTerms && consentAI && consentEmail;
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -134,32 +133,25 @@ export default function WizardPage() {
       age: 25,
       heightCm: 175,
       weightKg: 75,
-    } as Partial<FormValues>,
+    } as any,
   });
 
   const photoFile = watch("photo");
   const previewUrl = photoFile && photoFile[0] ? URL.createObjectURL(photoFile[0]) : null;
 
-  // Lead-magnet flow: sign in anonymously if no user, never block on auth UI.
-  // Users can later upgrade to a real account from /account; their lead session
-  // remains accessible via deleteToken.
   useEffect(() => {
-    if (DEMO || authLoading || user) return;
-    signInAnonymously(getClientAuth()).catch((err) => {
-      console.error("[Wizard] Anonymous auth failed:", err);
-      addToast({
-        variant: "error",
-        message: "No pudimos iniciar tu sesión. Recarga la página o inténtalo de nuevo.",
-      });
-    });
-  }, [DEMO, authLoading, user, addToast]);
+    if (!DEMO && !authLoading && !user) {
+      router.push("/auth?next=/wizard");
+    }
+  }, [DEMO, authLoading, user, router]);
 
   useEffect(() => {
     if (user?.email) setValue("email", user.email);
   }, [user?.email, setValue]);
 
-  const onFormError = (errs: Record<string, { message?: string } | undefined>) => {
-    const firstError = Object.values(errs)[0];
+  const onFormError = (errs: any) => {
+    console.log("Validation Errors:", errs);
+    const firstError = Object.values(errs)[0] as any;
     if (firstError) {
       addToast({ variant: "error", message: `Error: ${firstError.message || "Verifica los datos de calibración"}` });
     }
@@ -192,12 +184,7 @@ export default function WizardPage() {
   const onSubmit = async (values: FormValues) => {
     try {
       setLoading(true);
-      // Anonymous auth runs in the background (see useEffect above). If it
-      // hasn't completed yet, wait briefly before failing.
-      if (!user) {
-        await new Promise((r) => setTimeout(r, 500));
-      }
-      if (!user) throw new Error("No pudimos iniciar tu sesión. Recarga la página.");
+      if (!user) throw new Error("Necesitas iniciar sesión");
       const file: File | undefined = values.photo?.[0];
       if (!file) throw new Error("Debes subir una fotografía");
 
@@ -220,23 +207,10 @@ export default function WizardPage() {
       // Get landing variant for analytics tracking
       const landingVariant = getStoredVariant();
 
-      const consent = {
-        terms: consentTerms as true,
-        aiProcessing: consentAI as true,
-        marketing: consentEmail,
-        acceptedAt: new Date().toISOString(),
-      };
       const createRes = await fetch("/api/sessions", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({
-          email: values.email,
-          input: profile,
-          photoPath: storagePath,
-          landingVariant,
-          consent,
-          marketingConsent: consentEmail,
-        }),
+        body: JSON.stringify({ email: values.email, input: profile, photoPath: storagePath, landingVariant }),
       });
       const createJson = await createRes.json();
       if (!createRes.ok) throw new Error(createJson.error);
@@ -424,7 +398,7 @@ export default function WizardPage() {
                           className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[#6D00FF]"
                         />
                         <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors leading-relaxed">
-                          Opcional: acepto recibir contenido educativo y seguimiento de NGX. Puedo cancelar en cualquier momento.
+                          Acepto recibir correos sobre mi transformación de NGX Transform. Puedo cancelar en cualquier momento.
                         </span>
                       </label>
                     </div>
@@ -434,7 +408,7 @@ export default function WizardPage() {
                     <Button
                       type="button"
                       onClick={nextStage}
-                      disabled={!previewUrl || !requiredConsent}
+                      disabled={!previewUrl || !allConsent}
                       className="px-12 py-6 rounded-full bg-white text-black hover:bg-neutral-200 font-black italic tracking-widest text-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
                     >
                       INICIAR ESCANEO <ArrowRight className="ml-2 w-5 h-5" />
@@ -485,7 +459,7 @@ export default function WizardPage() {
                           <button
                             key={s}
                             type="button"
-                            onClick={() => setValue("sex", s as FormValues["sex"])}
+                            onClick={() => setValue("sex", s as any)}
                             className={cn(
                               "flex-1 py-3 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all",
                               watch("sex") === s

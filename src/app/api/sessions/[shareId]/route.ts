@@ -29,7 +29,6 @@ export async function GET(_: Request, context: { params: Promise<{ shareId: stri
         shareInsights?: boolean;
         shareProfile?: boolean;
       };
-      unlockState?: { unlocked?: boolean; unlockType?: string | null };
       createdAt?: unknown;
     };
 
@@ -77,15 +76,11 @@ export async function GET(_: Request, context: { params: Promise<{ shareId: stri
       profile: publicProfile,
       shareScope,
       hasPhoto: !!data.photo?.originalStoragePath,
-      unlockState: {
-        unlocked: !!data.unlockState?.unlocked,
-        unlockType: data.unlockState?.unlockType ?? null,
-      },
       createdAt: data.createdAt,
     });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : "Unknown error";
-    console.error("[Sessions/Public] GET failed:", message);
+    console.error(e);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -132,7 +127,7 @@ export async function DELETE(req: Request, context: { params: Promise<{ shareId:
     return NextResponse.json({ ok: true });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : "Unknown error";
-    console.error("[Sessions/Public] DELETE failed:", message);
+    console.error(e);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

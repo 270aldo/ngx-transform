@@ -56,7 +56,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : "Unknown error";
-    console.error("[Email] POST failed:", message);
+    console.error(e);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

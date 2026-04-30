@@ -30,9 +30,7 @@ export async function POST(req: Request) {
     }
 
     const authUser = await requireAuth(req);
-    const { email: formEmail, input, photoPath, landingVariant, consent, marketingConsent } = parsed.data;
-    // Anonymous auth users have no email and represent lead-magnet flow.
-    const isAnonymous = !authUser.email;
+    const { email: formEmail, input, photoPath, landingVariant } = parsed.data;
 
     // Determine the email to use: prefer auth email, fall back to form email
     const userEmail = authUser.email || formEmail;
@@ -142,7 +140,6 @@ export async function POST(req: Request) {
       shareId,
       email: userEmail,
       ownerUid: authUser.uid,
-      leadOnly: isAnonymous,
       shareOriginal: false,
       shareScope: {
         shareOriginal: false,
@@ -155,8 +152,6 @@ export async function POST(req: Request) {
       assets: {},
       status: "processing",
       deleteToken, // Token para acciones destructivas
-      consent: consent ?? null,
-      marketingConsent: marketingConsent ?? consent?.marketing ?? false,
       source: {
         variant: landingVariant || "general",
       },
