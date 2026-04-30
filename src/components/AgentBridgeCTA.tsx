@@ -2,7 +2,8 @@
 
 import { useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Shield, Calendar, Sparkles, Brain } from "lucide-react";
+import { ArrowRight, Brain } from "lucide-react";
+import { HYBRID_COPY } from "@/config/ngxTransformCopy";
 
 interface AgentBridgeCTAProps {
   userProfile: {
@@ -105,14 +106,10 @@ export function AgentBridgeCTA({
 
       {/* Message */}
       <h3 className="text-xl md:text-2xl font-semibold text-white mb-2">
-        GENESIS está listo para ser tu coach
+        Tu scan muestra una dirección posible.
       </h3>
-      <p className="text-white/60 mb-2">{capability.description}</p>
-      <p className="text-white/60 mb-6">
-        Este es tu potencial. Pero el potencial sin acción es solo fantasía.
-        <br />
-        El sistema NGX te ayuda a convertirlo en realidad.
-      </p>
+      <p className="text-white/70 mb-2">{HYBRID_COPY.map}</p>
+      <p className="text-white/50 italic mb-6 text-sm">{HYBRID_COPY.thesis}</p>
 
       {/* CTA */}
       <button
@@ -124,23 +121,22 @@ export function AgentBridgeCTA({
         }}
       >
         <span className="flex items-center justify-center gap-2">
-          Empezar mi temporada
+          {HYBRID_COPY.cta}
           <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
         </span>
       </button>
 
-      {/* Trust badges */}
-      <div className="flex flex-wrap gap-4 mt-6 text-xs text-white/40">
-        <span className="flex items-center gap-1">
-          <Shield className="h-3 w-3" /> Sin tarjeta requerida
-        </span>
-        <span className="flex items-center gap-1">
-          <Calendar className="h-3 w-3" /> Cancela cuando quieras
-        </span>
-        <span className="flex items-center gap-1">
-          <Sparkles className="h-3 w-3" /> 4 capacidades de IA integradas
-        </span>
-      </div>
+      {/* Trust badges (honest) */}
+      <ul className="flex flex-wrap gap-2 mt-6">
+        {HYBRID_COPY.trustBadges.map((badge) => (
+          <li
+            key={badge}
+            className="text-[10px] uppercase tracking-widest text-white/40 px-2 py-1 rounded-full border border-white/5"
+          >
+            {badge}
+          </li>
+        ))}
+      </ul>
     </motion.section>
   );
 }

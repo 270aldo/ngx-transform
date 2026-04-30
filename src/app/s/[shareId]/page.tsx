@@ -26,8 +26,13 @@ interface SessionDoc {
     goal: "definicion" | "masa" | "mixto";
     weeklyTime: number;
     notes?: string;
-    focusZone?: string;
+    focusZone?: "upper" | "lower" | "abs" | "full";
+    bodyType?: "ectomorph" | "mesomorph" | "endomorph";
+    bodyFatLevel?: "bajo" | "medio" | "alto";
     stressLevel?: number;
+    sleepQuality?: number;
+    disciplineRating?: number;
+    trainingHistoryYears?: number;
   };
   photo?: { originalStoragePath?: string };
   ai?: InsightsResult;
@@ -207,6 +212,7 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
                 }
               : undefined
           }
+          profile={allowProfile && data.input ? data.input : undefined}
         />
         {/* Genesis Demo CTA - appears after transformation viewer */}
         {isReady && (
