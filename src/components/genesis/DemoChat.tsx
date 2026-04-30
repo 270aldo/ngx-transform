@@ -18,7 +18,7 @@ import {
   ChevronRight,
   Brain,
 } from 'lucide-react';
-import type { AgentType, WidgetType, QuickAction as QuickActionType } from '@/types/genesis';
+import type { AgentType, WidgetType, QuickAction as QuickActionType, WorkoutData, MealData, InsightData, ChecklistData } from '@/types/genesis';
 import type { GenesisCapability } from '@/types/genesis';
 import { INITIAL_QUICK_ACTIONS, CONTEXTUAL_QUICK_ACTIONS } from '@/lib/genesis-demo/agents';
 import { WorkoutCard } from '@/components/widgets/WorkoutCard';
@@ -112,7 +112,7 @@ interface Message {
   content: string;
   widget?: {
     type: WidgetType;
-    data: any;
+    data: WorkoutData | MealData | InsightData | ChecklistData;
   };
 }
 
@@ -237,13 +237,13 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
 
     switch (widget.type) {
       case 'workout':
-        return <WorkoutCard data={widget.data} agent={agent} />;
+        return <WorkoutCard data={widget.data as WorkoutData} agent={agent} />;
       case 'meal':
-        return <MealPlan data={widget.data} agent={agent} />;
+        return <MealPlan data={widget.data as MealData} agent={agent} />;
       case 'insight':
-        return <InsightCard data={widget.data} agent={agent} />;
+        return <InsightCard data={widget.data as InsightData} agent={agent} />;
       case 'checklist':
-        return <ChecklistWidget data={widget.data} agent={agent} interactive={false} />;
+        return <ChecklistWidget data={widget.data as ChecklistData} agent={agent} interactive={false} />;
       default:
         return null;
     }

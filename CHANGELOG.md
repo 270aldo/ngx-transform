@@ -1,5 +1,30 @@
 # Changelog
 
+## v3.2 — Trust & Compliance + Quality Cleanup
+
+### Trust & Compliance (Codex Sprint 1)
+- Removed unverifiable claims from landing copy (`99.9% Precisión IA`, `1M+ Transformaciones`, `186+ Países`, `Zero almacenamiento`) across `general.ts`, `jovenes.ts`, `mayores.ts`. Repositioned as `NGX Future Body Scan` powered by `GENESIS`.
+- New honest stats: `3 min escaneo / 4 etapas / 7 días plan / 1 sistema GENESIS`.
+- Privacy copy clarified: explicit consent + temporary storage + deletion on request.
+- Centralized disclaimers and HYBRID copy in `src/config/ngxTransformCopy.ts`.
+- Backend age minimum lifted from 13 → 18 in `validators.ts:ProfileSchema` and `schemas/analysis.ts:ProfileSummarySchema`.
+- Marketing consent decoupled from required consent in wizard (terms + AI processing required, marketing opt-in).
+- Consent record persisted on session creation (`consent` object + `marketingConsent` flag).
+- Anonymous Auth silente in `/wizard`: lead-magnet flow no longer redirects to `/auth`. Sessions tagged `leadOnly: true` when created by anonymous users.
+- Disclaimers visible in `TransformationViewer2` (results) and `s/[shareId]/plan` (plan preview).
+- New telemetry events: `scan_started`, `scan_completed`, `readiness_viewed`, `pdf_*`, `hybrid_recommended`, `ascend_*`, `coach_validation_clicked`, `disclaimer_viewed`, `marketing_consent_*`.
+
+### Quality Cleanup
+- Vitest setup with `vitest run` script and 11 initial tests covering `ProfileSchema`, `ConsentSchema`, `CreateSessionSchema`, `TelemetryEventSchema`.
+- CI runs Vitest after build (`.github/workflows/ci.yml`).
+- Removed orphan `generateTransformedImageLegacy` from `nanobanana.ts`.
+- Migrated `OverlayImage.tsx` from `<img>` to `next/image`.
+- `STATUS_REPORT.md` synced to Next.js 16.0.7.
+- Lint errors arreglados (5 → 0); type-check verde.
+
+### Sentry (env-gated)
+- `@sentry/nextjs` instalado con `instrumentation.ts` y configs cliente/servidor/edge. Inactive sin `NEXT_PUBLIC_SENTRY_DSN`.
+
 ## v3.1 — Security Hardening & Infrastructure
 
 ### Rate Limiting & Security

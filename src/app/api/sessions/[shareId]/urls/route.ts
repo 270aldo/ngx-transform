@@ -53,7 +53,7 @@ export async function GET(req: Request, context: { params: Promise<{ shareId: st
     return NextResponse.json(result);
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : "Unknown error";
-    console.error(e);
+    console.error("[Sessions/URLs] GET failed:", message);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

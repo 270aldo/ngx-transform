@@ -37,6 +37,7 @@ import { SocialCounter } from "./SocialCounter";
 import { AgentBridgeCTA } from "./AgentBridgeCTA";
 import { ReferralCard } from "./ReferralCard";
 import { cn } from "@/lib/utils";
+import { DISCLAIMERS } from "@/config/ngxTransformCopy";
 
 export type TimelineStep = "m0" | "m4" | "m8" | "m12";
 
@@ -111,33 +112,32 @@ export function TransformationViewer2({
   const [showNav, setShowNav] = useState(false);
   const [hasSeenCinematic, setHasSeenCinematic] = useState(false);
 
-  // Check if user has already seen the dramatic reveal / cinematic
+  // Hydrate UX state (UI-only flags from localStorage, unlock from backend)
   useEffect(() => {
     const dramaticKey = `ngx-dramatic-seen-${shareId}`;
     const cinematicKey = `ngx-cinematic-seen-${shareId}`;
-    const unlockKey = `ngx-unlocked-${shareId}`;
 
-    // Check dramatic reveal
     if (localStorage.getItem(dramaticKey)) {
       setShowDramaticReveal(false);
     }
 
-    // Check cinematic
     if (localStorage.getItem(cinematicKey)) {
       setShowCinematic(false);
       setHasSeenCinematic(true);
     }
 
-    // Check unlocked content
-    const unlocked = localStorage.getItem(unlockKey);
-    if (unlocked) {
-      try {
-        setUnlockedContent(JSON.parse(unlocked));
-      } catch {
-        // Invalid JSON, reset
-        localStorage.removeItem(unlockKey);
-      }
-    }
+    // Source of truth for unlock = Firestore via /api/sessions/[shareId]
+    let cancelled = false;
+    fetch(`/api/sessions/${shareId}`, { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (cancelled || !data?.unlockState?.unlocked) return;
+        setUnlockedContent(["hd_images", "plan"]);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
   }, [shareId]);
 
   // Get current data
@@ -169,11 +169,11 @@ export function TransformationViewer2({
   // Content unlock handler
   const handleContentUnlock = useCallback(
     (contentType: string) => {
-      const newUnlocked = [...unlockedContent, contentType];
-      setUnlockedContent(newUnlocked);
-      localStorage.setItem(`ngx-unlocked-${shareId}`, JSON.stringify(newUnlocked));
+      // Optimistic UI update; server-side unlock state is the source of truth
+      // (validated on each gated endpoint, e.g. /api/social-pack/[shareId])
+      setUnlockedContent((prev) => (prev.includes(contentType) ? prev : [...prev, contentType]));
     },
-    [shareId, unlockedContent]
+    []
   );
 
   const handleCinematicComplete = useCallback(() => {
@@ -468,6 +468,13 @@ export function TransformationViewer2({
           setShowLetter(false);
         }}
       />
+
+      {/* Disclaimer (Trust & Compliance) */}
+      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-30 max-w-md px-4 pointer-events-none">
+        <p className="text-[10px] leading-snug text-neutral-400 bg-black/60 backdrop-blur-sm border border-white/10 rounded-md px-3 py-2 text-center">
+          {DISCLAIMERS.visual}
+        </p>
+      </div>
 
       {/* v2.1: Share to Unlock Modal */}
       {FF_SHARE_TO_UNLOCK && (
