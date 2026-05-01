@@ -405,7 +405,7 @@ const DayPage = ({ day }: { day: PlanDay }) => {
               {day.agentNotes.agent.toUpperCase()}
             </Text>
           </View>
-          <Text style={styles.agentNoteText}>{`"${day.agentNotes.note}"`}</Text>
+          <Text style={styles.agentNoteText}>&quot;{day.agentNotes.note}&quot;</Text>
         </View>
       )}
 

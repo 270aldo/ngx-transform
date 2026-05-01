@@ -71,6 +71,6 @@ export async function POST(req: Request, context: { params: Promise<{ shareId: s
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     console.error("[SHARE_SETTINGS]", e);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

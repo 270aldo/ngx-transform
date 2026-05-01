@@ -1,3 +1,4 @@
+import { secureCompare } from "@/lib/crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import {
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
       console.error("[EMAIL_SEQUENCE] CRON_API_KEY not configured in production!");
       return NextResponse.json({ error: "Server misconfigured" }, { status: 503 });
     }
-    if (expectedKey && (headerKey || bodyKey) !== expectedKey) {
+    if (expectedKey && !secureCompare(headerKey || bodyKey, expectedKey)) {
       return NextResponse.json(
         { error: "Unauthorized - API key required" },
         { status: 401 }
@@ -116,7 +117,7 @@ export async function POST(req: NextRequest) {
         // Validate API key for cron
         const expectedKey = process.env.CRON_API_KEY;
         const headerKey = req.headers.get("X-Api-Key");
-        if (!expectedKey || (validated.apiKey || headerKey) !== expectedKey) {
+        if (!expectedKey || !secureCompare(validated.apiKey || headerKey, expectedKey)) {
           return NextResponse.json(
             { error: "Unauthorized" },
             { status: 401 }

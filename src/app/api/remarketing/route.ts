@@ -1,3 +1,4 @@
+import { secureCompare } from "@/lib/crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { FieldValue } from "firebase-admin/firestore";
 import { z } from "zod";
@@ -125,7 +126,7 @@ export async function GET(request: NextRequest) {
   const apiKey = request.headers.get("X-Api-Key");
   const expectedKey = process.env.CRON_API_KEY;
 
-  if (!expectedKey || apiKey !== expectedKey) {
+  if (!expectedKey || !secureCompare(apiKey, expectedKey)) {
     return NextResponse.json(
       { error: "Unauthorized - API key required" },
       { status: 401 }
