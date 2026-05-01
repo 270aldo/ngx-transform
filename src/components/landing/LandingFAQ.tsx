@@ -8,6 +8,7 @@ export function LandingFAQ() {
   const { config } = useLandingConfig();
   const { faq } = config.copy;
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  if (!faq) return null;
 
   return (
     <section id="faq" className="max-w-3xl mx-auto px-4 mb-32 md:mb-48 scroll-mt-32">
@@ -15,7 +16,7 @@ export function LandingFAQ() {
         <span className="inline-flex px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] text-slate-400 font-mono uppercase tracking-widest mb-6">
           {faq.sectionLabel}
         </span>
-        <h2 className="landing-heading text-[2.1rem] leading-[0.94] md:text-[3rem] text-white">{faq.title}</h2>
+        <h2 className="landing-heading-section text-[1.9rem] leading-[1.1] md:text-[2.6rem] text-white max-w-[24ch] mx-auto">{faq.title}</h2>
       </div>
 
       <div className="space-y-4">

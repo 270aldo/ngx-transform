@@ -134,19 +134,69 @@ INSTRUCCIONES CLAVE:
 3. Sé CIENTÍFICAMENTE PRECISO. Si el usuario duerme mal, menciónalo como factor limitante. Usa terminología correcta (ej: "adaptación neuromuscular", "síntesis proteica").
 4. TONO: Profesional, Maduro, Estoico. Nada de "marketing hype" barato.
 
-FORMATO JSON REQUERIDO:
+FORMATO JSON REQUERIDO (estricto, sin envoltorio markdown, sin texto fuera del JSON):
 {
-  "user_visual_anchor": "Brief visual description of the user from the photo (use for strict consistency)",
-  "style_profile": "Cinematic lighting keywords based on user aesthetic preference",
+  "user_visual_anchor": "Descripción detallada e inmutable de los rasgos faciales/corporales únicos visibles en la foto, en INGLÉS, mínimo 50 caracteres. Usado para preservar identidad en imágenes generadas.",
+  "profile_summary": {
+    "sex": "${profile.sex}",
+    "age": ${profile.age},
+    "goal": "${(profile.goals ?? profile.goal) || 'mixto'}",
+    "bodyType": "${profile.bodyType || 'mesomorph'}",
+    "focusZone": "${profile.focusZone || 'full'}"
+  },
+  "insightsText": "Resumen principal del análisis en ESPAÑOL (LATAM), 200-800 caracteres. Tono clínico, estoico, motivacional. Menciona factores limitantes si aplica (sueño, estrés).",
   "timeline": {
-  "style_profile": { ... }
+    "m0": {
+      "month": 0,
+      "title": "Nombre corto de la fase de partida (ESPAÑOL, ej: 'GÉNESIS')",
+      "description": "Análisis clínico del punto de partida en ESPAÑOL (50-450 caracteres).",
+      "stats": { "strength": 0-100, "aesthetics": 0-100, "endurance": 0-100, "mental": 0-100 },
+      "image_prompt": "Detailed ENGLISH photo prompt for current state. Cinematic, 8k, dramatic lighting. 50-1900 chars.",
+      "mental": "Mentalidad/Mindset actual en ESPAÑOL (20-280 chars).",
+      "risks": ["Riesgo realista 1 ESPAÑOL", "Riesgo 2", "Riesgo 3"],
+      "expectations": ["Expectativa realista 1 ESPAÑOL", "Expectativa 2"]
+    },
+    "m4": {
+      "month": 4,
+      "title": "Nombre fase mes 4 (ESPAÑOL)",
+      "description": "Cambios tempranos visibles, adaptación neuromuscular en ESPAÑOL (50-450 chars).",
+      "stats": { "strength": int, "aesthetics": int, "endurance": int, "mental": int },
+      "image_prompt": "ENGLISH prompt - subject training hard, gym setting, athletic.",
+      "mental": "Mentalidad mes 4 ESPAÑOL."
+    },
+    "m8": {
+      "month": 8,
+      "title": "Nombre fase mes 8 (ESPAÑOL)",
+      "description": "Ganancias musculares notables, definición en ESPAÑOL.",
+      "stats": { "strength": int, "aesthetics": int, "endurance": int, "mental": int },
+      "image_prompt": "ENGLISH prompt - dynamic athlete pose, lifestyle setting.",
+      "mental": "Mentalidad mes 8 ESPAÑOL."
+    },
+    "m12": {
+      "month": 12,
+      "title": "Nombre fase final (ESPAÑOL, ej: 'CÚSPIDE')",
+      "description": "Estado final transformado, peak form en ESPAÑOL.",
+      "stats": { "strength": int, "aesthetics": int, "endurance": int, "mental": int },
+      "image_prompt": "ENGLISH prompt - hero static pose, editorial Nike-style cover.",
+      "mental": "Mentalidad final ESPAÑOL."
+    }
+  },
+  "letter_from_future": "Carta motivacional del yo del mes 12 al yo presente, ESPAÑOL, tono estoico y empático, 100-550 caracteres.",
+  "style_profile": {
+    "lighting": "Descripción de iluminación en INGLÉS (5-95 chars, ej: 'dramatic rim lighting, golden hour')",
+    "wardrobe": "Vestimenta deportiva en INGLÉS (5-95 chars)",
+    "background": "Entorno en INGLÉS (5-95 chars)",
+    "color_grade": "Color grade en INGLÉS (5-95 chars, ej: 'cinematic teal-orange grade')"
+  }
 }
 
 REGLAS CRÍTICAS:
-1. TODO EL TEXTO VISIBLE (title, description, narrative, mental, risks, expectations, letter) DEBE SER EN ESPAÑOL (LATAM).
-2. "image_prompt" DEBE MANTENERSE EN INGLÉS.
-3. Sé CIENTÍFICAMENTE PRECISO. Si el usuario duerme mal, menciónalo como factor limitante.
-4. JSON válido únicamente.`;
+1. SOLO JSON válido. Sin markdown (\`\`\`), sin comentarios, sin texto extra antes o después.
+2. Todos los campos obligatorios. NO omitir ninguno.
+3. Stats: enteros 0-100. Realistas: m0 base actual; m12 incremento creíble (no más de +35 sobre m0 en cada stat).
+4. Cualquier texto VISIBLE al usuario (title/description/mental/risks/expectations/letter/insightsText) en ESPAÑOL LATAM.
+5. image_prompt SIEMPRE en INGLÉS, detallado, sin nombres ni marcas registradas, fotorrealista, identidad consistente.
+6. Si el usuario reporta mal sueño/estrés alto/baja disciplina: menciónalo en insightsText y stats m12 más conservador.`;
 }
 
 // Legacy V1 prompt for backward compatibility
@@ -242,11 +292,22 @@ export async function generateInsightsV2(
 
   console.log("[Gemini V2] Generating analysis...");
 
-  const result = await model.generateContent([
-    { text: systemPrompt },
-    { text: userContext },
-    { inlineData: { mimeType, data } },
-  ]);
+  const result = await model.generateContent({
+    contents: [
+      {
+        role: "user",
+        parts: [
+          { text: systemPrompt },
+          { text: userContext },
+          { inlineData: { mimeType, data } },
+        ],
+      },
+    ],
+    generationConfig: {
+      responseMimeType: "application/json",
+      temperature: 0.7,
+    },
+  });
 
   let text = cleanJsonResponse(result.response.text());
 

@@ -13,7 +13,7 @@ export function LandingHowItWorks() {
         <span className="inline-flex px-3 py-1 rounded-full bg-[#6D00FF]/10 border border-[#6D00FF]/20 text-[10px] text-[#B98CFF] font-mono uppercase tracking-widest mb-6">
           Cómo funciona
         </span>
-        <h2 className="landing-heading text-[2.3rem] leading-[0.94] sm:text-[2.9rem] md:text-[4.6rem] text-white mb-4">
+        <h2 className="landing-heading text-[2.1rem] leading-[0.96] sm:text-[2.6rem] md:text-[3.8rem] text-white mb-4 max-w-[20ch] mx-auto">
           {howItWorks.title}
         </h2>
         {howItWorks.subtitle ? (
@@ -54,7 +54,7 @@ export function LandingHowItWorks() {
                         PASO {item.step}
                       </span>
                     </div>
-                    <h3 className="text-[1.7rem] leading-[0.96] sm:text-[1.95rem] md:text-[2.3rem] text-white mb-4 font-body font-bold italic tracking-[-0.05em] uppercase">
+                    <h3 className="text-[1.4rem] leading-[1.1] sm:text-[1.55rem] md:text-[1.8rem] text-white mb-4 font-body font-semibold tracking-[-0.02em]">
                       {item.title}
                     </h3>
                     <p className="text-slate-400 text-sm md:text-base leading-relaxed font-body">

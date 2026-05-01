@@ -5,15 +5,17 @@ import { useLandingConfig } from "./LandingProvider";
 export function LandingValueStack() {
   const { config } = useLandingConfig();
   const { valueStack } = config.copy;
+  if (!valueStack) return null;
 
   return (
     <section id="que-recibes" className="max-w-6xl mx-auto px-4 mb-32 md:mb-48 scroll-mt-32">
-      <div className="grid gap-8 mb-10 md:mb-16 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-end">
+      {/* Section header */}
+      <div className="grid gap-8 mb-12 md:mb-16 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-end">
         <div className="animate-on-scroll">
           <span className="inline-flex px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] text-emerald-400 font-mono uppercase tracking-widest mb-6">
             {valueStack.sectionLabel}
           </span>
-          <h2 className="landing-heading text-[2.1rem] leading-[0.94] sm:text-[2.6rem] md:text-[3.4rem] text-white">
+          <h2 className="landing-heading-section text-[1.95rem] leading-[1.05] sm:text-[2.3rem] md:text-[2.85rem] text-white max-w-[18ch]">
             {valueStack.title}
             <br />
             <span className="text-[#EDE9FE]">{valueStack.highlight}</span>
@@ -24,43 +26,43 @@ export function LandingValueStack() {
         </p>
       </div>
 
+      {/* 2x2 uniform grid */}
       <div className="grid gap-5 md:grid-cols-2 md:gap-6">
         {valueStack.items.map((item, index) => {
           const Icon = item.icon;
-          const isFeatured = index === 0;
+          const animationDelay = ["", "delay-100", "delay-200", "delay-300"][index] ?? "";
           return (
-            <div
+            <article
               key={item.title}
-              className={`animate-on-scroll ${index > 0 ? `delay-${index}00` : ""} ${isFeatured ? "md:col-span-2" : ""} landing-surface rounded-[24px] p-5 md:p-8 border-glow-hover`}
+              className={`group relative animate-on-scroll ${animationDelay} landing-surface rounded-[24px] p-6 md:p-8 border-glow-hover overflow-hidden transition-transform duration-500 hover:-translate-y-1`}
             >
-              <div className={`flex ${isFeatured ? "flex-col gap-6 md:flex-row md:items-center md:justify-between" : "items-start gap-4"}`}>
-                <div className={`flex ${isFeatured ? "items-center gap-5" : "items-start gap-4"}`}>
-                  <div className={`rounded-2xl bg-[#6D00FF]/10 border border-[#6D00FF]/20 flex items-center justify-center flex-shrink-0 ${isFeatured ? "w-14 h-14" : "w-12 h-12"}`}>
-                    <Icon className={`${isFeatured ? "w-7 h-7" : "w-6 h-6"} text-[#B98CFF]`} />
-                  </div>
-                  <div>
-                    <span className="landing-kicker !text-[0.62rem] !tracking-[0.22em] block mb-3">
-                      {isFeatured ? "activo central" : `activo 0${index + 1}`}
-                    </span>
-                    <h3 className={`text-white mb-2 ${isFeatured ? "text-[1.7rem] md:text-[2rem] leading-[0.98] font-body font-bold italic tracking-[-0.05em] uppercase" : "font-body font-semibold text-[1.2rem] leading-[1.05] tracking-[-0.03em]"}`}>
-                      {item.title}
-                    </h3>
-                    <p className={`text-slate-400 leading-relaxed font-body ${isFeatured ? "text-base max-w-2xl" : "text-sm"}`}>
-                      {item.description}
-                    </p>
-                  </div>
+              {/* Subtle top-left glow on hover */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -inset-px rounded-[24px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{
+                  background:
+                    "radial-gradient(circle at top left, rgba(109,0,255,0.18), transparent 55%)",
+                }}
+              />
+
+              <div className="relative flex items-start gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#6D00FF]/25 bg-[#6D00FF]/10 flex-shrink-0">
+                  <Icon className="w-6 h-6 text-[#B98CFF]" />
                 </div>
-                {isFeatured ? (
-                  <div className="grid gap-2 sm:grid-cols-3 md:max-w-[360px]">
-                    {["Privado", "Aproximado", "Compartible"].map((pill) => (
-                      <div key={pill} className="rounded-xl border border-white/8 bg-white/[0.03] px-3 py-2 text-center text-[11px] uppercase tracking-[0.18em] text-slate-400">
-                        {pill}
-                      </div>
-                    ))}
-                  </div>
-                ) : null}
+                <div className="min-w-0">
+                  <span className="landing-kicker !text-[0.62rem] !tracking-[0.22em] block mb-2 text-[#B98CFF]/80">
+                    {`activo 0${index + 1}`}
+                  </span>
+                  <h3 className="text-white font-body font-semibold text-[1.2rem] leading-[1.15] tracking-[-0.02em] mb-3">
+                    {item.title}
+                  </h3>
+                  <p className="text-slate-400 leading-relaxed font-body text-sm">
+                    {item.description}
+                  </p>
+                </div>
               </div>
-            </div>
+            </article>
           );
         })}
       </div>

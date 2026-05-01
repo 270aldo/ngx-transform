@@ -5,6 +5,7 @@ import { useLandingConfig } from "./LandingProvider";
 export function LandingBridge() {
   const { config, trackCta } = useLandingConfig();
   const { bridge } = config.copy;
+  if (!bridge) return null;
 
   return (
     <section className="max-w-6xl mx-auto px-4 mb-32 md:mb-48">
@@ -18,7 +19,7 @@ export function LandingBridge() {
               <span className="inline-flex px-3 py-1 rounded-full bg-[#6D00FF]/10 border border-[#6D00FF]/20 text-[10px] text-[#B98CFF] font-mono uppercase tracking-widest mb-6">
               {bridge.sectionLabel}
               </span>
-              <h2 className="landing-heading text-[2.2rem] leading-[0.94] text-white sm:text-[2.7rem] md:text-[3.3rem]">
+              <h2 className="landing-heading-section text-[2rem] leading-[1.05] text-white sm:text-[2.4rem] md:text-[2.85rem] max-w-[16ch]">
                 {bridge.title}
                 <br />
                 <span className="text-[#EDE9FE]">{bridge.highlight}</span>

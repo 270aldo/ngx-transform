@@ -11,6 +11,7 @@ import { getVariant } from "@/config/landing";
 interface LandingContextValue {
   config: VariantConfig;
   variantId: VariantId;
+  trackCta: (location: string, intent?: string, label?: string) => void;
 }
 
 const LandingContext = createContext<LandingContextValue | null>(null);
@@ -29,6 +30,23 @@ export function LandingProvider({ variant, children }: LandingProviderProps) {
     () => ({
       config: getVariant(variant),
       variantId: variant,
+      trackCta: (location, intent, label) => {
+        // Lightweight client-side telemetry. Posts to /api/telemetry if available.
+        try {
+          void fetch("/api/telemetry", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            keepalive: true,
+            body: JSON.stringify({
+              sessionId: "landing",
+              event: "cta_clicked",
+              metadata: { location, intent, label, variant },
+            }),
+          }).catch(() => {});
+        } catch {
+          // ignore — telemetry is best-effort.
+        }
+      },
     }),
     [variant]
   );

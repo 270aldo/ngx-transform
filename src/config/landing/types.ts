@@ -45,6 +45,15 @@ export interface HeroCopy {
   };
   subtitle: string;
   cta: string;
+  /** Primary CTA detail used by LandingHero/LandingTopNav. */
+  primaryCta: {
+    label: string;
+    intent: string;
+  };
+  /** Secondary CTA label (e.g. "Cómo funciona"). */
+  secondaryCta: string;
+  /** 3 short reassurance bullets shown under the hero CTA row. */
+  supportingPoints: [string, string, string];
   socialProof: {
     count: string;
     label: string;
@@ -56,6 +65,48 @@ export interface HeroCopy {
     beforeLabel?: string;  // default: "ANTES"
     afterLabel?: string;   // default: "DESPUÉS"
   };
+}
+
+export interface FAQItemCopy {
+  question: string;
+  answer: string;
+}
+
+export interface FAQCopy {
+  sectionLabel: string;
+  title: string;
+  items: FAQItemCopy[];
+}
+
+export interface ValueStackItemCopy {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+}
+
+export interface ValueStackCopy {
+  sectionLabel: string;
+  title: string;
+  highlight: string;
+  subtitle: string;
+  items: ValueStackItemCopy[];
+}
+
+export interface BridgeCardCopy {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+}
+
+export interface BridgeCopy {
+  sectionLabel: string;
+  title: string;
+  highlight: string;
+  subtitle: string;
+  footnote: string;
+  buttonText: string;
+  buttonIntent: string;
+  cards: BridgeCardCopy[];
 }
 
 export interface StatCopy {
@@ -91,6 +142,8 @@ export interface CTACopy {
   subtitle: string;
   buttonText: string;
   footnote: string;
+  /** Optional intent string for telemetry. */
+  intent?: string;
 }
 
 export interface FooterCopy {
@@ -122,6 +175,12 @@ export interface VariantCopy {
   };
   cta: CTACopy;
   footer: FooterCopy;
+  /** Optional FAQ section */
+  faq?: FAQCopy;
+  /** Optional value stack (qué recibes) section */
+  valueStack?: ValueStackCopy;
+  /** Optional bridge section (puente a HYBRID/coach) */
+  bridge?: BridgeCopy;
   /** Optional explainer video section */
   explainerVideo?: ExplainerVideoCopy;
 }

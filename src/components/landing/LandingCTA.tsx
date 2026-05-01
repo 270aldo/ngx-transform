@@ -26,7 +26,7 @@ export function LandingCTA() {
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#6D00FF] to-[#5B21B6] flex items-center justify-center mx-auto mb-8 shadow-[0_0_40px_rgba(109,0,255,0.3)]">
             <Sparkles className="w-8 h-8 text-white" />
           </div>
-          <h2 className="landing-heading text-[2.2rem] leading-[0.94] md:text-[3.2rem] text-white mb-4">
+          <h2 className="landing-heading text-[2rem] leading-[1] md:text-[2.9rem] text-white mb-4 max-w-[22ch] mx-auto">
             {cta.headline}
           </h2>
           <p className="text-slate-400 text-sm md:text-base mb-8 md:mb-10 max-w-lg mx-auto leading-relaxed font-body">

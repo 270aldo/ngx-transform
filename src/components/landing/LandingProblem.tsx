@@ -31,7 +31,7 @@ export function LandingProblem() {
           <span className="inline-flex px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-[10px] text-red-400 font-mono uppercase tracking-widest mb-6">
             El problema real
           </span>
-          <h2 className="landing-heading text-[2.3rem] leading-[0.94] text-white sm:text-[2.85rem] md:text-[3.4rem]">
+          <h2 className="landing-heading-section text-[2rem] leading-[1.05] text-white sm:text-[2.4rem] md:text-[2.9rem] max-w-[20ch]">
             El problema no es tu disciplina.
             <br />
             <span className="text-slate-400">Es que tu modelo está roto.</span>

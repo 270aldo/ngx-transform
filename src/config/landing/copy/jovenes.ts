@@ -28,6 +28,13 @@ export const jovenesCopy: VariantCopy = {
     subtitle:
       "IA que proyecta tu potencial físico en 12 meses. Tu mejor yo está a una foto de distancia.",
     cta: "Empezar Ahora",
+    primaryCta: { label: "Empezar Ahora", intent: "scan_start" },
+    secondaryCta: "Cómo funciona",
+    supportingPoints: [
+      "Resultado claro en menos de 3 minutos.",
+      "GENESIS interpreta tus datos con honestidad.",
+      "Tú decides el siguiente paso, sin presión.",
+    ],
     socialProof: {
       count: "Procesamiento en minutos",
       label: "Procesamiento seguro y controlado",

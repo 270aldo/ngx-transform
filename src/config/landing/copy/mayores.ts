@@ -27,6 +27,13 @@ export const mayoresCopy: VariantCopy = {
     subtitle:
       "Visualiza cómo puedes mejorar tu bienestar físico en 12 meses. Análisis personalizado y seguro.",
     cta: "Ver Mi Proyección",
+    primaryCta: { label: "Ver Mi Proyección", intent: "scan_start" },
+    secondaryCta: "Cómo funciona",
+    supportingPoints: [
+      "Resultado claro en menos de 3 minutos.",
+      "GENESIS interpreta tus datos con honestidad.",
+      "Tú decides el siguiente paso, sin presión.",
+    ],
     socialProof: {
       count: "Procesamiento en minutos",
       label: "Procesamiento seguro y controlado",

@@ -141,18 +141,28 @@ h1, h2, h3, h4, h5, h6 {
   color: rgba(184, 148, 255, 0.78);
 }
 
+/* Display heading: dramatic italic — reserved for hero, key hooks, final CTA */
 .landing-heading {
   font-family: var(--font-body);
   font-weight: 800;
   font-style: italic;
-  letter-spacing: -0.06em;
+  letter-spacing: -0.025em;
   text-transform: uppercase;
+}
+
+/* Section heading: regular, modern, premium feel — used for body sections (problema, mapa, bridge, FAQ) */
+.landing-heading-section {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: -0.02em;
+  text-transform: none;
 }
 
 .landing-subheading {
   font-family: var(--font-body);
-  font-weight: 700;
-  letter-spacing: -0.045em;
+  font-weight: 600;
+  letter-spacing: -0.025em;
 }
 
 .landing-surface {

@@ -230,7 +230,7 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
         {/* Genesis Demo CTA - appears after transformation viewer */}
         {isReady && (
           <>
-            <MuscleHealthScore />
+            <MuscleHealthScore shareId={shareId} />
             <TransformationSummary
               ai={ai}
               imageUrls={urls}
@@ -253,7 +253,7 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
       {/* Genesis Demo CTA - appears after transformation viewer */}
       {isReady && (
         <>
-          <MuscleHealthScore />
+          <MuscleHealthScore shareId={shareId} />
           <TransformationSummary
             ai={ai}
             imageUrls={urls}

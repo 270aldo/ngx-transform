@@ -20,7 +20,7 @@ export function LandingHero() {
 
   return (
     <section className="max-w-6xl mx-auto px-4 mb-32 md:mb-44">
-      <div className="relative overflow-hidden rounded-[32px] md:rounded-[40px] landing-surface-strong px-5 py-6 md:px-8 md:py-10 lg:px-10 lg:py-12">
+      <div className="relative overflow-hidden rounded-[32px] md:rounded-[40px] landing-surface-strong px-6 py-10 md:px-10 md:py-16 lg:px-14 lg:py-20">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
         <div
           className="absolute left-[-12%] top-[10%] h-[320px] w-[320px] rounded-full blur-[120px]"
@@ -31,10 +31,10 @@ export function LandingHero() {
           style={{ backgroundColor: `${theme.accent}22` }}
         />
 
-        <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(420px,0.98fr)] lg:gap-12">
+        <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(360px,420px)] lg:gap-12">
           <div className="text-center lg:text-left">
             <div
-              className="animate-on-scroll inline-flex items-center gap-3 px-4 py-2 rounded-full glass-panel mb-7 shadow-[0_0_40px_-10px_rgba(109,0,255,0.4)] cursor-default"
+              className="inline-flex items-center gap-3 px-4 py-2 rounded-full glass-panel mb-7 shadow-[0_0_40px_-10px_rgba(109,0,255,0.4)] cursor-default"
               style={{ borderColor: `${theme.primary}40` }}
             >
               <span className="relative flex h-2 w-2">
@@ -48,12 +48,12 @@ export function LandingHero() {
               <span className="text-[11px] tracking-wide font-mono" style={{ color: theme.accent }}>Proceso guiado</span>
             </div>
 
-            <p className="animate-on-scroll delay-100 landing-kicker mb-4">
+            <p className="landing-kicker mb-4">
               Visualización privada con salida más seria
             </p>
 
             <h1
-              className={`animate-on-scroll delay-100 landing-heading text-[3rem] leading-[0.88] text-white sm:text-[4rem] md:text-[5rem] lg:text-[5.65rem] ${textScaleClass} origin-left`}
+              className={`landing-heading text-[2.2rem] leading-[1] text-white sm:text-[2.7rem] md:text-[3.2rem] lg:text-[3.3rem] xl:text-[3.9rem] ${textScaleClass} origin-left max-w-[15ch] mx-auto lg:mx-0`}
             >
               {hero.headline.line1}
               <br />
@@ -61,37 +61,34 @@ export function LandingHero() {
             </h1>
 
             <p
-              className={`animate-on-scroll delay-200 mt-5 max-w-xl text-[1.02rem] leading-relaxed text-slate-300 md:text-[1.2rem] ${textScaleClass} mx-auto lg:mx-0`}
+              className={`mt-5 max-w-xl text-[1.02rem] leading-relaxed text-slate-300 md:text-[1.2rem] ${textScaleClass} mx-auto lg:mx-0`}
             >
               {hero.subtitle}
             </p>
 
-            <div className="animate-on-scroll delay-300 mt-8 flex flex-col gap-4 sm:flex-row sm:justify-center lg:justify-start">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center lg:justify-start">
               <Link
                 href="/wizard"
                 onClick={() => trackCta("hero_primary", hero.primaryCta.intent, hero.primaryCta.label)}
-                className="group relative w-full sm:w-auto px-8 md:px-10 py-4 md:py-5 rounded-full text-white text-base font-semibold tracking-wide whitespace-nowrap overflow-hidden transition-all duration-300 hover:-translate-y-0.5 min-h-[56px] inline-flex items-center justify-center"
+                className="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-white text-base font-semibold font-body transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_50px_-5px_rgba(109,0,255,1)]"
                 style={{
                   backgroundColor: theme.primary,
-                  boxShadow: `0 0 40px -5px ${theme.primary}99`,
+                  boxShadow: `0 0 40px -8px ${theme.primary}cc`,
                 }}
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out" />
-                <span className="relative flex items-center gap-2 font-body">
-                  {hero.primaryCta.label}
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                </span>
+                <span>{hero.primaryCta.label}</span>
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <a
                 href="#como-funciona"
-                className="w-full sm:w-auto px-8 md:px-10 py-4 md:py-5 rounded-full border border-white/15 bg-white/5 text-white font-body text-base whitespace-nowrap hover:bg-white/10 transition-colors inline-flex items-center justify-center gap-2 min-h-[56px]"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border border-white/15 bg-white/5 text-white font-body text-base hover:bg-white/10 hover:border-white/25 transition-colors"
               >
                 <PlayCircle className="w-5 h-5" />
-                {hero.secondaryCta}
+                <span>{hero.secondaryCta}</span>
               </a>
             </div>
 
-            <div className="animate-on-scroll delay-300 mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[12px] text-slate-500 lg:justify-start">
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[12px] text-slate-500 lg:justify-start">
               <span>{hero.socialProof.count}</span>
               <span className="hidden h-1 w-1 rounded-full bg-white/20 sm:inline-flex" />
               <span>{hero.socialProof.label}</span>
