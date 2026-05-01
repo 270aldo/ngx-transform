@@ -9,7 +9,6 @@ import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { PlanPreview } from '@/components/genesis/PlanPreview';
 import { ComparisonCTA } from '@/components/results/ComparisonCTA';
-import { DISCLAIMERS } from '@/config/ngxTransformCopy';
 
 export default function PlanPage() {
   const params = useParams();
@@ -24,13 +23,6 @@ export default function PlanPage() {
 
   return (
     <main className="min-h-screen bg-[#050505]">
-      {/* Disclaimer (Trust & Compliance) */}
-      <div className="max-w-lg mx-auto px-4 pt-4">
-        <p className="text-[11px] leading-snug text-neutral-400 border border-white/10 bg-white/[0.02] rounded-md px-3 py-2">
-          {DISCLAIMERS.plan}
-        </p>
-      </div>
-
       {/* Plan Preview */}
       <PlanPreview shareId={shareId} onUnlock={handleUnlock} />
 

@@ -37,10 +37,6 @@ import { SocialCounter } from "./SocialCounter";
 import { AgentBridgeCTA } from "./AgentBridgeCTA";
 import { ReferralCard } from "./ReferralCard";
 import { cn } from "@/lib/utils";
-import { DISCLAIMERS } from "@/config/ngxTransformCopy";
-import { ReadinessReport } from "./results/ReadinessReport";
-import { generateReadinessReport } from "@/lib/readiness";
-import type { Profile } from "@/lib/validators";
 
 export type TimelineStep = "m0" | "m4" | "m8" | "m12";
 
@@ -69,16 +65,6 @@ interface TransformationViewer2Props {
     goal?: "definicion" | "masa" | "mixto";
     stressLevel?: number;
   };
-  /** Full profile for Readiness Report (Sprint 2). Optional — falls back to skipping the section. */
-  profile?: Partial<Profile> & {
-    age: number;
-    sex: "male" | "female" | "other";
-    heightCm: number;
-    weightKg: number;
-    level: "novato" | "intermedio" | "avanzado";
-    goal: "definicion" | "masa" | "mixto";
-    weeklyTime: number;
-  };
   referralCode?: string;
   referralCount?: number;
   sessionId?: string;
@@ -101,7 +87,6 @@ export function TransformationViewer2({
   // v2.1 Viral props
   userName,
   userProfile,
-  profile,
   referralCode,
   referralCount = 0,
   sessionId,
@@ -126,32 +111,33 @@ export function TransformationViewer2({
   const [showNav, setShowNav] = useState(false);
   const [hasSeenCinematic, setHasSeenCinematic] = useState(false);
 
-  // Hydrate UX state (UI-only flags from localStorage, unlock from backend)
+  // Check if user has already seen the dramatic reveal / cinematic
   useEffect(() => {
     const dramaticKey = `ngx-dramatic-seen-${shareId}`;
     const cinematicKey = `ngx-cinematic-seen-${shareId}`;
+    const unlockKey = `ngx-unlocked-${shareId}`;
 
+    // Check dramatic reveal
     if (localStorage.getItem(dramaticKey)) {
       setShowDramaticReveal(false);
     }
 
+    // Check cinematic
     if (localStorage.getItem(cinematicKey)) {
       setShowCinematic(false);
       setHasSeenCinematic(true);
     }
 
-    // Source of truth for unlock = Firestore via /api/sessions/[shareId]
-    let cancelled = false;
-    fetch(`/api/sessions/${shareId}`, { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        if (cancelled || !data?.unlockState?.unlocked) return;
-        setUnlockedContent(["hd_images", "plan"]);
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
+    // Check unlocked content
+    const unlocked = localStorage.getItem(unlockKey);
+    if (unlocked) {
+      try {
+        setUnlockedContent(JSON.parse(unlocked));
+      } catch {
+        // Invalid JSON, reset
+        localStorage.removeItem(unlockKey);
+      }
+    }
   }, [shareId]);
 
   // Get current data
@@ -183,11 +169,11 @@ export function TransformationViewer2({
   // Content unlock handler
   const handleContentUnlock = useCallback(
     (contentType: string) => {
-      // Optimistic UI update; server-side unlock state is the source of truth
-      // (validated on each gated endpoint, e.g. /api/social-pack/[shareId])
-      setUnlockedContent((prev) => (prev.includes(contentType) ? prev : [...prev, contentType]));
+      const newUnlocked = [...unlockedContent, contentType];
+      setUnlockedContent(newUnlocked);
+      localStorage.setItem(`ngx-unlocked-${shareId}`, JSON.stringify(newUnlocked));
     },
-    []
+    [shareId, unlockedContent]
   );
 
   const handleCinematicComplete = useCallback(() => {
@@ -418,23 +404,6 @@ export function TransformationViewer2({
             </div>
           )}
 
-          {/* GENESIS Readiness Report (Sprint 2 — Funnel HYBRID) */}
-          {profile && (
-            <ReadinessReport
-              report={generateReadinessReport(profile as Profile)}
-              shareId={shareId}
-              sessionId={sessionId}
-              onValidateWithCoach={() => {
-                const url = process.env.NEXT_PUBLIC_BOOKING_URL || "#";
-                window.open(url, "_blank");
-              }}
-              onAscendClick={() => {
-                const url = process.env.NEXT_PUBLIC_BOOKING_URL || "#";
-                window.open(url, "_blank");
-              }}
-            />
-          )}
-
           {/* Agent Bridge CTA (replaces BookingCTA when enabled) */}
           {FF_AGENT_BRIDGE_CTA && userProfile ? (
             <AgentBridgeCTA
@@ -499,13 +468,6 @@ export function TransformationViewer2({
           setShowLetter(false);
         }}
       />
-
-      {/* Disclaimer (Trust & Compliance) */}
-      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-30 max-w-md px-4 pointer-events-none">
-        <p className="text-[10px] leading-snug text-neutral-400 bg-black/60 backdrop-blur-sm border border-white/10 rounded-md px-3 py-2 text-center">
-          {DISCLAIMERS.visual}
-        </p>
-      </div>
 
       {/* v2.1: Share to Unlock Modal */}
       {FF_SHARE_TO_UNLOCK && (

@@ -53,7 +53,7 @@ export const TimelineEntrySchema = z.object({
  */
 export const ProfileSummarySchema = z.object({
   sex: z.enum(["male", "female", "other"]),
-  age: z.number().int().min(18).max(100),
+  age: z.number().int().min(13).max(100),
   goal: z.enum(["definicion", "masa", "mixto"]),
   bodyType: z.enum(["ectomorph", "mesomorph", "endomorph"]),
   focusZone: z.enum(["upper", "lower", "abs", "full"]),

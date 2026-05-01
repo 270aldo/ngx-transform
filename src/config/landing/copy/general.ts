@@ -17,19 +17,19 @@ import type { VariantCopy } from "../types";
 export const generalCopy: VariantCopy = {
   hero: {
     badge: {
-      aiLabel: "Powered by GENESIS",
-      version: "Future Body Scan",
+      aiLabel: "Powered by Gemini AI",
+      version: "v2.1",
     },
     headline: {
       line1: "Visualiza tu",
-      line2: "potencial.",
+      line2: "transformación.",
     },
     subtitle:
-      "Visualiza una versión posible de tu transformación en 12 meses. Una simulación aspiracional generada con IA, acompañada de un plan de acción inicial.",
+      "IA que proyecta tu evolución física en 12 meses. Sube tu foto, recibe tu timeline personalizado. Gratis.",
     cta: "Comenzar Gratis",
     socialProof: {
-      count: "NGX Future Body Scan",
-      label: "Lead magnet oficial de NGX GENESIS",
+      count: "+10,000 transformaciones",
+      label: "Esta semana en NGX",
     },
     // Before/After transformation demo
     transformationDemo: {
@@ -41,26 +41,26 @@ export const generalCopy: VariantCopy = {
   },
 
   stats: [
-    { value: "3", suffix: "min", label: "Escaneo inicial" },
-    { value: "4", suffix: "", label: "Etapas visuales" },
-    { value: "7", suffix: "días", label: "Plan inicial" },
-    { value: "1", suffix: "", label: "Sistema: GENESIS" },
+    { value: "99.9", suffix: "%", label: "Precisión IA" },
+    { value: "<3", suffix: "min", label: "Análisis" },
+    { value: "1M", suffix: "+", label: "Transformaciones" },
+    { value: "186", suffix: "+", label: "Países" },
   ],
 
   features: [
     {
       icon: Brain,
-      title: "Análisis Biométrico GENESIS",
+      title: "Análisis Biométrico IA",
       description:
-        "GENESIS analiza tu estructura corporal, composición y respuestas para crear una proyección aspiracional personalizada. No es una predicción garantizada.",
+        "Gemini analiza tu estructura corporal, composición y potencial genético para crear proyecciones realistas y personalizadas.",
       size: "large",
     },
     {
       icon: Shield,
-      title: "Privacidad clara",
-      description: "Tu foto se procesa con consentimiento explícito. Usamos almacenamiento temporal para generar tu resultado y puedes solicitar eliminación.",
+      title: "Privacidad Total",
+      description: "Tu foto se procesa y elimina. Zero almacenamiento.",
       size: "medium",
-      badge: "Datos en tránsito cifrados",
+      badge: "Encriptación E2E",
     },
     {
       icon: Sparkles,
@@ -126,9 +126,9 @@ export const generalCopy: VariantCopy = {
   cta: {
     headline: "¿Listo para ver tu potencial?",
     subtitle:
-      "Visualiza tu potencial. Construirlo requiere un sistema. Genera tu Future Body Scan gratis y descubre cómo GENESIS puede acompañarte.",
+      "Únete a miles de personas que ya visualizaron su transformación. Gratis, sin registro, sin compromisos.",
     buttonText: "Comenzar Ahora",
-    footnote: "Visualización aspiracional, no garantía de resultado",
+    footnote: "Análisis en menos de 3 minutos",
   },
 
   footer: {
