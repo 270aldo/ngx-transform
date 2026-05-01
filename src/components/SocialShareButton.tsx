@@ -39,14 +39,14 @@ const socialNetworks = [
   {
     name: "WhatsApp",
     Icon: WhatsAppIcon,
-    color: "#25D366",
+    color: "#22C55E",
     getUrl: (url: string, text: string) =>
       `https://wa.me/?text=${encodeURIComponent(text + " " + url)}`,
   },
   {
     name: "Instagram",
     Icon: InstagramIcon,
-    color: "#E4405F",
+    color: "#A855F7",
     action: "copy" as const,
   },
   {
@@ -59,7 +59,7 @@ const socialNetworks = [
   {
     name: "Facebook",
     Icon: FacebookIcon,
-    color: "#1877F2",
+    color: "#6D00FF",
     getUrl: (url: string) =>
       `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
   },

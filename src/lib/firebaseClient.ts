@@ -1,7 +1,7 @@
 "use client";
 
 import { getApps, initializeApp, type FirebaseApp } from "firebase/app";
-import { getAuth, type Auth } from "firebase/auth";
+import { getAuth, signInAnonymously, type Auth, type User } from "firebase/auth";
 import { getStorage, type FirebaseStorage } from "firebase/storage";
 
 const config = {
@@ -27,5 +27,17 @@ export function getClientAuth(): Auth {
 
 export function getClientStorage(): FirebaseStorage {
   return getStorage(getClientApp());
+}
+
+/**
+ * Lead-magnet flow: returns the current Firebase user if signed in,
+ * otherwise signs in anonymously. Wizard uses this to get an auth.uid
+ * for Storage uploads without forcing a login UI.
+ */
+export async function ensureAnonymousSession(): Promise<User> {
+  const auth = getClientAuth();
+  if (auth.currentUser) return auth.currentUser;
+  const cred = await signInAnonymously(auth);
+  return cred.user;
 }
 

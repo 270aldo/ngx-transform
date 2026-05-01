@@ -50,7 +50,7 @@ export function StickyCTA() {
       {/* CTA Container */}
       <div className="bg-[#030005]/95 backdrop-blur-xl border-t border-white/10 px-4 py-3 safe-area-inset-bottom">
         <Link
-          href="/wizard"
+          href="/auth?next=/wizard"
           className="group relative flex items-center justify-center gap-2 w-full px-6 py-3.5 rounded-full text-white text-sm font-semibold tracking-wide overflow-hidden transition-all duration-300 active:scale-[0.98]"
           style={{
             backgroundColor: theme.primary,
@@ -66,7 +66,7 @@ export function StickyCTA() {
 
         {/* Subtle text below */}
         <p className="text-center text-[10px] text-slate-500 mt-2">
-          Gratis • Sin tarjeta de crédito • 2 min
+          Sin costo • Requiere cuenta • Proceso guiado
         </p>
       </div>
     </div>

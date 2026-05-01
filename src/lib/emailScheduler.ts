@@ -5,13 +5,16 @@
  * D0 - Results ready (immediate)
  * D1 - Reminder (24h after)
  * D3 - Plan available (72h after)
- * D7 - Conversion (168h after)
+ * D5 - Ebook bonus (day 5)
+ * D7 - Conversion (day 7)
+ * D10 - Urgency (day 10)
+ * D14 - Final call (day 14)
  */
 
 import { getDb } from "@/lib/firebaseAdmin";
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
 
-export type EmailStage = "D0" | "D1" | "D3" | "D7";
+export type EmailStage = "D0" | "D1" | "D3" | "D5" | "D7" | "D10" | "D14";
 
 export interface EmailSequence {
   id: string;
@@ -26,20 +29,26 @@ export interface EmailSequence {
   updatedAt: Timestamp;
 }
 
-// Days to wait before each email
-const STAGE_DELAYS: Record<EmailStage, number> = {
-  D0: 0,
-  D1: 1,
-  D3: 3,
-  D7: 7,
-};
-
 // Next stage mapping
 const NEXT_STAGE: Record<EmailStage, EmailStage | null> = {
   D0: "D1",
   D1: "D3",
-  D3: "D7",
-  D7: null,
+  D3: "D5",
+  D5: "D7",
+  D7: "D10",
+  D10: "D14",
+  D14: null,
+};
+
+// Days between each stage transition
+const STAGE_INTERVAL_TO_NEXT: Record<EmailStage, number> = {
+  D0: 1,
+  D1: 2,
+  D3: 2,
+  D5: 2,
+  D7: 3,
+  D10: 4,
+  D14: 0,
 };
 
 /**
@@ -110,13 +119,14 @@ export async function advanceSequence(shareId: string): Promise<EmailStage | nul
     // Sequence complete
     await sequenceRef.update({
       status: "completed",
+      nextSend: null,
       updatedAt: FieldValue.serverTimestamp(),
     });
     return null;
   }
 
-  // Calculate next send time
-  const delayDays = STAGE_DELAYS[nextStage];
+  // Calculate next send time using interval from current stage
+  const delayDays = STAGE_INTERVAL_TO_NEXT[sequence.stage];
   const nextSend = new Date();
   nextSend.setDate(nextSend.getDate() + delayDays);
 
@@ -179,10 +189,13 @@ export async function getDueSequences(): Promise<EmailSequence[]> {
  */
 export function getEmailSubject(stage: EmailStage): string {
   const subjects: Record<EmailStage, string> = {
-    D0: "Tu transformación de 12 meses está lista 🔥",
-    D1: "¿Ya viste tu transformación completa? 👀",
-    D3: "Tu plan personalizado de 7 días está listo 📋",
-    D7: "¿Listo para hacer esto real? 🚀",
+    D0: "Tu transformación de 12 meses está lista",
+    D1: "¿Ya viste tu transformación completa?",
+    D3: "Tu plan personalizado de 7 días está listo",
+    D5: "GENESIS escribió esto para ti",
+    D7: "Tu plaza en la próxima cohorte está abierta",
+    D10: "Quedan pocas plazas para la cohorte actual",
+    D14: "Última oportunidad para entrar a HYBRID",
   };
   return subjects[stage];
 }

@@ -6,8 +6,14 @@ import { FieldValue } from "firebase-admin/firestore";
 import { Resend } from "resend";
 import { telemetry, initSessionMetrics, startTimer } from "@/lib/telemetry";
 import { getOrCreateJob } from "@/lib/jobManager";
-import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
+import {
+  checkRateLimit,
+  getRateLimitHeaders,
+  getClientIP,
+  shouldBypassRateLimit,
+} from "@/lib/rateLimit";
 import { requireAuth } from "@/lib/authServer";
+import { sendN8NWebhook } from "@/lib/n8nWebhook";
 
 /**
  * Genera un token seguro para acciones destructivas
@@ -30,7 +36,7 @@ export async function POST(req: Request) {
     }
 
     const authUser = await requireAuth(req);
-    const { email: formEmail, input, photoPath, landingVariant } = parsed.data;
+    const { email: formEmail, input, photoPath, consents, landingVariant } = parsed.data;
 
     // Determine the email to use: prefer auth email, fall back to form email
     const userEmail = authUser.email || formEmail;
@@ -52,63 +58,67 @@ export async function POST(req: Request) {
     ipDocId = `${ip}-${today}`;
 
     const db = getDb();
-    const limit = Number(process.env.MAX_SESSIONS_PER_IP_PER_DAY || "3");
-    const emailLimit = Number(process.env.MAX_SESSIONS_PER_EMAIL_PER_DAY || "2");
+    const bypassRateLimits = shouldBypassRateLimit();
 
-    // Distributed rate limiting (Upstash Redis)
-    const rateLimitResult = await checkRateLimit("api:sessions", ip);
-    if (!rateLimitResult.success) {
-      return NextResponse.json(
-        { error: "Rate limit exceeded. Vuelve mañana." },
-        { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
-      );
-    }
+    if (!bypassRateLimits) {
+      const limit = Number(process.env.MAX_SESSIONS_PER_IP_PER_DAY || "3");
+      const emailLimit = Number(process.env.MAX_SESSIONS_PER_EMAIL_PER_DAY || "2");
 
-    // Rate limit per IP + email per day (transaction to avoid race)
-    if (ip !== "unknown") {
-      const rlRef = db.collection("rate_limits").doc(ipDocId);
-      emailDocId = `${userEmail.toLowerCase()}-${today}`;
-      const erRef = db.collection("rate_limits_email").doc(emailDocId);
-
-      await db.runTransaction(async (tx) => {
-        const [rlSnap, erSnap] = await Promise.all([tx.get(rlRef), tx.get(erRef)]);
-        const ipCount = rlSnap.exists ? (rlSnap.data()?.count || 0) : 0;
-        const emailCount = erSnap.exists ? (erSnap.data()?.count || 0) : 0;
-
-        if (ipCount >= limit) {
-          throw new Error("RATE_LIMIT_IP");
-        }
-        if (emailCount >= emailLimit) {
-          throw new Error("RATE_LIMIT_EMAIL");
-        }
-
-        tx.set(
-          rlRef,
-          { count: ipCount + 1, ip, day: today, updatedAt: FieldValue.serverTimestamp() },
-          { merge: true }
+      // Distributed rate limiting (Upstash Redis)
+      const rateLimitResult = await checkRateLimit("api:sessions", ip);
+      if (!rateLimitResult.success) {
+        return NextResponse.json(
+          { error: "Rate limit exceeded. Vuelve mañana." },
+          { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
         );
-        tx.set(
-          erRef,
-          { count: emailCount + 1, email: userEmail.toLowerCase(), day: today, updatedAt: FieldValue.serverTimestamp() },
-          { merge: true }
-        );
-      });
-    } else {
-      // Rate limit by email only when IP is unknown
-      emailDocId = `${userEmail.toLowerCase()}-${today}`;
-      const erRef = db.collection("rate_limits_email").doc(emailDocId);
-      await db.runTransaction(async (tx) => {
-        const erSnap = await tx.get(erRef);
-        const emailCount = erSnap.exists ? (erSnap.data()?.count || 0) : 0;
-        if (emailCount >= emailLimit) {
-          throw new Error("RATE_LIMIT_EMAIL");
-        }
-        tx.set(
-          erRef,
-          { count: emailCount + 1, email: userEmail.toLowerCase(), day: today, updatedAt: FieldValue.serverTimestamp() },
-          { merge: true }
-        );
-      });
+      }
+
+      // Rate limit per IP + email per day (transaction to avoid race)
+      if (ip !== "unknown") {
+        const rlRef = db.collection("rate_limits").doc(ipDocId);
+        emailDocId = `${userEmail.toLowerCase()}-${today}`;
+        const erRef = db.collection("rate_limits_email").doc(emailDocId);
+
+        await db.runTransaction(async (tx) => {
+          const [rlSnap, erSnap] = await Promise.all([tx.get(rlRef), tx.get(erRef)]);
+          const ipCount = rlSnap.exists ? (rlSnap.data()?.count || 0) : 0;
+          const emailCount = erSnap.exists ? (erSnap.data()?.count || 0) : 0;
+
+          if (ipCount >= limit) {
+            throw new Error("RATE_LIMIT_IP");
+          }
+          if (emailCount >= emailLimit) {
+            throw new Error("RATE_LIMIT_EMAIL");
+          }
+
+          tx.set(
+            rlRef,
+            { count: ipCount + 1, ip, day: today, updatedAt: FieldValue.serverTimestamp() },
+            { merge: true }
+          );
+          tx.set(
+            erRef,
+            { count: emailCount + 1, email: userEmail.toLowerCase(), day: today, updatedAt: FieldValue.serverTimestamp() },
+            { merge: true }
+          );
+        });
+      } else {
+        // Rate limit by email only when IP is unknown
+        emailDocId = `${userEmail.toLowerCase()}-${today}`;
+        const erRef = db.collection("rate_limits_email").doc(emailDocId);
+        await db.runTransaction(async (tx) => {
+          const erSnap = await tx.get(erRef);
+          const emailCount = erSnap.exists ? (erSnap.data()?.count || 0) : 0;
+          if (emailCount >= emailLimit) {
+            throw new Error("RATE_LIMIT_EMAIL");
+          }
+          tx.set(
+            erRef,
+            { count: emailCount + 1, email: userEmail.toLowerCase(), day: today, updatedAt: FieldValue.serverTimestamp() },
+            { merge: true }
+          );
+        });
+      }
     }
 
     // Validate uploaded file metadata before creating session
@@ -140,11 +150,22 @@ export async function POST(req: Request) {
       shareId,
       email: userEmail,
       ownerUid: authUser.uid,
+      hybridStatus: "prospect",
+      hybridConvertedAt: null,
       shareOriginal: false,
       shareScope: {
         shareOriginal: false,
         shareInsights: false,
         shareProfile: false,
+      },
+      consents: {
+        termsAcceptedAt: FieldValue.serverTimestamp(),
+        aiProcessingAcceptedAt: FieldValue.serverTimestamp(),
+        marketingEmailOptIn: consents.marketingEmailOptIn,
+        marketingEmailOptInAt: consents.marketingEmailOptIn
+          ? FieldValue.serverTimestamp()
+          : null,
+        captureSource: consents.captureSource,
       },
       input,
       photo: { originalStoragePath: photoPath },
@@ -155,6 +176,7 @@ export async function POST(req: Request) {
       source: {
         variant: landingVariant || "general",
       },
+      lastActivityAt: FieldValue.serverTimestamp(),
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     });
@@ -165,30 +187,13 @@ export async function POST(req: Request) {
     // Track evento de sesión creada
     await telemetry.sessionCreated(shareId);
 
-    // Fire webhook to n8n (non-blocking, with telemetry)
-    (async () => {
-      try {
-        const webhook = process.env.N8N_WEBHOOK_URL;
-        if (!webhook) return;
-        const res = await fetch(webhook, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            type: "ngx_session_created",
-            shareId,
-            email: userEmail,
-            input,
-            source: "wizard",
-            createdAt: new Date().toISOString(),
-          }),
-        });
-        if (!res.ok) {
-          console.error(`[Sessions] n8n webhook returned ${res.status}`);
-        }
-      } catch (err) {
-        console.error("[Sessions] n8n webhook failed:", err);
-      }
-    })();
+    void sendN8NWebhook("lead_captured", {
+      shareId,
+      email: userEmail,
+      source: landingVariant || "general",
+      marketingEmailOptIn: consents.marketingEmailOptIn,
+      consentCaptureSource: consents.captureSource,
+    });
 
     // Fire-and-forget email confirmation with share link (with telemetry)
     (async () => {
@@ -196,7 +201,11 @@ export async function POST(req: Request) {
         const key = process.env.RESEND_API_KEY;
         if (!key) return;
         const vercelUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null;
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || vercelUrl || "http://localhost:3000";
+        const baseUrl =
+          process.env.NEXT_PUBLIC_APP_URL ||
+          process.env.NEXT_PUBLIC_BASE_URL ||
+          vercelUrl ||
+          "http://localhost:3000";
         const url = String(baseUrl).startsWith("http") ? `${baseUrl}/s/${shareId}` : `https://${baseUrl}/s/${shareId}`;
         const resend = new Resend(key);
         await resend.emails.send({

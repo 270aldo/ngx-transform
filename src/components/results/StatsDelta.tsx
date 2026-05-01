@@ -138,7 +138,7 @@ export function StatsDelta({
                 className={cn(
                   "h-full rounded-full",
                   toValue >= 80 && "bg-gradient-to-r from-[#6D00FF] to-emerald-400",
-                  toValue >= 60 && toValue < 80 && "bg-gradient-to-r from-[#6D00FF] to-blue-400",
+                  toValue >= 60 && toValue < 80 && "bg-gradient-to-r from-[#6D00FF] to-[#7D1AFF]",
                   toValue >= 40 && toValue < 60 && "bg-[#6D00FF]",
                   toValue < 40 && "bg-gradient-to-r from-amber-500 to-[#6D00FF]"
                 )}

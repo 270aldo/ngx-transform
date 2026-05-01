@@ -41,7 +41,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, skipped: true, message: "Email suppressed" }, { status: 200 });
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL || "http://localhost:3000";
+    const baseUrl =
+      process.env.NEXT_PUBLIC_APP_URL ||
+      process.env.NEXT_PUBLIC_BASE_URL ||
+      process.env.VERCEL_URL ||
+      "http://localhost:3000";
     const url = String(baseUrl).startsWith("http") ? `${baseUrl}/s/${shareId}` : `https://${baseUrl}/s/${shareId}`;
 
     const resend = new Resend(key);

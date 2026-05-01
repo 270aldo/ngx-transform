@@ -2,11 +2,12 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 const UPDATED_AT = "2 de febrero de 2026";
-const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL;
-
-// TODO: Reemplazar con datos reales antes de lanzamiento
-const RESPONSABLE_NOMBRE = "[NOMBRE COMPLETO DEL RESPONSABLE]";
-const RESPONSABLE_DOMICILIO = "[DOMICILIO DEL RESPONSABLE]";
+const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "hola@ngxgenesis.com";
+const RESPONSABLE_NOMBRE =
+  process.env.NEXT_PUBLIC_LEGAL_RESPONSIBLE_NAME || "NGX Genesis";
+const RESPONSABLE_DOMICILIO =
+  process.env.NEXT_PUBLIC_LEGAL_RESPONSIBLE_ADDRESS ||
+  "domicilio disponible previa solicitud por el canal de privacidad publicado";
 
 export const metadata: Metadata = {
   title: "Aviso de Privacidad | NGX Transform",
@@ -26,13 +27,17 @@ export default function PrivacyPage() {
   );
 
   return (
-    <main className="min-h-screen bg-black text-white">
+    <div
+      role="document"
+      aria-labelledby="privacy-title"
+      className="min-h-screen bg-black text-white"
+    >
       <div className="max-w-3xl mx-auto px-6 py-16 space-y-10">
         <header className="space-y-3">
           <p className="text-xs tracking-[0.35em] uppercase text-[#6D00FF]">
             NGX Transform
           </p>
-          <h1 className="text-3xl font-semibold">
+          <h1 id="privacy-title" className="text-3xl font-semibold">
             Aviso de Privacidad Integral
           </h1>
           <p className="text-sm text-neutral-400">
@@ -119,12 +124,17 @@ export default function PrivacyPage() {
             <li>Operar el asistente GENESIS y sus capacidades de IA.</li>
             <li>Garantizar la seguridad del Servicio: prevención de abuso, fraude y cumplimiento de límites de uso.</li>
           </ul>
+          <p className="text-sm text-neutral-300">
+            Tus fotografías y datos de perfil se utilizan para operar el
+            Servicio y entregarte tus resultados. No los utilizamos para
+            entrenar modelos fundacionales propios.
+          </p>
 
           <h3 className="text-base font-medium text-neutral-200">
             Finalidades secundarias (no necesarias)
           </h3>
           <ul className="space-y-2 text-sm text-neutral-300 list-disc list-inside">
-            <li>Envío de comunicaciones de marketing, recordatorios y secuencias de email nurture.</li>
+            <li>Envío de comunicaciones de marketing, recordatorios y secuencias de email nurture, cuando hayas otorgado tu consentimiento.</li>
             <li>Remarketing y análisis de conversión.</li>
             <li>Estadísticas agregadas y mejora del Servicio.</li>
           </ul>
@@ -315,35 +325,37 @@ export default function PrivacyPage() {
               <tbody className="divide-y divide-white/5">
                 <tr>
                   <td className="py-2 pr-4">Fotografía original</td>
-                  <td className="py-2">30 días desde la generación de resultados</td>
+                  <td className="py-2">Mientras sea necesaria para generar y entregar resultados; las sesiones incompletas pueden depurarse automáticamente tras periodos prolongados de inactividad</td>
                 </tr>
                 <tr>
                   <td className="py-2 pr-4">Imágenes generadas por IA</td>
-                  <td className="py-2">12 meses o hasta solicitud de eliminación</td>
+                  <td className="py-2">Mientras la sesión permanezca disponible para el usuario o hasta solicitud de eliminación</td>
                 </tr>
                 <tr>
                   <td className="py-2 pr-4">Correo electrónico</td>
-                  <td className="py-2">Hasta cancelación de suscripción + 30 días</td>
+                  <td className="py-2">Mientras exista relación de servicio; para marketing, hasta baja o revocación más el periodo técnico mínimo de supresión</td>
                 </tr>
                 <tr>
                   <td className="py-2 pr-4">Datos de perfil (biométricos, objetivos)</td>
-                  <td className="py-2">12 meses o hasta solicitud de eliminación</td>
+                  <td className="py-2">Mientras sean necesarios para operar la sesión y entregar resultados, o hasta solicitud de eliminación</td>
                 </tr>
                 <tr>
                   <td className="py-2 pr-4">Indicadores de bienestar (estrés, sueño, disciplina)</td>
-                  <td className="py-2">90 días</td>
+                  <td className="py-2">Mientras sean necesarios para personalizar el análisis y el plan asociado a tu sesión</td>
                 </tr>
                 <tr>
                   <td className="py-2 pr-4">Página de resultados compartible</td>
-                  <td className="py-2">12 meses</td>
+                  <td className="py-2">Mientras la sesión siga activa o hasta solicitud de eliminación</td>
                 </tr>
               </tbody>
             </table>
           </div>
           <p className="text-sm text-neutral-300">
-            Una vez cumplidos estos plazos, procederemos a la supresión,
-            bloqueo o disociación de los datos conforme a la legislación
-            aplicable.
+            Los plazos exactos pueden variar según el estado de la sesión, la
+            necesidad operativa de mantener disponibles tus resultados y las
+            obligaciones legales aplicables. Una vez que los datos dejan de ser
+            necesarios, procederemos a su supresión, bloqueo o disociación
+            conforme a la legislación aplicable.
           </p>
         </section>
 
@@ -406,6 +418,6 @@ export default function PrivacyPage() {
           </div>
         </footer>
       </div>
-    </main>
+    </div>
   );
 }

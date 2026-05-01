@@ -19,7 +19,8 @@ import {
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 
 // Feature flag
-const FF_SHARE_TO_UNLOCK = process.env.FF_SHARE_TO_UNLOCK !== "false";
+const FF_SHARE_UNLOCK =
+  process.env.FF_SHARE_UNLOCK === "true" || process.env.FF_SHARE_TO_UNLOCK !== "false";
 
 const UnlockRequestSchema = z.object({
   shareId: z.string().min(1),
@@ -29,7 +30,7 @@ const UnlockRequestSchema = z.object({
 
 export async function POST(request: NextRequest) {
   // Check feature flag
-  if (!FF_SHARE_TO_UNLOCK) {
+  if (!FF_SHARE_UNLOCK) {
     return NextResponse.json(
       { success: false, message: "Feature not enabled" },
       { status: 403 }

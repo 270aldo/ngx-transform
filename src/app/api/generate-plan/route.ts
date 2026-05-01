@@ -34,7 +34,6 @@ export async function GET(request: NextRequest) {
     let level = "intermedio";
     let trainingDays = 4;
 
-    let personalized = false;
     try {
       const db = getDb();
       const sessionDoc = await db.collection("sessions").doc(shareId).get();
@@ -62,7 +61,6 @@ export async function GET(request: NextRequest) {
               ? 4
               : 5
             : 4;
-          personalized = true;
         }
       }
     } catch (dbError) {

@@ -14,8 +14,8 @@ import type { VariantTheme } from "./types";
 
 const BRAND_COLORS = {
   primary: "#6D00FF",
-  primaryHover: "#5b00d6",
-  accent: "#a78bfa",
+  primaryHover: "#7D1AFF",
+  accent: "#5B21B6",
 } as const;
 
 // ============================================================================

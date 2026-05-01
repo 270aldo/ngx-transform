@@ -208,6 +208,10 @@ export async function getReferrerStats(shareId: string): Promise<ReferrerStats |
  * Generate referral URL
  */
 export function generateReferralUrl(shareId: string, baseUrl?: string): string {
-  const base = baseUrl || process.env.NEXT_PUBLIC_BASE_URL || "";
+  const base =
+    baseUrl ||
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    "";
   return `${base}/s/${shareId}?ref=${shareId}`;
 }

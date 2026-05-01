@@ -29,7 +29,7 @@ const CAPABILITIES = {
   recuperacion: {
     label: "Biohacking y Recuperación",
     description: "Optimización del descanso y recuperación entre sesiones",
-    color: "#60a5fa",
+    color: "#7D1AFF",
   },
   habitos: {
     label: "Arquitectura de Hábitos",
@@ -56,7 +56,10 @@ export function AgentBridgeCTA({
 }: AgentBridgeCTAProps) {
   const capKey = selectCapability(userProfile);
   const capability = CAPABILITIES[capKey];
-  const bookingUrl = process.env.NEXT_PUBLIC_BOOKING_URL || "#";
+  const bookingUrl =
+    process.env.NEXT_PUBLIC_CALENDLY_URL ||
+    process.env.NEXT_PUBLIC_BOOKING_URL ||
+    "#";
 
   // Track event helper
   const trackEvent = useCallback(

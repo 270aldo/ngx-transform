@@ -40,7 +40,7 @@ const COLORS = {
   accent: {
     orange: "#FB923C",
     emerald: "#34D399",
-    blue: "#60A5FA",
+    blue: "#7D1AFF",
   },
 };
 

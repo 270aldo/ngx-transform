@@ -76,7 +76,7 @@ function buildCSP(isDev: boolean): string {
         .join("; ");
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
     const response = NextResponse.next();
     const isDev = process.env.NODE_ENV === "development";
 
@@ -103,8 +103,10 @@ export function middleware(request: NextRequest) {
 
         // In production, validate origin matches host
         if (!isDev && origin) {
+            const isLocalHost = Boolean(host && /^(localhost|127\.0\.0\.1)(:\d+)?$/.test(host));
             const allowedOrigins = [
                 `https://${host}`,
+                ...(isLocalHost ? [`http://${host}`, `https://${host}`] : []),
                 "https://ngx-transform.vercel.app",
                 // Add your production domains here
             ];

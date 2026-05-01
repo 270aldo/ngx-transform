@@ -18,8 +18,15 @@ import {
   ChevronRight,
   Brain,
 } from 'lucide-react';
-import type { AgentType, WidgetType, QuickAction as QuickActionType } from '@/types/genesis';
-import type { GenesisCapability } from '@/types/genesis';
+import type {
+  AgentType,
+  QuickAction as QuickActionType,
+  WorkoutData,
+  MealData,
+  InsightData,
+  ChecklistData,
+  GenesisCapability,
+} from '@/types/genesis';
 import { INITIAL_QUICK_ACTIONS, CONTEXTUAL_QUICK_ACTIONS } from '@/lib/genesis-demo/agents';
 import { WorkoutCard } from '@/components/widgets/WorkoutCard';
 import { MealPlan } from '@/components/widgets/MealPlan';
@@ -30,7 +37,7 @@ import { ChecklistWidget } from '@/components/widgets/ChecklistWidget';
 const CAPABILITY_META: Record<GenesisCapability, { label: string; color: string }> = {
   entrenamiento: { label: 'Entrenamiento', color: '#fb923c' },
   nutricion: { label: 'Nutrición', color: '#34d399' },
-  recuperacion: { label: 'Recuperación', color: '#60a5fa' },
+  recuperacion: { label: 'Recuperación', color: '#7D1AFF' },
   habitos: { label: 'Hábitos', color: '#a78bfa' },
 };
 
@@ -110,11 +117,14 @@ interface Message {
   agent: AgentType;
   capability: GenesisCapability;
   content: string;
-  widget?: {
-    type: WidgetType;
-    data: any;
-  };
+  widget?: DemoWidget;
 }
+
+type DemoWidget =
+  | { type: 'workout'; data: WorkoutData }
+  | { type: 'meal'; data: MealData }
+  | { type: 'insight'; data: InsightData }
+  | { type: 'checklist'; data: ChecklistData };
 
 interface DemoChatProps {
   shareId: string;

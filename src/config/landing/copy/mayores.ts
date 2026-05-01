@@ -17,8 +17,8 @@ import type { VariantCopy } from "../types";
 export const mayoresCopy: VariantCopy = {
   hero: {
     badge: {
-      aiLabel: "Tecnología Gemini AI",
-      version: "v2.1",
+      aiLabel: "Potenciado por GENESIS AI",
+      version: "HYBRID",
     },
     headline: {
       line1: "Recupera tu",
@@ -27,9 +27,16 @@ export const mayoresCopy: VariantCopy = {
     subtitle:
       "Visualiza cómo puedes mejorar tu bienestar físico en 12 meses. Análisis personalizado y seguro.",
     cta: "Ver Mi Proyección",
+    primaryCta: { label: "Ver Mi Proyección", intent: "scan_start" },
+    secondaryCta: "Cómo funciona",
+    supportingPoints: [
+      "Resultado claro en menos de 3 minutos.",
+      "GENESIS interpreta tus datos con honestidad.",
+      "Tú decides el siguiente paso, sin presión.",
+    ],
     socialProof: {
-      count: "+10,000 usuarios satisfechos",
-      label: "Esta semana",
+      count: "Procesamiento en minutos",
+      label: "Procesamiento seguro y controlado",
     },
     // Before/After transformation demo - images for wellness/vitality
     transformationDemo: {
@@ -41,10 +48,10 @@ export const mayoresCopy: VariantCopy = {
   },
 
   stats: [
-    { value: "99.9", suffix: "%", label: "Precisión" },
-    { value: "<3", suffix: "min", label: "Tiempo" },
-    { value: "1M", suffix: "+", label: "Usuarios" },
-    { value: "186", suffix: "+", label: "Países" },
+    { value: "4", suffix: " etapas", label: "De análisis a resultados" },
+    { value: "12", suffix: " meses", label: "Proyección personalizada" },
+    { value: "Acceso", suffix: "", label: "Privado con cuenta" },
+    { value: "IA +", suffix: " Coach", label: "Sistema HYBRID" },
   ],
 
   features: [
@@ -58,7 +65,8 @@ export const mayoresCopy: VariantCopy = {
     {
       icon: Shield,
       title: "Privacidad Garantizada",
-      description: "Tu foto se procesa de forma segura y se elimina automáticamente.",
+      description:
+        "Tu foto se procesa de forma segura y se conserva solo mientras es necesaria para operar el servicio y mantener disponibles tus resultados.",
       size: "medium",
       badge: "Datos protegidos",
     },
@@ -79,14 +87,14 @@ export const mayoresCopy: VariantCopy = {
         step: "01",
         title: "Comparte tu Foto",
         description:
-          "Una foto de cuerpo completo. Frontal y con buena iluminación.",
+          "Una foto de cuerpo completo. Frontal y con buena iluminación. El acceso es privado para resguardar tus resultados.",
         icon: Camera,
       },
       {
         step: "02",
         title: "Indica tus Objetivos",
         description:
-          "Cuéntanos sobre tu salud, actividad física y metas. Toma solo 2 minutos.",
+          "Cuéntanos sobre tu salud, actividad física y metas. Toma unos minutos.",
         icon: User,
       },
       {
@@ -106,13 +114,13 @@ export const mayoresCopy: VariantCopy = {
         text: "A mis 58 años, pensé que era tarde para mejorar. Esta proyección me mostró que aún tengo mucho potencial. Muy motivador.",
         name: "Roberto G.",
         role: "Usuario verificado",
-        gradient: "from-teal-400 to-emerald-400",
+        gradient: "from-violet-400 to-emerald-400",
       },
       {
         text: "Lo más útil fue ver el progreso gradual. No promesas irreales, sino una evolución que puedo lograr con constancia.",
         name: "María Elena P.",
         role: "Usuario verificado",
-        gradient: "from-blue-400 to-indigo-400",
+        gradient: "from-purple-400 to-fuchsia-400",
       },
       {
         text: "Como médico, aprecio que muestre proyecciones realistas. Mis pacientes lo usan para visualizar sus metas de salud.",
@@ -126,9 +134,9 @@ export const mayoresCopy: VariantCopy = {
   cta: {
     headline: "Tu bienestar comienza aquí",
     subtitle:
-      "Descubre cómo puedes mejorar tu salud física. Gratuito, confidencial y sin compromisos.",
+      "Descubre cómo puedes mejorar tu salud física. Acceso sin costo, resultados privados y control sobre tus datos.",
     buttonText: "Comenzar Ahora",
-    footnote: "Proceso simple de 3 minutos",
+    footnote: "Sin costo · Requiere cuenta · Proceso guiado",
   },
 
   footer: {

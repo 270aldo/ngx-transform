@@ -56,6 +56,13 @@ const MILESTONE_LABELS: Record<Milestone, { label: string; subtitle: string }> =
   m12: { label: "MES 12", subtitle: "Tu mejor versión" },
 };
 
+const LONGEVITY_CONTEXT: Record<Milestone, string> = {
+  m0: "Línea base. Tu cuerpo está perdiendo ~0.5% de masa muscular este año.",
+  m4: "+3kg masa magra = reducción estimada de 2 años en edad metabólica.",
+  m8: "Tu sensibilidad a insulina ha mejorado. Tu músculo trabaja para ti.",
+  m12: "Has revertido ~5 años de sarcopenia. Este es tu nuevo baseline.",
+};
+
 export function ChapterView({
   milestone,
   timelineEntry,
@@ -219,6 +226,21 @@ export function ChapterView({
                 )}
               </button>
             )}
+          </div>
+        </motion.div>
+
+        {/* Longevity context */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45 }}
+          className="mb-8"
+        >
+          <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-[#6D00FF]/10 border border-[#6D00FF]/20">
+            <span className="text-sm">🧬</span>
+            <p className="text-sm text-[#A78BFA] leading-snug">
+              {LONGEVITY_CONTEXT[milestone]}
+            </p>
           </div>
         </motion.div>
 

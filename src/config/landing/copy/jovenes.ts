@@ -18,8 +18,8 @@ import type { VariantCopy } from "../types";
 export const jovenesCopy: VariantCopy = {
   hero: {
     badge: {
-      aiLabel: "Powered by Gemini AI",
-      version: "v2.1",
+      aiLabel: "Potenciado por GENESIS AI",
+      version: "HYBRID",
     },
     headline: {
       line1: "Desbloquea tu",
@@ -28,9 +28,16 @@ export const jovenesCopy: VariantCopy = {
     subtitle:
       "IA que proyecta tu potencial físico en 12 meses. Tu mejor yo está a una foto de distancia.",
     cta: "Empezar Ahora",
+    primaryCta: { label: "Empezar Ahora", intent: "scan_start" },
+    secondaryCta: "Cómo funciona",
+    supportingPoints: [
+      "Resultado claro en menos de 3 minutos.",
+      "GENESIS interpreta tus datos con honestidad.",
+      "Tú decides el siguiente paso, sin presión.",
+    ],
     socialProof: {
-      count: "+10,000 atletas",
-      label: "Esta semana en NGX",
+      count: "Procesamiento en minutos",
+      label: "Procesamiento seguro y controlado",
     },
     // Before/After transformation demo
     transformationDemo: {
@@ -42,10 +49,10 @@ export const jovenesCopy: VariantCopy = {
   },
 
   stats: [
-    { value: "99.9", suffix: "%", label: "Precisión IA" },
-    { value: "<3", suffix: "min", label: "Análisis" },
-    { value: "1M", suffix: "+", label: "Transformaciones" },
-    { value: "186", suffix: "+", label: "Países" },
+    { value: "4", suffix: " etapas", label: "De análisis a resultados" },
+    { value: "12", suffix: " meses", label: "Proyección personalizada" },
+    { value: "Acceso", suffix: "", label: "Privado con cuenta" },
+    { value: "IA +", suffix: " Coach", label: "Sistema HYBRID" },
   ],
 
   features: [
@@ -58,8 +65,9 @@ export const jovenesCopy: VariantCopy = {
     },
     {
       icon: Shield,
-      title: "100% Privado",
-      description: "Tu foto se procesa y elimina. Cero rastro digital.",
+      title: "Privacidad Segura",
+      description:
+        "Tu foto se procesa de forma segura y se conserva solo mientras es necesaria para operar el servicio y entregarte resultados.",
       size: "medium",
       badge: "Encriptación E2E",
     },
@@ -74,20 +82,20 @@ export const jovenesCopy: VariantCopy = {
 
   howItWorks: {
     title: "Así de Simple",
-    subtitle: "De foto a proyección en menos de 3 minutos.",
+    subtitle: "De foto a proyección con seguimiento guiado.",
     steps: [
       {
         step: "01",
         title: "Sube tu Foto",
         description:
-          "Cuerpo completo, frontal. Una foto real, sin filtros.",
+          "Cuerpo completo, frontal. Una foto real, sin filtros. Necesitas acceso para guardar tus resultados.",
         icon: Camera,
       },
       {
         step: "02",
         title: "Cuéntanos tu Meta",
         description:
-          "Objetivos, nivel de entrenamiento, tiempo disponible. 2 minutos.",
+          "Objetivos, nivel de entrenamiento y tiempo disponible. Unos minutos.",
         icon: User,
       },
       {
@@ -119,7 +127,7 @@ export const jovenesCopy: VariantCopy = {
         text: "Como coach, mis atletas ven su proyección y se comprometen al 100%. La visualización es power.",
         name: "Marcos T.",
         role: "Strength Coach",
-        gradient: "from-blue-400 to-cyan-400",
+        gradient: "from-violet-400 to-fuchsia-400",
       },
     ],
   },
@@ -127,9 +135,9 @@ export const jovenesCopy: VariantCopy = {
   cta: {
     headline: "¿Listo para ver tu potencial?",
     subtitle:
-      "Miles ya desbloquearon su proyección. Gratis, sin registro, sin excusas.",
+      "Accede sin costo, crea tu sesión y recibe tu proyección con controles reales de privacidad.",
     buttonText: "Ver Mi Potencial",
-    footnote: "Análisis en menos de 3 minutos",
+    footnote: "Sin costo · Requiere cuenta · Proceso guiado",
   },
 
   footer: {

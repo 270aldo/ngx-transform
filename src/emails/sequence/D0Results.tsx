@@ -27,9 +27,12 @@ export default function D0Results({
   m12ImageUrl,
 }: D0ResultsProps) {
   const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || "https://transform.ngxgenesis.com";
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    "https://transform.ngxgenesis.com";
   const resultsUrl = `${baseUrl}/s/${shareId}`;
   const unsubscribeUrl = `${baseUrl}/unsubscribe?shareId=${shareId}`;
+  const logoUrl = `${baseUrl}/images/brand/logo.svg`;
 
   return (
     <Html>
@@ -40,9 +43,7 @@ export default function D0Results({
           <Container className="mx-auto my-8 max-w-xl">
             {/* Header */}
             <Section className="text-center mb-8">
-              <Text className="text-2xl font-bold text-white m-0">
-                NGX TRANSFORM
-              </Text>
+              <Img src={logoUrl} alt="NGX Genesis" width="140" className="mx-auto mb-3" />
               <Text className="text-sm text-neutral-500 m-0">
                 Tu proyección de 12 meses
               </Text>

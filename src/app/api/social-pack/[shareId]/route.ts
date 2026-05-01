@@ -14,7 +14,8 @@ import { getFormatConfig, isValidFormat } from "@/lib/viral/socialPackGenerator"
 import { recordDownload } from "@/lib/viral/shareUnlock";
 
 // Feature flag
-const FF_SHARE_TO_UNLOCK = process.env.FF_SHARE_TO_UNLOCK !== "false";
+const FF_SHARE_UNLOCK =
+  process.env.FF_SHARE_UNLOCK === "true" || process.env.FF_SHARE_TO_UNLOCK !== "false";
 
 export async function GET(
   request: NextRequest,
@@ -69,7 +70,7 @@ export async function GET(
     }
 
     // Check unlock status (if feature enabled)
-    if (FF_SHARE_TO_UNLOCK && !data.unlockState?.unlocked) {
+    if (FF_SHARE_UNLOCK && !data.unlockState?.unlocked) {
       return NextResponse.json(
         {
           success: false,

@@ -82,6 +82,13 @@ export type SessionStatus =
 export interface SessionDocument {
   shareId: string;
   email?: string | null;
+  consents?: {
+    termsAcceptedAt?: FirebaseFirestore.Timestamp | null;
+    aiProcessingAcceptedAt?: FirebaseFirestore.Timestamp | null;
+    marketingEmailOptIn?: boolean;
+    marketingEmailOptInAt?: FirebaseFirestore.Timestamp | null;
+    captureSource?: "wizard";
+  };
   input: {
     age: number;
     sex: "male" | "female" | "other";

@@ -19,7 +19,9 @@ export function ReferralCard({
 }: ReferralCardProps) {
   const [copied, setCopied] = useState(false);
   const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || "https://transform.ngxgenesis.com";
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    "https://transform.ngxgenesis.com";
   const referralLink = `${baseUrl}/?ref=${referralCode}`;
 
   // Track event helper

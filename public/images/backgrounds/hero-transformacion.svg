@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" fill="none">
+  <rect width="1600" height="900" fill="#050505"/>
+  <rect x="0" y="0" width="1600" height="900" fill="url(#bg)"/>
+
+  <g opacity="0.4" stroke="#6D00FF" stroke-opacity="0.15">
+    <path d="M0 120h1600"/>
+    <path d="M0 240h1600"/>
+    <path d="M0 360h1600"/>
+    <path d="M0 480h1600"/>
+    <path d="M0 600h1600"/>
+    <path d="M0 720h1600"/>
+    <path d="M160 0v900"/>
+    <path d="M320 0v900"/>
+    <path d="M480 0v900"/>
+    <path d="M640 0v900"/>
+    <path d="M800 0v900"/>
+    <path d="M960 0v900"/>
+    <path d="M1120 0v900"/>
+    <path d="M1280 0v900"/>
+    <path d="M1440 0v900"/>
+  </g>
+
+  <circle cx="320" cy="450" r="260" fill="#2B114A" opacity="0.85"/>
+  <circle cx="1210" cy="450" r="290" fill="#6D00FF" opacity="0.28"/>
+  <circle cx="840" cy="480" r="170" fill="#6D00FF" opacity="0.2"/>
+
+  <g opacity="0.82">
+    <rect x="600" y="250" width="200" height="110" rx="16" fill="#0B0B0E" stroke="#6D00FF" stroke-opacity="0.35"/>
+    <rect x="840" y="220" width="190" height="120" rx="16" fill="#0B0B0E" stroke="#6D00FF" stroke-opacity="0.32"/>
+    <rect x="760" y="380" width="220" height="130" rx="16" fill="#0B0B0E" stroke="#6D00FF" stroke-opacity="0.36"/>
+    <rect x="540" y="430" width="210" height="125" rx="16" fill="#0B0B0E" stroke="#6D00FF" stroke-opacity="0.3"/>
+    <rect x="1020" y="400" width="180" height="120" rx="16" fill="#0B0B0E" stroke="#6D00FF" stroke-opacity="0.32"/>
+  </g>
+
+  <g opacity="0.9">
+    <path d="M300 680C400 620 470 520 470 430C470 340 420 280 350 240C280 280 230 340 230 430C230 520 300 620 300 680Z" fill="#0D0D11" stroke="#6D00FF" stroke-opacity="0.2"/>
+    <path d="M1260 720C1390 660 1460 560 1460 430C1460 300 1390 210 1260 170C1130 210 1060 300 1060 430C1060 560 1130 660 1260 720Z" fill="#1A0E2E" stroke="#6D00FF" stroke-opacity="0.45"/>
+  </g>
+
+  <g opacity="0.95">
+    <text x="800" y="120" text-anchor="middle" fill="#F4EEFF" font-size="72" font-family="'JetBrains Mono', monospace" font-weight="700" letter-spacing="-1.5">VISUALIZA TU</text>
+    <text x="800" y="210" text-anchor="middle" fill="#DCC9FF" font-size="72" font-family="'JetBrains Mono', monospace" font-weight="700" letter-spacing="-1.5">TRANSFORMACIÓN</text>
+  </g>
+
+  <defs>
+    <radialGradient id="bg" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(800 450) rotate(90) scale(520 950)">
+      <stop stop-color="#18072E"/>
+      <stop offset="1" stop-color="#050505"/>
+    </radialGradient>
+  </defs>
+</svg>

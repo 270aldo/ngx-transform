@@ -59,10 +59,10 @@ const SHARE_PLATFORMS: Array<{
   label: string;
   color: string;
 }> = [
-  { id: "whatsapp", icon: MessageCircle, label: "WhatsApp", color: "#25D366" },
-  { id: "instagram", icon: Instagram, label: "Instagram", color: "#E1306C" },
-  { id: "twitter", icon: Twitter, label: "Twitter", color: "#1DA1F2" },
-  { id: "facebook", icon: Facebook, label: "Facebook", color: "#1877F2" },
+  { id: "whatsapp", icon: MessageCircle, label: "WhatsApp", color: "#22C55E" },
+  { id: "instagram", icon: Instagram, label: "Instagram", color: "#A855F7" },
+  { id: "twitter", icon: Twitter, label: "Twitter", color: "#6D00FF" },
+  { id: "facebook", icon: Facebook, label: "Facebook", color: "#7D1AFF" },
   { id: "copy", icon: Copy, label: "Copiar link", color: "#6D00FF" },
 ];
 

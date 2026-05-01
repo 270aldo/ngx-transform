@@ -53,10 +53,17 @@ export type FunnelEvent =
   | "email_D0_sent"
   | "email_D1_sent"
   | "email_D3_sent"
+  | "email_D5_sent"
   | "email_D7_sent"
+  | "email_D10_sent"
+  | "email_D14_sent"
   | "agent_cta_viewed"
   | "agent_cta_clicked"
-  | "referral_code_copied";
+  | "referral_code_copied"
+  | "hybrid_offer_calendly_click"
+  | "hybrid_offer_whatsapp_click"
+  | "hybrid_offer_chat_click"
+  | "nps_submitted";
 
 export interface EventPayload {
   sessionId: string;

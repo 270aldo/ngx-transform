@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
+import { Logo } from "@/components/ui/Logo";
 
 const LOADING_STEPS = [
     "Iniciando escaneo biométrico...",
@@ -15,11 +15,11 @@ const LOADING_STEPS = [
 ];
 
 const TIPS = [
-    "💡 La disciplina vence a la motivación el 100% de las veces.",
-    "💡 Tu cuerpo es el reflejo directo de tu mente.",
-    "💡 El dolor de hoy es la fuerza de mañana.",
-    "💡 No busques tiempo, créalo.",
-    "💡 La consistencia es la clave del alto rendimiento."
+    "La disciplina vence a la motivación cuando hay sistema.",
+    "Tu cuerpo refleja la calidad de tus decisiones diarias.",
+    "La constancia es el multiplicador de resultados.",
+    "No busques tiempo, diseña tu entorno para crearlo.",
+    "La consistencia es la clave del alto rendimiento."
 ];
 
 export function BiometricLoader() {
@@ -61,7 +61,7 @@ export function BiometricLoader() {
     }, []);
 
     return (
-        <div className="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center text-white overflow-hidden font-mono">
+        <div className="fixed inset-0 bg-[#050505]/95 z-50 flex flex-col items-center justify-center text-white overflow-hidden font-mono">
             {/* Background Grid Animation */}
             <div className="absolute inset-0 opacity-20 pointer-events-none">
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
@@ -91,6 +91,9 @@ export function BiometricLoader() {
 
             {/* Status Text */}
             <div className="space-y-2 text-center z-10 max-w-md px-6">
+                <div className="flex justify-center mb-3">
+                    <Logo variant="full" size="md" />
+                </div>
                 <h2 className="text-xl font-bold text-[#6D00FF] tracking-widest uppercase animate-pulse">
                     {LOADING_STEPS[stepIndex]}
                 </h2>

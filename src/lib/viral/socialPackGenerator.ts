@@ -58,7 +58,11 @@ export function getSocialPackDownloadUrls(
   shareId: string,
   baseUrl?: string
 ): Record<string, string> {
-  const base = baseUrl || process.env.NEXT_PUBLIC_BASE_URL || "";
+  const base =
+    baseUrl ||
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    "";
 
   return {
     story: `${base}/api/social-pack/${shareId}?format=story`,

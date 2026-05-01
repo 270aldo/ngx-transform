@@ -2,15 +2,16 @@
 
 import type { VariantId } from "@/config/landing";
 import { useVariantTracking } from "@/hooks/useVariantTracking";
-import { AnimatedBlobs } from "./AnimatedBlobs";
 import { ScrollAnimator } from "./ScrollAnimator";
 import { LandingProvider } from "./LandingProvider";
+import { LandingTopNav } from "./LandingTopNav";
 import { LandingHero } from "./LandingHero";
+import { LandingProblem } from "./LandingProblem";
 import { LandingStats } from "./LandingStats";
-import { LandingFeatures } from "./LandingFeatures";
 import { LandingHowItWorks } from "./LandingHowItWorks";
-import { LandingExplainerVideo } from "./LandingExplainerVideo";
-import { LandingTestimonials } from "./LandingTestimonials";
+import { LandingValueStack } from "./LandingValueStack";
+import { LandingBridge } from "./LandingBridge";
+import { LandingFAQ } from "./LandingFAQ";
 import { LandingCTA } from "./LandingCTA";
 import { LandingFooter } from "./LandingFooter";
 import { StickyCTA } from "./StickyCTA";
@@ -35,17 +36,17 @@ export function LandingPage({ variant = "general" }: LandingPageProps) {
     <LandingProvider variant={variant}>
       <ScrollAnimator>
         <div className="relative min-h-screen overflow-x-hidden selection:bg-[#6D00FF] selection:text-white">
-          {/* Background */}
-          <AnimatedBlobs />
+          <LandingTopNav />
 
           {/* Main Content */}
           <main className="relative z-10 pt-32 pb-20">
             <LandingHero />
-            <LandingStats />
-            <LandingFeatures />
+            <LandingProblem />
             <LandingHowItWorks />
-            <LandingExplainerVideo />
-            <LandingTestimonials />
+            <LandingValueStack />
+            <LandingStats />
+            <LandingBridge />
+            <LandingFAQ />
             <LandingCTA />
           </main>
 

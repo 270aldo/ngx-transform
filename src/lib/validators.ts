@@ -48,10 +48,18 @@ export type Profile = z.infer<typeof ProfileSchema>;
 // Session Management
 // ============================================================================
 
+export const SessionConsentsSchema = z.object({
+  terms: z.literal(true),
+  aiProcessing: z.literal(true),
+  marketingEmailOptIn: z.boolean().default(false),
+  captureSource: z.enum(["wizard"]).default("wizard"),
+});
+
 export const CreateSessionSchema = z.object({
   email: z.string().email().optional(),
   input: ProfileSchema,
   photoPath: z.string(),
+  consents: SessionConsentsSchema,
   /** Landing page variant for A/B testing analytics */
   landingVariant: z.enum(["general", "jovenes", "mayores"]).optional(),
 });
@@ -128,10 +136,17 @@ export const TelemetryEventSchema = z.object({
     "email_D0_sent",
     "email_D1_sent",
     "email_D3_sent",
+    "email_D5_sent",
     "email_D7_sent",
+    "email_D10_sent",
+    "email_D14_sent",
     "agent_cta_viewed",
     "agent_cta_clicked",
     "referral_code_copied",
+    "hybrid_offer_calendly_click",
+    "hybrid_offer_whatsapp_click",
+    "hybrid_offer_chat_click",
+    "nps_submitted",
   ]),
   stage: z.string().optional(),
   model_id: z.string().optional(),
@@ -168,6 +183,7 @@ export const FeatureFlagsSchema = z.object({
   FF_LETTER_FROM_FUTURE: z.boolean().default(true),
   FF_OG_SPLIT_SCREEN: z.boolean().default(true),
   FF_SHARE_TO_UNLOCK: z.boolean().default(true),
+  FF_SHARE_UNLOCK: z.boolean().default(true),
   FF_REFERRAL_TRACKING: z.boolean().default(true),
   FF_PLAN_7_DIAS: z.boolean().default(true),
   FF_EMAIL_SEQUENCE: z.boolean().default(true),
@@ -195,6 +211,9 @@ export function getFeatureFlags(): FeatureFlags {
     FF_LETTER_FROM_FUTURE: process.env.FF_LETTER_FROM_FUTURE !== "false",
     FF_OG_SPLIT_SCREEN: process.env.FF_OG_SPLIT_SCREEN !== "false",
     FF_SHARE_TO_UNLOCK: process.env.FF_SHARE_TO_UNLOCK !== "false",
+    FF_SHARE_UNLOCK:
+      process.env.FF_SHARE_UNLOCK === "true" ||
+      process.env.FF_SHARE_TO_UNLOCK !== "false",
     FF_REFERRAL_TRACKING: process.env.FF_REFERRAL_TRACKING !== "false",
     FF_PLAN_7_DIAS: process.env.FF_PLAN_7_DIAS !== "false",
     FF_EMAIL_SEQUENCE: process.env.FF_EMAIL_SEQUENCE !== "false",
