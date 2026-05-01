@@ -50,5 +50,5 @@ jobs:
       - name: Unit tests (Vitest)
         run: pnpm test
 
-      - name: Smoke tests
-        run: pnpm test:smoke
+      # Smoke tests intentionally not run here — they hit a live URL.
+      # Run them in a separate workflow against a deployed preview/staging.
