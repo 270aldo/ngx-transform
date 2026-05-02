@@ -1,11 +1,14 @@
 /**
- * PR-1: Centralized Image Configuration for Nano Banana Pro
+ * Centralized Image Configuration for Nano Banana
  *
  * This module provides all configuration for image generation including:
- * - Model settings (Gemini 3 Pro Image vs 2.5 Flash Image)
+ * - Model settings (Gemini 3.1 Flash Image vs Gemini 3 Pro Image)
  * - Aspect ratios and sizes
  * - Cost optimization strategies (standard vs batch)
  * - Identity Chain configuration
+ *
+ * Default image model: gemini-3.1-flash-image-preview (NanoBanana 2)
+ * Pro image model:     gemini-3-pro-image-preview    (NanoBanana Pro, FF_NB_PRO=true)
  */
 
 import { getFeatureFlags } from "./validators";
@@ -44,9 +47,11 @@ export interface CostEstimate {
 
 // Model identifiers
 export const MODELS = {
-  // Gemini 3 Pro Image (Nano Banana Pro) - Higher quality, Identity Chain support, up to 4K
+  // Gemini 3.1 Flash Image (NanoBanana 2) - Default, high-efficiency, released 2026-02-26
+  GEMINI_31_FLASH_IMAGE: "gemini-3.1-flash-image-preview",
+  // Gemini 3 Pro Image (NanoBanana Pro) - Higher quality, Identity Chain support, up to 4K
   GEMINI_3_PRO_IMAGE: "gemini-3-pro-image-preview",
-  // Gemini 2.5 Flash Image (Legacy/Stable) - Faster, lower cost
+  // Gemini 2.5 Flash Image (Legacy) - kept for backward compatibility only
   GEMINI_25_FLASH_IMAGE: "gemini-2.5-flash-image",
 } as const;
 
@@ -58,10 +63,10 @@ function resolveImageModel(ffNbProEnabled: boolean): string {
 
   const genericModel = process.env.GEMINI_MODEL?.trim();
   if (genericModel) {
-    // Compatibility: users often set GEMINI_MODEL=gemini-2.5-flash for text.
+    // Compatibility: users often set GEMINI_MODEL for text analysis.
     // For image generation we map it to the corresponding image-capable model.
-    if (genericModel === "gemini-2.5-flash") {
-      return MODELS.GEMINI_25_FLASH_IMAGE;
+    if (genericModel === "gemini-2.5-flash" || genericModel === "gemini-3.1-flash") {
+      return MODELS.GEMINI_31_FLASH_IMAGE;
     }
     if (genericModel.includes("image")) {
       return genericModel;
@@ -70,7 +75,7 @@ function resolveImageModel(ffNbProEnabled: boolean): string {
 
   return ffNbProEnabled
     ? MODELS.GEMINI_3_PRO_IMAGE
-    : MODELS.GEMINI_25_FLASH_IMAGE;
+    : MODELS.GEMINI_31_FLASH_IMAGE;
 }
 
 // Cost per image (USD) - Based on official Gemini pricing

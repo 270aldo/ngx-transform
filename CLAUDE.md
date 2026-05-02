@@ -388,8 +388,9 @@ UPSTASH_REDIS_REST_URL=          # From https://console.upstash.com/redis
 UPSTASH_REDIS_REST_TOKEN=        # From https://console.upstash.com/redis
 
 # Optional - AI Models
-GEMINI_IMAGE_MODEL=gemini-2.5-pro-image-preview  # Default model
-PLAN_GENERATION_MODEL=gemini-2.5-flash           # Plan generation model
+GEMINI_IMAGE_MODEL=gemini-3.1-flash-image-preview  # Default image model (NanoBanana 2)
+GEMINI_IMAGE_MODEL=gemini-3-pro-image-preview      # Pro image model (Identity Chain, FF_NB_PRO=true)
+PLAN_GENERATION_MODEL=gemini-2.5-flash             # Plan generation model
 
 # Optional - Email
 RESEND_API_KEY=                  # For email sharing
