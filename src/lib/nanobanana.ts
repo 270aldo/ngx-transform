@@ -1,10 +1,11 @@
 /**
- * PR-1: NanoBanana Pro - Gemini Image Generation with Identity Chain
+ * NanoBanana — Gemini Image Generation with Identity Chain
  *
  * "NanoBanana" is the internal alias for Gemini image generation.
  * This module supports:
- * - Gemini 3 Pro Image (gemini-3-pro-image-preview) with Identity Chain
- * - Gemini 2.5 Flash Image (gemini-2.5-flash-image-preview) legacy mode
+ * - Gemini 3.1 Flash Image (gemini-3.1-flash-image-preview) — Default, NanoBanana 2
+ * - Gemini 3 Pro Image (gemini-3-pro-image-preview) — Identity Chain, FF_NB_PRO=true
+ * - Gemini 2.5 Flash Image (gemini-2.5-flash-image) — Legacy, not recommended
  *
  * Identity Chain: Multi-reference generation for facial consistency
  * - m4 refs: [original, styleRef]

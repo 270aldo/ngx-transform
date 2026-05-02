@@ -30,6 +30,7 @@ plan/ (Gemini 2.0 Flash Lite)
 ## 1. Profile Analysis — `gemini.ts`
 
 **Model:** Gemini 2.5 Flash (configurable via `GEMINI_MODEL`)
+> ⚠️ Consider upgrading to `gemini-3.1-flash` for text analysis (same API, better quality).
 
 **Exported functions:**
 
@@ -92,8 +93,9 @@ NO: CGI, cartoon, plastic skin, extra limbs, face drift, multiple subjects
 ## 3. Image Generation — `nanobanana.ts`
 
 **Model support:**
-- `gemini-3-pro-image-preview` — Identity Chain enabled (when `FF_NB_PRO=true`)
-- `gemini-2.5-flash-image-preview` — Legacy mode
+- `gemini-3.1-flash-image-preview` — Default (NanoBanana 2, released 2026-02-26)
+- `gemini-3-pro-image-preview` — Identity Chain enabled (when `FF_NB_PRO=true`, NanoBanana Pro)
+- `gemini-2.5-flash-image` — Legacy mode (not recommended)
 - Configurable via `GEMINI_IMAGE_MODEL` env var
 
 **Exported functions:**

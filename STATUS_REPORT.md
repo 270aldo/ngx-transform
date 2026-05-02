@@ -19,7 +19,7 @@
 | Backend/DB | Firebase Admin SDK | 13.5.0 |
 | Storage | Google Cloud Storage | Via Firebase |
 | AI Insights | Google Gemini 2.5 Flash | gemini-2.5-flash |
-| AI Images | Gemini Image API | gemini-2.5-flash-image-preview |
+| AI Images | Gemini Image API | gemini-3.1-flash-image-preview |
 | Email | Resend | 6.0.3 |
 | Image Processing | Sharp | 0.33.4 |
 | Visualización | Recharts | 3.5.0 |
@@ -98,7 +98,7 @@ FIREBASE_PRIVATE_KEY="-----BEGIN..."
 
 # Gemini AI (requerido)
 GEMINI_API_KEY=
-GEMINI_IMAGE_MODEL=gemini-2.5-flash-image-preview
+GEMINI_IMAGE_MODEL=gemini-3.1-flash-image-preview
 
 # Email (opcional)
 RESEND_API_KEY=
