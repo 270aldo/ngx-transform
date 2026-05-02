@@ -1,9 +1,13 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   ProfileSchema,
   CreateSessionSchema,
   SessionConsentsSchema,
   TelemetryEventSchema,
+  LeadSchema,
+  GenerateImagesSchema,
+  DeleteSessionSchema,
+  getFeatureFlags,
 } from "./validators";
 
 const validProfile = {
@@ -114,5 +118,131 @@ describe("TelemetryEventSchema", () => {
   it("rejects unknown events", () => {
     const result = TelemetryEventSchema.safeParse({ sessionId: "abc", event: "made_up_event" });
     expect(result.success).toBe(false);
+  });
+});
+
+// ============================================================================
+// LeadSchema
+// ============================================================================
+
+describe("LeadSchema", () => {
+  it("accepts valid lead with consent=true", () => {
+    const result = LeadSchema.safeParse({ email: "lead@example.com", consent: true });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects when consent is false", () => {
+    const result = LeadSchema.safeParse({ email: "lead@example.com", consent: false });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects invalid email", () => {
+    const result = LeadSchema.safeParse({ email: "not-an-email", consent: true });
+    expect(result.success).toBe(false);
+  });
+
+  it("accepts optional source field", () => {
+    const result = LeadSchema.safeParse({
+      email: "lead@example.com",
+      consent: true,
+      source: "landing_hero",
+    });
+    expect(result.success).toBe(true);
+  });
+});
+
+// ============================================================================
+// GenerateImagesSchema
+// ============================================================================
+
+describe("GenerateImagesSchema", () => {
+  it("accepts sessionId only — steps defaults to [m4, m8, m12]", () => {
+    const result = GenerateImagesSchema.safeParse({ sessionId: "abc123" });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.steps).toEqual(["m4", "m8", "m12"]);
+    }
+  });
+
+  it("accepts a subset of steps", () => {
+    const result = GenerateImagesSchema.safeParse({ sessionId: "abc123", steps: ["m4", "m12"] });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects invalid step value", () => {
+    const result = GenerateImagesSchema.safeParse({ sessionId: "abc123", steps: ["m4", "m99"] });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects empty sessionId", () => {
+    const result = GenerateImagesSchema.safeParse({ sessionId: "" });
+    expect(result.success).toBe(false);
+  });
+});
+
+// ============================================================================
+// DeleteSessionSchema
+// ============================================================================
+
+describe("DeleteSessionSchema", () => {
+  const validToken = "a".repeat(20); // minimum 20 chars
+
+  it("accepts sessionId + 20-char token", () => {
+    const result = DeleteSessionSchema.safeParse({ sessionId: "sess_abc", deleteToken: validToken });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects token shorter than 20 chars", () => {
+    const result = DeleteSessionSchema.safeParse({ sessionId: "sess_abc", deleteToken: "short" });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects token longer than 64 chars", () => {
+    const result = DeleteSessionSchema.safeParse({
+      sessionId: "sess_abc",
+      deleteToken: "a".repeat(65),
+    });
+    expect(result.success).toBe(false);
+  });
+});
+
+// ============================================================================
+// getFeatureFlags
+// ============================================================================
+
+describe("getFeatureFlags", () => {
+  let savedNbPro: string | undefined;
+  let savedIdentityChain: string | undefined;
+
+  beforeEach(() => {
+    savedNbPro = process.env.FF_NB_PRO;
+    savedIdentityChain = process.env.FF_IDENTITY_CHAIN;
+  });
+
+  afterEach(() => {
+    if (savedNbPro === undefined) delete process.env.FF_NB_PRO;
+    else process.env.FF_NB_PRO = savedNbPro;
+    if (savedIdentityChain === undefined) delete process.env.FF_IDENTITY_CHAIN;
+    else process.env.FF_IDENTITY_CHAIN = savedIdentityChain;
+  });
+
+  it("FF_NB_PRO defaults to false when env var is absent", () => {
+    delete process.env.FF_NB_PRO;
+    expect(getFeatureFlags().FF_NB_PRO).toBe(false);
+  });
+
+  it("FF_NB_PRO is true when env var is 'true'", () => {
+    process.env.FF_NB_PRO = "true";
+    expect(getFeatureFlags().FF_NB_PRO).toBe(true);
+  });
+
+  it("FF_IDENTITY_CHAIN defaults to true when env var is absent", () => {
+    delete process.env.FF_IDENTITY_CHAIN;
+    expect(getFeatureFlags().FF_IDENTITY_CHAIN).toBe(true);
+  });
+
+  it("FF_IDENTITY_CHAIN is false when env var is 'false'", () => {
+    process.env.FF_IDENTITY_CHAIN = "false";
+    expect(getFeatureFlags().FF_IDENTITY_CHAIN).toBe(false);
   });
 });
