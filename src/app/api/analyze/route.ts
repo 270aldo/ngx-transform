@@ -23,7 +23,7 @@ import type { SessionDocument } from "@/types/ai";
 // ============================================================================
 
 const MAX_RETRIES = Number(process.env.MAX_ANALYSIS_RETRIES || "3");
-const MODEL_ID = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+const MODEL_ID = process.env.GEMINI_MODEL || "gemini-3.1-flash";
 
 // ============================================================================
 // Route Handler

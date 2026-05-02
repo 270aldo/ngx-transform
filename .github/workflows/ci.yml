@@ -29,9 +29,8 @@ jobs:
       - name: Lint
         run: pnpm lint
 
-      # NOTE: `pnpm exec tsc --noEmit` is currently disabled until pre-existing
-      # type errors in src/components/landing/* and src/components/shadcn/ui/button.tsx
-      # are resolved. Re-enable once green.
+      - name: Type check
+        run: pnpm exec tsc --noEmit
 
       - name: Build
         env:
