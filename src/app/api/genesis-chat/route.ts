@@ -10,6 +10,8 @@ import { DemoUserResponses } from "@/types/demo";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 import { getAuthUser } from "@/lib/authServer";
 
+export const runtime = "nodejs";
+
 // Request schema
 const requestSchema = z.object({
   shareId: z.string().min(1),

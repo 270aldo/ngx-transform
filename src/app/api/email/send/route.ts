@@ -21,6 +21,8 @@ import D10Urgency from "@/emails/sequence/D10Urgency";
 import D14Final from "@/emails/sequence/D14Final";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 
+export const runtime = "nodejs";
+
 // Lazy initialization of Resend to avoid build errors
 function getResend(): Resend | null {
   const apiKey = process.env.RESEND_API_KEY;

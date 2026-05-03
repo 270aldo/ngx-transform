@@ -18,6 +18,8 @@ import {
 } from "@/lib/jobManager";
 import type { SessionDocument } from "@/types/ai";
 
+export const runtime = "nodejs";
+
 // ============================================================================
 // Constants
 // ============================================================================

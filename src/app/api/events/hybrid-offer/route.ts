@@ -5,6 +5,8 @@ import { FieldValue } from "firebase-admin/firestore";
 import { sendN8NWebhook } from "@/lib/n8nWebhook";
 import { checkRateLimit, getClientIP, getRateLimitHeaders } from "@/lib/rateLimit";
 
+export const runtime = "nodejs";
+
 const EventSchema = z.object({
   shareId: z.string().min(1),
   event: z.enum([

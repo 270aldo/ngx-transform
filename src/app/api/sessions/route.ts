@@ -15,6 +15,8 @@ import {
 import { requireAuth } from "@/lib/authServer";
 import { sendN8NWebhook } from "@/lib/n8nWebhook";
 
+export const runtime = "nodejs";
+
 /**
  * Genera un token seguro para acciones destructivas
  */

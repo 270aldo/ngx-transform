@@ -4,6 +4,8 @@ import { getDb } from "@/lib/firebaseAdmin";
 import { requireAuth } from "@/lib/authServer";
 import { FieldValue } from "firebase-admin/firestore";
 
+export const runtime = "nodejs";
+
 const ShareSettingsSchema = z
   .object({
     shareOriginal: z.boolean().optional(),

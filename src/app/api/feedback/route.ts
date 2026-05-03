@@ -4,6 +4,8 @@ import { getDb } from "@/lib/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
 import { checkRateLimit, getClientIP, getRateLimitHeaders } from "@/lib/rateLimit";
 
+export const runtime = "nodejs";
+
 const FeedbackSchema = z.object({
   shareId: z.string().min(1),
   score: z.number().int().min(1).max(10),

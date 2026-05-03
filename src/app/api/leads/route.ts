@@ -4,6 +4,8 @@ import { LeadSchema } from "@/lib/validators";
 import { FieldValue } from "firebase-admin/firestore";
 import { isEmailSuppressed } from "@/lib/emailSuppression";
 
+export const runtime = "nodejs";
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();

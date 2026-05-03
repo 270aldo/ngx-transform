@@ -3,6 +3,8 @@ import { getDb } from "@/lib/firebaseAdmin";
 import { requireAuth } from "@/lib/authServer";
 import type { Timestamp } from "firebase-admin/firestore";
 
+export const runtime = "nodejs";
+
 export async function GET(req: Request) {
   try {
     const authUser = await requireAuth(req);

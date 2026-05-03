@@ -6,6 +6,8 @@ import { checkRateLimit, getRateLimitHeaders } from "@/lib/rateLimit";
 import { getDb } from "@/lib/firebaseAdmin";
 import { isEmailSuppressed } from "@/lib/emailSuppression";
 
+export const runtime = "nodejs";
+
 // Validation schema
 const remarketingSchema = z.object({
   email: z.string().email("Email inválido"),

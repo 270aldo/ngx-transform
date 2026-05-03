@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/firebaseAdmin";
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
 
+export const runtime = "nodejs";
+
 const COUNTER_DOC = "counters/global_transforms";
 const SEED_COUNT = Number(process.env.SOCIAL_COUNTER_SEED_TOTAL || "8547");
 const WEEKLY_SEED = Number(process.env.SOCIAL_COUNTER_SEED_WEEKLY || "2341");
