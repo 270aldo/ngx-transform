@@ -3,13 +3,43 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 
-export function BookingCTA() {
+interface BookingCTAProps {
+  /**
+   * Session/share id for conversion attribution. When omitted the CTA
+   * still renders but click events fire without a sessionId — which
+   * means they won't show up in funnel reports. Pass it whenever
+   * available (we already have it in TransformationViewer{,2}.tsx).
+   */
+  shareId?: string;
+}
+
+export function BookingCTA({ shareId }: BookingCTAProps = {}) {
   const bookingUrl =
     process.env.NEXT_PUBLIC_CALENDLY_URL ||
     process.env.NEXT_PUBLIC_BOOKING_URL;
 
   // Don't render if no booking URL configured
   if (!bookingUrl) return null;
+
+  const handleClick = () => {
+    // Fire-and-forget — never block the navigation if telemetry fails.
+    // Using direct fetch to /api/telemetry (not the server-only helper)
+    // because this is a client component and `@/lib/telemetry` imports
+    // firebase-admin. AUDIT-033: previously untracked; conversion
+    // funnel only saw AgentBridgeCTA clicks.
+    if (shareId) {
+      void fetch("/api/telemetry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: shareId,
+          event: "cta_clicked",
+          metadata: { source: "booking", url: bookingUrl },
+        }),
+        keepalive: true,
+      }).catch(() => {});
+    }
+  };
 
   return (
     <motion.div
@@ -21,6 +51,7 @@ export function BookingCTA() {
         href={bookingUrl}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={handleClick}
         className="block group"
       >
         <div className="relative overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-[var(--primary)] via-[var(--accent)] to-[var(--primary)] p-4 sm:p-6 lg:p-8">

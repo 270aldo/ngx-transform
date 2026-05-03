@@ -101,7 +101,7 @@ export function TransformationViewer({ ai, imageUrls, shareId, isReady = true }:
 
             {/* Booking CTA */}
             <div className="mt-8 lg:mt-12">
-              <BookingCTA />
+              <BookingCTA shareId={shareId} />
             </div>
           </div>
 

@@ -147,6 +147,11 @@ export const TelemetryEventSchema = z.object({
     "hybrid_offer_whatsapp_click",
     "hybrid_offer_chat_click",
     "nps_submitted",
+    // Genesis demo (AUDIT-034)
+    "demo_started",
+    "demo_message_sent",
+    "demo_completed",
+    "demo_abandoned",
   ]),
   stage: z.string().optional(),
   model_id: z.string().optional(),

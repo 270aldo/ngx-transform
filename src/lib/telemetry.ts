@@ -63,7 +63,12 @@ export type FunnelEvent =
   | "hybrid_offer_calendly_click"
   | "hybrid_offer_whatsapp_click"
   | "hybrid_offer_chat_click"
-  | "nps_submitted";
+  | "nps_submitted"
+  // Genesis demo (AUDIT-034)
+  | "demo_started"
+  | "demo_message_sent"
+  | "demo_completed"
+  | "demo_abandoned";
 
 export interface EventPayload {
   sessionId: string;
@@ -387,4 +392,31 @@ export const telemetry = {
 
   emailSent: (sessionId: string) =>
     trackEvent({ sessionId, event: "email_sent" }),
+
+  // Genesis demo events (AUDIT-034)
+  demoStarted: (sessionId: string) =>
+    trackEvent({ sessionId, event: "demo_started" }),
+
+  demoMessageSent: (sessionId: string, interactionIndex: number) =>
+    trackEvent({
+      sessionId,
+      event: "demo_message_sent",
+      metadata: { interactionIndex },
+    }),
+
+  demoCompleted: (sessionId: string, totalInteractions: number, durationMs?: number) =>
+    trackEvent({
+      sessionId,
+      event: "demo_completed",
+      latency_ms: durationMs,
+      metadata: { totalInteractions },
+    }),
+
+  demoAbandoned: (sessionId: string, completedInteractions: number, durationMs?: number) =>
+    trackEvent({
+      sessionId,
+      event: "demo_abandoned",
+      latency_ms: durationMs,
+      metadata: { completedInteractions },
+    }),
 };
