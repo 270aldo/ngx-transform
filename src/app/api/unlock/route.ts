@@ -17,6 +17,9 @@ import {
   type UnlockType,
 } from "@/lib/viral/shareUnlock";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
+import { getDb } from "@/lib/firebaseAdmin";
+
+export const runtime = "nodejs";
 
 // Feature flag
 const FF_SHARE_UNLOCK =
@@ -63,6 +66,18 @@ export async function POST(request: NextRequest) {
     }
 
     const { shareId, action, unlockType } = validation.data;
+
+    // AUDIT-018 — verify session exists before mutation. Without this,
+    // attacker iterating shareIds could pollute share-intent counters
+    // and unlock state on arbitrary sessions.
+    const db = getDb();
+    const sessionSnap = await db.collection("sessions").doc(shareId).get();
+    if (!sessionSnap.exists) {
+      return NextResponse.json(
+        { success: false, message: "Session not found" },
+        { status: 404 }
+      );
+    }
 
     if (action === "share_intent") {
       // Record that user opened share dialog

@@ -20,6 +20,10 @@ import {
   getReferrerStats,
 } from "@/lib/viral/referralTracking";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
+import { getAuthUser } from "@/lib/authServer";
+import { getDb } from "@/lib/firebaseAdmin";
+
+export const runtime = "nodejs";
 
 // Feature flag
 const FF_REFERRAL_TRACKING = process.env.FF_REFERRAL_TRACKING !== "false";
@@ -107,6 +111,38 @@ export async function POST(request: NextRequest) {
             { status: 400 }
           );
         }
+
+        // AUDIT-018 — claim grants rewards; require auth + ownership.
+        // Other actions stay public (visit/complete are part of the
+        // viral loop where the actor isn't necessarily the owner).
+        const authUser = await getAuthUser(request);
+        if (!authUser) {
+          return NextResponse.json(
+            { success: false, message: "Authentication required to claim rewards" },
+            { status: 401 }
+          );
+        }
+        const db = getDb();
+        const sessionSnap = await db.collection("sessions").doc(targetId).get();
+        if (!sessionSnap.exists) {
+          return NextResponse.json(
+            { success: false, message: "Session not found" },
+            { status: 404 }
+          );
+        }
+        const sessionData = sessionSnap.data() as { ownerUid?: string; email?: string };
+        const isOwner = sessionData.ownerUid === authUser.uid;
+        const emailMatch =
+          !!authUser.email &&
+          !!sessionData.email &&
+          authUser.email.toLowerCase() === sessionData.email.toLowerCase();
+        if (!isOwner && !emailMatch) {
+          return NextResponse.json(
+            { success: false, message: "You can only claim your own rewards" },
+            { status: 403 }
+          );
+        }
+
         const result = await claimReferralReward(targetId);
         return NextResponse.json({
           success: result.success,
