@@ -9,6 +9,7 @@
  * - GEMINI_HOURLY_LIMIT_USD: Max spend per hour (default: $10)
  */
 
+import * as Sentry from "@sentry/nextjs";
 import { getDb } from "./firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
 
@@ -90,6 +91,12 @@ export async function checkSpendLimit(estimatedCost: number = 0): Promise<SpendC
 
     if (wouldExceedDaily) {
       console.error(`[SpendLimiter] Daily limit exceeded: $${dailySpend.toFixed(2)}/$${DAILY_LIMIT_USD}`);
+      // Sentry alert hook: this is the actual block, fire as 'error'
+      Sentry.captureMessage("spend.daily.exceeded", {
+        level: "error",
+        tags: { component: "spendLimiter", scope: "daily" },
+        extra: { dailySpend, dailyLimit: DAILY_LIMIT_USD, estimatedCost },
+      });
       return {
         allowed: false,
         dailySpend,
@@ -102,6 +109,11 @@ export async function checkSpendLimit(estimatedCost: number = 0): Promise<SpendC
 
     if (wouldExceedHourly) {
       console.error(`[SpendLimiter] Hourly limit exceeded: $${hourlySpend.toFixed(2)}/$${HOURLY_LIMIT_USD}`);
+      Sentry.captureMessage("spend.hourly.exceeded", {
+        level: "error",
+        tags: { component: "spendLimiter", scope: "hourly" },
+        extra: { hourlySpend, hourlyLimit: HOURLY_LIMIT_USD, estimatedCost },
+      });
       return {
         allowed: false,
         dailySpend,
@@ -110,6 +122,24 @@ export async function checkSpendLimit(estimatedCost: number = 0): Promise<SpendC
         hourlyLimit: HOURLY_LIMIT_USD,
         reason: `Hourly spend limit exceeded ($${hourlySpend.toFixed(2)}/$${HOURLY_LIMIT_USD})`,
       };
+    }
+
+    // Pre-warning: emit a warning when crossing 80% so ops can react
+    // before hitting the hard cap. Sentry alert rule should de-dup.
+    const dailyRatio = (dailySpend + estimatedCost) / DAILY_LIMIT_USD;
+    const hourlyRatio = (hourlySpend + estimatedCost) / HOURLY_LIMIT_USD;
+    if (dailyRatio >= 0.8) {
+      Sentry.captureMessage("spend.daily.warning_80pct", {
+        level: "warning",
+        tags: { component: "spendLimiter", scope: "daily" },
+        extra: { dailySpend, dailyLimit: DAILY_LIMIT_USD, ratio: dailyRatio },
+      });
+    } else if (hourlyRatio >= 0.8) {
+      Sentry.captureMessage("spend.hourly.warning_80pct", {
+        level: "warning",
+        tags: { component: "spendLimiter", scope: "hourly" },
+        extra: { hourlySpend, hourlyLimit: HOURLY_LIMIT_USD, ratio: hourlyRatio },
+      });
     }
 
     return {
