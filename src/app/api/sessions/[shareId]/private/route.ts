@@ -2,9 +2,23 @@ import { NextResponse } from "next/server";
 import { getDb } from "@/lib/firebaseAdmin";
 import { getSignedUrl } from "@/lib/storage";
 import { requireAuth } from "@/lib/authServer";
+import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
+
+export const runtime = "nodejs";
 
 export async function GET(req: Request, context: { params: Promise<{ shareId: string }> }) {
   try {
+    // Rate limit by IP first — protects against credential-stuffing scans
+    // probing shareIds against authenticated tokens.
+    const clientIP = getClientIP(req);
+    const rateLimitResult = await checkRateLimit("api:general", clientIP);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "Too many requests" },
+        { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+      );
+    }
+
     const authUser = await requireAuth(req);
     const { shareId } = await context.params;
     const db = getDb();
