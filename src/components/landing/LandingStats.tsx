@@ -1,6 +1,7 @@
 "use client";
 
 import { useLandingConfig } from "./LandingProvider";
+import { AnimatedCounter } from "./AnimatedCounter";
 
 export function LandingStats() {
   const { config } = useLandingConfig();
@@ -18,10 +19,13 @@ export function LandingStats() {
               i > 0 ? `delay-${i}00` : ""
             } rounded-2xl border border-white/6 bg-white/[0.03] p-5 md:p-6 text-left md:text-center`}
           >
-            <div className="text-2xl md:text-[2.4rem] text-white font-body font-black italic tracking-[-0.06em] mb-2 uppercase">
-              {stat.value}
-              <span style={{ color: theme.accent }}>{stat.suffix}</span>
-            </div>
+            <AnimatedCounter
+              value={stat.value}
+              suffix={stat.suffix}
+              duration={1800}
+              className="text-2xl md:text-[2.4rem] text-white font-body font-black italic tracking-[-0.06em] mb-2 uppercase"
+              suffixStyle={{ color: theme.accent }}
+            />
             <div className="text-[11px] text-slate-500 uppercase tracking-[0.24em] font-mono">
               {stat.label}
             </div>

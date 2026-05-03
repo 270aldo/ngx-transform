@@ -108,7 +108,7 @@ export function HeroTransformation({ className }: HeroTransformationProps) {
             aria-valuenow={Math.round(position)}
             tabIndex={0}
           >
-            {demo ? (
+            {demo && demo.beforeImage && demo.afterImage ? (
               <>
                 {/* AFTER (week 12) — full layer underneath */}
                 <Image

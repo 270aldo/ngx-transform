@@ -41,15 +41,13 @@ export function LandingHero() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
               </span>
-              <span className="text-[11px] text-slate-300 tracking-wide font-mono">Sin costo</span>
+              <span className="text-[11px] text-slate-300 tracking-wide font-mono">{hero.badge.aiLabel}</span>
               <span className="h-3 w-px bg-white/20" />
-              <span className="text-[11px] text-slate-300 tracking-wide font-mono">Acceso privado</span>
-              <span className="h-3 w-px bg-white/20" />
-              <span className="text-[11px] tracking-wide font-mono" style={{ color: theme.accent }}>Proceso guiado</span>
+              <span className="text-[11px] tracking-wide font-mono" style={{ color: theme.accent }}>{hero.badge.version}</span>
             </div>
 
             <p className="landing-kicker mb-4">
-              Visualización privada con salida más seria
+              {hero.socialProof.label}
             </p>
 
             <h1

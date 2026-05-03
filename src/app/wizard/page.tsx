@@ -642,7 +642,7 @@ export default function WizardPage() {
                         Activamos tu acceso privado.
                       </h1>
                       <p className="mt-5 max-w-xl text-base leading-relaxed text-white/65 md:text-[1.05rem]">
-                        Este paso no intenta venderte nada todavía. Primero validamos imagen, privacidad y consentimiento para que la experiencia se sienta seria desde el inicio.
+                        Tu foto es el punto de partida. Sube una foto real, da tu consentimiento y GENESIS empieza a trabajar con lo que tienes.
                       </p>
 
                       <div className="mt-7 rounded-[24px] landing-surface px-5 py-5 text-left">

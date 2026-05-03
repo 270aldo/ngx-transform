@@ -1,8 +1,7 @@
 /**
- * Landing Page Copy - Mayores Variant (50+)
+ * Landing Page Copy - Mayores Variant (45-60)
  *
- * Calm, health-focused copy for older audience.
- * Tone: Trustworthy, supportive, wellness-oriented.
+ * Tono: respetuoso, claro, preventivo. Salud muscular, función y longevidad.
  */
 
 import {
@@ -17,139 +16,142 @@ import type { VariantCopy } from "../types";
 export const mayoresCopy: VariantCopy = {
   hero: {
     badge: {
-      aiLabel: "Potenciado por GENESIS AI",
-      version: "HYBRID",
+      aiLabel: "GENESIS",
+      version: "Transform Scan",
     },
     headline: {
-      line1: "Recupera tu",
-      line2: "vitalidad.",
+      line1: "Su cuerpo no necesita castigo.",
+      line2: "Necesita estrategia.",
     },
     subtitle:
-      "Visualiza cómo puedes mejorar tu bienestar físico en 12 meses. Análisis personalizado y seguro.",
-    cta: "Ver Mi Proyección",
-    primaryCta: { label: "Ver Mi Proyección", intent: "scan_start" },
+      "Suba una foto. GENESIS analiza su punto de partida y le muestra una proyección aspiracional de cómo podría mejorar fuerza, composición y vitalidad en una temporada de 12 semanas con un sistema serio.",
+    cta: "Ver mi punto de partida",
+    primaryCta: {
+      label: "Ver mi punto de partida",
+      intent: "scan_start",
+    },
     secondaryCta: "Cómo funciona",
     supportingPoints: [
-      "Resultado claro en menos de 3 minutos.",
-      "GENESIS interpreta tus datos con honestidad.",
-      "Tú decides el siguiente paso, sin presión.",
+      "Gratis · Privado · 3 min.",
+      "Sin presión. Sin promesas falsas.",
+      "Usted decide el siguiente paso.",
     ],
     socialProof: {
-      count: "Procesamiento en minutos",
-      label: "Procesamiento seguro y controlado",
+      count: "Gratis · Privado · 3 min",
+      label: "Visualización aspiracional + ruta inicial HYBRID",
     },
-    // Before/After transformation demo - images for wellness/vitality
     transformationDemo: {
       beforeImage: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&h=1000&fit=crop&crop=faces",
       afterImage: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=800&h=1000&fit=crop&crop=faces",
-      beforeLabel: "ANTES",
-      afterLabel: "12 MESES",
+      beforeLabel: "HOY",
+      afterLabel: "12 SEMANAS",
     },
   },
 
   stats: [
-    { value: "4", suffix: " etapas", label: "De análisis a resultados" },
-    { value: "12", suffix: " meses", label: "Proyección personalizada" },
-    { value: "Acceso", suffix: "", label: "Privado con cuenta" },
-    { value: "IA +", suffix: " Coach", label: "Sistema HYBRID" },
+    { value: "12", suffix: " sem", label: "proceso estructurado" },
+    { value: "3", suffix: "min", label: "scan inicial" },
+    { value: "1", suffix: "", label: "sistema integrado" },
+    { value: "0", suffix: "", label: "presión artificial" },
   ],
 
   features: [
     {
       icon: Brain,
-      title: "Análisis Personalizado",
+      title: "Fuerza para vivir mejor",
       description:
-        "Nuestra tecnología analiza tu constitución física y crea una proyección realista adaptada a tu edad y objetivos de salud.",
+        "El objetivo no es perseguir juventud. Es construir músculo, movilidad, energía y capacidad física para que su cuerpo responda mejor en la vida real.",
       size: "large",
     },
     {
       icon: Shield,
-      title: "Privacidad Garantizada",
+      title: "Privacidad y claridad",
       description:
-        "Tu foto se procesa de forma segura y se conserva solo mientras es necesaria para operar el servicio y mantener disponibles tus resultados.",
+        "Su foto se procesa con consentimiento explícito. La visualización es aspiracional y no promete un resultado médico o físico garantizado.",
       size: "medium",
-      badge: "Datos protegidos",
+      badge: "Sin promesas falsas",
     },
     {
       icon: Heart,
-      title: "Progreso Gradual",
+      title: "HYBRID cuando se necesita criterio humano",
       description:
-        "Visualiza tu evolución en 4 etapas: Hoy, 4 meses, 8 meses y 12 meses. Un camino sostenible hacia tu bienestar.",
+        "GENESIS estructura la ruta. Un coach humano puede revisarla, ajustar el proceso y acompañarle cuando hay lesiones, dudas, falta de adherencia o necesidad de mayor seguridad.",
       size: "full",
     },
   ],
 
   howItWorks: {
-    title: "Proceso Sencillo",
-    subtitle: "Tres pasos simples para ver tu proyección.",
+    title: "Un proceso simple, con intención",
+    subtitle:
+      "Tres pasos para dejar de adivinar y empezar a ver qué ruta tendría sentido para usted.",
     steps: [
       {
         step: "01",
-        title: "Comparte tu Foto",
+        title: "Suba una foto actual",
         description:
-          "Una foto de cuerpo completo. Frontal y con buena iluminación. El acceso es privado para resguardar tus resultados.",
+          "Frontal, cuerpo completo y buena iluminación. Es una referencia visual, no una evaluación médica.",
         icon: Camera,
       },
       {
         step: "02",
-        title: "Indica tus Objetivos",
+        title: "Comparta su contexto",
         description:
-          "Cuéntanos sobre tu salud, actividad física y metas. Toma unos minutos.",
+          "Edad, objetivo, nivel, disponibilidad y limitaciones. La seguridad empieza por entender la realidad.",
         icon: User,
       },
       {
         step: "03",
-        title: "Recibe tu Proyección",
+        title: "Vea su ruta inicial",
         description:
-          "Obtén una visualización personalizada de tu progreso potencial.",
+          "Reciba una proyección aspiracional y una lectura clara de si HYBRID puede ser el siguiente paso correcto.",
         icon: Heart,
       },
     ],
   },
 
   testimonials: {
-    sectionLabel: "Testimonios",
+    sectionLabel: "Verdad Directa",
     items: [
       {
-        text: "A mis 58 años, pensé que era tarde para mejorar. Esta proyección me mostró que aún tengo mucho potencial. Muy motivador.",
-        name: "Roberto G.",
-        role: "Usuario verificado",
-        gradient: "from-violet-400 to-emerald-400",
+        text: "No se trata de verse joven. Se trata de mantener fuerza, movilidad y autonomía durante más años.",
+        name: "Función Primero",
+        role: "Performance & Longevity",
+        gradient: "from-teal-400 to-emerald-400",
       },
       {
-        text: "Lo más útil fue ver el progreso gradual. No promesas irreales, sino una evolución que puedo lograr con constancia.",
-        name: "María Elena P.",
-        role: "Usuario verificado",
-        gradient: "from-purple-400 to-fuchsia-400",
+        text: "El músculo no es vanidad. Es infraestructura metabólica, física y funcional. Cuando se pierde, todo cuesta más.",
+        name: "Salud Muscular",
+        role: "Base del sistema NGX",
+        gradient: "from-blue-400 to-indigo-400",
       },
       {
-        text: "Como médico, aprecio que muestre proyecciones realistas. Mis pacientes lo usan para visualizar sus metas de salud.",
-        name: "Dr. Fernando A.",
-        role: "Médico Deportivo",
+        text: "Si hay dolor, lesiones o años de sedentarismo, no conviene improvisar. Ahí HYBRID tiene sentido.",
+        name: "Criterio Humano",
+        role: "Coach + GENESIS",
         gradient: "from-violet-400 to-purple-400",
       },
     ],
   },
 
   cta: {
-    headline: "Tu bienestar comienza aquí",
+    headline: "No es tarde. Pero sí conviene dejar de improvisar.",
     subtitle:
-      "Descubre cómo puedes mejorar tu salud física. Acceso sin costo, resultados privados y control sobre tus datos.",
-    buttonText: "Comenzar Ahora",
-    footnote: "Sin costo · Requiere cuenta · Proceso guiado",
+      "Vea su punto de partida y, si tiene sentido, revise su ruta con un coach humano dentro de HYBRID.",
+    buttonText: "Comenzar mi scan",
+    footnote: "Visualización aspiracional. No sustituye evaluación médica.",
   },
 
   footer: {
-    brandName: "NGX Transform",
-    status: "Sistema funcionando correctamente",
-    copyright: "© 2024 NGX. Todos los derechos reservados.",
+    brandName: "NGX Transform Scan",
+    status: "GENESIS operativo",
+    copyright: "© 2026 NGX. Todos los derechos reservados.",
   },
 
-  // Optional: Explainer video section (hidden if no videoUrl)
   explainerVideo: {
-    title: "¿Cómo Funciona?",
-    subtitle: "Un proceso sencillo de 3 pasos para visualizar tu progreso.",
-    videoUrl: "", // Empty = section hidden. Add video URL when ready.
+    title: "Cómo funciona NGX Transform Scan",
+    subtitle:
+      "Una forma sencilla de visualizar dirección, entender contexto y decidir si necesita acompañamiento HYBRID.",
+    videoUrl: "",
     posterUrl: "/images/video-poster.jpg",
     duration: "45s",
   },
