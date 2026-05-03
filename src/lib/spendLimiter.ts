@@ -68,6 +68,21 @@ function getHourKey(): string {
 // ============================================================================
 
 /**
+ * Process-level cache of the last successful Firestore read. Used as a
+ * fallback when Firestore is unavailable so we don't hard-fail every
+ * AI request during transient outages (typical Firestore cold-start
+ * blips can be ~5-30s). Stale-while-degraded.
+ */
+let lastSpendCache:
+  | {
+      dailySpend: number;
+      hourlySpend: number;
+      readAt: number;
+    }
+  | null = null;
+const SPEND_CACHE_TTL_MS = 5 * 60_000; // 5 minutes
+
+/**
  * Check if a request is allowed based on current spend limits
  */
 export async function checkSpendLimit(estimatedCost: number = 0): Promise<SpendCheckResult> {
@@ -84,6 +99,9 @@ export async function checkSpendLimit(estimatedCost: number = 0): Promise<SpendC
 
     const dailySpend = (dayDoc.data()?.totalSpend as number) || 0;
     const hourlySpend = (hourDoc.data()?.totalSpend as number) || 0;
+
+    // Refresh in-memory cache for fail-degraded mode (AUDIT-024)
+    lastSpendCache = { dailySpend, hourlySpend, readAt: Date.now() };
 
     // Check if adding this request would exceed limits
     const wouldExceedDaily = dailySpend + estimatedCost > DAILY_LIMIT_USD;
@@ -150,9 +168,55 @@ export async function checkSpendLimit(estimatedCost: number = 0): Promise<SpendC
       hourlyLimit: HOURLY_LIMIT_USD,
     };
   } catch (error) {
-    // Fail CLOSED in production to prevent uncapped API bills
-    console.error("[SpendLimiter] Error checking limits:", error);
+    console.error("[SpendLimiter] Error reading limits:", error);
+
+    // AUDIT-024 — degraded mode. Prefer the last successful in-memory
+    // read over fail-closed when the cache is recent. This rides out
+    // short Firestore blips without blocking legitimate users while
+    // still respecting recent spend totals.
+    if (
+      process.env.NODE_ENV === "production" &&
+      lastSpendCache &&
+      Date.now() - lastSpendCache.readAt < SPEND_CACHE_TTL_MS
+    ) {
+      const wouldExceedDaily = lastSpendCache.dailySpend + estimatedCost > DAILY_LIMIT_USD;
+      const wouldExceedHourly = lastSpendCache.hourlySpend + estimatedCost > HOURLY_LIMIT_USD;
+      Sentry.captureMessage("spend.firestore.read_failed_degraded", {
+        level: "warning",
+        tags: { component: "spendLimiter", mode: "degraded" },
+        extra: {
+          cacheAgeMs: Date.now() - lastSpendCache.readAt,
+          dailySpend: lastSpendCache.dailySpend,
+          hourlySpend: lastSpendCache.hourlySpend,
+        },
+      });
+      if (wouldExceedDaily || wouldExceedHourly) {
+        return {
+          allowed: false,
+          dailySpend: lastSpendCache.dailySpend,
+          hourlySpend: lastSpendCache.hourlySpend,
+          dailyLimit: DAILY_LIMIT_USD,
+          hourlyLimit: HOURLY_LIMIT_USD,
+          reason: "Spend limit exceeded (degraded mode, cached value)",
+        };
+      }
+      return {
+        allowed: true,
+        dailySpend: lastSpendCache.dailySpend,
+        hourlySpend: lastSpendCache.hourlySpend,
+        dailyLimit: DAILY_LIMIT_USD,
+        hourlyLimit: HOURLY_LIMIT_USD,
+        reason: "Degraded mode - serving from cache",
+      };
+    }
+
+    // Fail CLOSED in production when cache is missing or stale —
+    // protect against uncapped API bills.
     if (process.env.NODE_ENV === "production") {
+      Sentry.captureMessage("spend.firestore.read_failed_closed", {
+        level: "error",
+        tags: { component: "spendLimiter", mode: "fail-closed" },
+      });
       return {
         allowed: false,
         dailySpend: 0,
