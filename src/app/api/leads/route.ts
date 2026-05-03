@@ -3,11 +3,23 @@ import { getDb } from "@/lib/firebaseAdmin";
 import { LeadSchema } from "@/lib/validators";
 import { FieldValue } from "firebase-admin/firestore";
 import { isEmailSuppressed } from "@/lib/emailSuppression";
+import { checkRateLimit, getClientIP, getRateLimitHeaders } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
   try {
+    // Rate limit by IP — public endpoint, was previously unprotected.
+    // Falls back gracefully if Upstash unavailable (per allowFallbackInProd).
+    const clientIP = getClientIP(req);
+    const rl = await checkRateLimit("api:general", clientIP);
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "Too many requests" },
+        { status: 429, headers: getRateLimitHeaders(rl) }
+      );
+    }
+
     const body = await req.json();
     const parsed = LeadSchema.safeParse(body);
     if (!parsed.success) {
