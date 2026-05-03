@@ -81,7 +81,7 @@ async function resolveTarget(input: {
   });
 
   let targetEmail = input.email || "";
-  let targetShareId = input.shareId || null;
+  const targetShareId = input.shareId || null;
   if (!targetEmail && input.shareId) {
     const db = getDb();
     const snap = await db.collection("sessions").doc(input.shareId).get();
