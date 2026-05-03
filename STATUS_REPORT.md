@@ -66,7 +66,7 @@
 ### Setup Local
 
 ```bash
-cd /Users/aldoolivas/APP_NANO_NGX/app
+cd /path/to/genesis-scann   # ajusta a tu repo local
 
 # Instalar dependencias
 pnpm install
