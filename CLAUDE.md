@@ -418,6 +418,8 @@ NEXT_PUBLIC_BOOKING_URL=         # CTA link
 
 ## Security (v3.0) ⭐ NEW
 
+> ⚠️ **AUDIT-2026-05 NOTICE**: La subsección "Content Security Policy (CSP)" y "Security Headers" describen **DISEÑO OBJETIVO, no implementado a 2026-05-02**. El archivo `src/middleware.ts` referenciado **no existe** — existe `src/proxy.ts` con CSP parcial pero nunca se carga. La auditoría completa está en [docs/AUDIT_2026_05.md](docs/AUDIT_2026_05.md), implementación tracked en `AUDIT-001` del backlog. **API Protection, Rate Limiting y Share Scope System sí están implementados** y reflejan la realidad.
+
 ### API Protection
 
 | Endpoint | Protection |
@@ -441,9 +443,11 @@ Distributed rate limiting via `src/lib/rateLimit.ts`:
 "api:email"         // 2 per hour (by IP)
 ```
 
-### Content Security Policy (CSP)
+### Content Security Policy (CSP) — 📋 DISEÑO OBJETIVO (no implementado)
 
-Implemented in `src/middleware.ts`:
+> Pendiente de implementación en `/middleware.ts` (root, no `src/`). Tracked en AUDIT-001 del backlog. Diseño detallado en [docs/AUDIT_2026_05.md sección T1.3](docs/AUDIT_2026_05.md).
+
+Diseño objetivo:
 
 - **script-src**: `'self'` + nonce-based + `'strict-dynamic'`
 - **connect-src**: Whitelisted Firebase, Upstash, Vercel, Google APIs
@@ -451,9 +455,11 @@ Implemented in `src/middleware.ts`:
 - **object-src**: `'none'`
 - **upgrade-insecure-requests**: Enabled
 
-### Security Headers
+### Security Headers — 📋 DISEÑO OBJETIVO (no implementado)
 
-| Header | Value |
+> Pendiente de implementación junto con CSP en `/middleware.ts`. Ver AUDIT-001.
+
+| Header | Value objetivo |
 |--------|-------|
 | `Strict-Transport-Security` | `max-age=63072000; includeSubDomains; preload` |
 | `X-Frame-Options` | `SAMEORIGIN` |
