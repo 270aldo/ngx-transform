@@ -415,7 +415,7 @@ export function TransformationViewer2({
               sessionId={sessionId}
             />
           ) : (
-            <BookingCTA />
+            <BookingCTA shareId={shareId} />
           )}
 
           {/* Referral Card */}

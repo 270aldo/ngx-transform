@@ -1,4 +1,6 @@
 import { getDb } from "@/lib/firebaseAdmin";
+import { getAuthUser } from "@/lib/authServer";
+import { headers } from "next/headers";
 import type { InsightsResult } from "@/types/ai";
 import { TransformationViewer } from "@/components/TransformationViewer";
 import { TransformationViewer2 } from "@/components/TransformationViewer2";
@@ -25,6 +27,7 @@ export const dynamic = "force-dynamic";
 interface SessionDoc {
   shareId: string;
   email?: string | null;
+  ownerUid?: string;
   input: {
     age: number;
     sex: "male" | "female" | "other";
@@ -102,7 +105,7 @@ async function getUrlsLocally(data: SessionDoc, allowOriginal: boolean) {
   return result;
 }
 
-export default async function Page({ params }: { params: Promise<{ shareId: string }> }) {
+export default async function Page({ params, request }: { params: Promise<{ shareId: string }>; request?: Request }) {
   const { shareId } = await params;
   const db = getDb();
   const snap = await db.collection("sessions").doc(shareId).get();
@@ -112,15 +115,27 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
   const data = snap.data() as SessionDoc | undefined;
   if (!data) return <div className="text-white p-10">Datos inválidos</div>;
 
+  // Check if the authenticated user is the owner — owners always see the full experience
+  let isOwner = false;
+  try {
+    const reqHeaders = await headers();
+    const fakeReq = new Request("http://localhost", { headers: reqHeaders });
+    const authUser = await getAuthUser(fakeReq);
+    isOwner = !!authUser?.uid && authUser.uid === data.ownerUid;
+  } catch {
+    // Not authenticated — treat as public visitor
+  }
+
   const shareScope = {
     shareOriginal: data.shareScope?.shareOriginal ?? !!data.shareOriginal,
     shareInsights: data.shareScope?.shareInsights ?? false,
     shareProfile: data.shareScope?.shareProfile ?? false,
   };
 
-  const allowOriginal = FF_EXPOSE_ORIGINAL && shareScope.shareOriginal;
-  const allowInsights = shareScope.shareInsights;
-  const allowProfile = shareScope.shareProfile;
+  // Owner always gets full access regardless of shareScope
+  const allowOriginal = isOwner || (FF_EXPOSE_ORIGINAL && shareScope.shareOriginal);
+  const allowInsights = isOwner || shareScope.shareInsights;
+  const allowProfile = isOwner || shareScope.shareProfile;
 
   const ai = allowInsights ? data.ai : undefined;
   const urls = await getUrlsLocally(data, allowOriginal);

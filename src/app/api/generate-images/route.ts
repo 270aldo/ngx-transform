@@ -28,6 +28,7 @@ import sharp from "sharp";
 import { telemetry, startTimer } from "@/lib/telemetry";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 import { checkSpendLimit, recordSpend } from "@/lib/spendLimiter";
+import { verifyWorkerToken } from "@/lib/workerAuth";
 import { requireAuth } from "@/lib/authServer";
 import { getAiGenerationFlag } from "@/lib/aiKillSwitch";
 import {
@@ -60,27 +61,33 @@ const PREVIOUS_STEP: Record<NanoStep, NanoStep | null> = {
   m12: "m8",
 };
 
-const WORKER_TOKEN = process.env.AI_WORKER_TOKEN || "";
-
-function isWorkerRequest(req: Request): boolean {
-  if (!WORKER_TOKEN) return false;
-  const headerToken = req.headers.get("x-worker-token") || "";
-  const url = new URL(req.url);
-  const queryToken = url.searchParams.get("workerToken") || "";
-  const token = headerToken || queryToken;
-  return token === WORKER_TOKEN;
-}
+// Worker request validation moved to src/lib/workerAuth.ts (AUDIT-004).
+// This endpoint now requires a sessionId-scoped, short-lived signed token
+// in the x-worker-token header. The query-param fallback was removed
+// (it leaked tokens via access logs and Referer headers).
 
 // ============================================================================
 // Watermark Utility
 // ============================================================================
+
+// AUDIT-028 — guard Sharp against OOM via huge inputs. Generated images
+// from Gemini are typically ≤2MB, but a misconfig or upstream change
+// could pipe a 50MB asset through .toBuffer() and crash the function.
+const MAX_SHARP_INPUT_BYTES = Number(process.env.MAX_SHARP_INPUT_BYTES || (15 * 1024 * 1024));
 
 async function applyWatermark(
   buffer: Buffer,
   contentType: string
 ): Promise<{ buffer: Buffer; contentType: string }> {
   try {
-    const img = sharp(buffer);
+    if (buffer.length > MAX_SHARP_INPUT_BYTES) {
+      console.warn(
+        `[Watermark] Skipping watermark — buffer ${buffer.length}B exceeds ` +
+        `MAX_SHARP_INPUT_BYTES=${MAX_SHARP_INPUT_BYTES}. Returning original.`
+      );
+      return { buffer, contentType };
+    }
+    const img = sharp(buffer, { limitInputPixels: 268_402_689 });
     const meta = await img.metadata();
     const width = meta.width ?? 1200;
     const height = meta.height ?? 1600;
@@ -131,7 +138,20 @@ export async function POST(req: Request) {
     const { sessionId } = parsed.data;
     parsedSessionId = sessionId;
 
-    const isWorker = isWorkerRequest(req);
+    // Worker auth: header-only, sessionId-scoped, short-lived signed token.
+    // Returns ok:false if no token present or invalid; we treat that as a
+    // regular user request (which then requires user auth below).
+    const providedWorkerToken = req.headers.get("x-worker-token") || "";
+    const workerCheck = providedWorkerToken
+      ? verifyWorkerToken(providedWorkerToken, sessionId)
+      : { ok: false as const, reason: "no token" };
+    const isWorker = workerCheck.ok === true;
+    if (providedWorkerToken && !workerCheck.ok) {
+      // Token was provided but failed validation — log to spot abuse / misconfig
+      console.warn(
+        `[GenerateImages] Worker token rejected for session=${sessionId}: ${workerCheck.reason}`
+      );
+    }
 
     // Kill switch for AI generation
     const aiFlag = await getAiGenerationFlag();
@@ -277,6 +297,15 @@ export async function POST(req: Request) {
     const qualityScores: Record<string, number> = {};
     const degradedSteps: string[] = [];
 
+    // AUDIT-025 — global retry budget across all steps. Each Gemini
+    // image-gen retry costs full tokens; without a cap, a session
+    // could burn 3 steps × MAX_RETRIES = 6 retries per session under
+    // a bad-prompt or safety-filter cascade.
+    const MAX_TOTAL_RETRIES_PER_SESSION = Number(
+      process.env.MAX_TOTAL_IMAGE_RETRIES || "3"
+    );
+    let totalRetriesUsed = 0;
+
     // Process steps in order (important for Identity Chain)
     for (const step of stepsToProcess) {
       const stepTimer = startTimer();
@@ -301,6 +330,16 @@ export async function POST(req: Request) {
           }
         }
 
+        // Per-step retry budget = remaining global budget, clamped to MAX_RETRIES.
+        // Once the global budget is exhausted, subsequent steps run with 0
+        // retries (single attempt only) — degrades gracefully instead of
+        // burning more tokens on a session that's clearly struggling.
+        const remainingGlobalRetries = Math.max(
+          0,
+          MAX_TOTAL_RETRIES_PER_SESSION - totalRetriesUsed
+        );
+        const stepMaxRetries = Math.min(MAX_RETRIES, remainingGlobalRetries);
+
         // Generate image with retry
         const result: GenerationResult = await withRetry(
           async () => {
@@ -315,12 +354,16 @@ export async function POST(req: Request) {
             });
           },
           {
-            maxRetries: MAX_RETRIES,
+            maxRetries: stepMaxRetries,
             baseDelayMs: 2000,
             maxDelayMs: 15000,
           },
           (attempt, error) => {
-            console.log(`[GenerateImages] Retry ${attempt} for ${step}: ${error.message}`);
+            totalRetriesUsed++;
+            console.log(
+              `[GenerateImages] Retry ${attempt}/${stepMaxRetries} for ${step} ` +
+              `(global ${totalRetriesUsed}/${MAX_TOTAL_RETRIES_PER_SESSION}): ${error.message}`
+            );
           }
         );
 

@@ -4,6 +4,10 @@
 /node_modules
 /.pnp
 .pnp.*
+
+# Lockfile policy: pnpm only (see package.json#packageManager)
+package-lock.json
+yarn.lock
 .yarn/*
 !.yarn/patches
 !.yarn/plugins

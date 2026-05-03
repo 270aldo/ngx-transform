@@ -2,9 +2,24 @@ import { NextResponse } from "next/server";
 import { getDb } from "@/lib/firebaseAdmin";
 import { deletePath, deletePrefix, getSignedUrl } from "@/lib/storage";
 import { validateDeleteToken } from "@/lib/jobManager";
+import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 
-export async function GET(_: Request, context: { params: Promise<{ shareId: string }> }) {
+export const runtime = "nodejs";
+
+export async function GET(req: Request, context: { params: Promise<{ shareId: string }> }) {
   try {
+    // Rate limit by IP — endpoint is public (viral share page) and must
+    // remain so. Limit prevents shareId enumeration scans and abuse of
+    // signed-URL generation (each call hits Firebase Storage).
+    const clientIP = getClientIP(req);
+    const rateLimitResult = await checkRateLimit("api:general", clientIP);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "Too many requests" },
+        { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+      );
+    }
+
     const { shareId } = await context.params;
     const db = getDb();
     const ref = db.collection("sessions").doc(shareId);

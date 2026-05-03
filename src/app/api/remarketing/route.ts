@@ -6,6 +6,8 @@ import { checkRateLimit, getRateLimitHeaders } from "@/lib/rateLimit";
 import { getDb } from "@/lib/firebaseAdmin";
 import { isEmailSuppressed } from "@/lib/emailSuppression";
 
+export const runtime = "nodejs";
+
 // Validation schema
 const remarketingSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -119,6 +121,22 @@ export async function POST(request: NextRequest) {
 
 // GET endpoint to check lead status (for admin/debugging)
 // SECURITY: Requires API key to prevent PII exposure
+//
+// Note: an audit ticket (AUDIT-019) flagged "returns all lead data
+// without pagination" — that was a false positive. This handler
+// only accepts a specific email and returns one document. Hardening
+// applied below is defensive (email shape validation + redacted logs).
+const GetSchema = z.object({
+  email: z.string().email().max(254),
+});
+
+function redactEmail(email: string): string {
+  const [user, domain] = email.split("@");
+  if (!user || !domain) return "***";
+  const head = user.slice(0, 2);
+  return `${head}***@${domain}`;
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 
@@ -133,16 +151,15 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const rawEmail = searchParams.get("email");
-
-  if (!rawEmail) {
+  const parsed = GetSchema.safeParse({ email: searchParams.get("email") });
+  if (!parsed.success) {
     return NextResponse.json(
-      { error: "email parameter required" },
+      { error: "valid email parameter required" },
       { status: 400 }
     );
   }
 
-  const email = rawEmail.toLowerCase().trim();
+  const email = parsed.data.email.toLowerCase().trim();
 
   try {
     const db = getDb();
@@ -160,7 +177,8 @@ export async function GET(request: NextRequest) {
       lead: leadDoc.data(),
     });
   } catch (error) {
-    console.error("Error fetching lead:", error);
+    // Redact email from logs — error message could be Sentry-bound
+    console.error("[Remarketing GET] error for", redactEmail(email), error);
     return NextResponse.json(
       { error: "Error fetching lead" },
       { status: 500 }

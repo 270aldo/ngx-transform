@@ -129,9 +129,14 @@ type DemoWidget =
 interface DemoChatProps {
   shareId: string;
   onComplete: () => void;
+  /**
+   * Optional: emit telemetry per user-initiated message. The page that
+   * mounts DemoChat (s/[shareId]/demo) wires this into /api/telemetry.
+   */
+  onMessageSent?: (interactionIndex: number) => void;
 }
 
-export function DemoChat({ shareId, onComplete }: DemoChatProps) {
+export function DemoChat({ shareId, onComplete, onMessageSent }: DemoChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [remainingMessages, setRemainingMessages] = useState(5);
   const [quickActions, setQuickActions] = useState<QuickActionType[]>(INITIAL_QUICK_ACTIONS);
@@ -160,6 +165,13 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
 
   const handleQuickAction = (action: QuickActionType) => {
     if (remainingMessages <= 0) return;
+
+    // AUDIT-034: emit telemetry for each interaction. interactionIndex
+    // counts from 0 upward, derived from messages already exchanged.
+    if (onMessageSent) {
+      const interactionIndex = Math.max(0, 5 - remainingMessages);
+      onMessageSent(interactionIndex);
+    }
 
     setIsTyping(true);
 

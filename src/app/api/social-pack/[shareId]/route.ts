@@ -13,6 +13,8 @@ import { getSignedUrl } from "@/lib/storage";
 import { getFormatConfig, isValidFormat } from "@/lib/viral/socialPackGenerator";
 import { recordDownload } from "@/lib/viral/shareUnlock";
 
+export const runtime = "nodejs";
+
 // Feature flag
 const FF_SHARE_UNLOCK =
   process.env.FF_SHARE_UNLOCK === "true" || process.env.FF_SHARE_TO_UNLOCK !== "false";

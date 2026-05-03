@@ -13,7 +13,7 @@ import { Input } from "@/components/shadcn/ui/input"; // Kept for text fields
 import { useToast } from "@/components/ui/toast-provider";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { cn } from "@/lib/utils";
-import { Eye, Target, Activity, Cpu, ArrowRight, Upload, ChevronRight, ChevronLeft, Lock, Mail, ShieldCheck, Sparkles } from "lucide-react";
+import { Eye, Target, Activity, Cpu, ArrowRight, Upload, ChevronRight, ChevronLeft, Lock, Mail, ShieldCheck, Sparkles, User, Sun, ScanLine } from "lucide-react";
 import { getStoredVariant } from "@/hooks/useVariantTracking";
 
 // New Components
@@ -313,7 +313,7 @@ export default function WizardPage() {
         ? "Sube una foto para continuar."
         : !accessReady
           ? "Todavía estamos preparando tu acceso privado. Espera unos segundos."
-        : "Debes aceptar los consentimientos obligatorios antes de continuar.";
+          : "Debes aceptar los consentimientos obligatorios antes de continuar.";
       setFormError(message);
       addToast({ variant: "error", message });
       return;
@@ -469,49 +469,52 @@ export default function WizardPage() {
   return (
     <div className="relative min-h-screen bg-transparent text-white selection:bg-[#6D00FF]/30 font-[var(--font-body)]">
 
-      {/* TOP HEADER */}
-      <div className="fixed inset-x-0 top-0 z-50 px-4 pt-4 md:px-6 md:pt-6">
-        <div className="mx-auto flex max-w-6xl items-start justify-between gap-3 md:items-center pointer-events-none">
-          <div className="landing-surface pointer-events-auto flex min-w-0 items-center gap-3 rounded-[28px] px-3 py-3 md:px-4 md:py-3.5">
+      {/* TOP HEADER — Single Premium Floating Pill */}
+      <div className="fixed inset-x-0 top-0 z-50 px-4 pt-4 md:px-6 md:pt-5">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 rounded-[32px] border border-white/10 bg-[#16171d]/80 backdrop-blur-xl px-4 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.4)] pointer-events-auto">
+
+          {/* LEFT: Brand info */}
+          <div className="flex min-w-0 items-center gap-3">
             <button
               type="button"
               onClick={goBack}
-              className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full border border-white/10 bg-black/35 px-3 text-[10px] font-medium uppercase tracking-[0.22em] text-white/75 transition-colors hover:bg-black/55 hover:text-white"
+              className="inline-flex h-9 shrink-0 items-center gap-2 rounded-full border border-white/10 bg-black/35 px-3 text-[10px] font-medium uppercase tracking-[0.22em] text-white/75 transition-colors hover:bg-black/55 hover:text-white"
             >
-              <ChevronLeft size={14} />
+              <ChevronLeft size={13} />
               <span className="hidden sm:inline">Atrás</span>
             </button>
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[#6D00FF]/25 bg-gradient-to-br from-[#6D00FF]/30 to-[#B98CFF]/10">
-              <Sparkles size={18} className="text-[#C6A4FF]" />
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#6D00FF]/25 bg-gradient-to-br from-[#6D00FF]/30 to-[#B98CFF]/10">
+              <Sparkles size={16} className="text-[#C6A4FF]" />
             </div>
             <div className="min-w-0">
-              <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">Wizard privado</p>
-              <div className="mt-1 flex flex-wrap items-center gap-2">
-                <span className="truncate text-sm font-body font-semibold uppercase tracking-[0.04em] text-white md:text-base">
+              <p className="landing-kicker !text-[0.58rem] !tracking-[0.22em] !text-white/40">Wizard privado</p>
+              <div className="mt-0.5 flex flex-wrap items-center gap-2">
+                <span className="truncate text-[0.8rem] font-body font-semibold uppercase tracking-[0.04em] text-white md:text-sm">
                   Configuración privada
                 </span>
-                <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] text-white/55">
+                <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[9px] uppercase tracking-[0.18em] text-white/50">
                   Paso {currentStage} / 4
                 </span>
               </div>
-              <p className="mt-1 text-xs leading-relaxed text-white/40">
+              <p className="mt-0.5 text-[0.7rem] leading-relaxed text-white/35 hidden sm:block">
                 {stageMeta.subtitle}
               </p>
             </div>
           </div>
 
-          <div className="pointer-events-auto flex items-center gap-2">
-            <div className="hidden md:flex items-center gap-2 rounded-full landing-surface px-2 py-2">
+          {/* RIGHT: Stage tabs */}
+          <div className="flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-1.5">
               {WIZARD_STAGE_TABS.map((tab) => (
                 <div
                   key={tab.id}
                   className={cn(
-                    "rounded-full px-3 py-2 text-[10px] uppercase tracking-[0.18em] transition-all",
+                    "rounded-full px-3.5 py-2 text-[10px] uppercase tracking-[0.18em] transition-all font-mono",
                     currentStage === tab.id
-                      ? "bg-[#6D00FF] text-white shadow-[0_0_18px_rgba(109,0,255,0.25)]"
+                      ? "bg-[#6D00FF] text-white shadow-[0_0_18px_rgba(109,0,255,0.30)]"
                       : currentStage > tab.id
-                        ? "bg-[#6D00FF]/12 text-[#C9A9FF]"
-                        : "bg-white/[0.03] text-white/32"
+                        ? "text-[#C9A9FF]"
+                        : "text-white/30"
                   )}
                 >
                   {tab.short}
@@ -519,16 +522,17 @@ export default function WizardPage() {
               ))}
             </div>
             {DEMO ? (
-              <div className="rounded-full border border-[#6D00FF]/30 bg-[#6D00FF]/15 px-3 py-2 text-[10px] font-mono uppercase tracking-[0.22em] text-[#C6A4FF]">
+              <div className="rounded-full border border-[#6D00FF]/30 bg-[#6D00FF]/15 px-3 py-2.5 text-[10px] font-mono uppercase tracking-[0.22em] text-[#C6A4FF]">
                 Demo mode
               </div>
             ) : null}
           </div>
+
         </div>
       </div>
 
       {/* MAIN CONTENT AREA */}
-      <form onSubmit={handleSubmit(onSubmit, onFormError)} className="mx-auto flex min-h-screen max-w-6xl flex-col px-4 pb-24 pt-32 md:px-6 md:pb-28 md:pt-36">
+      <form onSubmit={handleSubmit(onSubmit, onFormError)} className="mx-auto flex min-h-screen max-w-6xl flex-col px-4 pb-24 pt-28 md:px-6 md:pb-28 md:pt-32">
         <input
           type="file"
           accept="image/*"
@@ -602,29 +606,29 @@ export default function WizardPage() {
               <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-white/60 md:text-base">
                 Estamos creando el acceso temporal para que puedas subir tu foto y generar tu visualización sin meter login antes de tiempo.
               </p>
-            {accessError ? (
-              <div className="mx-auto mt-6 max-w-md rounded-[22px] border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
-                {accessError}
+              {accessError ? (
+                <div className="mx-auto mt-6 max-w-md rounded-[22px] border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-100">
+                  {accessError}
+                </div>
+              ) : null}
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="border-white/10 bg-white/5 text-white hover:bg-white/10"
+                  onClick={() => window.location.reload()}
+                >
+                  Reintentar
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="border-white/10 bg-white/5 text-white hover:bg-white/10"
+                  onClick={() => router.push("/auth?next=/wizard")}
+                >
+                  Entrar con Google
+                </Button>
               </div>
-            ) : null}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                className="border-white/10 bg-white/5 text-white hover:bg-white/10"
-                onClick={() => window.location.reload()}
-              >
-                Reintentar
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className="border-white/10 bg-white/5 text-white hover:bg-white/10"
-                onClick={() => router.push("/auth?next=/wizard")}
-              >
-                Entrar con Google
-              </Button>
-            </div>
             </div>
           </div>
         ) : (
@@ -632,8 +636,8 @@ export default function WizardPage() {
             {/* STAGE 1: IDENTITY */}
             {currentStage === 1 && (
               <div className="w-full animate-in slide-in-from-right-8 fade-in duration-500">
-                <section className="rounded-[32px] landing-surface-strong p-6 md:p-8 lg:p-10">
-                  <div className="grid gap-8 lg:grid-cols-[minmax(0,0.84fr)_minmax(0,1.16fr)] lg:gap-10">
+                <section className="rounded-[32px] landing-surface-strong p-6 md:p-8">
+                  <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-8 lg:items-stretch">
                     <div className="flex flex-col">
                       <p className="landing-kicker mb-4">Paso 1 · foto base</p>
                       <h1 className="landing-heading text-[2.7rem] leading-[0.9] text-white md:text-[4rem] lg:text-[4.5rem]">
@@ -642,7 +646,7 @@ export default function WizardPage() {
                         Activamos tu acceso privado.
                       </h1>
                       <p className="mt-5 max-w-xl text-base leading-relaxed text-white/65 md:text-[1.05rem]">
-                        Este paso no intenta venderte nada todavía. Primero validamos imagen, privacidad y consentimiento para que la experiencia se sienta seria desde el inicio.
+                        Tu foto es el punto de partida. Sube una foto real, da tu consentimiento y GENESIS empieza a trabajar con lo que tienes.
                       </p>
 
                       <div className="mt-7 rounded-[24px] landing-surface px-5 py-5 text-left">
@@ -652,7 +656,7 @@ export default function WizardPage() {
                         </p>
                       </div>
 
-                      <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                      <div className="mt-6 grid grid-cols-3 gap-3 items-stretch">
                         {[
                           {
                             icon: ShieldCheck,
@@ -672,23 +676,20 @@ export default function WizardPage() {
                         ].map((item) => {
                           const Icon = item.icon;
                           return (
-                            <div key={item.label} className="rounded-[22px] landing-surface px-4 py-4">
+                            <div key={item.label} className="rounded-[22px] landing-surface px-4 py-4 h-full flex flex-col">
                               <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl border border-[#6D00FF]/20 bg-[#6D00FF]/10">
                                 <Icon className="h-4 w-4 text-[#C6A4FF]" />
                               </div>
                               <p className="text-sm font-semibold text-white">{item.label}</p>
-                              <p className="mt-2 text-xs leading-relaxed text-white/45">{item.text}</p>
+                              <p className="mt-auto text-xs leading-relaxed text-white/45">{item.text}</p>
                             </div>
                           );
                         })}
                       </div>
 
-                      <div className="mt-6 rounded-[22px] border border-white/10 bg-white/[0.03] px-4 py-4 text-sm leading-relaxed text-white/50">
-                        Si la imagen no está lista, no te pediremos el resto. Primero resolvemos la base.
-                      </div>
                     </div>
 
-                    <div className="rounded-[28px] landing-surface p-4 md:p-5">
+                    <div className="rounded-[28px] landing-surface p-4 md:p-5 flex flex-col">
                       <div className="flex items-center justify-between gap-3 border-b border-white/8 pb-4">
                         <div>
                           <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">Foto base</p>
@@ -705,7 +706,7 @@ export default function WizardPage() {
                         onDragEnter={onDrag}
                         onClick={() => inputRef.current?.click()}
                         className={cn(
-                          "group relative mt-5 flex min-h-[360px] md:min-h-[420px] w-full flex-col items-center justify-center overflow-hidden rounded-[28px] border border-dashed transition-all cursor-pointer",
+                          "group relative mt-5 flex flex-1 min-h-[300px] w-full flex-col items-center justify-center overflow-hidden rounded-[28px] border border-dashed transition-all cursor-pointer",
                           previewUrl
                             ? "border-[#6D00FF]/45 bg-[#6D00FF]/6"
                             : "border-white/12 bg-white/[0.03] hover:border-white/25 hover:bg-white/[0.05]"
@@ -733,25 +734,44 @@ export default function WizardPage() {
                             </div>
                           </>
                         ) : (
-                          <div className="max-w-sm px-6 text-center transition-transform group-hover:scale-[1.02]">
-                            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-[#6D00FF]/25 bg-[#6D00FF]/10 shadow-[0_0_30px_rgba(109,0,255,0.18)]">
-                              <Upload className="h-8 w-8 text-[#6D00FF]" />
-                            </div>
-                            <h3 className="mt-6 text-[1.45rem] font-black italic uppercase tracking-[-0.05em] text-white">
-                              Arrastra tu foto o haz clic
-                            </h3>
-                            <p className="mt-3 text-sm leading-relaxed text-white/50">
-                              JPG o PNG, máximo 8MB. Idealmente cuerpo completo, buena luz y una pose simple.
-                            </p>
-                            <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-                              {["Privado", "Aproximado", "Sin login aún"].map((item) => (
-                                <span
-                                  key={item}
-                                  className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-white/45"
-                                >
-                                  {item}
-                                </span>
-                              ))}
+                          <div className="flex h-full w-full flex-col items-center justify-center p-6 text-center transition-transform group-hover:scale-[1.01]">
+                            {/* Decorative framing */}
+                            <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,rgba(109,0,255,0.06)_0%,transparent_70%)] opacity-50" />
+                            <div className="absolute left-6 top-6 h-4 w-4 border-l border-t border-[#6D00FF]/40" />
+                            <div className="absolute right-6 top-6 h-4 w-4 border-r border-t border-[#6D00FF]/40" />
+                            <div className="absolute bottom-6 left-6 h-4 w-4 border-b border-l border-[#6D00FF]/40" />
+                            <div className="absolute bottom-6 right-6 h-4 w-4 border-b border-r border-[#6D00FF]/40" />
+
+                            <div className="relative z-10 flex flex-col items-center w-full">
+                              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#6D00FF]/30 bg-gradient-to-b from-[#6D00FF]/20 to-transparent shadow-[0_0_30px_rgba(109,0,255,0.15)]">
+                                <Upload className="h-7 w-7 text-[#C6A4FF]" />
+                              </div>
+
+                              <h3 className="text-xl md:text-2xl font-semibold text-white tracking-tight">
+                                Carga de biometría
+                              </h3>
+                              <p className="mt-2 text-sm text-white/50">
+                                Arrastra tu archivo o haz clic para explorar
+                              </p>
+
+                              <div className="mt-7 w-full max-w-[280px] space-y-2.5 text-left">
+                                {[
+                                  { icon: User, text: "Cuerpo completo (o medio)" },
+                                  { icon: Sun, text: "Iluminación clara natural" },
+                                  { icon: ScanLine, text: "Fondo despejado" },
+                                ].map((req, i) => (
+                                  <div key={i} className="flex items-center gap-3 rounded-xl bg-white/[0.02] px-3.5 py-2.5 border border-white/5 backdrop-blur-sm">
+                                    <req.icon className="h-4 w-4 text-[#C6A4FF]" />
+                                    <span className="text-xs font-medium text-white/70">{req.text}</span>
+                                  </div>
+                                ))}
+                              </div>
+
+                              <div className="mt-8 flex items-center justify-center gap-3 rounded-full border border-white/10 bg-white/[0.02] px-4 py-1.5 text-[9px] font-mono uppercase tracking-[0.2em] text-white/40">
+                                <span>JPG / PNG</span>
+                                <span className="h-1 w-1 rounded-full bg-white/20" />
+                                <span>MAX 8MB</span>
+                              </div>
                             </div>
                           </div>
                         )}
@@ -814,7 +834,7 @@ export default function WizardPage() {
 
             {/* STAGE 2: BIOMETRICS */}
             {currentStage === 2 && (
-              <div className="w-full max-w-5xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 space-y-8">
+              <div className="w-full max-w-5xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 space-y-6">
                 <div className="text-center">
                   <p className="landing-kicker mb-4">Paso 2 · Perfil corporal</p>
                   <h2 className="landing-heading text-[2.4rem] leading-[0.92] text-white md:text-[3.4rem]">
@@ -823,7 +843,7 @@ export default function WizardPage() {
                     a tu punto de partida.
                   </h2>
                   <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/55 md:text-base">
-                    Estos datos no sustituyen una medición clínica. Sólo calibran el rango de la visualización para que no se sienta como un juguete genérico.
+                    Entre más exactos sean estos datos, más precisa y personal será tu visualización.
                   </p>
                 </div>
 
@@ -908,10 +928,10 @@ export default function WizardPage() {
                     </div>
 
                     <div className="rounded-[24px] landing-surface px-5 py-5">
-                      <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">Lectura inicial</p>
-                      <p className="mt-3 text-base font-semibold text-white">Todavía no estamos diagnosticando.</p>
+                      <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">Siguiente paso</p>
+                      <p className="mt-3 text-base font-semibold text-white">Tu visualización privada te espera.</p>
                       <p className="mt-2 text-sm leading-relaxed text-white/50">
-                        Sólo estamos construyendo una base más útil para que la visualización y el siguiente paso tengan coherencia entre sí.
+                        Con estos datos generamos una imagen aproximada de tu potencial físico y abrimos tu acceso al roadmap personalizado.
                       </p>
                     </div>
                   </div>
@@ -921,7 +941,7 @@ export default function WizardPage() {
 
             {/* STAGE 3: MISSION */}
             {currentStage === 3 && (
-              <div className="w-full max-w-5xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 space-y-8">
+              <div className="w-full max-w-5xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 space-y-6">
                 <div className="text-center">
                   <p className="landing-kicker mb-4">Paso 3 · objetivo</p>
                   <h2 className="landing-heading text-[2.4rem] leading-[0.92] text-white md:text-[3.4rem]">
@@ -1047,7 +1067,7 @@ export default function WizardPage() {
 
             {/* STAGE 4: SOFTWARE (MENTAL) */}
             {currentStage === 4 && (
-              <div className="w-full max-w-4xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 flex flex-col items-center justify-center h-full space-y-8">
+              <div className="w-full max-w-4xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 flex flex-col items-center justify-center h-full space-y-6">
                 <div className="text-center">
                   <p className="landing-kicker mb-4">Paso 4 · cierre</p>
                   <h2 className="landing-heading text-[2.4rem] leading-[0.92] text-white md:text-[3.2rem]">

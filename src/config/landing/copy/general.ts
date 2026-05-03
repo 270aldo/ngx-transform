@@ -1,8 +1,8 @@
 /**
  * Landing Page Copy - General Variant
  *
- * Default copy for the main landing page.
- * Premium/aspirational tone targeting broad audience.
+ * NGX Transform Scan — lead magnet principal para HYBRID.
+ * Tono: Verdad Directa + Performance & Longevity + salud muscular.
  */
 
 import {
@@ -19,184 +19,184 @@ import type { VariantCopy } from "../types";
 export const generalCopy: VariantCopy = {
   hero: {
     badge: {
-      aiLabel: "Potenciado por GENESIS AI",
-      version: "HYBRID",
+      aiLabel: "GENESIS",
+      version: "Future Body Scan",
     },
     headline: {
-      line1: "Visualiza tu",
-      line2: "transformación física.",
+      line1: "Lo que no te conoce,",
+      line2: "no te puede transformar.",
     },
     subtitle:
-      "Sube una foto. La IA analiza tu composición corporal, identifica tu potencial y genera una proyección visual realista de lo que tu cuerpo puede lograr en 12 semanas.",
-    cta: "Descubre Tu Potencial",
+      "Sube una foto. GENESIS analiza tu punto de partida y te muestra una proyección aspiracional de lo que podrías construir en una temporada de 12 semanas con entrenamiento, nutrición, recuperación y acompañamiento humano.",
+    cta: "Ver mi punto de partida",
     primaryCta: {
-      label: "Descubre Tu Potencial",
+      label: "Ver mi punto de partida",
       intent: "scan_start",
     },
     secondaryCta: "Cómo funciona",
     supportingPoints: [
-      "Resultado claro en menos de 3 minutos.",
+      "Gratis · Privado · 3 min.",
       "GENESIS interpreta tus datos con honestidad.",
       "Tú decides el siguiente paso, sin presión.",
     ],
     socialProof: {
-      count: "Procesamiento en minutos",
-      label: "Procesamiento seguro y controlado",
+      count: "Gratis · Privado · 3 min",
+      label: "Visualización aspiracional + ruta inicial HYBRID",
     },
-    // Before/After transformation demo
     transformationDemo: {
       beforeImage: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&h=1000&fit=crop&crop=faces",
       afterImage: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=800&h=1000&fit=crop&crop=faces",
-      beforeLabel: "ANTES",
-      afterLabel: "12 MESES",
+      beforeLabel: "HOY",
+      afterLabel: "12 SEMANAS",
     },
   },
 
   stats: [
-    { value: "4", suffix: " etapas", label: "De análisis a resultados" },
-    { value: "12", suffix: " meses", label: "Proyección personalizada" },
-    { value: "Acceso", suffix: "", label: "Privado con cuenta" },
-    { value: "IA +", suffix: " Coach", label: "Sistema HYBRID" },
+    { value: "12", suffix: " sem", label: "temporada seria" },
+    { value: "1", suffix: "", label: "sistema unificado" },
+    { value: "IA+", suffix: "coach", label: "cuando toca ejecutar" },
+    { value: "0", suffix: "", label: "promesas mágicas" },
   ],
 
   features: [
     {
       icon: Brain,
-      title: "Análisis Biométrico IA",
+      title: "Tu cuerpo no es una plantilla",
       description:
-        "Gemini analiza tu estructura corporal, composición y potencial genético para crear proyecciones realistas y personalizadas.",
+        "GENESIS cruza tu foto, edad, objetivo y contexto inicial para darte una lectura más útil que una rutina genérica. No intenta adivinar tu vida: empieza a entenderla.",
       size: "large",
     },
     {
       icon: Shield,
-      title: "Privacidad Segura",
+      title: "Privacidad sin letra pequeña",
       description:
-        "Tu foto se procesa de forma segura y se conserva solo mientras es necesaria para operar el servicio y mostrar tus resultados.",
+        "Tu foto se procesa con consentimiento explícito. No la vendemos, no la publicamos y no la usamos como testimonio sin permiso.",
       size: "medium",
-      badge: "Encriptación E2E",
+      badge: "Consentimiento explícito",
     },
     {
       icon: Sparkles,
-      title: "Timeline de 12 Meses",
+      title: "La imagen inspira. El sistema transforma.",
       description:
-        "No es solo un antes/después. Visualiza tu progreso en 4 etapas: Hoy, Mes 4, Mes 8 y Mes 12 con estadísticas y métricas detalladas.",
+        "El scan te muestra una dirección posible. HYBRID convierte esa dirección en ejecución: temporada de 12 semanas, GENESIS ajustando y un coach humano validando la ruta.",
       size: "full",
     },
   ],
 
   howItWorks: {
-    title: "3 pasos. Acceso privado. Tu potencial revelado.",
-    subtitle: "",
+    title: "De curiosidad a claridad",
+    subtitle:
+      "No vienes a jugar con una imagen. Vienes a descubrir qué sistema necesitarías para cambiar de verdad.",
     steps: [
       {
         step: "01",
-        title: "Sube tu foto",
+        title: "Sube una foto real",
         description:
-          "Una foto de cuerpo completo. Privada y segura. Requiere acceso para generar y resguardar tus resultados.",
+          "Cuerpo completo, frontal y con buena iluminación. Sin filtros. El punto de partida importa.",
         icon: Camera,
       },
       {
         step: "02",
-        title: "GENESIS analiza tu cuerpo",
+        title: "Dale contexto a GENESIS",
         description:
-          "La IA evalúa tu composición corporal, identifica áreas de oportunidad y calcula tu potencial real basado en ciencia y datos.",
+          "Objetivo, edad, nivel, disponibilidad y obstáculos. Sin eso, cualquier plan es una apuesta.",
         icon: Brain,
       },
       {
         step: "03",
-        title: "Visualiza tu transformación",
+        title: "Recibe tu proyección y ruta",
         description:
-          "Recibe una proyección visual realista de tu potencial, junto con un análisis detallado y tu plan de acción personalizado.",
+          "Visualización aspiracional, lectura inicial y siguiente paso hacia HYBRID si necesitas acompañamiento humano.",
         icon: Sparkles,
       },
     ],
   },
 
   testimonials: {
-    sectionLabel: "Lo que dicen",
+    sectionLabel: "Verdad Directa",
     items: [
       {
-        text: "Increíble la precisión. Mi proyección de mes 12 se parece mucho a mi progreso real después de entrenar 8 meses.",
-        name: "Carlos M.",
-        role: "Usuario verificado",
-        gradient: "from-violet-400 to-fuchsia-300",
+        text: "La imagen no es el producto. Es el espejo. El producto real es el sistema que te ayuda a convertir intención en ejecución.",
+        name: "Principio NGX",
+        role: "Sin humo",
+        gradient: "from-violet-400 to-purple-300",
       },
       {
-        text: "Lo usé para motivarme. Ver mi potencial me dio la disciplina que necesitaba para empezar a entrenar en serio.",
-        name: "Ana R.",
-        role: "Usuario verificado",
-        gradient: "from-emerald-400 to-lime-300",
+        text: "Después de los 30, improvisar sale caro. Músculo, energía, movilidad y metabolismo no se protegen con motivación: se protegen con estructura.",
+        name: "Salud Muscular",
+        role: "Base de longevidad",
+        gradient: "from-blue-400 to-cyan-300",
       },
       {
-        text: "Como entrenador, lo uso con mis clientes para mostrarles su potencial. La visualización es poderosísima.",
-        name: "Diego L.",
-        role: "Personal Trainer",
-        gradient: "from-purple-400 to-rose-300",
+        text: "HYBRID existe porque la IA puede diseñar el sistema, pero un humano puede ayudarte a sostenerlo cuando la semana se complica.",
+        name: "GENESIS + Coach",
+        role: "Humano amplificado por IA",
+        gradient: "from-emerald-400 to-green-300",
       },
     ],
   },
 
   valueStack: {
     sectionLabel: "Qué Recibes",
-    title: "Una lectura honesta",
-    highlight: "y un mapa de acción",
+    title: "Claridad, no promesas.",
+    highlight: "Un diagnóstico real.",
     subtitle:
-      "No es otra app que promete. Es un escaneo aspiracional + un plan inicial que puedes ejecutar tú mismo o validar con un coach humano.",
+      "El producto gratuito no es la imagen. Es la claridad: qué potencial tienes, qué te está frenando y si necesitas acompañamiento humano para ejecutar.",
     items: [
       {
         icon: Sparkles,
-        title: "Future Body Scan visual",
+        title: "Visualización aspiracional",
         description:
-          "4 etapas — hoy, mes 4, mes 8 y mes 12 — generadas con identidad consistente para que la imagen se vea como tú, no como un avatar genérico.",
-      },
-      {
-        icon: FileText,
-        title: "Plan de 7 días",
-        description:
-          "Entrenamiento, nutrición y hábitos para tu primera semana. Educativo y orientativo — diseñado para que ejecutes con claridad.",
+          "Una proyección visual de tu potencial basada en tus datos reales. No es una promesa — es una dirección posible.",
       },
       {
         icon: Brain,
         title: "Readiness Report",
         description:
-          "GENESIS evalúa tu adherencia probable, tu base muscular y si te conviene un proceso autoguiado o con coach humano.",
+          "GENESIS evalúa qué tan preparado estás para ejecutar: disponibilidad, sueño, estrés, historial de adherencia y necesidad de accountability.",
+      },
+      {
+        icon: FileText,
+        title: "Ruta inicial de 7 días",
+        description:
+          "Entrenamiento, nutrición y hábitos para tu primera semana. Educativo y orientativo — un primer paso concreto.",
       },
       {
         icon: Users,
-        title: "Ruta a HYBRID",
+        title: "Diagnóstico HYBRID",
         description:
-          "Si tu contexto sugiere acompañamiento humano, te conectamos con un coach NGX. Si no, sigues con ASCEND autoguiado.",
+          "Si tu perfil lo indica, accedes a una sesión de 15 minutos con un coach humano para definir si una temporada de 12 semanas tiene sentido para ti.",
       },
     ],
   },
 
   bridge: {
     sectionLabel: "El Puente",
-    title: "La imagen inspira.",
-    highlight: "El sistema transforma.",
+    title: "La IA traza el mapa.",
+    highlight: "El coach te ayuda a sostenerlo.",
     subtitle:
-      "GENESIS te muestra el mapa. Un coach humano te ayuda a ejecutarlo. La IA no reemplaza al coach — lo amplifica.",
-    footnote: "Sin costo · Coach disponible en HYBRID",
-    buttonText: "Validar mi ruta con un coach",
-    buttonIntent: "hybrid_offer",
+      "GENESIS diseña, analiza y ajusta. Tu coach revisa, contextualiza y te mantiene honesto cuando la motivación baja.",
+    footnote: "15 min · Sin compromiso · Sin presión",
+    buttonText: "Agendar diagnóstico HYBRID",
+    buttonIntent: "hybrid_diagnosis",
     cards: [
       {
         icon: Brain,
-        title: "GENESIS analiza",
+        title: "GENESIS diagnostica",
         description:
-          "Lee tu perfil, mide adherencia, organiza el plan y detecta ajustes. Sin sesgos, sin promesas.",
+          "Analiza tu punto de partida, mide tu readiness y diseña una ruta basada en tu contexto real. Sin sesgos.",
       },
       {
         icon: Users,
-        title: "El coach valida",
+        title: "El coach adapta",
         description:
-          "Un coach humano revisa la estrategia contigo, ajusta a tu contexto real y te acompaña en la ejecución.",
+          "Un coach humano revisa tu diagnóstico contigo, ajusta a tu realidad y define si una temporada de 12 semanas tiene sentido.",
       },
       {
         icon: Sparkles,
-        title: "Tú ejecutas",
+        title: "Tú ejecutas con sistema",
         description:
-          "Con un mapa claro y validado, lo que falta es consistencia. Esa parte sigue siendo tuya.",
+          "IA para precisión. Coach para accountability. Sistema para sostenerlo cuando la semana se complica.",
       },
     ],
   },
@@ -239,24 +239,25 @@ export const generalCopy: VariantCopy = {
   },
 
   cta: {
-    headline: "Tu cuerpo tiene más potencial del que crees.",
+    headline: "La imagen puede incomodarte. Bien.",
     subtitle:
-      "Deja de adivinar. Deja de seguir planes genéricos. Descubre lo que es posible para ti con un análisis real de GENESIS.",
-    buttonText: "Descubre Tu Potencial",
-    footnote: "Sin costo · Requiere cuenta · Proceso guiado",
+      "Úsala como punto de partida. Si quieres convertir esa dirección en una temporada real, agenda un diagnóstico HYBRID y revisamos tu caso con honestidad.",
+    buttonText: "Iniciar mi scan",
+    intent: "final_cta_hybrid",
+    footnote: "Visualización aspiracional. No garantía de resultado.",
   },
 
   footer: {
-    brandName: "NGX Transform",
-    status: "Todos los sistemas operativos",
-    copyright: "© 2024 NGX. Todos los derechos reservados.",
+    brandName: "NGX Transform Scan",
+    status: "GENESIS operativo",
+    copyright: "© 2026 NGX. Todos los derechos reservados.",
   },
 
-  // Optional: Explainer video section (hidden if no videoUrl)
   explainerVideo: {
-    title: "¿Cómo Funciona NGX?",
-    subtitle: "Mira cómo la IA analiza y proyecta tu transformación paso a paso.",
-    videoUrl: "", // Empty = section hidden. Add video URL when ready.
+    title: "No es otra app de fitness",
+    subtitle:
+      "Es el primer paso para entender tu cuerpo, tu contexto y la ruta que tendría sentido para ti.",
+    videoUrl: "",
     posterUrl: "/images/video-poster.jpg",
     duration: "45s",
   },

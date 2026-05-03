@@ -3,6 +3,8 @@ import { getDb } from "@/lib/firebaseAdmin";
 import { getSignedUrl } from "@/lib/storage";
 import { getAuthUser } from "@/lib/authServer";
 
+export const runtime = "nodejs";
+
 const FF_EXPOSE_ORIGINAL = process.env.FF_EXPOSE_ORIGINAL !== "false";
 
 export async function GET(req: Request, context: { params: Promise<{ shareId: string }> }) {

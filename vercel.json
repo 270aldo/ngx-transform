@@ -4,5 +4,11 @@
   "installCommand": "pnpm install",
   "env": {
     "NEXT_PUBLIC_APP_URL": "https://transform.ngxgenesis.com"
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/cleanup",
+      "schedule": "0 3 * * *"
+    }
+  ]
 }

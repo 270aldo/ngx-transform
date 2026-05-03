@@ -4,6 +4,8 @@ import { getDb } from "@/lib/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
 import { checkRateLimit, getClientIP, getRateLimitHeaders } from "@/lib/rateLimit";
 
+export const runtime = "nodejs";
+
 const FeedbackSchema = z.object({
   shareId: z.string().min(1),
   score: z.number().int().min(1).max(10),
@@ -25,6 +27,19 @@ export async function POST(req: NextRequest) {
 
     const payload = FeedbackSchema.parse(await req.json());
     const db = getDb();
+
+    // AUDIT-018 — verify the session exists before updating npsScore.
+    // Without this check, an attacker iterating shareIds could create
+    // bogus npsScore entries on arbitrary sessions (or non-existent ones).
+    const sessionRef = db.collection("sessions").doc(payload.shareId);
+    const sessionSnap = await sessionRef.get();
+    if (!sessionSnap.exists) {
+      return NextResponse.json(
+        { ok: false, error: "Session not found" },
+        { status: 404 }
+      );
+    }
+
     await db.collection("feedback").add({
       ...payload,
       createdAt: FieldValue.serverTimestamp(),
@@ -32,16 +47,13 @@ export async function POST(req: NextRequest) {
       ip: clientIP,
     });
 
-    await db
-      .collection("sessions")
-      .doc(payload.shareId)
-      .set(
-        {
-          lastActivityAt: FieldValue.serverTimestamp(),
-          npsScore: payload.score,
-        },
-        { merge: true }
-      );
+    await sessionRef.set(
+      {
+        lastActivityAt: FieldValue.serverTimestamp(),
+        npsScore: payload.score,
+      },
+      { merge: true }
+    );
 
     return NextResponse.json({ ok: true });
   } catch (error) {

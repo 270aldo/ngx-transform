@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/nextjs";
+import { sanitizeEvent } from "./sentry.before-send";
 
 const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
 
@@ -8,4 +9,5 @@ Sentry.init({
   tracesSampleRate: 0.1,
   replaysOnErrorSampleRate: 1,
   replaysSessionSampleRate: 0.05,
+  beforeSend: sanitizeEvent,
 });

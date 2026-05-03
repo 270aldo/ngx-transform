@@ -46,15 +46,28 @@ interface CleanupResult {
 // ============================================================================
 
 function validateCronKey(req: Request): boolean {
-  const cronKey = process.env.CRON_API_KEY;
-  if (!cronKey) {
-    console.error("[Cleanup] CRON_API_KEY not configured");
+  // Accept either CRON_API_KEY (manual triggers) or CRON_SECRET
+  // (Vercel cron's auto-injected Authorization: Bearer header).
+  // Operators may set either or both — at least one is required.
+  const cronApiKey = process.env.CRON_API_KEY;
+  const cronSecret = process.env.CRON_SECRET;
+
+  if (!cronApiKey && !cronSecret) {
+    console.error("[Cleanup] Neither CRON_API_KEY nor CRON_SECRET configured");
     return false;
   }
 
-  const providedKey = req.headers.get("x-cron-key") || req.headers.get("authorization")?.replace("Bearer ", "");
+  const providedKey =
+    req.headers.get("x-cron-key") ||
+    req.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ||
+    "";
 
-  return secureCompare(providedKey, cronKey);
+  // Try both — secureCompare returns false on length mismatch so this
+  // is safe even when one of them is undefined.
+  if (cronApiKey && secureCompare(providedKey, cronApiKey)) return true;
+  if (cronSecret && secureCompare(providedKey, cronSecret)) return true;
+
+  return false;
 }
 
 // ============================================================================

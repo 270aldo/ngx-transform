@@ -4,7 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Versión:** 11.0 (Genesis Doctrine)
+### Versionado (single source of truth)
+
+| Eje | Versión actual | Fuente autoritativa |
+|---|---|---|
+| Producto / release | v3.2 (HYBRID Launch Ready) | [CHANGELOG.md](CHANGELOG.md) — última entrada |
+| Doctrina conceptual GENESIS | v11.0 (Genesis Doctrine) | [docs/AGENTS.md](docs/AGENTS.md) |
+| Stack runtime | Next.js 16.0.7 / React 19.1.2 | [package.json](package.json) — `dependencies` |
+| Auditoría más reciente | AUDIT-2026-05 | [docs/AUDIT_2026_05.md](docs/AUDIT_2026_05.md) |
+| Feature flags | ver tabla autoritativa | [docs/FEATURE_FLAGS.md](docs/FEATURE_FLAGS.md) |
+
+Si algún doc del repo afirma una versión distinta, este archivo y los enlaces de arriba mandan. Cualquier bump (de stack o doctrina) debe actualizar la fila correspondiente.
+
 **Stack:** Next.js 16.0.7 + React 19 + TypeScript + Firebase + Tailwind CSS v4 + Upstash Redis
 
 NGX Transform is a **premium viral lead magnet** that creates realistic 12-month physical transformation projections. Users upload a photo, provide profile data, and receive AI-generated insights with visualized progress images at m0/m4/m8/m12 milestones, plus a personalized 7-day fitness plan.
@@ -147,13 +158,16 @@ pnpm lint         # ESLint
 | `/api/genesis-voice` | POST | Voice agent responses via ElevenLabs (v3.0) |
 | `/api/remarketing` | POST/GET | Remarketing leads (POST: register, GET: admin lookup) |
 | `/api/generate-plan` | GET/POST | PDF plan generation with rate limiting |
-| `/api/csp-report` | POST | CSP violation reports |
+| `/api/csp-report` | POST | CSP violation reports (forwarded to Sentry; rate-limited; 16KB body cap — AUDIT-017) |
 | `/api/sessions/[shareId]/private` | GET | Authenticated session data (full PII) |
 | `/api/sessions/[shareId]/share-settings` | POST | Update share scope (shareOriginal, shareInsights, shareProfile) |
 | `/api/sessions/me` | GET | List sessions for authenticated user |
-| `/api/cron/cleanup` | POST | Cleanup expired sessions/orphaned assets |
+| `/api/cron/cleanup` | POST | Cleanup expired sessions/orphaned assets (Vercel cron, 03:00 UTC daily) |
 | `/api/health` | GET | Uptime health check |
-| `/api/unsubscribe` | POST | Email suppression (unsubscribe/resubscribe) |
+| `/api/unsubscribe` | GET/POST | Email suppression. Accepts signed HMAC token (`?u=...`, preferred) or legacy `email`/`shareId` (in transition window — AUDIT-006) |
+| `/api/feedback` | POST | NPS feedback capture (rate-limited, validates session exists) |
+| `/api/telemetry` | POST | Funnel events from client components (rate-limited, Zod-validated) |
+| `/api/events/hybrid-offer` | POST | Hybrid-offer click tracking (Calendly / WhatsApp / chat) |
 
 ### Type Definitions
 
@@ -418,6 +432,8 @@ NEXT_PUBLIC_BOOKING_URL=         # CTA link
 
 ## Security (v3.0) ⭐ NEW
 
+> ⚠️ **AUDIT-2026-05 NOTICE**: La subsección "Content Security Policy (CSP)" y "Security Headers" describen **DISEÑO OBJETIVO, no implementado a 2026-05-02**. El archivo `src/middleware.ts` referenciado **no existe** — existe `src/proxy.ts` con CSP parcial pero nunca se carga. La auditoría completa está en [docs/AUDIT_2026_05.md](docs/AUDIT_2026_05.md), implementación tracked en `AUDIT-001` del backlog. **API Protection, Rate Limiting y Share Scope System sí están implementados** y reflejan la realidad.
+
 ### API Protection
 
 | Endpoint | Protection |
@@ -441,9 +457,11 @@ Distributed rate limiting via `src/lib/rateLimit.ts`:
 "api:email"         // 2 per hour (by IP)
 ```
 
-### Content Security Policy (CSP)
+### Content Security Policy (CSP) — 📋 DISEÑO OBJETIVO (no implementado)
 
-Implemented in `src/middleware.ts`:
+> Pendiente de implementación en `/middleware.ts` (root, no `src/`). Tracked en AUDIT-001 del backlog. Diseño detallado en [docs/AUDIT_2026_05.md sección T1.3](docs/AUDIT_2026_05.md).
+
+Diseño objetivo:
 
 - **script-src**: `'self'` + nonce-based + `'strict-dynamic'`
 - **connect-src**: Whitelisted Firebase, Upstash, Vercel, Google APIs
@@ -451,9 +469,11 @@ Implemented in `src/middleware.ts`:
 - **object-src**: `'none'`
 - **upgrade-insecure-requests**: Enabled
 
-### Security Headers
+### Security Headers — 📋 DISEÑO OBJETIVO (no implementado)
 
-| Header | Value |
+> Pendiente de implementación junto con CSP en `/middleware.ts`. Ver AUDIT-001.
+
+| Header | Value objetivo |
 |--------|-------|
 | `Strict-Transport-Security` | `max-age=63072000; includeSubDomains; preload` |
 | `X-Frame-Options` | `SAMEORIGIN` |

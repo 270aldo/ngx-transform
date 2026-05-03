@@ -1,10 +1,18 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import React from "react";
+import { z } from "zod";
 import ResultsEmail from "@/emails/ResultsEmail";
 import { getDb } from "@/lib/firebaseAdmin";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 import { isEmailSuppressed } from "@/lib/emailSuppression";
+import { requireAuth } from "@/lib/authServer";
+
+export const runtime = "nodejs";
+
+const EmailRequestSchema = z.object({
+  shareId: z.string().min(1).max(128),
+});
 
 export async function POST(req: Request) {
   try {
@@ -18,9 +26,21 @@ export async function POST(req: Request) {
       );
     }
 
+    // Auth required — closes the unauth-fanout vector even though the
+    // endpoint already only sends to the session owner. Without this,
+    // an attacker iterating shareIds could spam users' inboxes from
+    // our domain (and burn Resend quota).
+    const authUser = await requireAuth(req);
+
     const body = await req.json();
-    const { shareId } = body as { shareId?: string };
-    if (!shareId) return NextResponse.json({ error: "Missing shareId" }, { status: 400 });
+    const parsed = EmailRequestSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Invalid request", details: parsed.error.issues },
+        { status: 400 }
+      );
+    }
+    const { shareId } = parsed.data;
 
     const key = process.env.RESEND_API_KEY;
     if (!key) return NextResponse.json({ error: "RESEND_API_KEY not set" }, { status: 400 });
@@ -34,6 +54,19 @@ export async function POST(req: Request) {
 
     const sessionData = sessionDoc.data();
     const ownerEmail = sessionData?.email || sessionData?.input?.email;
+    const ownerUid = sessionData?.ownerUid as string | undefined;
+
+    // Ownership check: caller must own this session OR match the email
+    // (covers legacy sessions captured before auth was tied in).
+    const isOwner = !!ownerUid && ownerUid === authUser.uid;
+    const emailMatch =
+      !!authUser.email &&
+      !!ownerEmail &&
+      authUser.email.toLowerCase() === String(ownerEmail).toLowerCase();
+    if (!isOwner && !emailMatch) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     if (!ownerEmail) {
       return NextResponse.json({ error: "No email associated with this session" }, { status: 400 });
     }
@@ -60,7 +93,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : "Unknown error";
-    console.error(e);
+    if (message === "UNAUTHORIZED") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    console.error("[api/email]", e);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

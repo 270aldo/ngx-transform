@@ -4,6 +4,14 @@ import { getDb } from "@/lib/firebaseAdmin";
 import { generateGenesisIntro, buildGenesisIntroScript } from "@/lib/elevenlabs-voice";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 import { getAuthUser } from "@/lib/authServer";
+import { checkSpendLimit, recordSpend } from "@/lib/spendLimiter";
+import { getAiGenerationFlag } from "@/lib/aiKillSwitch";
+
+export const runtime = "nodejs";
+
+// Estimated cost per ElevenLabs Multilingual v2 call:
+// ~400-500 chars × $0.0001/char ≈ $0.04-0.05. Use $0.05 conservative.
+const ELEVENLABS_INTRO_COST_USD = 0.05;
 
 // Rate limit: 1 audio generation per shareId
 const audioCache = new Map<string, { audioBase64: string; generatedAt: number }>();
@@ -84,9 +92,41 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // AI kill switch — same gate as Gemini-based endpoints
+    const aiFlag = await getAiGenerationFlag();
+    if (!aiFlag.enabled) {
+      console.warn(`[genesis-voice] AI generation disabled (source=${aiFlag.source})`);
+      return NextResponse.json({
+        success: true,
+        audioBase64: null,
+        transcript,
+        fallback: true,
+        message: "Audio generation temporarily unavailable.",
+      });
+    }
+
+    // Spend limiter — ElevenLabs runs through the same Gemini bucket
+    // until a per-provider bucket exists (tracked in AUDIT-023).
+    const spendCheck = await checkSpendLimit(ELEVENLABS_INTRO_COST_USD);
+    if (!spendCheck.allowed) {
+      console.warn(`[genesis-voice] Spend limit blocked: ${spendCheck.reason}`);
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Service temporarily at capacity. Please try again later.",
+          fallback: true,
+          transcript,
+        },
+        { status: 503 }
+      );
+    }
+
     // Generate audio with ElevenLabs
     const { audioBuffer } = await generateGenesisIntro(userName, userLevel, userGoal);
     const audioBase64 = audioBuffer.toString("base64");
+
+    // Record spend after successful generation (fire-and-forget; logs on failure)
+    void recordSpend(ELEVENLABS_INTRO_COST_USD, "elevenlabs:genesis-intro");
 
     // Cache the result
     audioCache.set(cacheKey, {

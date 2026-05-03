@@ -8,11 +8,35 @@
  * 4) Default enabled
  */
 
+import * as Sentry from "@sentry/nextjs";
 import { getDb } from "./firebaseAdmin";
 
 const FLAG_KEY = "ENABLE_AI_GENERATION";
 const DEFAULT_ENABLED = true;
 const CACHE_TTL_MS = Number(process.env.AI_FLAG_CACHE_TTL_MS || "60000");
+
+/**
+ * Emit a Sentry event whenever the kill switch state actually changes.
+ * Lets ops set an alert rule on tag `component:aiKillSwitch`.
+ */
+function notifyIfChanged(
+  newEnabled: boolean,
+  newSource: "env" | "edge-config" | "firestore" | "default"
+) {
+  if (!cache) return; // first read, no transition to report
+  if (cache.enabled === newEnabled && cache.source === newSource) return;
+  Sentry.captureMessage(
+    `aiKillSwitch.changed: ${cache.enabled ? "ENABLED" : "DISABLED"} -> ${newEnabled ? "ENABLED" : "DISABLED"}`,
+    {
+      level: newEnabled ? "info" : "warning",
+      tags: { component: "aiKillSwitch", newState: newEnabled ? "enabled" : "disabled" },
+      extra: {
+        previous: { enabled: cache.enabled, source: cache.source },
+        next: { enabled: newEnabled, source: newSource },
+      },
+    }
+  );
+}
 
 let cache:
   | {
@@ -94,22 +118,26 @@ export async function getAiGenerationFlag(): Promise<{
 
   const env = envOverride();
   if (env !== null) {
+    notifyIfChanged(env, "env");
     cache = { enabled: env, source: "env", checkedAt: Date.now() };
     return { enabled: env, source: "env" };
   }
 
   const edge = await fetchEdgeConfigFlag();
   if (edge !== null) {
+    notifyIfChanged(edge, "edge-config");
     cache = { enabled: edge, source: "edge-config", checkedAt: Date.now() };
     return { enabled: edge, source: "edge-config" };
   }
 
   const firestore = await fetchFirestoreFlag();
   if (firestore !== null) {
+    notifyIfChanged(firestore, "firestore");
     cache = { enabled: firestore, source: "firestore", checkedAt: Date.now() };
     return { enabled: firestore, source: "firestore" };
   }
 
+  notifyIfChanged(DEFAULT_ENABLED, "default");
   cache = { enabled: DEFAULT_ENABLED, source: "default", checkedAt: Date.now() };
   return { enabled: DEFAULT_ENABLED, source: "default" };
 }

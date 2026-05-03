@@ -17,6 +17,8 @@ import { getAiGenerationFlag } from "@/lib/aiKillSwitch";
 import { requireAuth } from "@/lib/authServer";
 import { telemetry } from "@/lib/telemetry";
 
+export const runtime = "nodejs";
+
 // Feature flag
 const FF_PLAN_7_DIAS = process.env.FF_PLAN_7_DIAS !== "false";
 
