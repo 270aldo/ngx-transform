@@ -4,7 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Versión:** 11.0 (Genesis Doctrine)
+### Versionado (single source of truth)
+
+| Eje | Versión actual | Fuente autoritativa |
+|---|---|---|
+| Producto / release | v3.2 (HYBRID Launch Ready) | [CHANGELOG.md](CHANGELOG.md) — última entrada |
+| Doctrina conceptual GENESIS | v11.0 (Genesis Doctrine) | [docs/AGENTS.md](docs/AGENTS.md) |
+| Stack runtime | Next.js 16.0.7 / React 19.1.2 | [package.json](package.json) — `dependencies` |
+| Auditoría más reciente | AUDIT-2026-05 | [docs/AUDIT_2026_05.md](docs/AUDIT_2026_05.md) |
+| Feature flags | ver tabla autoritativa | [docs/FEATURE_FLAGS.md](docs/FEATURE_FLAGS.md) |
+
+Si algún doc del repo afirma una versión distinta, este archivo y los enlaces de arriba mandan. Cualquier bump (de stack o doctrina) debe actualizar la fila correspondiente.
+
 **Stack:** Next.js 16.0.7 + React 19 + TypeScript + Firebase + Tailwind CSS v4 + Upstash Redis
 
 NGX Transform is a **premium viral lead magnet** that creates realistic 12-month physical transformation projections. Users upload a photo, provide profile data, and receive AI-generated insights with visualized progress images at m0/m4/m8/m12 milestones, plus a personalized 7-day fitness plan.
@@ -147,13 +158,16 @@ pnpm lint         # ESLint
 | `/api/genesis-voice` | POST | Voice agent responses via ElevenLabs (v3.0) |
 | `/api/remarketing` | POST/GET | Remarketing leads (POST: register, GET: admin lookup) |
 | `/api/generate-plan` | GET/POST | PDF plan generation with rate limiting |
-| `/api/csp-report` | POST | CSP violation reports |
+| `/api/csp-report` | POST | CSP violation reports (forwarded to Sentry; rate-limited; 16KB body cap — AUDIT-017) |
 | `/api/sessions/[shareId]/private` | GET | Authenticated session data (full PII) |
 | `/api/sessions/[shareId]/share-settings` | POST | Update share scope (shareOriginal, shareInsights, shareProfile) |
 | `/api/sessions/me` | GET | List sessions for authenticated user |
-| `/api/cron/cleanup` | POST | Cleanup expired sessions/orphaned assets |
+| `/api/cron/cleanup` | POST | Cleanup expired sessions/orphaned assets (Vercel cron, 03:00 UTC daily) |
 | `/api/health` | GET | Uptime health check |
-| `/api/unsubscribe` | POST | Email suppression (unsubscribe/resubscribe) |
+| `/api/unsubscribe` | GET/POST | Email suppression. Accepts signed HMAC token (`?u=...`, preferred) or legacy `email`/`shareId` (in transition window — AUDIT-006) |
+| `/api/feedback` | POST | NPS feedback capture (rate-limited, validates session exists) |
+| `/api/telemetry` | POST | Funnel events from client components (rate-limited, Zod-validated) |
+| `/api/events/hybrid-offer` | POST | Hybrid-offer click tracking (Calendly / WhatsApp / chat) |
 
 ### Type Definitions
 
