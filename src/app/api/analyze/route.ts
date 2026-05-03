@@ -114,9 +114,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing photo" }, { status: 400 });
     }
 
-    // Check spend limits (analysis is cheap but still tracked)
-    const analysisCost = 0.001; // ~$0.001 per analysis (conservative estimate)
-    const spendCheck = await checkSpendLimit(analysisCost);
+    // Estimated cost per analyze call — Gemini 3.x Flash text+vision.
+    // Pricing reference (2026): input ~$0.075/1M tokens, output ~$0.30/1M.
+    // Typical call ≈ 1100 image tokens + 500 prompt tokens (input) +
+    // ~800 tokens (structured JSON output) = ~$0.00036 actual.
+    // We use 2x that as a buffer for retries (MAX_RETRIES=3) and
+    // prompt expansion (mental logs, body type variants).
+    // Centralized constant so it's easy to bump as model pricing changes.
+    const ANALYSIS_COST_USD = 0.0008;
+    const spendCheck = await checkSpendLimit(ANALYSIS_COST_USD);
     if (!spendCheck.allowed) {
       console.error(`[Analyze] Spend limit exceeded: ${spendCheck.reason}`);
       telemetry.spendLimitBlocked(sessionId, spendCheck.reason);
@@ -179,7 +185,7 @@ export async function POST(req: Request) {
     await telemetry.analysisCompleted(sessionId, latency, MODEL_ID);
 
     // Record spend
-    await recordSpend(analysisCost, "analysis");
+    await recordSpend(ANALYSIS_COST_USD, "analysis");
 
     console.log(`[Analyze] Completed ${sessionId} in ${latency}ms (${retryCount} retries)`);
 
