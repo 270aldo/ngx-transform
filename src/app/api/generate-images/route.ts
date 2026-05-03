@@ -28,6 +28,7 @@ import sharp from "sharp";
 import { telemetry, startTimer } from "@/lib/telemetry";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 import { checkSpendLimit, recordSpend } from "@/lib/spendLimiter";
+import { verifyWorkerToken } from "@/lib/workerAuth";
 import { requireAuth } from "@/lib/authServer";
 import { getAiGenerationFlag } from "@/lib/aiKillSwitch";
 import {
@@ -60,16 +61,10 @@ const PREVIOUS_STEP: Record<NanoStep, NanoStep | null> = {
   m12: "m8",
 };
 
-const WORKER_TOKEN = process.env.AI_WORKER_TOKEN || "";
-
-function isWorkerRequest(req: Request): boolean {
-  if (!WORKER_TOKEN) return false;
-  const headerToken = req.headers.get("x-worker-token") || "";
-  const url = new URL(req.url);
-  const queryToken = url.searchParams.get("workerToken") || "";
-  const token = headerToken || queryToken;
-  return token === WORKER_TOKEN;
-}
+// Worker request validation moved to src/lib/workerAuth.ts (AUDIT-004).
+// This endpoint now requires a sessionId-scoped, short-lived signed token
+// in the x-worker-token header. The query-param fallback was removed
+// (it leaked tokens via access logs and Referer headers).
 
 // ============================================================================
 // Watermark Utility
@@ -131,7 +126,20 @@ export async function POST(req: Request) {
     const { sessionId } = parsed.data;
     parsedSessionId = sessionId;
 
-    const isWorker = isWorkerRequest(req);
+    // Worker auth: header-only, sessionId-scoped, short-lived signed token.
+    // Returns ok:false if no token present or invalid; we treat that as a
+    // regular user request (which then requires user auth below).
+    const providedWorkerToken = req.headers.get("x-worker-token") || "";
+    const workerCheck = providedWorkerToken
+      ? verifyWorkerToken(providedWorkerToken, sessionId)
+      : { ok: false as const, reason: "no token" };
+    const isWorker = workerCheck.ok === true;
+    if (providedWorkerToken && !workerCheck.ok) {
+      // Token was provided but failed validation — log to spot abuse / misconfig
+      console.warn(
+        `[GenerateImages] Worker token rejected for session=${sessionId}: ${workerCheck.reason}`
+      );
+    }
 
     // Kill switch for AI generation
     const aiFlag = await getAiGenerationFlag();
