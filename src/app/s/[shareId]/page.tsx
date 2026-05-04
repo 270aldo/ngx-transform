@@ -1,6 +1,5 @@
 import { getDb } from "@/lib/firebaseAdmin";
-import { getAuthUser } from "@/lib/authServer";
-import { headers } from "next/headers";
+import { getAuthUserFromCookie } from "@/lib/authServer";
 import type { InsightsResult } from "@/types/ai";
 import { TransformationViewer } from "@/components/TransformationViewer";
 import { TransformationViewer2 } from "@/components/TransformationViewer2";
@@ -105,7 +104,7 @@ async function getUrlsLocally(data: SessionDoc, allowOriginal: boolean) {
   return result;
 }
 
-export default async function Page({ params, request }: { params: Promise<{ shareId: string }>; request?: Request }) {
+export default async function Page({ params }: { params: Promise<{ shareId: string }> }) {
   const { shareId } = await params;
   const db = getDb();
   const snap = await db.collection("sessions").doc(shareId).get();
@@ -172,16 +171,10 @@ export default async function Page({ params, request }: { params: Promise<{ shar
     );
   }
 
-  // Check if the authenticated user is the owner — owners always see the full experience
-  let isOwner = false;
-  try {
-    const reqHeaders = await headers();
-    const fakeReq = new Request("http://localhost", { headers: reqHeaders });
-    const authUser = await getAuthUser(fakeReq);
-    isOwner = !!authUser?.uid && authUser.uid === data.ownerUid;
-  } catch {
-    // Not authenticated — treat as public visitor
-  }
+  // Check if the authenticated user is the owner — owners always see the full experience.
+  // Reads the __session HTTP cookie set by /api/auth/session (synced by AuthProvider).
+  const authUser = await getAuthUserFromCookie();
+  const isOwner = !!authUser?.uid && authUser.uid === data.ownerUid;
 
   const shareScope = {
     shareOriginal: data.shareScope?.shareOriginal ?? !!data.shareOriginal,
