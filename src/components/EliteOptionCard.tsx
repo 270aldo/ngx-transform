@@ -70,7 +70,7 @@ export function EliteOptionCard({
         )}
       />
 
-      <div className="absolute inset-0 opacity-[0.12] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] pointer-events-none mix-blend-overlay" />
+      <div className="absolute inset-0 opacity-[0.12] bg-[url('/noise.svg')] pointer-events-none mix-blend-overlay" />
 
       <div
         className={cn(

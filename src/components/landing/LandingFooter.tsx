@@ -16,24 +16,24 @@ export function LandingFooter() {
               <span className="text-white font-body font-bold text-xs">N</span>
             </div>
             <div className="leading-tight">
-              <span className="text-white/60 text-sm font-body font-medium tracking-[0.03em]">{footer.brandName}</span>
-              <p className="text-[10px] text-slate-600 font-mono tracking-wide">{footer.status}</p>
+              <span className="text-white/80 text-sm font-body font-medium tracking-[0.03em]">{footer.brandName}</span>
+              <p className="text-[10px] text-slate-400 font-mono tracking-wide">{footer.status}</p>
             </div>
           </div>
 
           <div className="flex items-center gap-6">
-            <Link href="/privacy" className="text-xs text-slate-500 hover:text-white transition-colors font-body">
+            <Link href="/privacy" className="text-xs text-slate-300 hover:text-white transition-colors font-body">
               Privacidad
             </Link>
-            <Link href="/terms" className="text-xs text-slate-500 hover:text-white transition-colors font-body">
+            <Link href="/terms" className="text-xs text-slate-300 hover:text-white transition-colors font-body">
               Términos
             </Link>
-            <a href="mailto:hola@ngxgenesis.com" className="text-xs text-slate-500 hover:text-white transition-colors font-body">
+            <a href="mailto:hola@ngxgenesis.com" className="text-xs text-slate-300 hover:text-white transition-colors font-body">
               Contacto
             </a>
           </div>
 
-          <p className="text-xs text-slate-600 font-body">{footer.copyright}</p>
+          <p className="text-xs text-slate-400 font-body">{footer.copyright}</p>
         </div>
       </div>
     </footer>

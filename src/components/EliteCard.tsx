@@ -35,7 +35,7 @@ export function EliteCard({
     const content = (
         <div className="h-full bg-gradient-to-br from-[#6D00FF] via-[#4c00b0] to-black p-6 flex flex-col justify-between relative overflow-hidden group">
             {/* Noise texture overlay */}
-            <div className="absolute inset-0 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay pointer-events-none" />
+            <div className="absolute inset-0 opacity-20 bg-[url('/noise.svg')] mix-blend-overlay pointer-events-none" />
 
             <div className="relative z-10 flex justify-between items-start">
                 <div>

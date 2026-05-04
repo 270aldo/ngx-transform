@@ -110,10 +110,67 @@ export default async function Page({ params, request }: { params: Promise<{ shar
   const db = getDb();
   const snap = await db.collection("sessions").doc(shareId).get();
 
-  if (!snap.exists) return <div className="text-white p-10">Sesión no encontrada</div>;
+  if (!snap.exists) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-transparent text-white px-6">
+        <div className="max-w-lg w-full text-center space-y-6">
+          <p className="text-xs tracking-[0.35em] uppercase text-[#6D00FF] font-mono">NGX Transform</p>
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
+            Esta sesión<br />ya no existe
+          </h1>
+          <p className="text-base text-slate-300 leading-relaxed">
+            Las visualizaciones expiran, se eliminan a petición del propietario, o nunca se generaron.
+            Si tenías el enlace guardado, vuelve a generar tu propia transformación.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
+            <a
+              href="/wizard"
+              className="px-6 py-3 rounded-full bg-[#6D00FF] text-white text-sm font-semibold hover:bg-[#5B21B6] transition-colors"
+            >
+              Crear mi transformación
+            </a>
+            <a
+              href="/"
+              className="px-6 py-3 rounded-full border border-white/15 text-sm font-semibold text-slate-200 hover:bg-white/5 transition-colors"
+            >
+              Volver al inicio
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const data = snap.data() as SessionDoc | undefined;
-  if (!data) return <div className="text-white p-10">Datos inválidos</div>;
+  if (!data) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-transparent text-white px-6">
+        <div className="max-w-lg w-full text-center space-y-6">
+          <p className="text-xs tracking-[0.35em] uppercase text-[#6D00FF] font-mono">NGX Transform</p>
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
+            Datos<br />incompletos
+          </h1>
+          <p className="text-base text-slate-300 leading-relaxed">
+            Esta sesión existe pero quedó corrupta o incompleta. Puedes generar una nueva visualización privada en menos de 3 minutos.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
+            <a
+              href="/wizard"
+              className="px-6 py-3 rounded-full bg-[#6D00FF] text-white text-sm font-semibold hover:bg-[#5B21B6] transition-colors"
+            >
+              Crear mi transformación
+            </a>
+            <a
+              href="/"
+              className="px-6 py-3 rounded-full border border-white/15 text-sm font-semibold text-slate-200 hover:bg-white/5 transition-colors"
+            >
+              Volver al inicio
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Check if the authenticated user is the owner — owners always see the full experience
   let isOwner = false;
@@ -142,14 +199,18 @@ export default async function Page({ params, request }: { params: Promise<{ shar
 
   if (!allowInsights) {
     const heroImage = urls.images?.m12 || urls.images?.m8 || urls.images?.m4 || urls.originalUrl;
+    // Distinguir entre default privacidad (sin shareScope explícito) vs decisión activa del creador
+    const explicitShareDecision = data.shareScope !== undefined;
     return (
       <div className="min-h-screen bg-transparent text-white">
         <div className="max-w-5xl mx-auto px-6 py-12 space-y-8">
           <div className="space-y-2">
             <p className="text-xs tracking-[0.35em] uppercase text-[#6D00FF]">NGX Transform</p>
-            <h1 className="text-3xl font-semibold">Transformación compartida</h1>
+            <h1 className="text-3xl font-semibold">Transformación privada</h1>
             <p className="text-sm text-neutral-400">
-              Este usuario decidió compartir solo las imágenes. El análisis permanece privado.
+              {explicitShareDecision
+                ? "El creador decidió compartir solo las imágenes. El análisis permanece privado."
+                : "Esta visualización es privada por defecto. Solo el creador puede ver el análisis completo."}
             </p>
           </div>
 
