@@ -74,7 +74,8 @@ export function LandingHero() {
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <a
-                href="#como-funciona"
+                href="#reporte-ejemplo"
+                onClick={() => trackCta("hero_report_preview", "view_report_example", hero.secondaryCta)}
                 className="ngx-glass-clear inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-white font-body text-base transition-all duration-150 hover:[backdrop-filter:blur(24px)_saturate(180%)] active:scale-[0.97]"
               >
                 <PlayCircle className="w-5 h-5" />

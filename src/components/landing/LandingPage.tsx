@@ -10,7 +10,9 @@ import { LandingProblem } from "./LandingProblem";
 import { LandingStats } from "./LandingStats";
 import { LandingHowItWorks } from "./LandingHowItWorks";
 import { LandingValueStack } from "./LandingValueStack";
+import { LandingReportPreview } from "./LandingReportPreview";
 import { LandingBridge } from "./LandingBridge";
+import { LandingTrustStrip } from "./LandingTrustStrip";
 import { LandingFAQ } from "./LandingFAQ";
 import { LandingCTA } from "./LandingCTA";
 import { LandingFooter } from "./LandingFooter";
@@ -44,8 +46,10 @@ export function LandingPage({ variant = "general" }: LandingPageProps) {
             <LandingProblem />
             <LandingHowItWorks />
             <LandingValueStack />
+            <LandingReportPreview />
             <LandingStats />
             <LandingBridge />
+            <LandingTrustStrip />
             <LandingFAQ />
             <LandingCTA />
           </main>

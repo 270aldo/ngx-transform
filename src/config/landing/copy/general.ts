@@ -1,8 +1,8 @@
 /**
- * Landing Page Copy - General Variant
+ * Landing Page Copy — General Variant (Diagnostic Lead Magnet v2)
  *
- * NGX Transform Scan — lead magnet principal para HYBRID.
- * Tono: Verdad Directa + Performance & Longevity + salud muscular.
+ * Tesis: NGX Transform no vende una imagen. Vende claridad.
+ * La imagen es el gancho. El diagnóstico es el valor. HYBRID es el camino para ejecutar.
  */
 
 import {
@@ -12,7 +12,7 @@ import {
   Sparkles,
   FileText,
   Users,
-  Lock,
+  Compass,
 } from "lucide-react";
 import type { VariantCopy } from "../types";
 
@@ -27,21 +27,21 @@ export const generalCopy: VariantCopy = {
       line2: "no te puede transformar.",
     },
     subtitle:
-      "Sube una foto. GENESIS analiza tu punto de partida y te muestra una proyección aspiracional de lo que podrías construir en una temporada de 12 semanas con entrenamiento, nutrición, recuperación y acompañamiento humano.",
+      "Sube una foto real. GENESIS analiza tu punto de partida, interpreta tu contexto y te entrega una visualización aspiracional, un Readiness Report y una ruta inicial para empezar con claridad.",
     cta: "Ver mi punto de partida",
     primaryCta: {
       label: "Ver mi punto de partida",
       intent: "scan_start",
     },
-    secondaryCta: "Cómo funciona",
+    secondaryCta: "Ver ejemplo de reporte",
     supportingPoints: [
       "Gratis · Privado · 3 min.",
-      "GENESIS interpreta tus datos con honestidad.",
+      "GENESIS interpreta tu punto de partida.",
       "Tú decides el siguiente paso, sin presión.",
     ],
     socialProof: {
       count: "Gratis · Privado · 3 min",
-      label: "Visualización aspiracional + ruta inicial HYBRID",
+      label: "Visualización aspiracional + Readiness Report + ruta inicial",
     },
     transformationDemo: {
       beforeImage: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&h=1000&fit=crop&crop=faces",
@@ -78,7 +78,7 @@ export const generalCopy: VariantCopy = {
       icon: Sparkles,
       title: "La imagen inspira. El sistema transforma.",
       description:
-        "El scan te muestra una dirección posible. HYBRID convierte esa dirección en ejecución: temporada de 12 semanas, GENESIS ajustando y un coach humano validando la ruta.",
+        "El scan te muestra una dirección posible. HYBRID convierte esa dirección en ejecución: una temporada de 12 semanas, GENESIS ajustando y un coach humano validando la ruta.",
       size: "full",
     },
   ],
@@ -104,10 +104,17 @@ export const generalCopy: VariantCopy = {
       },
       {
         step: "03",
-        title: "Recibe tu proyección y ruta",
+        title: "Recibe tu visualización",
         description:
-          "Visualización aspiracional, lectura inicial y siguiente paso hacia HYBRID si necesitas acompañamiento humano.",
+          "Una proyección aspiracional para ver una dirección posible. No es una promesa ni una predicción médica.",
         icon: Sparkles,
+      },
+      {
+        step: "04",
+        title: "Obtén tu ruta inicial",
+        description:
+          "GENESIS te entrega una lectura de readiness, una ruta de 7 días y el siguiente paso si necesitas acompañamiento humano.",
+        icon: Compass,
       },
     ],
   },
@@ -137,17 +144,17 @@ export const generalCopy: VariantCopy = {
   },
 
   valueStack: {
-    sectionLabel: "Qué Recibes",
+    sectionLabel: "Qué recibes",
     title: "Claridad, no promesas.",
-    highlight: "Un diagnóstico real.",
+    highlight: "Un punto de partida real.",
     subtitle:
-      "El producto gratuito no es la imagen. Es la claridad: qué potencial tienes, qué te está frenando y si necesitas acompañamiento humano para ejecutar.",
+      "El producto gratuito no es la imagen. Es la claridad: qué potencial puedes construir, qué te está frenando y si necesitas acompañamiento humano para ejecutar.",
     items: [
       {
         icon: Sparkles,
         title: "Visualización aspiracional",
         description:
-          "Una proyección visual de tu potencial basada en tus datos reales. No es una promesa — es una dirección posible.",
+          "Una proyección visual de tu potencial basada en tus datos iniciales. No es una promesa: es una dirección posible.",
       },
       {
         icon: Brain,
@@ -159,23 +166,62 @@ export const generalCopy: VariantCopy = {
         icon: FileText,
         title: "Ruta inicial de 7 días",
         description:
-          "Entrenamiento, nutrición y hábitos para tu primera semana. Educativo y orientativo — un primer paso concreto.",
+          "Entrenamiento, nutrición y hábitos para tu primera semana. Educativo y orientativo: un primer paso concreto.",
       },
       {
         icon: Users,
         title: "Diagnóstico HYBRID",
         description:
-          "Si tu perfil lo indica, accedes a una sesión de 15 minutos con un coach humano para definir si una temporada de 12 semanas tiene sentido para ti.",
+          "Si tu perfil lo indica, puedes agendar una sesión de 15 minutos con un coach humano para definir si una temporada de 12 semanas tiene sentido para ti.",
       },
     ],
   },
 
+  reportPreview: {
+    sectionLabel: "Ejemplo de reporte",
+    headline: "Mira lo que recibes antes de subir tu foto.",
+    subtitle:
+      "El resultado no debe sentirse como una imagen suelta. Debe sentirse como una lectura inicial: dónde estás, qué te frena y qué paso tiene más sentido.",
+    scoreLabel: "Readiness Score",
+    scoreValue: 72,
+    scoreMax: 100,
+    scoreDescription:
+      "Listo para empezar, pero con riesgo de abandono si no hay estructura.",
+    dimensions: [
+      { label: "Entrenamiento", value: 78 },
+      { label: "Nutrición", value: 64 },
+      { label: "Recuperación", value: 58 },
+      { label: "Adherencia", value: 71 },
+    ],
+    insights: [
+      {
+        label: "Obstáculo principal",
+        text: "Tu plan actual depende demasiado de motivación y muy poco de estructura semanal.",
+      },
+      {
+        label: "Palanca #1",
+        text: "2-3 sesiones de fuerza bien diseñadas por semana pueden crear el estímulo mínimo para avanzar.",
+      },
+      {
+        label: "Palanca #2",
+        text: "Proteína suficiente, sueño más consistente y ajustes de carga reducen el riesgo de abandonar.",
+      },
+      {
+        label: "Siguiente paso",
+        text: "Ruta inicial de 7 días. HYBRID solo si necesitas accountability humana para sostenerla.",
+      },
+    ],
+    ctaLabel: "Ver mi punto de partida",
+    ctaHref: "/wizard",
+    microcopy: "Demo ilustrativo. Tu reporte se genera con tus datos.",
+  },
+
   bridge: {
-    sectionLabel: "El Puente",
+    sectionLabel: "El puente",
     title: "La IA traza el mapa.",
     highlight: "El coach te ayuda a sostenerlo.",
     subtitle:
-      "GENESIS diseña, analiza y ajusta. Tu coach revisa, contextualiza y te mantiene honesto cuando la motivación baja.",
+      "GENESIS puede darte claridad. Pero si tu historial muestra baja adherencia, estrés alto, lesiones, poca experiencia o falta de estructura, el siguiente paso no debería ser hacerlo solo.",
     footnote: "15 min · Sin compromiso · Sin presión",
     buttonText: "Agendar diagnóstico HYBRID",
     buttonIntent: "hybrid_diagnosis",
@@ -184,13 +230,13 @@ export const generalCopy: VariantCopy = {
         icon: Brain,
         title: "GENESIS diagnostica",
         description:
-          "Analiza tu punto de partida, mide tu readiness y diseña una ruta basada en tu contexto real. Sin sesgos.",
+          "Analiza tu punto de partida, mide tu readiness y diseña una ruta basada en tu contexto real. Sin plantillas.",
       },
       {
         icon: Users,
-        title: "El coach adapta",
+        title: "El coach valida",
         description:
-          "Un coach humano revisa tu diagnóstico contigo, ajusta a tu realidad y define si una temporada de 12 semanas tiene sentido.",
+          "Un coach humano revisa tu caso, detecta riesgos, ajusta a tu realidad y define si HYBRID tiene sentido para ti.",
       },
       {
         icon: Sparkles,
@@ -201,39 +247,54 @@ export const generalCopy: VariantCopy = {
     ],
   },
 
+  trustStrip: {
+    title: "Privado por diseño. Honesto por principio.",
+    bullets: [
+      "Tu foto se procesa con consentimiento explícito.",
+      "La visualización es aspiracional, no una promesa.",
+      "Tu resultado no sustituye evaluación médica.",
+      "Puedes solicitar eliminación de tus datos.",
+    ],
+  },
+
   faq: {
-    sectionLabel: "Preguntas Frecuentes",
+    sectionLabel: "Preguntas frecuentes",
     title: "Lo que necesitas saber antes de empezar",
     items: [
       {
         question: "¿Es real la imagen que genera?",
         answer:
-          "Es una simulación aspiracional generada con IA. No es una predicción garantizada ni una promesa médica. Sirve para visualizar una posibilidad, no para confirmar resultados.",
+          "Es una visualización aspiracional generada con IA. No es una predicción garantizada, no es una promesa médica y no confirma resultados futuros. Sirve para visualizar una posibilidad y abrir una conversación más honesta sobre tu punto de partida.",
       },
       {
         question: "¿Qué pasa con mi foto?",
         answer:
-          "Se procesa con tu consentimiento explícito y se almacena de forma temporal mientras se genera tu resultado. Puedes solicitar eliminación cuando quieras desde tu sesión.",
+          "Se procesa con tu consentimiento explícito para generar tu sesión privada. No la vendemos, no la publicamos y no la usamos como testimonio sin permiso. Puedes solicitar eliminación cuando quieras desde tu sesión o por el canal de privacidad.",
       },
       {
         question: "¿Necesito crear cuenta para empezar?",
         answer:
-          "No. Puedes generar tu Future Body Scan y plan inicial sin login. Si después quieres guardar tu historial, descargar el PDF completo o conectar con un coach, se crea una cuenta en ese momento.",
+          "No necesitas una cuenta completa para iniciar el scan. El flujo puede crear una sesión privada para guardar tu resultado y permitirte volver a consultarlo. Si después quieres seguimiento, historial o HYBRID, se te pedirá completar el acceso.",
       },
       {
         question: "¿En qué se diferencia ASCEND de HYBRID?",
         answer:
-          "ASCEND es un proceso autoguiado con GENESIS para personas con base de adherencia y experiencia. HYBRID añade un coach humano que valida estrategia, adapta a tu contexto y te da accountability.",
+          "ASCEND es autoguiado con GENESIS para personas con buena adherencia y experiencia. HYBRID suma un coach humano que valida estrategia, adapta el proceso y te da accountability cuando necesitas más soporte.",
       },
       {
         question: "¿El plan de 7 días sustituye a un médico o nutriólogo?",
         answer:
-          "No. Es una guía educativa. Si tienes lesiones, dolor crónico o condiciones médicas, consulta a un profesional antes de iniciar.",
+          "No. Es una guía educativa y orientativa. Si tienes dolor, lesiones, condiciones médicas o dudas clínicas, consulta a un profesional antes de iniciar cambios intensos de entrenamiento o alimentación.",
       },
       {
         question: "¿Cuánto tarda el proceso?",
         answer:
-          "Menos de 3 minutos para llenar el wizard y procesar el escaneo. El resultado completo (timeline + plan + reporte) está listo de forma inmediata.",
+          "El wizard toma menos de 3 minutos. Después verás tu visualización, lectura inicial, ruta de 7 días y siguiente paso recomendado.",
+      },
+      {
+        question: "¿Por qué aparece HYBRID?",
+        answer:
+          "Porque muchas personas no fallan por falta de información. Fallan por falta de estructura, seguimiento y ajustes humanos. HYBRID aparece solo cuando tiene sentido: si tu contexto indica que necesitas más que una ruta autoguiada.",
       },
     ],
   },
@@ -248,7 +309,7 @@ export const generalCopy: VariantCopy = {
   },
 
   footer: {
-    brandName: "NGX Transform Scan",
+    brandName: "NGX Transform",
     status: "GENESIS operativo",
     copyright: "© 2026 NGX. Todos los derechos reservados.",
   },
@@ -262,3 +323,4 @@ export const generalCopy: VariantCopy = {
     duration: "45s",
   },
 };
+

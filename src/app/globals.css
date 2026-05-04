@@ -787,3 +787,219 @@ h1, h2, h3, h4, h5, h6 {
 .text-ngx-fg-4 { color: var(--ngx-fg-4); }
 .text-ngx-purple { color: var(--ngx-purple); }
 .text-ngx-success { color: var(--ngx-success); }
+
+/* ============================================================================
+   NEOGEN-X DS — Section + Card layout system (mobile-first)
+   Single source of truth for all landing sections. Use these instead of
+   ad-hoc max-w/px/grid-cols utilities so cards align across the page.
+   ============================================================================ */
+
+/* Section wrapper — handles max-width, horizontal padding, vertical rhythm */
+.ngx-section {
+  width: 100%;
+  max-width: 72rem; /* matches Tailwind max-w-6xl */
+  margin-inline: auto;
+  padding-inline: 1rem; /* mobile */
+  padding-block-end: clamp(5rem, 10vw, 10rem); /* mb-32 → mb-40 fluid */
+  scroll-margin-top: 96px; /* override per breakpoint below */
+}
+@media (min-width: 640px) {
+  .ngx-section { padding-inline: 1.5rem; }
+}
+@media (min-width: 1024px) {
+  .ngx-section { padding-inline: 2rem; }
+}
+
+/* Section header — eyebrow + heading + supporting paragraph */
+.ngx-section-header {
+  display: grid;
+  gap: 1.5rem;
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+@media (min-width: 1024px) {
+  .ngx-section-header {
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    align-items: end;
+    gap: 2rem;
+  }
+}
+
+/* Section heading scale (clamp fluid, no hardcoded breakpoints) */
+.ngx-section-heading {
+  font-family: var(--ngx-font-display);
+  font-weight: 800;
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  line-height: 1.0;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  color: var(--ngx-fg-1);
+  max-width: 22ch;
+}
+.ngx-section-heading-soft {
+  /* same scale but without uppercase/display — for FAQ, CTA where mixed case reads better */
+  font-family: var(--ngx-font-body);
+  font-weight: 700;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--ngx-fg-1);
+  max-width: 24ch;
+}
+
+/* Eyebrow pill (decorated version of .ngx-eyebrow with bg + border) */
+.ngx-eyebrow-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--ngx-r-pill);
+  background: var(--ngx-purple-dim);
+  border: 1px solid rgba(109, 0, 255, 0.20);
+  font-family: var(--ngx-font-body);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ngx-purple-light);
+  margin-bottom: 1.25rem;
+}
+/* Variants for sections that need a non-purple accent */
+.ngx-eyebrow-pill[data-accent="red"] {
+  background: rgba(239, 68, 68, 0.10);
+  border-color: rgba(239, 68, 68, 0.20);
+  color: rgb(252, 165, 165);
+}
+.ngx-eyebrow-pill[data-accent="emerald"] {
+  background: rgba(0, 245, 170, 0.10);
+  border-color: rgba(0, 245, 170, 0.20);
+  color: rgb(110, 231, 183);
+}
+.ngx-eyebrow-pill[data-accent="neutral"] {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.10);
+  color: var(--ngx-fg-2);
+}
+
+/* Card — base for any tile in any section grid (uniform padding, radius, glass) */
+.ngx-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--ngx-glass-regular-bg);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid var(--ngx-border-subtle);
+  border-radius: var(--ngx-r-lg); /* 20px */
+  padding: 1.25rem; /* mobile */
+  transition: border-color var(--ngx-dur-short) var(--ngx-ease-std),
+              transform var(--ngx-dur-short) var(--ngx-ease-std),
+              box-shadow var(--ngx-dur-short) var(--ngx-ease-std);
+}
+@media (min-width: 768px) {
+  .ngx-card { padding: 1.75rem; }
+}
+.ngx-card:hover {
+  border-color: var(--ngx-border-active);
+  transform: translateY(-2px);
+  box-shadow: var(--ngx-glow-primary-soft);
+}
+
+/* Card icon-box — 48x48 rounded square with translucent purple bg */
+.ngx-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--ngx-r-chip);
+  background: var(--ngx-purple-dim);
+  border: 1px solid var(--ngx-border-card);
+  color: var(--ngx-purple-light);
+  flex-shrink: 0;
+}
+.ngx-card-icon[data-accent="red"] {
+  background: rgba(239, 68, 68, 0.10);
+  border-color: rgba(239, 68, 68, 0.20);
+  color: rgb(252, 165, 165);
+}
+.ngx-card-icon[data-accent="emerald"] {
+  background: rgba(0, 245, 170, 0.10);
+  border-color: rgba(0, 245, 170, 0.20);
+  color: var(--ngx-success);
+}
+
+/* Card title (consistent across all card grids) */
+.ngx-card-title {
+  font-family: var(--ngx-font-body);
+  font-weight: 700;
+  font-size: 1.0625rem; /* 17px */
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ngx-fg-1);
+}
+.ngx-card-desc {
+  font-family: var(--ngx-font-body);
+  font-weight: 400;
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.55;
+  color: var(--ngx-fg-2);
+}
+
+/* Card grids — responsive, mobile-first, consistent gap */
+.ngx-card-grid {
+  display: grid;
+  gap: 1rem;
+}
+@media (min-width: 768px) {
+  .ngx-card-grid { gap: 1.5rem; }
+}
+.ngx-card-grid-2 {
+  grid-template-columns: 1fr;
+}
+@media (min-width: 768px) {
+  .ngx-card-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.ngx-card-grid-3 {
+  grid-template-columns: 1fr;
+}
+@media (min-width: 768px) {
+  .ngx-card-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.ngx-card-grid-4 {
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px) {
+  .ngx-card-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+  .ngx-card-grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* Section panel — wraps a section in a single glass card (CTA, Stats inner, Bridge, ReportPreview) */
+.ngx-section-panel {
+  position: relative;
+  overflow: hidden;
+  border-radius: clamp(20px, 3vw, 32px);
+  background:
+    radial-gradient(800px 600px at 15% 0%, rgba(109, 0, 255, 0.16), transparent 60%),
+    var(--ngx-glass-regular-bg);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid var(--ngx-border-subtle);
+  padding: 1.5rem;
+}
+@media (min-width: 768px) {
+  .ngx-section-panel { padding: 2.5rem; }
+}
+@media (min-width: 1024px) {
+  .ngx-section-panel { padding: 3rem; }
+}
+
+/* Sticky-nav anchor offset (so jumping to a section doesn't hide it under the nav) */
+section[id] {
+  scroll-margin-top: 112px;
+}
+@media (max-width: 768px) {
+  section[id] {
+    scroll-margin-top: 96px;
+  }
+}
