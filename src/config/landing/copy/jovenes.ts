@@ -1,8 +1,7 @@
 /**
- * Landing Page Copy - Jóvenes Variant (18-35)
+ * Landing Page Copy - Jóvenes Variant
  *
- * Energetic, fitness-focused copy for younger audience.
- * Tone: Dynamic, challenging, achievement-oriented.
+ * NOTA: La ruta conserva el nombre técnico /j, pero el copy se ajusta al ICP real: 30-45 activos.
  */
 
 import {
@@ -18,139 +17,142 @@ import type { VariantCopy } from "../types";
 export const jovenesCopy: VariantCopy = {
   hero: {
     badge: {
-      aiLabel: "Potenciado por GENESIS AI",
-      version: "HYBRID",
+      aiLabel: "GENESIS",
+      version: "Transform Scan",
     },
     headline: {
-      line1: "Desbloquea tu",
-      line2: "mejor versión.",
+      line1: "Tu físico no está estancado.",
+      line2: "Tu sistema sí.",
     },
     subtitle:
-      "IA que proyecta tu potencial físico en 12 meses. Tu mejor yo está a una foto de distancia.",
-    cta: "Empezar Ahora",
-    primaryCta: { label: "Empezar Ahora", intent: "scan_start" },
+      "Sube una foto. GENESIS analiza tu punto de partida y te muestra una proyección aspiracional de lo que podrías construir en 12 semanas si dejas de improvisar y empiezas a entrenar con sistema.",
+    cta: "Escanear mi punto de partida",
+    primaryCta: {
+      label: "Escanear mi punto de partida",
+      intent: "scan_start",
+    },
     secondaryCta: "Cómo funciona",
     supportingPoints: [
-      "Resultado claro en menos de 3 minutos.",
-      "GENESIS interpreta tus datos con honestidad.",
-      "Tú decides el siguiente paso, sin presión.",
+      "Gratis · Privado · 3 min.",
+      "Sin hacks, solo sistema.",
+      "Tú decides el siguiente paso.",
     ],
     socialProof: {
-      count: "Procesamiento en minutos",
-      label: "Procesamiento seguro y controlado",
+      count: "Gratis · Privado · 3 min",
+      label: "Future Body Scan + ruta inicial HYBRID",
     },
-    // Before/After transformation demo
     transformationDemo: {
       beforeImage: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&h=1000&fit=crop&crop=faces",
       afterImage: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=800&h=1000&fit=crop&crop=faces",
-      beforeLabel: "ANTES",
-      afterLabel: "12 MESES",
+      beforeLabel: "HOY",
+      afterLabel: "12 SEMANAS",
     },
   },
 
   stats: [
-    { value: "4", suffix: " etapas", label: "De análisis a resultados" },
-    { value: "12", suffix: " meses", label: "Proyección personalizada" },
-    { value: "Acceso", suffix: "", label: "Privado con cuenta" },
-    { value: "IA +", suffix: " Coach", label: "Sistema HYBRID" },
+    { value: "12", suffix: " sem", label: "enfoque real" },
+    { value: "0", suffix: "", label: "hacks milagro" },
+    { value: "1", suffix: "", label: "sistema GENESIS" },
+    { value: "IA+", suffix: "coach", label: "para ejecutar" },
   ],
 
   features: [
     {
       icon: Brain,
-      title: "Análisis Biométrico IA",
+      title: "No necesitas más rutinas sueltas",
       description:
-        "Gemini escanea tu estructura muscular, distribución de grasa y potencial genético. Sin excusas, solo datos.",
+        "Necesitas una ruta que conecte entrenamiento, nutrición, recuperación y adherencia. GENESIS empieza con tu punto de partida, no con una plantilla reciclada.",
       size: "large",
     },
     {
       icon: Shield,
-      title: "Privacidad Segura",
+      title: "Tu foto no es contenido",
       description:
-        "Tu foto se procesa de forma segura y se conserva solo mientras es necesaria para operar el servicio y entregarte resultados.",
+        "Es un dato privado para generar tu scan. No se vende, no se publica y no se convierte en testimonio sin tu autorización.",
       size: "medium",
-      badge: "Encriptación E2E",
+      badge: "Privado por diseño",
     },
     {
       icon: Zap,
-      title: "Timeline de 12 Meses",
+      title: "El espejo motiva. El sistema sostiene.",
       description:
-        "Visualiza tu progreso real: Hoy → Mes 4 → Mes 8 → Mes 12. Cada fase con métricas exactas de tu evolución.",
+        "La proyección te da dirección. HYBRID te da estructura: GENESIS analiza, un coach valida y tú ejecutas una temporada con ajustes reales.",
       size: "full",
     },
   ],
 
   howItWorks: {
-    title: "Así de Simple",
-    subtitle: "De foto a proyección con seguimiento guiado.",
+    title: "Así empieza una transformación seria",
+    subtitle:
+      "No con motivación. Con claridad, estructura y una decisión concreta.",
     steps: [
       {
         step: "01",
-        title: "Sube tu Foto",
+        title: "Sube una foto sin filtros",
         description:
-          "Cuerpo completo, frontal. Una foto real, sin filtros. Necesitas acceso para guardar tus resultados.",
+          "Cuerpo completo, frontal, buena luz. El punto de partida no se maquilla.",
         icon: Camera,
       },
       {
         step: "02",
-        title: "Cuéntanos tu Meta",
+        title: "Define objetivo y realidad",
         description:
-          "Objetivos, nivel de entrenamiento y tiempo disponible. Unos minutos.",
+          "Músculo, grasa, energía, tiempo, nivel y obstáculos. El sistema necesita contexto para servirte.",
         icon: User,
       },
       {
         step: "03",
-        title: "Recibe tu Proyección",
+        title: "Recibe tu scan y siguiente paso",
         description:
-          "IA genera tu timeline con 4 etapas de transformación realista.",
+          "Visualización aspiracional, lectura inicial y opción de revisar tu ruta HYBRID con un coach.",
         icon: Sparkles,
       },
     ],
   },
 
   testimonials: {
-    sectionLabel: "Resultados Reales",
+    sectionLabel: "Verdad Directa",
     items: [
       {
-        text: "La proyección de mes 12 era exactamente mi objetivo. Después de 8 meses, ya estoy casi ahí. Esta herramienta es brutal.",
-        name: "Alejandro S.",
-        role: "CrossFit Athlete",
+        text: "Si cada lunes empiezas de cero, no tienes problema de motivación. Tienes problema de sistema.",
+        name: "Adherencia",
+        role: "El punto débil real",
         gradient: "from-orange-400 to-red-400",
       },
       {
-        text: "Lo usé como motivación visual. Ver mi potencial me dio la disciplina que me faltaba para romperla en el gym.",
-        name: "Sofía M.",
-        role: "Fitness Influencer",
+        text: "Perder grasa sin construir músculo es una estrategia incompleta. El objetivo es recomposición, energía y función.",
+        name: "Recomposición",
+        role: "No solo peso",
         gradient: "from-pink-400 to-purple-400",
       },
       {
-        text: "Como coach, mis atletas ven su proyección y se comprometen al 100%. La visualización es power.",
-        name: "Marcos T.",
-        role: "Strength Coach",
-        gradient: "from-violet-400 to-fuchsia-400",
+        text: "HYBRID no existe para hacerte dependiente. Existe para que no abandones justo cuando el plan empieza a funcionar.",
+        name: "Coach Humano",
+        role: "Accountability real",
+        gradient: "from-blue-400 to-cyan-400",
       },
     ],
   },
 
   cta: {
-    headline: "¿Listo para ver tu potencial?",
+    headline: "Deja de coleccionar intentos.",
     subtitle:
-      "Accede sin costo, crea tu sesión y recibe tu proyección con controles reales de privacidad.",
-    buttonText: "Ver Mi Potencial",
-    footnote: "Sin costo · Requiere cuenta · Proceso guiado",
+      "Haz el scan, mira tu punto de partida y decide si vas a seguir improvisando o vas a construir una temporada con sistema.",
+    buttonText: "Ver mi scan",
+    footnote: "Visualización aspiracional. El resultado depende de ejecución real.",
   },
 
   footer: {
-    brandName: "NGX Transform",
-    status: "Sistemas activos",
-    copyright: "© 2024 NGX. Todos los derechos reservados.",
+    brandName: "NGX Transform Scan",
+    status: "GENESIS operativo",
+    copyright: "© 2026 NGX. Todos los derechos reservados.",
   },
 
-  // Optional: Explainer video section (hidden if no videoUrl)
   explainerVideo: {
-    title: "¿Cómo Funciona?",
-    subtitle: "Mira cómo la IA escanea y proyecta tu transformación.",
-    videoUrl: "", // Empty = section hidden. Add video URL when ready.
+    title: "La imagen no transforma. El sistema sí.",
+    subtitle:
+      "GENESIS te muestra una dirección. HYBRID te ayuda a ejecutarla.",
+    videoUrl: "",
     posterUrl: "/images/video-poster.jpg",
     duration: "45s",
   },

@@ -282,7 +282,7 @@ export async function generateInsightsV2(
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error("Missing GEMINI_API_KEY");
 
-  const modelName = process.env.GEMINI_MODEL || "gemini-3.1-flash";
+  const modelName = process.env.GEMINI_MODEL || "gemini-flash-latest";
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({ model: modelName });
 
@@ -392,7 +392,7 @@ export async function generateInsightsFromImage(
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error("Missing GEMINI_API_KEY");
 
-  const modelName = process.env.GEMINI_MODEL || "gemini-3.1-flash";
+  const modelName = process.env.GEMINI_MODEL || "gemini-flash-latest";
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({ model: modelName });
 

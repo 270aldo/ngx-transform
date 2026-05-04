@@ -66,7 +66,7 @@ export function StickyCTA() {
 
         {/* Subtle text below */}
         <p className="text-center text-[10px] text-slate-500 mt-2">
-          Sin costo • Requiere cuenta • Proceso guiado
+          Sin costo • Sin compromiso • Con honestidad
         </p>
       </div>
     </div>
