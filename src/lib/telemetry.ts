@@ -139,7 +139,7 @@ export async function trackEvent(payload: EventPayload): Promise<void> {
 
   try {
     const db = getDb();
-    
+
     // Scrub PII from payload before saving
     const safePayload = scrubPII(payload) as EventPayload;
 
@@ -149,11 +149,28 @@ export async function trackEvent(payload: EventPayload): Promise<void> {
       environment: process.env.NODE_ENV || "development",
     };
 
-    // Guardar evento individual
-    await db.collection("telemetry_events").add(eventDoc);
+    // Guard Firestore writes against deadline_exceeded hangs (observed up to 60s).
+    // Telemetry must never block the request path: race the write against a 5s timeout
+    // and silently drop on slow networks. Critical events use Sentry, not this pipeline.
+    const writeWithTimeout = <T>(promise: Promise<T>, label: string): Promise<T | null> =>
+      Promise.race<T | null>([
+        promise,
+        new Promise<null>((resolve) =>
+          setTimeout(() => {
+            console.warn(`[Telemetry] ${label} skipped (5s timeout) — ${payload.event}`);
+            resolve(null);
+          }, 5000)
+        ),
+      ]).catch((error) => {
+        console.warn(`[Telemetry] ${label} failed:`, error);
+        return null;
+      });
 
-    // Actualizar métricas agregadas de la sesión
-    await updateSessionMetrics(safePayload);
+    // Run both writes in parallel; either or both can quietly drop.
+    await Promise.all([
+      writeWithTimeout(db.collection("telemetry_events").add(eventDoc), "event write"),
+      writeWithTimeout(updateSessionMetrics(safePayload), "metrics update"),
+    ]);
 
     console.log(`[Telemetry] ${payload.event} - ${payload.sessionId}`);
   } catch (error) {
