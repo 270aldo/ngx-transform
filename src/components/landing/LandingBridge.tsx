@@ -11,7 +11,7 @@ export function LandingBridge() {
     <section className="max-w-6xl mx-auto px-4 mb-32 md:mb-48">
       <div className="animate-on-scroll landing-surface-strong rounded-[28px] md:rounded-[36px] p-6 md:p-10 border border-white/10 relative overflow-hidden">
         <div className="absolute inset-0 cta-gradient" />
-        <div className="absolute inset-0 opacity-[0.18] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay pointer-events-none" />
+        <div className="absolute inset-0 opacity-[0.18] bg-[url('/noise.svg')] mix-blend-overlay pointer-events-none" />
 
         <div className="relative z-10 grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-10">
           <div className="flex flex-col justify-between">
@@ -53,7 +53,7 @@ export function LandingBridge() {
                   <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-[#6D00FF]/20 bg-[#6D00FF]/10">
                     <Icon className="w-6 h-6 text-[#B98CFF]" />
                   </div>
-                  <h4 className="text-white text-[1.2rem] leading-[1.04] font-body font-semibold tracking-[-0.03em] mb-2">{card.title}</h4>
+                  <h3 className="text-white text-[1.2rem] leading-[1.04] font-body font-semibold tracking-[-0.03em] mb-2">{card.title}</h3>
                   <p className="text-slate-400 text-sm leading-relaxed font-body">{card.description}</p>
                 </div>
               );

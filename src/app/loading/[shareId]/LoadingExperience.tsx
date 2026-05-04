@@ -29,19 +29,36 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
   const [stepIndex, setStepIndex] = useState(0);
   const [tipIndex, setTipIndex] = useState(0);
   const [status, setStatus] = useState<string>("processing");
-  const [imageCount, setImageCount] = useState(0);
+  const [imageKeys, setImageKeys] = useState<string[]>([]);
+  const [hasAi, setHasAi] = useState(false);
   const [progress, setProgress] = useState(12);
   const [error, setError] = useState<string | null>(null);
+  const [retrying, setRetrying] = useState(false);
   const startedGenerationRef = useRef(false);
 
+  const imageCount = imageKeys.length;
+  const has = (key: string) => imageKeys.includes(key);
+  const isReady = status === "ready";
+  const isFailed = status === "failed";
+
+  // Resolved per-step states from real Firestore data, not optimistic increments
+  const stepStates = useMemo(() => {
+    return [
+      { label: "Analizando tu foto", done: hasAi || imageCount >= 1, active: !hasAi && imageCount === 0 },
+      { label: "Generando mes 4", done: has("m4"), active: hasAi && !has("m4") },
+      { label: "Generando mes 8", done: has("m8"), active: has("m4") && !has("m8") },
+      { label: "Generando mes 12", done: has("m12"), active: has("m8") && !has("m12") },
+      { label: "Preparando tus resultados", done: isReady, active: imageCount >= 3 && !isReady },
+    ];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imageKeys, hasAi, isReady]);
+
   const stageLabel = useMemo(() => {
-    if (status === "failed") return "Proceso detenido";
-    if (status === "ready") return "Preparando tus resultados...";
-    if (imageCount >= 3) return "Generando mes 12...";
-    if (imageCount === 2) return "Generando mes 8...";
-    if (imageCount === 1) return "Generando mes 4...";
-    return "Analizando tu foto...";
-  }, [status, imageCount]);
+    if (isFailed) return "Proceso detenido";
+    if (isReady) return "¡Listo! Cargando tus resultados...";
+    const activeStep = stepStates.find((s) => s.active);
+    return activeStep ? `${activeStep.label}...` : stepStates[0].label;
+  }, [isFailed, isReady, stepStates]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -68,10 +85,13 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
 
         const nextStatus = json?.status || "processing";
         const images = (json?.assets?.images || {}) as Record<string, string>;
-        const count = Object.keys(images).length;
+        const keys = Object.keys(images);
+        const count = keys.length;
+        const aiPresent = json?.ai != null && json?.ai !== undefined;
 
         setStatus(nextStatus);
-        setImageCount(count);
+        setImageKeys(keys);
+        setHasAi(aiPresent);
         setProgress(PROGRESS_BY_COUNT[Math.min(count, 3)]);
 
         if (!startedGenerationRef.current && (nextStatus === "analyzed" || nextStatus === "processing") && count === 0 && !authLoading) {
@@ -168,45 +188,101 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 pt-4 text-xs">
-          {[
-            "Analizando tu foto...",
-            "Generando mes 4...",
-            "Generando mes 8...",
-            "Generando mes 12...",
-            "Preparando tus resultados...",
-          ].map((label, idx) => (
-            <div
-              key={label}
-              className={cn(
-                "rounded-xl border border-white/10 bg-white/5 p-3",
-                (status === "ready" && idx === 4) ||
-                (idx === 0 && imageCount === 0) ||
-                (idx === 1 && imageCount >= 1) ||
-                (idx === 2 && imageCount >= 2) ||
-                (idx === 3 && imageCount >= 3)
-                  ? "border-[#6D00FF] bg-[#6D00FF]/10"
-                  : ""
-              )}
-            >
-              <p className="uppercase tracking-wider text-neutral-400">{label.replace("...", "")}</p>
-              <p className="text-sm font-semibold">
-                {(status === "ready" && idx === 4) ||
-                (idx === 0 && imageCount === 0) ||
-                (idx === 1 && imageCount >= 1) ||
-                (idx === 2 && imageCount >= 2) ||
-                (idx === 3 && imageCount >= 3)
-                  ? "Listo"
-                  : "Procesando..."}
-              </p>
-              <div className="mt-2 h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
-                <div className="h-full w-2/3 bg-[#6D00FF] animate-pulse rounded-full" />
+          {stepStates.map((step) => {
+            const stoppedHere = isFailed && !step.done && step.active;
+            const stateLabel = step.done
+              ? "Listo"
+              : stoppedHere
+                ? "Detenido"
+                : step.active
+                  ? "Procesando..."
+                  : "Pendiente";
+            return (
+              <div
+                key={step.label}
+                className={cn(
+                  "rounded-xl border border-white/10 bg-white/5 p-3 transition-colors",
+                  step.done && "border-[#6D00FF] bg-[#6D00FF]/10",
+                  step.active && !isFailed && "border-[#6D00FF]/40",
+                  stoppedHere && "border-red-500/40 bg-red-500/5"
+                )}
+              >
+                <p className="uppercase tracking-wider text-neutral-400">{step.label}</p>
+                <p
+                  className={cn(
+                    "text-sm font-semibold",
+                    step.done && "text-[#6D00FF]",
+                    stoppedHere && "text-red-400"
+                  )}
+                >
+                  {stateLabel}
+                </p>
+                <div className="mt-2 h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+                  <div
+                    className={cn(
+                      "h-full rounded-full",
+                      step.done
+                        ? "w-full bg-[#6D00FF]"
+                        : step.active && !isFailed
+                          ? "w-2/3 bg-[#6D00FF] animate-pulse"
+                          : stoppedHere
+                            ? "w-1/3 bg-red-400/60"
+                            : "w-0"
+                    )}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {error && (
-          <p className="text-xs text-red-400">{error}</p>
+          <div className="space-y-3 pt-2">
+            <p className="text-xs text-red-400">{error}</p>
+            <button
+              onClick={async () => {
+                if (retrying) return;
+                setRetrying(true);
+                setError(null);
+                try {
+                  const token = await getIdToken();
+                  if (!token) {
+                    setError("Error de autenticación. Recarga la página.");
+                    setRetrying(false);
+                    return;
+                  }
+                  // Reset start flag so the poll will trigger generation again
+                  startedGenerationRef.current = false;
+                  // Try analyze first (in case ai is missing), then images
+                  await fetch("/api/analyze", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ sessionId: shareId }),
+                  });
+                  await fetch("/api/generate-images", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ sessionId: shareId }),
+                  });
+                } catch (e) {
+                  setError("No pudimos reintentar. Intenta de nuevo en unos segundos.");
+                  console.error("[Loading] Retry failed:", e);
+                } finally {
+                  setRetrying(false);
+                }
+              }}
+              disabled={retrying}
+              className="px-5 py-2 rounded-full bg-[#6D00FF] hover:bg-[#5B21B6] text-white text-xs font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {retrying ? "Reintentando..." : "Reintentar generación"}
+            </button>
+          </div>
         )}
       </div>
 
