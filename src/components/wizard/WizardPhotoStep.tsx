@@ -115,12 +115,12 @@ export function WizardPhotoStep({
           {TRUST_CARDS.map((item) => {
             const Icon = item.icon;
             return (
-              <div key={item.title} className="ngx-card h-full !p-4 md:!p-5">
-                <span className="ngx-card-icon mb-3" style={{ width: "2.25rem", height: "2.25rem" }}>
-                  <Icon className="h-4 w-4" />
+              <div key={item.title} className="ngx-card h-full !p-5">
+                <span className="ngx-card-icon mb-4">
+                  <Icon className="h-5 w-5" />
                 </span>
-                <p className="ngx-card-title !text-sm">{item.title}</p>
-                <p className="ngx-card-desc !text-xs mt-1.5">{item.text}</p>
+                <p className="ngx-card-title !text-[0.95rem]">{item.title}</p>
+                <p className="ngx-card-desc !text-xs mt-2">{item.text}</p>
               </div>
             );
           })}

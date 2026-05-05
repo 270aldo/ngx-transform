@@ -66,16 +66,20 @@ export function LandingBridge() {
             </div>
           </div>
 
-          <div className="ngx-card-grid ngx-card-grid-3 lg:grid-cols-1 xl:grid-cols-3">
+          {/* Stack vertical inside the right column — keeps cards readable
+              instead of squashing 3 into a narrow column at xl. */}
+          <div className="flex flex-col gap-3 md:gap-4">
             {bridge.cards.map((card) => {
               const Icon = card.icon;
               return (
-                <article key={card.title} className="ngx-card !p-5 md:!p-6">
-                  <span className="ngx-card-icon mb-4">
+                <article key={card.title} className="ngx-card flex-row !p-4 md:!p-5 flex items-start gap-4">
+                  <span className="ngx-card-icon shrink-0">
                     <Icon className="w-5 h-5" />
                   </span>
-                  <h3 className="ngx-card-title mb-2">{card.title}</h3>
-                  <p className="ngx-card-desc">{card.description}</p>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="ngx-card-title mb-1.5">{card.title}</h3>
+                    <p className="ngx-card-desc">{card.description}</p>
+                  </div>
                 </article>
               );
             })}

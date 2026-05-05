@@ -40,13 +40,13 @@ export function LandingProblem() {
         </p>
       </div>
 
-      <div className="ngx-card-grid ngx-card-grid-3">
+      <div className="ngx-card-grid ngx-card-grid-3 items-stretch">
         {problems.map((problem, index) => {
           const Icon = problem.icon;
           return (
             <article
               key={problem.title}
-              className={`animate-on-scroll ${index > 0 ? `delay-${index}00` : ""} ngx-card`}
+              className={`animate-on-scroll ${index > 0 ? `delay-${index}00` : ""} ngx-card h-full`}
             >
               <div className="mb-6 flex items-start justify-between gap-4">
                 <span className="ngx-card-icon" data-accent="red">

@@ -23,14 +23,14 @@ export function LandingValueStack() {
         </p>
       </div>
 
-      <div className="ngx-card-grid ngx-card-grid-2">
+      <div className="ngx-card-grid ngx-card-grid-2 items-stretch">
         {valueStack.items.map((item, index) => {
           const Icon = item.icon;
           const animationDelay = ["", "delay-100", "delay-200", "delay-300"][index] ?? "";
           return (
             <article
               key={item.title}
-              className={`group animate-on-scroll ${animationDelay} ngx-card`}
+              className={`group animate-on-scroll ${animationDelay} ngx-card h-full`}
             >
               <div className="flex items-start gap-4">
                 <span className="ngx-card-icon">
