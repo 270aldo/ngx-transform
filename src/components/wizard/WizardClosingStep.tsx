@@ -162,10 +162,10 @@ export function WizardClosingStep({
         <Button
           type="submit"
           disabled={!canSubmitWizard || loading}
-          className="w-full rounded-full bg-[var(--ngx-purple)] py-6 text-base font-bold uppercase tracking-[0.14em] text-white shadow-[var(--ngx-glow-primary)] transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.98] disabled:bg-white/[0.06] disabled:text-white/30 disabled:shadow-none disabled:translate-y-0"
+          className="h-auto w-full !whitespace-normal rounded-full bg-[var(--ngx-purple)] px-5 py-5 text-sm md:text-base font-bold uppercase tracking-[0.10em] md:tracking-[0.14em] text-white shadow-[var(--ngx-glow-primary)] transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.98] disabled:bg-white/[0.06] disabled:text-white/30 disabled:shadow-none disabled:translate-y-0"
         >
-          Generar visualización y siguiente paso
-          <ArrowRight className="ml-2 h-4 w-4" />
+          <span className="text-center leading-snug">Generar visualización y siguiente paso</span>
+          <ArrowRight className="ml-2 h-4 w-4 shrink-0" />
         </Button>
       </div>
     </div>
