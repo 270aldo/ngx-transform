@@ -77,70 +77,74 @@ export function WizardClosingStep({
         />
       </div>
 
-      <div className="w-full ngx-card !p-5 md:!p-6">
-        <div>
-          <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Acceso privado</span>
-          {authedEmail && !usingAnonymousAccess ? (
-            <>
-              <p className="mt-2 text-sm text-white">{authedEmail}</p>
-              <Input
-                {...register("email")}
-                readOnly
-                className="sr-only"
-                aria-hidden="true"
-                tabIndex={-1}
-              />
-            </>
-          ) : (
-            <>
-              <div className="relative mt-3">
+      <div className="w-full ngx-metal-card !p-5 md:!p-6">
+        <div className="relative z-10">
+          <div>
+            <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Acceso privado</span>
+            {authedEmail && !usingAnonymousAccess ? (
+              <>
+                <p className="mt-2 text-sm text-white">{authedEmail}</p>
                 <Input
                   {...register("email")}
-                  type="email"
-                  placeholder="tu@email.com"
-                  className="bg-white/5 border-[color:var(--ngx-border-subtle)] rounded-2xl py-6 pl-12 text-white focus:border-[var(--ngx-purple)] transition-all"
+                  readOnly
+                  className="sr-only"
+                  aria-hidden="true"
+                  tabIndex={-1}
                 />
-                <Eye className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
-              </div>
-              <p className="mt-2 text-xs text-white/45 leading-relaxed">
-                Te enviaremos aquí el enlace privado a tu visualización y a tu roadmap inicial. No te pediremos contraseña en este paso.
-              </p>
-            </>
-          )}
-          {errors.email ? (
-            <p className="mt-2 text-left text-xs text-red-300">{errors.email.message}</p>
-          ) : null}
-        </div>
+              </>
+            ) : (
+              <>
+                <div className="relative mt-3">
+                  <Input
+                    {...register("email")}
+                    type="email"
+                    placeholder="tu@email.com"
+                    className="bg-white/5 border-[color:var(--ngx-border-subtle)] rounded-2xl py-6 pl-12 text-white focus:border-[var(--ngx-purple)] transition-all"
+                  />
+                  <Eye className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
+                </div>
+                <p className="mt-2 text-xs text-white/45 leading-relaxed">
+                  Te enviaremos aquí el enlace privado a tu visualización y a tu roadmap inicial.
+                </p>
+              </>
+            )}
+            {errors.email ? (
+              <p className="mt-2 text-left text-xs text-red-300">{errors.email.message}</p>
+            ) : null}
+          </div>
 
-        <label className="mt-4 flex items-start gap-3 cursor-pointer group border-t border-[color:var(--ngx-border-subtle)] pt-4">
-          <input
-            type="checkbox"
-            checked={consentEmail}
-            onChange={(e) => onChangeConsentEmail(e.target.checked)}
-            className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[var(--ngx-purple)]"
-          />
-          <span className="text-xs text-white/55 group-hover:text-white/80 transition-colors leading-relaxed">
-            Quiero recibir correos de seguimiento y novedades de NGX Transform. <span className="text-white/35">(opcional)</span>
-          </span>
-        </label>
+          <label className="mt-4 flex items-start gap-3 cursor-pointer group border-t border-[color:var(--ngx-border-subtle)] pt-4">
+            <input
+              type="checkbox"
+              checked={consentEmail}
+              onChange={(e) => onChangeConsentEmail(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[var(--ngx-purple)]"
+            />
+            <span className="text-xs text-white/55 group-hover:text-white/80 transition-colors leading-relaxed">
+              Quiero recibir correos de seguimiento y novedades de NGX Transform. <span className="text-white/35">(opcional)</span>
+            </span>
+          </label>
+        </div>
       </div>
 
-      <div className="w-full ngx-card !p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Acceso</span>
-          <p className="mt-1.5 text-sm text-white">{resolvedEmail || "Pendiente de confirmar"}</p>
-        </div>
-        <div>
-          <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Foto</span>
-          <p className="mt-1.5 text-sm text-white">{previewUrl ? "Cargada y lista para procesarse" : "No detectada"}</p>
-        </div>
-        <div>
-          <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Objetivo</span>
-          <p className="mt-1.5 text-sm text-white">{selectedGoalLabel}</p>
-        </div>
-        <div>
-          <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Enfoque</span>
-          <p className="mt-1.5 text-sm text-white">{selectedFocusLabel}</p>
+      <div className="w-full ngx-metal-card !p-5">
+        <div className="relative z-10 grid grid-cols-2 gap-4 md:gap-5">
+          <div>
+            <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Acceso</span>
+            <p className="mt-1.5 text-sm text-white">{resolvedEmail || "Pendiente de confirmar"}</p>
+          </div>
+          <div>
+            <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Foto</span>
+            <p className="mt-1.5 text-sm text-white">{previewUrl ? "Cargada y lista" : "No detectada"}</p>
+          </div>
+          <div>
+            <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Objetivo</span>
+            <p className="mt-1.5 text-sm text-white">{selectedGoalLabel}</p>
+          </div>
+          <div>
+            <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Enfoque</span>
+            <p className="mt-1.5 text-sm text-white">{selectedFocusLabel}</p>
+          </div>
         </div>
       </div>
 

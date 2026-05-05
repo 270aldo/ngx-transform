@@ -68,45 +68,49 @@ export function WizardObjectiveStep({ watch, setValue }: WizardObjectiveStepProp
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="ngx-card !p-6">
-          <span className="ngx-eyebrow !text-[10px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>Nivel de experiencia</span>
-          <div className="grid grid-cols-3 gap-2">
-            {([{ id: "novato", l: "Novato" }, { id: "intermedio", l: "Pro" }, { id: "avanzado", l: "Elite" }] as const).map((lv) => (
-              <button
-                key={lv.id}
-                type="button"
-                onClick={() => setValue("level", lv.id)}
-                className={cn(
-                  "py-3 rounded-xl border text-[10px] font-mono uppercase tracking-[0.18em] transition-all duration-150",
-                  watch("level") === lv.id
-                    ? "bg-[var(--ngx-purple)] text-white border-[var(--ngx-purple)] shadow-[var(--ngx-glow-primary-soft)]"
-                    : "bg-white/[0.03] text-white/45 border-[color:var(--ngx-border-subtle)] hover:border-white/20 hover:text-white/70"
-                )}
-              >
-                {lv.l}
-              </button>
-            ))}
+        <div className="ngx-metal-card !p-6">
+          <div className="relative z-10">
+            <span className="ngx-eyebrow !text-[10px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>Nivel de experiencia</span>
+            <div className="grid grid-cols-3 gap-2">
+              {([{ id: "novato", l: "Novato" }, { id: "intermedio", l: "Pro" }, { id: "avanzado", l: "Elite" }] as const).map((lv) => (
+                <button
+                  key={lv.id}
+                  type="button"
+                  onClick={() => setValue("level", lv.id)}
+                  className={cn(
+                    "py-3 rounded-xl border text-[10px] font-mono uppercase tracking-[0.18em] transition-all duration-150",
+                    watch("level") === lv.id
+                      ? "bg-[var(--ngx-purple)] text-white border-[var(--ngx-purple)] shadow-[var(--ngx-glow-primary-soft)]"
+                      : "bg-white/[0.03] text-white/45 border-[color:var(--ngx-border-subtle)] hover:border-white/20 hover:text-white/70"
+                  )}
+                >
+                  {lv.l}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="ngx-card !p-6">
-          <span className="ngx-eyebrow !text-[10px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>Días disponibles por semana</span>
-          <div className="grid grid-cols-5 gap-2">
-            {[1, 2, 3, 4, 5].map((d) => (
-              <button
-                key={d}
-                type="button"
-                onClick={() => setValue("weeklyTime", d)}
-                className={cn(
-                  "py-3 rounded-xl border text-xs font-mono uppercase tracking-[0.14em] transition-all duration-150",
-                  watch("weeklyTime") === d
-                    ? "bg-[var(--ngx-purple)] text-white border-[var(--ngx-purple)] shadow-[var(--ngx-glow-primary-soft)]"
-                    : "bg-white/[0.03] text-white/45 border-[color:var(--ngx-border-subtle)] hover:border-white/20 hover:text-white/70"
-                )}
-              >
-                {d}d
-              </button>
-            ))}
+        <div className="ngx-metal-card !p-6">
+          <div className="relative z-10">
+            <span className="ngx-eyebrow !text-[10px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>Días disponibles por semana</span>
+            <div className="grid grid-cols-5 gap-2">
+              {[1, 2, 3, 4, 5].map((d) => (
+                <button
+                  key={d}
+                  type="button"
+                  onClick={() => setValue("weeklyTime", d)}
+                  className={cn(
+                    "py-3 rounded-xl border text-xs font-mono uppercase tracking-[0.14em] transition-all duration-150",
+                    watch("weeklyTime") === d
+                      ? "bg-[var(--ngx-purple)] text-white border-[var(--ngx-purple)] shadow-[var(--ngx-glow-primary-soft)]"
+                      : "bg-white/[0.03] text-white/45 border-[color:var(--ngx-border-subtle)] hover:border-white/20 hover:text-white/70"
+                  )}
+                >
+                  {d}d
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

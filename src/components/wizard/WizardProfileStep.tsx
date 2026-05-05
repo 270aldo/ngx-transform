@@ -55,7 +55,8 @@ export function WizardProfileStep({ register, watch, setValue }: WizardProfileSt
             trackColor="violet"
           />
 
-          <div className="ngx-card !p-4">
+          <div className="ngx-metal-card !p-4">
+            <div className="relative z-10">
             <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Género biológico</span>
             <div className="mt-3 grid grid-cols-2 gap-3">
               {(["male", "female"] as const).map((s) => (
@@ -73,6 +74,7 @@ export function WizardProfileStep({ register, watch, setValue }: WizardProfileSt
                   {s === "male" ? "Masculino" : "Femenino"}
                 </button>
               ))}
+            </div>
             </div>
           </div>
 
@@ -109,12 +111,14 @@ export function WizardProfileStep({ register, watch, setValue }: WizardProfileSt
             </div>
           </div>
 
-          <div className="ngx-card !p-5">
-            <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Lectura inicial</span>
-            <p className="mt-2 text-base font-bold text-white">Todavía no estamos diagnosticando.</p>
-            <p className="mt-2 text-sm leading-relaxed text-white/55">
-              Sólo estamos construyendo una base más útil para que la visualización y el siguiente paso tengan coherencia entre sí.
-            </p>
+          <div className="ngx-metal-card !p-5">
+            <div className="relative z-10">
+              <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Lectura inicial</span>
+              <p className="mt-2 text-base font-bold text-white">Todavía no estamos diagnosticando.</p>
+              <p className="mt-2 text-sm leading-relaxed text-white/55">
+                Sólo estamos construyendo una base más útil para que la visualización y el siguiente paso tengan coherencia entre sí.
+              </p>
+            </div>
           </div>
         </div>
       </div>
