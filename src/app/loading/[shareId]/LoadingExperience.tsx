@@ -265,11 +265,13 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.4 }}
-            className="ngx-glass-clear !p-4 rounded-2xl"
+            className="ngx-metal-card !p-5"
           >
-            <p className="text-sm text-white/65 leading-relaxed">
-              {TIPS[tipIndex]}
-            </p>
+            <div className="relative z-10">
+              <p className="text-sm text-white/75 leading-relaxed">
+                {TIPS[tipIndex]}
+              </p>
+            </div>
           </motion.div>
         </AnimatePresence>
       </div>

@@ -107,10 +107,12 @@ export function BiometricLoader() {
 
       {/* Tip card — relative on mobile, absolute on md+ */}
       <div className="mt-8 px-6 w-full max-w-lg text-center md:absolute md:mt-0 md:bottom-12">
-        <div className="ngx-glass-clear !p-4 rounded-2xl">
-          <p className="text-sm text-white/65 leading-relaxed animate-[fadeIn_0.5s_ease-in-out]" key={tipIndex}>
-            {TIPS[tipIndex]}
-          </p>
+        <div className="ngx-metal-card !p-5">
+          <div className="relative z-10">
+            <p className="text-sm text-white/75 leading-relaxed animate-[fadeIn_0.5s_ease-in-out]" key={tipIndex}>
+              {TIPS[tipIndex]}
+            </p>
+          </div>
         </div>
       </div>
     </div>

@@ -81,20 +81,24 @@ export function RiveOrb({
     >
       {/* Soft halo behind the orb */}
       <div
-        className="pointer-events-none absolute inset-0 rounded-full blur-[60px]"
-        style={{ background: "radial-gradient(closest-side, rgba(109,0,255,0.45), rgba(109,0,255,0.10) 60%, transparent 80%)" }}
+        className="pointer-events-none absolute inset-[-15%] rounded-full blur-[80px]"
+        style={{ background: "radial-gradient(closest-side, rgba(109,0,255,0.55), rgba(109,0,255,0.18) 55%, transparent 80%)" }}
       />
 
-      {/* Rive orb — wrapped with screen blend + circular clip so the
-          artboard's dark background fades into the page's dark bg.
-          Style is on the wrapper because Rive's runtime overrides the
+      {/* Rive orb — radial mask fades the artboard's dark edges into
+          transparent so the orb floats without a visible canvas circle.
+          Plus-lighter blend additionally suppresses any residual dark.
+          Style on the wrapper because Rive's runtime overrides the
           <canvas> inline style. */}
       {!hasError ? (
         <div
           className="relative z-10 h-full w-full"
           style={{
-            mixBlendMode: "screen",
-            clipPath: "circle(50% at 50% 50%)",
+            mixBlendMode: "plus-lighter",
+            maskImage:
+              "radial-gradient(circle at 50% 50%, black 0%, black 38%, transparent 62%)",
+            WebkitMaskImage:
+              "radial-gradient(circle at 50% 50%, black 0%, black 38%, transparent 62%)",
           }}
         >
           <RiveComponent />
