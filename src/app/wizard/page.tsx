@@ -7,18 +7,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ensureAnonymousSession, getClientStorage } from "@/lib/firebaseClient";
 import { ref, uploadBytes } from "firebase/storage";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { Button } from "@/components/shadcn/ui/button";
 import { Input } from "@/components/shadcn/ui/input"; // Kept for text fields
 import { useToast } from "@/components/ui/toast-provider";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { cn } from "@/lib/utils";
-import { Eye, Target, Activity, Cpu, ArrowRight, Upload, ChevronRight, ChevronLeft, Lock, Mail, ShieldCheck, Sparkles } from "lucide-react";
+import { Eye, Target, Activity, Cpu, ChevronRight, ChevronLeft, Lock, ArrowRight } from "lucide-react";
 import { getStoredVariant } from "@/hooks/useVariantTracking";
 
 // New Components
 import { EliteOptionCard } from "@/components/EliteOptionCard";
 import { CyberSlider } from "@/components/CyberSlider";
+import {
+  WizardCommandBar,
+  WizardPhotoStep,
+  type WizardStageTab,
+} from "@/components/wizard";
 
 const OptionalEmailSchema = z.preprocess((value) => {
   if (typeof value !== "string") return value;
@@ -63,29 +67,51 @@ type FormValues = z.infer<typeof FormSchema>;
 
 const STAGE_LABELS: Record<number, { title: string; subtitle: string }> = {
   1: {
-    title: "Sincronización visual",
-    subtitle: "Carga y validación privada de imagen",
+    title: "Foto base",
+    subtitle: "Sube una imagen real y acepta el consentimiento privado",
   },
   2: {
     title: "Perfil corporal",
-    subtitle: "Definiendo parámetros físicos base",
+    subtitle: "Edad, medidas y parámetros físicos iniciales",
   },
   3: {
-    title: "Objetivo de misión",
-    subtitle: "Define el objetivo de esta visualización",
+    title: "Objetivo y contexto",
+    subtitle: "Define qué quieres lograr y qué puede frenarte",
   },
   4: {
-    title: "Calibración mental",
-    subtitle: "Ajuste de parámetros psicométricos",
+    title: "Cierre privado",
+    subtitle: "Confirma correo y genera tu visualización",
   },
 };
 
-const WIZARD_STAGE_TABS = [
+const WIZARD_STAGE_TABS: readonly WizardStageTab[] = [
   { id: 1, short: "Foto" },
   { id: 2, short: "Perfil" },
   { id: 3, short: "Objetivo" },
   { id: 4, short: "Cierre" },
 ] as const;
+
+const TOTAL_STEPS = WIZARD_STAGE_TABS.length;
+
+// File validation constants for the photo upload step
+const ACCEPTED_PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
+const MAX_PHOTO_SIZE_MB = 8;
+const MAX_PHOTO_SIZE_BYTES = MAX_PHOTO_SIZE_MB * 1024 * 1024;
+
+/**
+ * Lightweight client-side wizard tracking — dispatches CustomEvents on window
+ * so any future analytics integration can listen without us adding a dependency.
+ */
+function trackWizardEvent(name: string, payload: Record<string, unknown> = {}) {
+  if (typeof window === "undefined") return;
+  try {
+    window.dispatchEvent(
+      new CustomEvent(`wizard:${name}`, { detail: payload })
+    );
+  } catch {
+    // no-op — never block UX on tracking
+  }
+}
 
 export const dynamic = "force-dynamic";
 
@@ -167,8 +193,16 @@ async function readErrorMessage(response: Response, fallback: string) {
 export default function WizardPage() {
   const router = useRouter();
   const DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "1";
+  // Dev-only stage jump for QA: ?stage=2|3|4. Stripped in production builds.
+  const initialStage = (() => {
+    if (process.env.NODE_ENV !== "development") return 1;
+    if (typeof window === "undefined") return 1;
+    const param = new URLSearchParams(window.location.search).get("stage");
+    const n = Number(param);
+    return Number.isInteger(n) && n >= 1 && n <= 4 ? n : 1;
+  })();
   const [loading, setLoading] = useState(false);
-  const [currentStage, setCurrentStage] = useState(1);
+  const [currentStage, setCurrentStage] = useState(initialStage);
   const [formError, setFormError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [accessReady, setAccessReady] = useState(DEMO);
@@ -346,18 +380,103 @@ export default function WizardPage() {
   }, [router]);
 
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const onDrop = useCallback((e: React.DragEvent<HTMLLabelElement>) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files?.[0];
-    if (file) {
+
+  const validatePhotoFile = useCallback(
+    (file: File): { ok: true } | { ok: false; message: string } => {
+      const acceptedTypes = ACCEPTED_PHOTO_TYPES as readonly string[];
+      if (!acceptedTypes.includes(file.type)) {
+        return { ok: false, message: "Sube una imagen JPG, PNG o WEBP." };
+      }
+      if (file.size > MAX_PHOTO_SIZE_BYTES) {
+        return {
+          ok: false,
+          message: `La imagen supera ${MAX_PHOTO_SIZE_MB}MB. Usa una versión más ligera.`,
+        };
+      }
+      return { ok: true };
+    },
+    []
+  );
+
+  const acceptPhotoFile = useCallback(
+    (file: File): boolean => {
+      const result = validatePhotoFile(file);
+      if (!result.ok) {
+        addToast({ variant: "error", message: result.message });
+        return false;
+      }
+
       const dt = new DataTransfer();
       dt.items.add(file);
       if (inputRef.current) inputRef.current.files = dt.files;
       setValue("photo", dt.files as unknown as FileList);
-    }
-  }, [setValue]);
 
-  const onDrag = useCallback((e: React.DragEvent) => { e.preventDefault(); e.stopPropagation(); }, []);
+      const sizeMb = file.size / (1024 * 1024);
+      trackWizardEvent("photo_selected", {
+        fileType: file.type,
+        fileSizeMb: Number(sizeMb.toFixed(2)),
+      });
+      return true;
+    },
+    [addToast, setValue, validatePhotoFile]
+  );
+
+  const onPhotoInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const accepted = acceptPhotoFile(file);
+      if (!accepted) {
+        // Wipe rejected file from the input so the same file can be re-picked after fixing it
+        if (inputRef.current) inputRef.current.value = "";
+      }
+    },
+    [acceptPhotoFile]
+  );
+
+  const onDrop = useCallback(
+    (e: React.DragEvent<HTMLLabelElement>) => {
+      e.preventDefault();
+      const file = e.dataTransfer.files?.[0];
+      if (!file) return;
+      acceptPhotoFile(file);
+    },
+    [acceptPhotoFile]
+  );
+
+  const onDrag = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const openPicker = useCallback(() => inputRef.current?.click(), []);
+
+  // Step-view + consent tracking (non-blocking)
+  useEffect(() => {
+    trackWizardEvent("step_view", { step: currentStage });
+  }, [currentStage]);
+
+  const handleConsentTermsChange = useCallback((value: boolean) => {
+    setConsentTerms(value);
+    trackWizardEvent("consent_checked", { consent: "terms", checked: value });
+  }, []);
+  const handleConsentAIChange = useCallback((value: boolean) => {
+    setConsentAI(value);
+    trackWizardEvent("consent_checked", { consent: "ai", checked: value });
+  }, []);
+  const handleConsentEmailChange = useCallback((value: boolean) => {
+    setConsentEmail(value);
+    trackWizardEvent("consent_checked", { consent: "email", checked: value });
+  }, []);
+
+  const handleContinueFromPhoto = useCallback(() => {
+    trackWizardEvent("continue_click", {
+      step: 1,
+      ready: canAdvancePastIdentity,
+    });
+    nextStage();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canAdvancePastIdentity]);
 
   const onSubmit = async (values: FormValues) => {
     try {
@@ -469,71 +588,24 @@ export default function WizardPage() {
   return (
     <div className="relative min-h-screen bg-transparent text-white selection:bg-[#6D00FF]/30 font-[var(--font-body)]">
 
-      {/* TOP HEADER */}
-      <div className="fixed inset-x-0 top-0 z-50 px-4 pt-4 md:px-6 md:pt-6">
-        <div className="mx-auto flex max-w-6xl items-start justify-between gap-3 md:items-center pointer-events-none">
-          <div className="landing-surface pointer-events-auto flex min-w-0 items-center gap-3 rounded-[28px] px-3 py-3 md:px-4 md:py-3.5">
-            <button
-              type="button"
-              onClick={goBack}
-              className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full border border-white/10 bg-black/35 px-3 text-[10px] font-medium uppercase tracking-[0.22em] text-white/75 transition-colors hover:bg-black/55 hover:text-white"
-            >
-              <ChevronLeft size={14} />
-              <span className="hidden sm:inline">Atrás</span>
-            </button>
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[#6D00FF]/25 bg-gradient-to-br from-[#6D00FF]/30 to-[#B98CFF]/10">
-              <Sparkles size={18} className="text-[#C6A4FF]" />
-            </div>
-            <div className="min-w-0">
-              <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">Wizard privado</p>
-              <div className="mt-1 flex flex-wrap items-center gap-2">
-                <span className="truncate text-sm font-body font-semibold uppercase tracking-[0.04em] text-white md:text-base">
-                  Configuración privada
-                </span>
-                <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] text-white/55">
-                  Paso {currentStage} / 4
-                </span>
-              </div>
-              <p className="mt-1 text-xs leading-relaxed text-white/40">
-                {stageMeta.subtitle}
-              </p>
-            </div>
-          </div>
-
-          <div className="pointer-events-auto flex items-center gap-2">
-            <div className="hidden md:flex items-center gap-2 rounded-full landing-surface px-2 py-2">
-              {WIZARD_STAGE_TABS.map((tab) => (
-                <div
-                  key={tab.id}
-                  className={cn(
-                    "rounded-full px-3 py-2 text-[10px] uppercase tracking-[0.18em] transition-all",
-                    currentStage === tab.id
-                      ? "bg-[#6D00FF] text-white shadow-[0_0_18px_rgba(109,0,255,0.25)]"
-                      : currentStage > tab.id
-                        ? "bg-[#6D00FF]/12 text-[#C9A9FF]"
-                        : "bg-white/[0.03] text-white/32"
-                  )}
-                >
-                  {tab.short}
-                </div>
-              ))}
-            </div>
-            {DEMO ? (
-              <div className="rounded-full border border-[#6D00FF]/30 bg-[#6D00FF]/15 px-3 py-2 text-[10px] font-mono uppercase tracking-[0.22em] text-[#C6A4FF]">
-                Demo mode
-              </div>
-            ) : null}
-          </div>
-        </div>
-      </div>
+      {/* Unified command bar (back + center title + progress tabs) */}
+      <WizardCommandBar
+        current={currentStage}
+        totalSteps={TOTAL_STEPS}
+        title={stageMeta.title}
+        subtitle={stageMeta.subtitle}
+        tabs={WIZARD_STAGE_TABS}
+        onBack={goBack}
+        isDemoMode={DEMO}
+      />
 
       {/* MAIN CONTENT AREA */}
       <form onSubmit={handleSubmit(onSubmit, onFormError)} className="mx-auto flex min-h-screen max-w-6xl flex-col px-4 pb-24 pt-32 md:px-6 md:pb-28 md:pt-36">
         <input
           type="file"
-          accept="image/*"
+          accept="image/jpeg,image/png,image/webp"
           className="sr-only"
-          {...register("photo")}
+          {...register("photo", { onChange: onPhotoInputChange })}
           ref={(el) => {
             inputRef.current = el;
             register("photo").ref(el);
@@ -629,198 +701,32 @@ export default function WizardPage() {
           </div>
         ) : (
           <>
-            {/* STAGE 1: IDENTITY */}
+            {/* STAGE 1: PHOTO BASE (refactored into wizard components) */}
             {currentStage === 1 && (
-              <div className="w-full animate-in slide-in-from-right-8 fade-in duration-500">
-                <section className="rounded-[32px] landing-surface-strong p-6 md:p-8 lg:p-10">
-                  <div className="grid gap-8 lg:grid-cols-[minmax(0,0.84fr)_minmax(0,1.16fr)] lg:gap-10">
-                    <div className="flex flex-col">
-                      <p className="landing-kicker mb-4">Paso 1 · foto base</p>
-                      <h1 className="landing-heading text-[2.7rem] leading-[0.9] text-white md:text-[4rem] lg:text-[4.5rem]">
-                        Sube tu foto.
-                        <br />
-                        Activamos tu acceso privado.
-                      </h1>
-                      <p className="mt-5 max-w-xl text-base leading-relaxed text-white/65 md:text-[1.05rem]">
-                        Tu foto es el punto de partida. Sube una foto real, da tu consentimiento y GENESIS empieza a trabajar con lo que tienes.
-                      </p>
-
-                      <div className="mt-7 rounded-[24px] landing-surface px-5 py-5 text-left">
-                        <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">Contrato de experiencia</p>
-                        <p className="mt-3 text-sm leading-relaxed text-white/80 md:text-[0.95rem]">
-                          Esto no es un diagnóstico médico ni una predicción exacta. Es una visualización privada y motivacional generada con IA para ayudarte a imaginar tu potencial y abrir una conversación más seria sobre lo que te acercaría a él.
-                        </p>
-                      </div>
-
-                      <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                        {[
-                          {
-                            icon: ShieldCheck,
-                            label: "Privado por diseño",
-                            text: "Tu foto se usa sólo para operar esta experiencia.",
-                          },
-                          {
-                            icon: Sparkles,
-                            label: "Salida aproximada",
-                            text: "Es motivacional, no clínica ni exacta.",
-                          },
-                          {
-                            icon: Mail,
-                            label: "Correo al final",
-                            text: "Primero avanzas sin fricción. El acceso llega después.",
-                          },
-                        ].map((item) => {
-                          const Icon = item.icon;
-                          return (
-                            <div key={item.label} className="rounded-[22px] landing-surface px-4 py-4">
-                              <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl border border-[#6D00FF]/20 bg-[#6D00FF]/10">
-                                <Icon className="h-4 w-4 text-[#C6A4FF]" />
-                              </div>
-                              <p className="text-sm font-semibold text-white">{item.label}</p>
-                              <p className="mt-2 text-xs leading-relaxed text-white/45">{item.text}</p>
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      <div className="mt-6 rounded-[22px] border border-white/10 bg-white/[0.03] px-4 py-4 text-sm leading-relaxed text-white/50">
-                        Si la imagen no está lista, no te pediremos el resto. Primero resolvemos la base.
-                      </div>
-                    </div>
-
-                    <div className="rounded-[28px] landing-surface p-4 md:p-5">
-                      <div className="flex items-center justify-between gap-3 border-b border-white/8 pb-4">
-                        <div>
-                          <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">Foto base</p>
-                          <p className="mt-2 text-lg font-semibold text-white">Carga privada de imagen</p>
-                        </div>
-                        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-white/45">
-                          {previewUrl ? "Archivo listo" : "Cuerpo completo"}
-                        </span>
-                      </div>
-
-                      <label
-                        onDrop={onDrop}
-                        onDragOver={onDrag}
-                        onDragEnter={onDrag}
-                        onClick={() => inputRef.current?.click()}
-                        className={cn(
-                          "group relative mt-5 flex min-h-[360px] md:min-h-[420px] w-full flex-col items-center justify-center overflow-hidden rounded-[28px] border border-dashed transition-all cursor-pointer",
-                          previewUrl
-                            ? "border-[#6D00FF]/45 bg-[#6D00FF]/6"
-                            : "border-white/12 bg-white/[0.03] hover:border-white/25 hover:bg-white/[0.05]"
-                        )}
-                      >
-                        {previewUrl ? (
-                          <>
-                            <Image src={previewUrl} alt="Preview" fill className="z-10 object-contain p-4 md:p-5" />
-                            <Image src={previewUrl} alt="Blur" fill className="z-0 object-cover blur-2xl opacity-20 scale-110" />
-                            <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
-                            <div className="absolute left-5 top-5 z-20 rounded-full border border-white/10 bg-black/45 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-white/70 backdrop-blur-md">
-                              Vista previa protegida
-                            </div>
-                            <div className="absolute bottom-5 left-5 right-5 z-20 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                              <div>
-                                <p className="text-sm font-semibold text-white">Imagen detectada y lista para validarse</p>
-                                <p className="mt-1 text-xs leading-relaxed text-white/55">
-                                  Si quieres, puedes reemplazarla antes de pasar al perfil corporal.
-                                </p>
-                              </div>
-                              <div className="inline-flex items-center gap-2 rounded-full bg-[#6D00FF] px-4 py-2 text-xs font-semibold text-white shadow-[0_0_20px_rgba(109,0,255,0.35)]">
-                                <Upload size={16} />
-                                Cambiar archivo
-                              </div>
-                            </div>
-                          </>
-                        ) : (
-                          <div className="max-w-sm px-6 text-center transition-transform group-hover:scale-[1.02]">
-                            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-[#6D00FF]/25 bg-[#6D00FF]/10 shadow-[0_0_30px_rgba(109,0,255,0.18)]">
-                              <Upload className="h-8 w-8 text-[#6D00FF]" />
-                            </div>
-                            <h3 className="mt-6 text-[1.45rem] font-black italic uppercase tracking-[-0.05em] text-white">
-                              Arrastra tu foto o haz clic
-                            </h3>
-                            <p className="mt-3 text-sm leading-relaxed text-white/50">
-                              JPG o PNG, máximo 8MB. Idealmente cuerpo completo, buena luz y una pose simple.
-                            </p>
-                            <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-                              {["Privado", "Aproximado", "Sin login aún"].map((item) => (
-                                <span
-                                  key={item}
-                                  className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-white/45"
-                                >
-                                  {item}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </label>
-
-                      {previewUrl ? (
-                        <div className="mt-5 animate-in fade-in duration-300">
-                          <div className="space-y-3 rounded-[24px] border border-white/10 bg-white/[0.03] p-4 text-left">
-                            <label className="flex items-start gap-3 cursor-pointer group">
-                              <input
-                                type="checkbox"
-                                checked={consentTerms}
-                                onChange={(e) => setConsentTerms(e.target.checked)}
-                                className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[#6D00FF]"
-                              />
-                              <span className="text-xs leading-relaxed text-white/55 transition-colors group-hover:text-white/75">
-                                Soy mayor de 18 años. He leído y acepto los{" "}
-                                <a href="/terms" target="_blank" className="text-[#B98CFF] underline">Términos de Servicio</a>{" "}y el{" "}
-                                <a href="/privacy" target="_blank" className="text-[#B98CFF] underline">Aviso de Privacidad</a>.
-                              </span>
-                            </label>
-                            <label className="flex items-start gap-3 cursor-pointer group">
-                              <input
-                                type="checkbox"
-                                checked={consentAI}
-                                onChange={(e) => setConsentAI(e.target.checked)}
-                                className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[#6D00FF]"
-                              />
-                              <span className="text-xs leading-relaxed text-white/55 transition-colors group-hover:text-white/75">
-                                Autorizo que mi foto sea procesada por inteligencia artificial (Google Gemini) para generar mi visualización privada y el contexto inicial del siguiente paso. Entiendo que se almacena de forma segura solo mientras sea necesario para prestar el servicio.
-                              </span>
-                            </label>
-                          </div>
-                        </div>
-                      ) : (
-                        <p className="mt-5 text-xs leading-relaxed text-white/35">
-                          Cuando detectemos una imagen válida, te pediremos los consentimientos obligatorios para desbloquear el perfil corporal.
-                        </p>
-                      )}
-
-                      <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                        <p className="max-w-sm text-xs leading-relaxed text-white/42">
-                          El correo se confirma al final, justo antes de generar tu visualización privada. Aquí no te pediremos contraseña.
-                        </p>
-                        <Button
-                          type="button"
-                          onClick={nextStage}
-                          disabled={!canAdvancePastIdentity}
-                          className="h-auto rounded-full bg-[#6D00FF] px-7 py-4 text-sm font-semibold uppercase tracking-[0.14em] text-white shadow-[0_0_30px_rgba(109,0,255,0.32)] transition-all hover:scale-[1.01] hover:bg-[#5f00de] disabled:bg-white/8 disabled:text-white/30 disabled:shadow-none"
-                        >
-                          Continuar al perfil
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-              </div>
+              <WizardPhotoStep
+                previewUrl={previewUrl}
+                consentTerms={consentTerms}
+                consentAI={consentAI}
+                consentEmail={consentEmail}
+                canAdvance={canAdvancePastIdentity}
+                onClickPicker={openPicker}
+                onDropFile={onDrop}
+                onDragOver={onDrag}
+                onDragEnter={onDrag}
+                onChangeTerms={handleConsentTermsChange}
+                onChangeAI={handleConsentAIChange}
+                onChangeEmail={handleConsentEmailChange}
+                onContinue={handleContinueFromPhoto}
+              />
             )}
 
             {/* STAGE 2: BIOMETRICS */}
             {currentStage === 2 && (
               <div className="w-full max-w-5xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 space-y-8">
                 <div className="text-center">
-                  <p className="landing-kicker mb-4">Paso 2 · Perfil corporal</p>
-                  <h2 className="landing-heading text-[2.4rem] leading-[0.92] text-white md:text-[3.4rem]">
-                    Le damos contexto
-                    <br />
-                    a tu punto de partida.
+                  <span className="ngx-eyebrow-pill mb-4 mx-auto">Paso 2 · Perfil corporal</span>
+                  <h2 className="ngx-h1 mx-auto !text-center" style={{ maxWidth: "20ch" }}>
+                    Le damos contexto a tu punto de partida.
                   </h2>
                   <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/55 md:text-base">
                     Estos datos no sustituyen una medición clínica. Sólo calibran el rango de la visualización para que no se sienta como un juguete genérico.
@@ -828,7 +734,7 @@ export default function WizardPage() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] items-start">
-                  <div className="space-y-5 rounded-[30px] landing-surface-strong p-5 md:p-6">
+                  <div className="ngx-section-panel !p-5 md:!p-6 space-y-5">
                     <CyberSlider
                       label="Edad"
                       {...register("age")}
@@ -853,18 +759,18 @@ export default function WizardPage() {
                       trackColor="violet"
                     />
 
-                    <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-4">
-                      <label className="text-[10px] font-mono uppercase tracking-[0.22em] text-white/45 block">Género biológico</label>
-                      <div className="mt-4 grid grid-cols-2 gap-3">
+                    <div className="ngx-card !p-4">
+                      <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Género biológico</span>
+                      <div className="mt-3 grid grid-cols-2 gap-3">
                         {(["male", "female"] as const).map((s) => (
                           <button
                             key={s}
                             type="button"
                             onClick={() => setValue("sex", s)}
                             className={cn(
-                              "py-3 rounded-xl border text-[10px] font-mono uppercase tracking-[0.18em] transition-all",
+                              "py-3 rounded-xl border text-[10px] font-mono uppercase tracking-[0.18em] transition-all duration-150",
                               watch("sex") === s
-                                ? "bg-[#6D00FF] text-white border-[#6D00FF] shadow-[0_0_18px_rgba(109,0,255,0.22)]"
+                                ? "bg-[var(--ngx-purple)] text-white border-[var(--ngx-purple)] shadow-[var(--ngx-glow-primary-soft)]"
                                 : "bg-white/[0.03] text-white/45 border-white/10 hover:border-white/20 hover:text-white/70"
                             )}
                           >
@@ -874,14 +780,14 @@ export default function WizardPage() {
                       </div>
                     </div>
 
-                    <div className="rounded-[24px] border border-white/10 bg-white/[0.03] p-4 text-sm leading-relaxed text-white/45">
+                    <p className="text-xs leading-relaxed text-white/45 px-1">
                       Mientras más honestos sean estos datos, mejor se sentirá el puente entre la visualización y el roadmap.
-                    </div>
+                    </p>
                   </div>
 
                   <div className="space-y-4">
-                    <div className="rounded-[30px] landing-surface p-5 md:p-6">
-                      <label className="text-[10px] font-mono uppercase tracking-[0.22em] text-white/45 block">Tipo somático</label>
+                    <div className="ngx-glass !p-5 md:!p-6">
+                      <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Tipo somático</span>
                       <div className="mt-4 grid grid-cols-1 gap-3">
                         <EliteOptionCard
                           title="ECTOMORFO"
@@ -907,10 +813,10 @@ export default function WizardPage() {
                       </div>
                     </div>
 
-                    <div className="rounded-[24px] landing-surface px-5 py-5">
-                      <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">Lectura inicial</p>
-                      <p className="mt-3 text-base font-semibold text-white">Todavía no estamos diagnosticando.</p>
-                      <p className="mt-2 text-sm leading-relaxed text-white/50">
+                    <div className="ngx-card !p-5">
+                      <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Lectura inicial</span>
+                      <p className="mt-2 text-base font-bold text-white">Todavía no estamos diagnosticando.</p>
+                      <p className="mt-2 text-sm leading-relaxed text-white/55">
                         Sólo estamos construyendo una base más útil para que la visualización y el siguiente paso tengan coherencia entre sí.
                       </p>
                     </div>
@@ -923,11 +829,9 @@ export default function WizardPage() {
             {currentStage === 3 && (
               <div className="w-full max-w-5xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 space-y-8">
                 <div className="text-center">
-                  <p className="landing-kicker mb-4">Paso 3 · objetivo</p>
-                  <h2 className="landing-heading text-[2.4rem] leading-[0.92] text-white md:text-[3.4rem]">
-                    Define la dirección
-                    <br />
-                    de tu visualización.
+                  <span className="ngx-eyebrow-pill mb-4 mx-auto">Paso 3 · Objetivo y contexto</span>
+                  <h2 className="ngx-h1 mx-auto !text-center" style={{ maxWidth: "20ch" }}>
+                    Define la dirección de tu visualización.
                   </h2>
                   <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/55 md:text-base">
                     Aquí decidimos qué versión de ti estamos intentando visualizar para que el resultado tenga una intención clara, no sólo un efecto bonito.
@@ -975,8 +879,8 @@ export default function WizardPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="rounded-[28px] landing-surface p-6">
-                    <label className="text-[10px] font-mono uppercase tracking-[0.22em] text-white/45 mb-4 block">Nivel de experiencia</label>
+                  <div className="ngx-card !p-6">
+                    <span className="ngx-eyebrow !text-[10px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>Nivel de experiencia</span>
                     <div className="grid grid-cols-3 gap-2">
                       {([{ id: "novato", l: "Novato" }, { id: "intermedio", l: "Pro" }, { id: "avanzado", l: "Elite" }] as const).map((lv) => (
                         <button
@@ -984,9 +888,9 @@ export default function WizardPage() {
                           type="button"
                           onClick={() => setValue("level", lv.id)}
                           className={cn(
-                            "py-3 rounded-xl border text-[10px] font-mono uppercase tracking-[0.18em] transition-all",
+                            "py-3 rounded-xl border text-[10px] font-mono uppercase tracking-[0.18em] transition-all duration-150",
                             watch("level") === lv.id
-                              ? "bg-[#6D00FF] text-white border-[#6D00FF] shadow-[0_0_18px_rgba(109,0,255,0.22)]"
+                              ? "bg-[var(--ngx-purple)] text-white border-[var(--ngx-purple)] shadow-[var(--ngx-glow-primary-soft)]"
                               : "bg-white/[0.03] text-white/45 border-white/10 hover:border-white/20 hover:text-white/70"
                           )}
                         >
@@ -996,8 +900,8 @@ export default function WizardPage() {
                     </div>
                   </div>
 
-                  <div className="rounded-[28px] landing-surface p-6">
-                    <label className="text-[10px] font-mono uppercase tracking-[0.22em] text-white/45 mb-4 block">Días disponibles por semana</label>
+                  <div className="ngx-card !p-6">
+                    <span className="ngx-eyebrow !text-[10px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>Días disponibles por semana</span>
                     <div className="grid grid-cols-5 gap-2">
                       {[1, 2, 3, 4, 5].map((d) => (
                         <button
@@ -1005,9 +909,9 @@ export default function WizardPage() {
                           type="button"
                           onClick={() => setValue("weeklyTime", d)}
                           className={cn(
-                            "py-3 rounded-xl border text-xs font-mono uppercase tracking-[0.14em] transition-all",
+                            "py-3 rounded-xl border text-xs font-mono uppercase tracking-[0.14em] transition-all duration-150",
                             watch("weeklyTime") === d
-                              ? "bg-[#6D00FF] text-white border-[#6D00FF] shadow-[0_0_18px_rgba(109,0,255,0.22)]"
+                              ? "bg-[var(--ngx-purple)] text-white border-[var(--ngx-purple)] shadow-[var(--ngx-glow-primary-soft)]"
                               : "bg-white/[0.03] text-white/45 border-white/10 hover:border-white/20 hover:text-white/70"
                           )}
                         >
@@ -1018,27 +922,26 @@ export default function WizardPage() {
                   </div>
                 </div>
 
-                <div className="rounded-[30px] landing-surface-strong p-6 md:p-8">
-                  <div className="mb-6 flex justify-between items-center">
-                    <label className="text-[10px] font-mono uppercase tracking-[0.22em] text-white/45">Zona de enfoque principal</label>
-                  </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="ngx-section-panel !p-6 md:!p-8">
+                  <span className="ngx-eyebrow !text-[10px] block mb-5" style={{ color: "var(--ngx-fg-3)" }}>Zona de enfoque principal</span>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                     {([
                       { id: "upper", l: "Tren Superior" }, { id: "lower", l: "Tren Inferior" },
                       { id: "abs", l: "Core & Abs" }, { id: "full", l: "Full Body" }
                     ] as const).map((z) => (
-                      <div
+                      <button
                         key={z.id}
+                        type="button"
                         onClick={() => setValue("focusZone", z.id)}
                         className={cn(
-                          "p-4 rounded-xl border text-center cursor-pointer transition-all hover:scale-105 active:scale-95",
+                          "p-4 rounded-xl border text-center cursor-pointer transition-all duration-150 active:scale-[0.97]",
                           watch("focusZone") === z.id
-                            ? "bg-[#6D00FF] border-[#6D00FF] text-white shadow-[0_0_20px_rgba(109,0,255,0.28)]"
-                            : "bg-black/30 border-white/10 text-white/45 hover:text-white/80 hover:border-white/20"
+                            ? "bg-[var(--ngx-purple)] border-[var(--ngx-purple)] text-white shadow-[var(--ngx-glow-primary-soft)]"
+                            : "bg-white/[0.02] border-white/10 text-white/55 hover:text-white/85 hover:border-white/20"
                         )}
                       >
-                        <div className="text-xs font-mono uppercase tracking-[0.16em]">{z.l}</div>
-                      </div>
+                        <span className="text-xs font-mono uppercase tracking-[0.16em]">{z.l}</span>
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -1049,18 +952,16 @@ export default function WizardPage() {
             {currentStage === 4 && (
               <div className="w-full max-w-4xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 flex flex-col items-center justify-center h-full space-y-8">
                 <div className="text-center">
-                  <p className="landing-kicker mb-4">Paso 4 · cierre</p>
-                  <h2 className="landing-heading text-[2.4rem] leading-[0.92] text-white md:text-[3.2rem]">
-                    Cerramos la calibración
-                    <br />
-                    y activamos tu acceso.
+                  <span className="ngx-eyebrow-pill mb-4 mx-auto">Paso 4 · Cierre privado</span>
+                  <h2 className="ngx-h1 mx-auto !text-center" style={{ maxWidth: "26ch" }}>
+                    Cerramos la calibración y activamos tu acceso.
                   </h2>
                   <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/55 md:text-base">
                     Un último ajuste mental y el correo donde quieres recibir tu acceso privado. Después sí generamos la visualización y el siguiente paso.
                   </p>
                 </div>
 
-                <div className="w-full space-y-5 rounded-[30px] landing-surface-strong p-6 md:p-8">
+                <div className="w-full ngx-section-panel !p-6 md:!p-8 space-y-5">
                   <CyberSlider
                     label="Nivel de Disciplina"
                     {...register("disciplineRating")}
@@ -1084,9 +985,9 @@ export default function WizardPage() {
                   />
                 </div>
 
-                <div className="grid w-full grid-cols-1 gap-4 rounded-[28px] landing-surface p-5 md:p-6">
+                <div className="w-full ngx-card !p-5 md:!p-6">
                   <div>
-                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/45">Acceso privado</p>
+                    <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Acceso privado</span>
                     {user?.email && !usingAnonymousAccess ? (
                       <>
                         <p className="mt-2 text-sm text-white">{user.email}</p>
@@ -1105,9 +1006,9 @@ export default function WizardPage() {
                             {...register("email")}
                             type="email"
                             placeholder="tu@email.com"
-                            className="bg-white/5 border-white/10 rounded-2xl py-6 pl-12 text-white focus:border-[#6D00FF] transition-all"
+                            className="bg-white/5 border-white/10 rounded-2xl py-6 pl-12 text-white focus:border-[var(--ngx-purple)] transition-all"
                           />
-                          <Eye className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500" size={18} />
+                          <Eye className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
                         </div>
                         <p className="mt-2 text-xs text-white/45 leading-relaxed">
                           Te enviaremos aquí el enlace privado a tu visualización y a tu roadmap inicial. No te pediremos contraseña en este paso.
@@ -1119,45 +1020,45 @@ export default function WizardPage() {
                     ) : null}
                   </div>
 
-                  <label className="flex items-start gap-3 cursor-pointer group">
+                  <label className="mt-4 flex items-start gap-3 cursor-pointer group border-t border-white/[0.06] pt-4">
                     <input
                       type="checkbox"
                       checked={consentEmail}
                       onChange={(e) => setConsentEmail(e.target.checked)}
-                      className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[#6D00FF]"
+                      className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[var(--ngx-purple)]"
                     />
-                    <span className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors leading-relaxed">
-                      Quiero recibir correos de seguimiento y novedades de NGX Transform. Es opcional y puedo cancelar en cualquier momento.
+                    <span className="text-xs text-white/55 group-hover:text-white/80 transition-colors leading-relaxed">
+                      Quiero recibir correos de seguimiento y novedades de NGX Transform. <span className="text-white/35">(opcional)</span>
                     </span>
                   </label>
                 </div>
 
-                <div className="grid w-full grid-cols-1 gap-3 rounded-[28px] landing-surface p-5 md:grid-cols-2">
+                <div className="w-full ngx-card !p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/45">Acceso</p>
-                    <p className="mt-1 text-sm text-white">{resolvedEmail || "Pendiente de confirmar"}</p>
+                    <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Acceso</span>
+                    <p className="mt-1.5 text-sm text-white">{resolvedEmail || "Pendiente de confirmar"}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/45">Foto</p>
-                    <p className="mt-1 text-sm text-white">{previewUrl ? "Cargada y lista para procesarse" : "No detectada"}</p>
+                    <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Foto</span>
+                    <p className="mt-1.5 text-sm text-white">{previewUrl ? "Cargada y lista para procesarse" : "No detectada"}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/45">Objetivo</p>
-                    <p className="mt-1 text-sm text-white">{selectedGoalLabel}</p>
+                    <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Objetivo</span>
+                    <p className="mt-1.5 text-sm text-white">{selectedGoalLabel}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/45">Enfoque</p>
-                    <p className="mt-1 text-sm text-white">{selectedFocusLabel}</p>
+                    <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Enfoque</span>
+                    <p className="mt-1.5 text-sm text-white">{selectedFocusLabel}</p>
                   </div>
                 </div>
 
                 {!canSubmitWizard ? (
-                  <p className="mt-4 text-center text-xs text-amber-300">
+                  <p className="text-center text-xs text-amber-300">
                     Antes de generar tu visualización necesitamos un correo válido y conservar la foto cargada del paso 1.
                   </p>
                 ) : null}
 
-                <p className="mt-6 max-w-2xl text-center text-xs text-white/45 leading-relaxed">
+                <p className="max-w-2xl text-center text-xs text-white/45 leading-relaxed">
                   En el siguiente paso generaremos una visualización aproximada de tu potencial con IA. Después podrás ver un roadmap inicial para entender qué necesitarías construir antes de pensar en un sistema más serio.
                 </p>
 
@@ -1165,9 +1066,10 @@ export default function WizardPage() {
                   <Button
                     type="submit"
                     disabled={!canSubmitWizard || loading}
-                    className="w-full rounded-[22px] bg-[#6D00FF] py-7 text-base font-semibold uppercase tracking-[0.14em] text-white shadow-[0_0_40px_rgba(109,0,255,0.32)] transition-transform hover:scale-[1.01] hover:bg-[#5800cc] active:scale-[0.99]"
+                    className="w-full rounded-full bg-[var(--ngx-purple)] py-6 text-base font-bold uppercase tracking-[0.14em] text-white shadow-[var(--ngx-glow-primary)] transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.98] disabled:bg-white/[0.06] disabled:text-white/30 disabled:shadow-none disabled:translate-y-0"
                   >
-                    GENERAR VISUALIZACIÓN Y SIGUIENTE PASO
+                    Generar visualización y siguiente paso
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </div>
               </div>
@@ -1176,7 +1078,7 @@ export default function WizardPage() {
             {/* NAVIGATION FOOTER */}
             {currentStage > 1 && (
               <div className="fixed bottom-0 left-0 w-full px-4 pb-5 pt-10 bg-gradient-to-t from-black via-black/90 to-transparent z-40 pointer-events-none md:px-6">
-                <div className="max-w-5xl mx-auto flex items-center justify-between gap-3 rounded-full landing-surface px-3 py-3 pointer-events-auto">
+                <div className="max-w-5xl mx-auto flex items-center justify-between gap-3 rounded-full border border-white/[0.08] bg-black/55 backdrop-blur-2xl px-3 py-3 pointer-events-auto shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
                   <button
                     type="button"
                     onClick={prevStage}
@@ -1185,18 +1087,21 @@ export default function WizardPage() {
                     <ChevronLeft size={14} /> Anterior
                   </button>
 
-                  <div className="hidden md:block text-center">
-                    <p className="landing-kicker !text-[0.58rem] !tracking-[0.2em]">Paso {currentStage} de 4</p>
-                    <p className="mt-1 text-sm text-white/65">{stageMeta.title}</p>
+                  <div className="hidden md:flex items-center gap-2">
+                    <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
+                      Paso {currentStage} / 4
+                    </span>
+                    <span className="h-3 w-px bg-white/15" />
+                    <span className="text-sm text-white/75">{stageMeta.title}</span>
                   </div>
 
                   {currentStage < 4 && (
                     <button
                       type="button"
                       onClick={nextStage}
-                      className="flex items-center gap-2 rounded-full bg-[#6D00FF] px-6 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-white shadow-[0_0_24px_rgba(109,0,255,0.25)] transition-transform hover:scale-[1.01] hover:bg-[#5f00de]"
+                      className="flex items-center gap-2 rounded-full bg-[var(--ngx-purple)] px-5 py-2.5 text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-white shadow-[var(--ngx-glow-primary-soft)] transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97]"
                     >
-                      Siguiente fase <ChevronRight size={14} />
+                      Siguiente <ChevronRight size={14} />
                     </button>
                   )}
                 </div>

@@ -18,6 +18,13 @@ interface EliteOptionCardProps {
   compact?: boolean;
 }
 
+/**
+ * Selectable option card with NEOGEN-X DS styling.
+ *  - Idle: subtle glass + white-8 border
+ *  - Selected: 2px purple LEFT border (DS signature) + soft glow
+ *  - Title is sans-serif bold uppercase (no italic display)
+ *  - Eyebrow uses .ngx-eyebrow tokens
+ */
 export function EliteOptionCard({
   title,
   description,
@@ -33,99 +40,84 @@ export function EliteOptionCard({
   compact = false,
 }: EliteOptionCardProps) {
   return (
-    <div
+    <button
+      type="button"
       onClick={onClick}
-      role="button"
       aria-label={imageAlt || title}
+      aria-pressed={selected}
       className={cn(
-        "relative group cursor-pointer overflow-hidden rounded-[24px] border transition-all duration-300 active:scale-95 animate-in fade-in zoom-in slide-in-from-bottom-4 fill-mode-backwards",
+        "relative group cursor-pointer overflow-hidden rounded-2xl border-l-2 border transition-all duration-200 active:scale-[0.98] animate-in fade-in zoom-in slide-in-from-bottom-4 fill-mode-backwards text-left w-full",
         selected
-          ? "border-[#6D00FF]/55 bg-[#11081C] shadow-[0_0_30px_rgba(109,0,255,0.22)] scale-[1.01]"
-          : "border-white/10 bg-white/[0.04] hover:border-white/20 hover:bg-white/[0.06] hover:scale-[1.01]",
+          ? "border-l-[var(--ngx-purple)] border-y-[var(--ngx-purple)]/30 border-r-[var(--ngx-purple)]/30 bg-[var(--ngx-purple)]/[0.06] shadow-[var(--ngx-glow-primary-soft)]"
+          : "border-l-transparent border-white/[0.08] bg-white/[0.025] hover:border-l-[var(--ngx-purple-light)] hover:border-white/[0.18] hover:bg-white/[0.04]",
         className
       )}
       style={{ animationDelay: `${idx * 50}ms` }}
     >
+      {/* Optional background image with gradient overlay */}
       {imageSrc && (
         <div className="absolute inset-0 pointer-events-none">
           <div
-            className="absolute inset-0 opacity-30 bg-cover bg-center transition-opacity duration-300 group-hover:opacity-40"
+            className="absolute inset-0 opacity-25 bg-cover bg-center transition-opacity duration-300 group-hover:opacity-35"
             style={{ backgroundImage: `url(${imageSrc})` }}
           />
           <div
             className={cn(
               "absolute inset-0",
               overlayTone === "deep"
-                ? "bg-gradient-to-b from-[#050505]/20 via-[#050505]/75 to-[#050505]/95"
-                : "bg-gradient-to-b from-[#6D00FF]/10 via-[#050505]/70 to-[#050505]/95"
+                ? "bg-gradient-to-b from-[#050505]/30 via-[#050505]/80 to-[#050505]/95"
+                : "bg-gradient-to-b from-[var(--ngx-purple)]/[0.08] via-[#050505]/75 to-[#050505]/95"
             )}
           />
         </div>
       )}
 
-      <div
+      {/* Selected check pill */}
+      <span
         className={cn(
-          "absolute inset-0 pointer-events-none",
-          selected ? "bg-[#6D00FF]/14" : "bg-transparent"
-        )}
-      />
-
-      <div className="absolute inset-0 opacity-[0.12] bg-[url('/noise.svg')] pointer-events-none mix-blend-overlay" />
-
-      <div
-        className={cn(
-          "absolute top-4 right-4 w-6 h-6 rounded-full border flex items-center justify-center transition-all duration-300",
+          "absolute top-3 right-3 flex w-6 h-6 rounded-full items-center justify-center transition-all duration-200",
           selected
-            ? "bg-[#6D00FF] border-[#6D00FF] opacity-100 scale-100"
-            : "border-white/15 bg-black/20 opacity-0 scale-75 group-hover:opacity-100"
+            ? "bg-[var(--ngx-purple)] opacity-100 scale-100"
+            : "bg-white/[0.04] border border-white/[0.10] opacity-0 scale-75 group-hover:opacity-100"
         )}
       >
         <Check size={12} className="text-white" />
-      </div>
+      </span>
 
       <div
         className={cn(
-          "relative h-full flex flex-col justify-between",
+          "relative h-full flex flex-col justify-between gap-4",
           compact ? "p-4" : "p-5"
         )}
       >
         <div>
           {idx ? (
-            <p className="mb-4 text-[10px] font-mono uppercase tracking-[0.22em] text-white/38">
+            <span className="block mb-3 ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
               Opción {String(idx).padStart(2, "0")}
-            </p>
+            </span>
           ) : null}
           <h3
             className={cn(
-              "font-body text-[1.3rem] font-black italic uppercase tracking-[-0.05em] leading-[0.95] transition-colors duration-300",
-              selected ? "text-white" : "text-white/80 group-hover:text-white"
+              "font-body font-bold uppercase text-lg leading-tight tracking-[-0.005em] transition-colors duration-200",
+              selected ? "text-white" : "text-white/85 group-hover:text-white"
             )}
           >
             {title}
           </h3>
-          {description && (
-            <p className="mt-3 text-sm text-neutral-300/90 font-body leading-relaxed group-hover:text-neutral-200 transition-colors">
+          {description ? (
+            <p className="mt-2 text-sm font-body leading-relaxed text-white/55 group-hover:text-white/70 transition-colors">
               {description}
             </p>
-          )}
-        </div>
-
-        <div className="mt-4 flex flex-col gap-3">
-          {Icon ? (
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/35 px-3 py-1.5 text-[10px] tracking-[0.18em] uppercase font-mono text-white/80">
-              <Icon size={14} className="text-[#B98CFF]" />
-              <span>{iconLabel ?? "Misión elite"}</span>
-            </div>
           ) : null}
-
-          <div
-            className={cn(
-              "h-px w-full transition-all duration-500 rounded-full",
-              selected ? "bg-[#6D00FF]/80 shadow-[0_0_10px_#6D00FF]" : "bg-white/10 group-hover:bg-white/20"
-            )}
-          />
         </div>
+
+        {Icon ? (
+          <div className="inline-flex items-center gap-2 self-start rounded-full border border-white/[0.10] bg-black/35 px-3 py-1.5 text-[10px] tracking-[0.18em] uppercase font-mono text-white/75">
+            <Icon size={12} className="text-[var(--ngx-purple-light)]" />
+            <span>{iconLabel ?? "Misión elite"}</span>
+          </div>
+        ) : null}
       </div>
-    </div>
+    </button>
   );
 }

@@ -32,6 +32,7 @@ export function LandingTopNav() {
             <div className="hidden md:flex items-center gap-1 bg-white/5 rounded-full p-1">
               <a href="#como-funciona" className="px-4 py-1.5 rounded-full text-xs text-slate-400 hover:text-white hover:bg-white/10 font-body transition-colors">Cómo Funciona</a>
               <a href="#que-recibes" className="px-4 py-1.5 rounded-full text-xs text-slate-400 hover:text-white hover:bg-white/10 font-body transition-colors">Qué Recibes</a>
+              <a href="#reporte-ejemplo" className="hidden lg:inline-flex px-4 py-1.5 rounded-full text-xs text-slate-400 hover:text-white hover:bg-white/10 font-body transition-colors">Ejemplo</a>
               <a href="#faq" className="px-4 py-1.5 rounded-full text-xs text-slate-400 hover:text-white hover:bg-white/10 font-body transition-colors">FAQ</a>
             </div>
 

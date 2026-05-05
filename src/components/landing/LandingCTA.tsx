@@ -7,49 +7,57 @@ import { useLandingConfig } from "./LandingProvider";
 export function LandingCTA() {
   const { config, trackCta } = useLandingConfig();
   const { cta } = config.copy;
-  const { theme } = config;
 
   return (
-    <section id="cta-final" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 scroll-mt-32">
-      <div className="animate-on-scroll-scale relative landing-surface-strong rounded-[32px] p-8 md:p-14 text-center overflow-hidden">
+    <section id="cta-final" className="ngx-section" style={{ maxWidth: "60rem", paddingBlockEnd: "5rem" }}>
+      <div className="animate-on-scroll-scale ngx-section-panel text-center">
         <div
-          className="absolute inset-0"
+          aria-hidden
+          className="absolute inset-0 pointer-events-none"
           style={{
-            background: `radial-gradient(ellipse at center, ${theme.primary}26, transparent 70%)`,
+            background:
+              "radial-gradient(ellipse 60% 60% at 50% 0%, rgba(109,0,255,0.18), transparent 70%)",
           }}
         />
-        <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 blur-[120px] opacity-20"
-          style={{ backgroundColor: theme.primary }}
-        />
-        <div className="relative z-10">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#6D00FF] to-[#5B21B6] flex items-center justify-center mx-auto mb-8 shadow-[0_0_40px_rgba(109,0,255,0.3)]">
+        <div className="relative">
+          <div
+            className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-8"
+            style={{
+              background: "linear-gradient(135deg, var(--ngx-purple), var(--ngx-purple-deep))",
+              boxShadow: "0 0 40px rgba(109,0,255,0.35)",
+            }}
+          >
             <Sparkles className="w-8 h-8 text-white" />
           </div>
-          <h2 className="landing-heading text-[2rem] leading-[1] md:text-[2.9rem] text-white mb-4 max-w-[22ch] mx-auto">
+          <h2 className="ngx-section-heading-soft mx-auto" style={{ maxWidth: "22ch" }}>
             {cta.headline}
           </h2>
-          <p className="text-slate-400 text-sm md:text-base mb-8 md:mb-10 max-w-lg mx-auto leading-relaxed font-body">
+          <p className="mt-5 text-sm md:text-base text-ngx-fg-2 max-w-lg mx-auto leading-relaxed">
             {cta.subtitle}
           </p>
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-8">
             <Link
               href="/wizard"
               onClick={() => trackCta("final_cta", cta.intent, cta.buttonText)}
-              className="group relative px-10 md:px-12 py-4 md:py-5 rounded-full text-white text-base md:text-lg font-semibold tracking-wide overflow-hidden transition-all duration-300 hover:-translate-y-0.5"
+              className="group inline-flex items-center gap-2 px-9 py-4 rounded-full text-white font-bold font-body text-base transition-all duration-150 active:scale-[0.97] hover:-translate-y-0.5"
               style={{
-                backgroundColor: theme.primary,
-                boxShadow: `0 0 40px -5px ${theme.primary}99`,
+                backgroundColor: "var(--ngx-purple)",
+                boxShadow: "var(--ngx-glow-primary)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = "var(--ngx-glow-primary-strong)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = "var(--ngx-glow-primary)";
               }}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out" />
-              <span className="relative flex items-center gap-2 font-body">
-                {cta.buttonText}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-              </span>
+              <span>{cta.buttonText}</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
-          <p className="text-xs text-slate-500 mt-6 font-body uppercase tracking-[0.2em]">{cta.footnote}</p>
+          <p className="mt-6 text-xs text-ngx-fg-3 font-mono uppercase tracking-[0.2em]">
+            {cta.footnote}
+          </p>
         </div>
       </div>
     </section>

@@ -5,82 +5,96 @@ import { useLandingConfig } from "./LandingProvider";
 export function LandingHowItWorks() {
   const { config } = useLandingConfig();
   const { howItWorks } = config.copy;
-  const { theme } = config;
 
   return (
-    <section id="como-funciona" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mb-32 md:mb-48 scroll-mt-32">
-      <div className="text-center mb-14 md:mb-20 animate-on-scroll">
-        <span className="inline-flex px-3 py-1 rounded-full bg-[#6D00FF]/10 border border-[#6D00FF]/20 text-[10px] text-[#B98CFF] font-mono uppercase tracking-widest mb-6">
-          Cómo funciona
-        </span>
-        <h2 className="landing-heading text-[2.1rem] leading-[0.96] sm:text-[2.6rem] md:text-[3.8rem] text-white mb-4 max-w-[20ch] mx-auto">
+    <section id="como-funciona" className="ngx-section">
+      <div className="text-center mb-12 md:mb-16 animate-on-scroll max-w-3xl mx-auto">
+        <span className="ngx-eyebrow-pill">Cómo funciona</span>
+        <h2 className="ngx-section-heading mx-auto" style={{ maxWidth: "20ch" }}>
           {howItWorks.title}
         </h2>
         {howItWorks.subtitle ? (
-          <p className="text-slate-400 text-sm md:text-base max-w-2xl mx-auto leading-relaxed font-body">
+          <p className="mt-4 text-ngx-fg-2 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
             {howItWorks.subtitle}
           </p>
         ) : null}
       </div>
 
-      <div className="relative">
+      {/* Mobile: simple stacked rows (icon + card). md+: zigzag with center timeline */}
+      <ol className="relative">
+        {/* Center timeline (md+ only) */}
         <div
-          className="absolute left-1/2 -translate-x-1/2 top-7 bottom-7 w-[1.5px] hidden md:block"
+          aria-hidden
+          className="hidden md:block absolute left-1/2 -translate-x-1/2 top-8 bottom-8 w-px"
           style={{
-            background: `linear-gradient(to bottom, transparent, ${theme.primary}, ${theme.primary}, transparent)`,
-            opacity: 0.92,
+            background:
+              "linear-gradient(to bottom, transparent, var(--ngx-purple) 12%, var(--ngx-purple) 88%, transparent)",
+            opacity: 0.55,
           }}
         />
 
-        <div className="space-y-12 md:space-y-20">
+        <div className="flex flex-col gap-6 md:gap-16">
           {howItWorks.steps.map((item, i) => {
             const Icon = item.icon;
             const isLeftCard = i % 2 === 0;
 
             return (
-              <div key={item.step} className="relative grid md:grid-cols-[1fr_auto_1fr] gap-8 items-center">
-                <div
-                  className={`${isLeftCard ? "md:col-start-1 md:justify-self-end" : "md:col-start-3 md:justify-self-start"} w-full ${i === 1 ? "md:max-w-[470px]" : "md:max-w-[460px]"} animate-on-scroll${isLeftCard ? "-left" : "-right"} ${i > 0 ? `delay-${i}00` : ""}`}
-                >
-                  <article className="landing-surface rounded-3xl border border-white/10 p-6 md:p-10 border-glow-hover">
+              <li key={item.step} className="md:grid md:grid-cols-[1fr_auto_1fr] md:gap-8 md:items-center">
+                {/* MOBILE: simple horizontal row [icon, card] */}
+                <div className="flex items-stretch gap-4 md:hidden">
+                  <div className="flex-shrink-0 flex flex-col items-center">
                     <div
-                      className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-5"
+                      className="w-12 h-12 rounded-full flex items-center justify-center"
                       style={{
-                        backgroundColor: `${theme.primary}1a`,
-                        border: `1px solid ${theme.primary}33`,
+                        backgroundColor: "var(--ngx-purple)",
+                        boxShadow: "0 0 20px rgba(109,0,255,0.45)",
                       }}
                     >
-                      <span className="text-[10px] font-mono uppercase tracking-widest" style={{ color: theme.accent }}>
-                        PASO {item.step}
-                      </span>
+                      <Icon className="w-5 h-5 text-white" />
                     </div>
-                    <h3 className="text-[1.4rem] leading-[1.1] sm:text-[1.55rem] md:text-[1.8rem] text-white mb-4 font-body font-semibold tracking-[-0.02em]">
+                  </div>
+                  <article className={`flex-1 ngx-card animate-on-scroll ${i > 0 ? `delay-${i}00` : ""} min-h-[140px]`}>
+                    <span className="ngx-eyebrow inline-block mb-2">PASO {item.step}</span>
+                    <h3 className="font-body font-bold text-lg text-ngx-fg-1 leading-tight tracking-[-0.015em] mb-2">
                       {item.title}
                     </h3>
-                    <p className="text-slate-400 text-sm md:text-base leading-relaxed font-body">
-                      {item.description}
-                    </p>
+                    <p className="ngx-card-desc">{item.description}</p>
                   </article>
                 </div>
 
-                <div className={`relative z-10 md:col-start-2 justify-self-center animate-on-scroll-scale ${i > 0 ? `delay-${i}00` : ""}`}>
+                {/* DESKTOP md+: zigzag layout */}
+                <div
+                  className={`hidden md:block ${isLeftCard ? "md:col-start-1 md:justify-self-end" : "md:col-start-3 md:justify-self-start"} w-full md:max-w-[460px] animate-on-scroll${isLeftCard ? "-left" : "-right"} ${i > 0 ? `delay-${i}00` : ""}`}
+                >
+                  <article className="ngx-card !p-7 min-h-[200px]">
+                    <span className="ngx-eyebrow inline-block mb-3">PASO {item.step}</span>
+                    <h3 className="font-body font-bold text-xl text-ngx-fg-1 leading-tight tracking-[-0.015em] mb-3">
+                      {item.title}
+                    </h3>
+                    <p className="ngx-card-desc">{item.description}</p>
+                  </article>
+                </div>
+
+                <div
+                  className={`hidden md:flex md:col-start-2 md:justify-self-center relative z-10 animate-on-scroll-scale ${i > 0 ? `delay-${i}00` : ""}`}
+                >
                   <div
-                    className="w-[60px] h-[60px] rounded-full border border-[#8B5CF6]/45 flex items-center justify-center"
+                    className="w-[60px] h-[60px] rounded-full flex items-center justify-center"
                     style={{
-                      backgroundColor: theme.primary,
-                      boxShadow: `0 0 30px ${theme.primary}88`,
+                      backgroundColor: "var(--ngx-purple)",
+                      boxShadow: "0 0 30px rgba(109,0,255,0.5)",
                     }}
                   >
                     <Icon className="w-7 h-7 text-white" />
                   </div>
                 </div>
 
-                <div className={`${isLeftCard ? "md:col-start-3" : "md:col-start-1"} hidden md:block`} />
-              </div>
+                <div className={`hidden md:block ${isLeftCard ? "md:col-start-3" : "md:col-start-1"}`} />
+              </li>
             );
           })}
         </div>
-      </div>
+      </ol>
     </section>
   );
 }

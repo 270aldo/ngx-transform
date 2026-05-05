@@ -160,6 +160,40 @@ export interface ExplainerVideoCopy {
   duration?: string;
 }
 
+// ============================================================================
+// Report Preview (Iteración 2 — diagnostic lead magnet)
+// ============================================================================
+
+export interface ReportPreviewDimension {
+  label: string;
+  value: number;
+}
+
+export interface ReportPreviewInsight {
+  label: string;
+  text: string;
+}
+
+export interface ReportPreviewCopy {
+  sectionLabel: string;
+  headline: string;
+  subtitle: string;
+  scoreLabel: string;
+  scoreValue: number;
+  scoreMax: number;
+  scoreDescription: string;
+  dimensions: ReportPreviewDimension[];
+  insights: ReportPreviewInsight[];
+  ctaLabel: string;
+  ctaHref: string;
+  microcopy: string;
+}
+
+export interface TrustStripCopy {
+  title: string;
+  bullets: string[];
+}
+
 export interface VariantCopy {
   hero: HeroCopy;
   stats: StatCopy[];
@@ -183,6 +217,10 @@ export interface VariantCopy {
   bridge?: BridgeCopy;
   /** Optional explainer video section */
   explainerVideo?: ExplainerVideoCopy;
+  /** Optional report preview (diagnostic mock dashboard before wizard) */
+  reportPreview?: ReportPreviewCopy;
+  /** Optional trust/privacy strip */
+  trustStrip?: TrustStripCopy;
 }
 
 // ============================================================================
