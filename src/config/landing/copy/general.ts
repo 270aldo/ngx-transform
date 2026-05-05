@@ -52,11 +52,36 @@ export const generalCopy: VariantCopy = {
   },
 
   stats: [
-    { value: "12", suffix: " sem", label: "temporada seria" },
-    { value: "1", suffix: "", label: "sistema unificado" },
-    { value: "IA+", suffix: "coach", label: "cuando toca ejecutar" },
-    { value: "0", suffix: "", label: "promesas mágicas" },
+    { value: "12", suffix: " sem", label: "para construir una temporada seria" },
+    { value: "1", suffix: "", label: "sistema que conecta foto, contexto y ruta" },
+    { value: "IA+", suffix: "coach", label: "solo cuando necesitas más soporte" },
+    { value: "0", suffix: "", label: "promesas vacías" },
   ],
+
+  problem: {
+    sectionLabel: "El problema real",
+    title: "El problema no es tu disciplina.",
+    highlight: "Es que sigues usando planes que no te conocen.",
+    subtitle:
+      "Has probado rutinas, apps, dietas y consejos sueltos. Algunos funcionan unos días. Luego llega tu vida real: estrés, horarios, sueño, cansancio, lesiones o falta de estructura. Ahí se rompe el plan.",
+    cards: [
+      {
+        title: "Tu plan no conoce tu contexto",
+        description:
+          "No sabe cómo duermes, cuánto tiempo tienes, qué equipo usas, qué lesiones arrastras ni qué tan constante has sido antes.",
+      },
+      {
+        title: "Empiezas fuerte, pero el sistema no se adapta",
+        description:
+          "Cuando baja la motivación o se complica la semana, una rutina genérica no ajusta nada. Solo te deja con culpa.",
+      },
+      {
+        title: "Después de los 30, improvisar sale caro",
+        description:
+          "Músculo, energía, recuperación y metabolismo necesitan estrategia. No más planes hechos para alguien que no eres tú.",
+      },
+    ],
+  },
 
   features: [
     {
@@ -84,36 +109,36 @@ export const generalCopy: VariantCopy = {
   ],
 
   howItWorks: {
-    title: "De curiosidad a claridad",
+    title: "Así pasas de curiosidad a claridad",
     subtitle:
-      "No vienes a jugar con una imagen. Vienes a descubrir qué sistema necesitarías para cambiar de verdad.",
+      "No vienes a jugar con una imagen. Vienes a entender qué punto de partida tienes y qué ruta tendría sentido para ti.",
     steps: [
       {
         step: "01",
         title: "Sube una foto real",
         description:
-          "Cuerpo completo, frontal y con buena iluminación. Sin filtros. El punto de partida importa.",
+          "Una imagen simple, frontal y con buena iluminación. No buscamos perfección. Buscamos un punto de partida honesto.",
         icon: Camera,
       },
       {
         step: "02",
-        title: "Dale contexto a GENESIS",
+        title: "Agrega contexto",
         description:
-          "Objetivo, edad, nivel, disponibilidad y obstáculos. Sin eso, cualquier plan es una apuesta.",
+          "Objetivo, edad, nivel, disponibilidad y obstáculos. Sin contexto, cualquier recomendación es una apuesta.",
         icon: Brain,
       },
       {
         step: "03",
-        title: "Recibe tu visualización",
+        title: "Recibe tu lectura inicial",
         description:
-          "Una proyección aspiracional para ver una dirección posible. No es una promesa ni una predicción médica.",
+          "Ves una visualización aspiracional y una interpretación clara de lo que puede estar frenando tu progreso.",
         icon: Sparkles,
       },
       {
         step: "04",
-        title: "Obtén tu ruta inicial",
+        title: "Decide tu siguiente paso",
         description:
-          "GENESIS te entrega una lectura de readiness, una ruta de 7 días y el siguiente paso si necesitas acompañamiento humano.",
+          "Sales con una ruta inicial y una recomendación honesta: avanzar solo o revisar HYBRID con un coach.",
         icon: Compass,
       },
     ],
@@ -145,115 +170,129 @@ export const generalCopy: VariantCopy = {
 
   valueStack: {
     sectionLabel: "Qué recibes",
-    title: "Claridad, no promesas.",
-    highlight: "Un punto de partida real.",
+    title: "No recibes una imagen.",
+    highlight: "Recibes dirección.",
     subtitle:
-      "El producto gratuito no es la imagen. Es la claridad: qué potencial puedes construir, qué te está frenando y si necesitas acompañamiento humano para ejecutar.",
+      "La visualización llama tu atención. La lectura inicial te da claridad. La ruta te ayuda a saber qué hacer después.",
     items: [
       {
         icon: Sparkles,
-        title: "Visualización aspiracional",
+        title: "Una visualización aspiracional",
         description:
-          "Una proyección visual de tu potencial basada en tus datos iniciales. No es una promesa: es una dirección posible.",
+          "Una imagen para ver una dirección posible. No es promesa, predicción ni resultado garantizado.",
       },
       {
         icon: Brain,
-        title: "Readiness Report",
+        title: "Una lectura de tu punto de partida",
         description:
-          "GENESIS evalúa qué tan preparado estás para ejecutar: disponibilidad, sueño, estrés, historial de adherencia y necesidad de accountability.",
+          "GENESIS interpreta tu contexto inicial para mostrar qué factores pueden estar frenando tu progreso.",
       },
       {
         icon: FileText,
-        title: "Ruta inicial de 7 días",
+        title: "Una ruta inicial de acción",
         description:
-          "Entrenamiento, nutrición y hábitos para tu primera semana. Educativo y orientativo: un primer paso concreto.",
+          "Un primer mapa con entrenamiento, nutrición y hábitos para empezar con más orden y menos improvisación.",
       },
       {
         icon: Users,
-        title: "Diagnóstico HYBRID",
+        title: "Una recomendación honesta",
         description:
-          "Si tu perfil lo indica, puedes agendar una revisión con un coach humano para definir si una temporada de 12 semanas tiene sentido para ti.",
+          "Si tu caso necesita más estructura, te mostramos cuándo tiene sentido revisar HYBRID con un coach humano.",
       },
     ],
   },
 
   reportPreview: {
-    sectionLabel: "Ejemplo de reporte",
-    headline: "Mira lo que recibes antes de subir tu foto.",
+    sectionLabel: "Ejemplo de resultado",
+    headline: "Así debería sentirse tu resultado.",
     subtitle:
-      "El resultado no debe sentirse como una imagen suelta. Debe sentirse como una lectura inicial: dónde estás, qué te frena y qué paso tiene más sentido.",
-    scoreLabel: "Readiness Score",
+      "No como una imagen suelta. Como una primera lectura: dónde estás, qué puede frenarte y qué paso conviene tomar.",
+    scoreLabel: "Score de preparación",
     scoreValue: 72,
     scoreMax: 100,
     scoreDescription:
-      "Listo para empezar, pero con riesgo de abandono si no hay estructura.",
+      "Buen punto para empezar, pero con riesgo de abandono si no hay estructura semanal.",
     dimensions: [
       { label: "Entrenamiento", value: 78 },
       { label: "Nutrición", value: 64 },
       { label: "Recuperación", value: 58 },
-      { label: "Adherencia", value: 71 },
+      { label: "Constancia", value: 71 },
     ],
     insights: [
       {
-        label: "Obstáculo principal",
-        text: "Tu plan actual depende demasiado de motivación y muy poco de estructura semanal.",
+        label: "Lo que puede frenarte",
+        text: "Tu avance depende demasiado de motivación y poco de estructura.",
       },
       {
-        label: "Palanca #1",
-        text: "2-3 sesiones de fuerza bien diseñadas por semana pueden crear el estímulo mínimo para avanzar.",
+        label: "Primera palanca",
+        text: "Fuerza bien programada 2-3 veces por semana para crear base.",
       },
       {
-        label: "Palanca #2",
-        text: "Proteína suficiente, sueño más consistente y ajustes de carga reducen el riesgo de abandonar.",
+        label: "Ajuste clave",
+        text: "Mejorar proteína, sueño y progresión antes de subir intensidad.",
       },
       {
         label: "Siguiente paso",
-        text: "Ruta inicial de 7 días. HYBRID solo si necesitas accountability humana para sostenerla.",
+        text: "Empezar con una ruta inicial o revisar HYBRID si necesitas soporte.",
       },
     ],
     ctaLabel: "Ver mi punto de partida",
     ctaHref: "/wizard",
-    microcopy: "Demo ilustrativo. Tu reporte se genera con tus datos.",
+    microcopy: "Ejemplo ilustrativo. Tu resultado se genera con tus datos.",
   },
 
   bridge: {
-    sectionLabel: "El puente",
-    title: "La IA traza el mapa.",
-    highlight: "El coach te ayuda a sostenerlo.",
+    sectionLabel: "Cuando hacerlo solo no basta",
+    title: "GENESIS te da dirección.",
+    highlight: "Un coach te ayuda a sostenerla.",
     subtitle:
-      "GENESIS puede darte claridad. Pero si tu historial muestra baja adherencia, estrés alto, lesiones, poca experiencia o falta de estructura, el siguiente paso no debería ser hacerlo solo.",
-    footnote: "Sin compromiso · Sin presión · Con criterio humano",
-    buttonText: "Agendar diagnóstico HYBRID",
-    buttonIntent: "hybrid_diagnosis",
+      "La mayoría no falla porque no sepa qué hacer. Falla porque no logra sostenerlo cuando aparece la vida real. HYBRID existe para esos casos: más estructura, más seguimiento y una revisión humana cuando la necesitas.",
+    footnote: "Sin presión · Sin compromiso · Con criterio humano",
+    buttonText: "Revisar si HYBRID es para mí",
+    buttonIntent: "hybrid_review",
     cards: [
       {
         icon: Brain,
-        title: "GENESIS diagnostica",
+        title: "Primero entiendes tu punto de partida",
         description:
-          "Analiza tu punto de partida, mide tu readiness y diseña una ruta basada en tu contexto real. Sin plantillas.",
+          "GENESIS organiza tu foto y contexto para mostrarte qué puede estar limitando tu avance.",
       },
       {
         icon: Users,
-        title: "El coach valida",
+        title: "Luego un humano revisa tu caso",
         description:
-          "Un coach humano revisa tu caso, detecta riesgos, ajusta a tu realidad y define si HYBRID tiene sentido para ti.",
+          "Un coach puede ayudarte a detectar riesgos, ajustar expectativas y definir si necesitas acompañamiento.",
       },
       {
         icon: Sparkles,
-        title: "Tú ejecutas con sistema",
+        title: "Después ejecutas con estructura",
         description:
-          "IA para precisión. Coach para accountability. Sistema para sostenerlo cuando la semana se complica.",
+          "Menos improvisación. Más claridad semanal. Un sistema que te ayuda a sostener el proceso.",
       },
     ],
   },
 
   trustStrip: {
-    title: "Privado por diseño. Honesto por principio.",
-    bullets: [
-      "Tu foto se procesa con consentimiento explícito.",
-      "La visualización es aspiracional, no una promesa.",
-      "Tu resultado no sustituye evaluación médica.",
-      "Puedes solicitar eliminación de tus datos.",
+    title: "Tu foto, tus datos, tu control.",
+    subtitle:
+      "Esta experiencia usa información sensible. Por eso la explicamos claro antes de pedirte avanzar.",
+    cards: [
+      {
+        title: "Procesamiento privado",
+        description: "Tu foto se usa solo para operar esta sesión y generar tu resultado.",
+      },
+      {
+        title: "Sin promesa de resultado",
+        description: "La visualización es aspiracional. No confirma cómo vas a verte.",
+      },
+      {
+        title: "No es evaluación médica",
+        description: "La lectura es educativa y no sustituye atención profesional.",
+      },
+      {
+        title: "Control de datos",
+        description: "Puedes solicitar eliminación de tu información cuando lo necesites.",
+      },
     ],
   },
 
@@ -279,7 +318,7 @@ export const generalCopy: VariantCopy = {
       {
         question: "¿En qué se diferencia ASCEND de HYBRID?",
         answer:
-          "ASCEND es autoguiado con GENESIS para personas con buena adherencia y experiencia. HYBRID suma un coach humano que valida estrategia, adapta el proceso y te da accountability cuando necesitas más soporte.",
+          "ASCEND es autoguiado con GENESIS para personas con buena constancia y experiencia. HYBRID suma un coach humano que valida estrategia, adapta el proceso y te ayuda a sostenerlo cuando necesitas más soporte.",
       },
       {
         question: "¿El plan de 7 días sustituye a un médico o nutriólogo?",
@@ -300,11 +339,11 @@ export const generalCopy: VariantCopy = {
   },
 
   cta: {
-    headline: "La imagen puede incomodarte. Bien.",
+    headline: "Empieza con una foto. Sal con más claridad.",
     subtitle:
-      "Úsala como punto de partida. Si quieres convertir esa dirección en una temporada real, agenda un diagnóstico HYBRID y revisamos tu caso con honestidad.",
+      "No necesitas prometerte otra transformación perfecta. Necesitas ver dónde estás, entender qué te frena y tomar el siguiente paso con más criterio.",
     buttonText: "Iniciar mi scan",
-    intent: "final_cta_hybrid",
+    intent: "final_cta_scan",
     footnote: "Visualización aspiracional. No garantía de resultado.",
   },
 

@@ -2,6 +2,8 @@
 
 import { useLandingConfig } from "./LandingProvider";
 
+const RECEIVE_LABELS = ["Visual", "Lectura", "Ruta", "Siguiente paso"] as const;
+
 export function LandingValueStack() {
   const { config } = useLandingConfig();
   const { valueStack } = config.copy;
@@ -27,17 +29,18 @@ export function LandingValueStack() {
         {valueStack.items.map((item, index) => {
           const Icon = item.icon;
           const animationDelay = ["", "delay-100", "delay-200", "delay-300"][index] ?? "";
+          const label = RECEIVE_LABELS[index] ?? `Recibes 0${index + 1}`;
           return (
             <article
               key={item.title}
-              className={`group animate-on-scroll ${animationDelay} ngx-card h-full`}
+              className={`group animate-on-scroll ${animationDelay} ngx-metal-card h-full p-5 md:p-6`}
             >
-              <div className="flex items-start gap-4">
+              <div className="relative z-10 flex items-start gap-4">
                 <span className="ngx-card-icon">
                   <Icon className="w-5 h-5" />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <span className="ngx-eyebrow text-[10px] block mb-2">activo 0{index + 1}</span>
+                  <span className="ngx-eyebrow text-[10px] block mb-2">{label}</span>
                   <h3 className="ngx-card-title mb-2">{item.title}</h3>
                   <p className="ngx-card-desc">{item.description}</p>
                 </div>
