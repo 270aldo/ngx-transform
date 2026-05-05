@@ -1,69 +1,31 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useForm, type FieldErrors, type Resolver } from "react-hook-form";
-import { z } from "zod";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ensureAnonymousSession, getClientStorage } from "@/lib/firebaseClient";
 import { ref, uploadBytes } from "firebase/storage";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/shadcn/ui/button";
-import { Input } from "@/components/shadcn/ui/input"; // Kept for text fields
 import { useToast } from "@/components/ui/toast-provider";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { cn } from "@/lib/utils";
-import { Eye, Target, Activity, Cpu, ChevronRight, ChevronLeft, Lock, ArrowRight } from "lucide-react";
+import { ChevronRight, ChevronLeft, Lock } from "lucide-react";
 import { getStoredVariant } from "@/hooks/useVariantTracking";
 
-// New Components
-import { EliteOptionCard } from "@/components/EliteOptionCard";
-import { CyberSlider } from "@/components/CyberSlider";
+// Wizard components
 import {
   WizardCommandBar,
   WizardPhotoStep,
+  WizardProfileStep,
+  WizardObjectiveStep,
+  WizardClosingStep,
+  WizardFormSchema,
+  type WizardFormValues,
   type WizardStageTab,
 } from "@/components/wizard";
 
-const OptionalEmailSchema = z.preprocess((value) => {
-  if (typeof value !== "string") return value;
-  const trimmed = value.trim();
-  return trimmed === "" ? undefined : trimmed;
-}, z.string().email("Ingresa un correo valido").optional());
-
-const FormSchema = z.object({
-  email: OptionalEmailSchema,
-  // Stage 2: Biometrics
-  age: z.coerce.number().int().min(18).max(100),
-  sex: z.enum(["male", "female", "other"]),
-  heightCm: z.coerce.number().min(100).max(250),
-  weightKg: z.coerce.number().min(30).max(300),
-  bodyType: z.enum(["ectomorph", "mesomorph", "endomorph"]).default("mesomorph"),
-  bodyFatLevel: z.enum(["bajo", "medio", "alto"]).default("medio"),
-
-  // Stage 3: Strategy
-  level: z.enum(["novato", "intermedio", "avanzado"]),
-  goal: z.enum(["definicion", "masa", "mixto"]),
-  focusZone: z.enum(["upper", "lower", "abs", "full"]).default("full"),
-  weeklyTime: z.coerce.number().min(1).max(14),
-
-  // Stage 4: Mental
-  disciplineRating: z.coerce.number().min(1).max(10).default(5),
-  stressLevel: z.coerce.number().min(1).max(10).default(5),
-  sleepQuality: z.coerce.number().min(1).max(10).default(5),
-
-  // Extras (Hidden/Defaults)
-  trainingDaysPerWeek: z.coerce.number().min(1).max(7).default(3),
-  trainingHistoryYears: z.coerce.number().min(0).max(30).default(0),
-  nutritionQuality: z.coerce.number().min(1).max(10).default(6),
-  trainingStyle: z.enum(["fuerza", "hipertrofia", "funcional", "hiit", "mixto"]).default("mixto"),
-  aestheticPreference: z.enum(["cinematic", "editorial", "street", "minimal"]).default("cinematic"),
-  specificGoals: z.array(z.string()).default([]),
-  focusAreas: z.array(z.string()).default([]),
-  notes: z.string().optional(),
-  photo: z.custom<FileList>().optional(),
-});
-
-type FormValues = z.infer<typeof FormSchema>;
+type FormValues = WizardFormValues;
+const FormSchema = WizardFormSchema;
 
 const STAGE_LABELS: Record<number, { title: string; subtitle: string }> = {
   1: {
@@ -720,359 +682,33 @@ export default function WizardPage() {
               />
             )}
 
-            {/* STAGE 2: BIOMETRICS */}
+            {/* STAGE 2: PERFIL CORPORAL */}
             {currentStage === 2 && (
-              <div className="w-full max-w-5xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 space-y-8">
-                <div className="text-center">
-                  <span className="ngx-eyebrow-pill mb-4 mx-auto">Paso 2 · Perfil corporal</span>
-                  <h2 className="ngx-h1 mx-auto !text-center" style={{ maxWidth: "20ch" }}>
-                    Le damos contexto a tu punto de partida.
-                  </h2>
-                  <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/55 md:text-base">
-                    Estos datos no sustituyen una medición clínica. Sólo calibran el rango de la visualización para que no se sienta como un juguete genérico.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] items-start">
-                  <div className="ngx-section-panel !p-5 md:!p-6 space-y-5">
-                    <CyberSlider
-                      label="Edad"
-                      {...register("age")}
-                      min={18} max={80} step={1}
-                      valueDisplay={watch("age")}
-                      suffix="AÑOS"
-                    />
-                    <CyberSlider
-                      label="Altura"
-                      {...register("heightCm")}
-                      min={140} max={220} step={1}
-                      valueDisplay={watch("heightCm")}
-                      suffix="CM"
-                      trackColor="emerald"
-                    />
-                    <CyberSlider
-                      label="Peso"
-                      {...register("weightKg")}
-                      min={40} max={150} step={0.5}
-                      valueDisplay={watch("weightKg")}
-                      suffix="KG"
-                      trackColor="violet"
-                    />
-
-                    <div className="ngx-card !p-4">
-                      <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Género biológico</span>
-                      <div className="mt-3 grid grid-cols-2 gap-3">
-                        {(["male", "female"] as const).map((s) => (
-                          <button
-                            key={s}
-                            type="button"
-                            onClick={() => setValue("sex", s)}
-                            className={cn(
-                              "py-3 rounded-xl border text-[10px] font-mono uppercase tracking-[0.18em] transition-all duration-150",
-                              watch("sex") === s
-                                ? "bg-[var(--ngx-purple)] text-white border-[var(--ngx-purple)] shadow-[var(--ngx-glow-primary-soft)]"
-                                : "bg-white/[0.03] text-white/45 border-white/10 hover:border-white/20 hover:text-white/70"
-                            )}
-                          >
-                            {s === "male" ? "Masculino" : "Femenino"}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <p className="text-xs leading-relaxed text-white/45 px-1">
-                      Mientras más honestos sean estos datos, mejor se sentirá el puente entre la visualización y el roadmap.
-                    </p>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="ngx-glass !p-5 md:!p-6">
-                      <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Tipo somático</span>
-                      <div className="mt-4 grid grid-cols-1 gap-3">
-                        <EliteOptionCard
-                          title="ECTOMORFO"
-                          description="Estructura ligera, metabolismo rápido, dificultad para ganar masa."
-                          selected={watch("bodyType") === "ectomorph"}
-                          onClick={() => setValue("bodyType", "ectomorph")}
-                          idx={1}
-                        />
-                        <EliteOptionCard
-                          title="MESOMORFO"
-                          description="Atlético natural, gana músculo y pierde grasa con facilidad."
-                          selected={watch("bodyType") === "mesomorph"}
-                          onClick={() => setValue("bodyType", "mesomorph")}
-                          idx={2}
-                        />
-                        <EliteOptionCard
-                          title="ENDOMORFO"
-                          description="Estructura sólida y ancha, gana fuerza fácilmente."
-                          selected={watch("bodyType") === "endomorph"}
-                          onClick={() => setValue("bodyType", "endomorph")}
-                          idx={3}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="ngx-card !p-5">
-                      <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Lectura inicial</span>
-                      <p className="mt-2 text-base font-bold text-white">Todavía no estamos diagnosticando.</p>
-                      <p className="mt-2 text-sm leading-relaxed text-white/55">
-                        Sólo estamos construyendo una base más útil para que la visualización y el siguiente paso tengan coherencia entre sí.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <WizardProfileStep register={register} watch={watch} setValue={setValue} />
             )}
 
-            {/* STAGE 3: MISSION */}
+            {/* STAGE 3: OBJETIVO Y CONTEXTO */}
             {currentStage === 3 && (
-              <div className="w-full max-w-5xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 space-y-8">
-                <div className="text-center">
-                  <span className="ngx-eyebrow-pill mb-4 mx-auto">Paso 3 · Objetivo y contexto</span>
-                  <h2 className="ngx-h1 mx-auto !text-center" style={{ maxWidth: "20ch" }}>
-                    Define la dirección de tu visualización.
-                  </h2>
-                  <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/55 md:text-base">
-                    Aquí decidimos qué versión de ti estamos intentando visualizar para que el resultado tenga una intención clara, no sólo un efecto bonito.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <EliteOptionCard
-                    className="h-64"
-                    title="DEFINICIÓN EXTREMA"
-                    description="Maximiza la definición muscular y reduce grasa corporal a un dígito."
-                    selected={watch("goal") === "definicion"}
-                    onClick={() => setValue("goal", "definicion")}
-                    idx={1}
-                    imageSrc="/images/backgrounds/goal-definicion.svg"
-                    imageAlt="Definición extrema"
-                    icon={Target}
-                    iconLabel="Precisión metabólica"
-                    overlayTone="deep"
-                  />
-                  <EliteOptionCard
-                    className="h-64"
-                    title="HIPERTROFIA MASIVA"
-                    description="Prioriza volumen muscular, densidad y ganancia de tamaño total."
-                    selected={watch("goal") === "masa"}
-                    onClick={() => setValue("goal", "masa")}
-                    idx={2}
-                    imageSrc="/images/backgrounds/goal-hipertrofia.svg"
-                    imageAlt="Hipertrofia masiva"
-                    icon={Activity}
-                    iconLabel="Densidad y volumen"
-                  />
-                  <EliteOptionCard
-                    className="h-64"
-                    title="HÍBRIDO ATLÉTICO"
-                    description="Equilibrio entre rendimiento, estética y funcionalidad en todo el cuerpo."
-                    selected={watch("goal") === "mixto"}
-                    onClick={() => setValue("goal", "mixto")}
-                    idx={3}
-                    imageSrc="/images/backgrounds/goal-hibrido.svg"
-                    imageAlt="Híbrido atlético"
-                    icon={Cpu}
-                    iconLabel="Rendimiento total"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="ngx-card !p-6">
-                    <span className="ngx-eyebrow !text-[10px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>Nivel de experiencia</span>
-                    <div className="grid grid-cols-3 gap-2">
-                      {([{ id: "novato", l: "Novato" }, { id: "intermedio", l: "Pro" }, { id: "avanzado", l: "Elite" }] as const).map((lv) => (
-                        <button
-                          key={lv.id}
-                          type="button"
-                          onClick={() => setValue("level", lv.id)}
-                          className={cn(
-                            "py-3 rounded-xl border text-[10px] font-mono uppercase tracking-[0.18em] transition-all duration-150",
-                            watch("level") === lv.id
-                              ? "bg-[var(--ngx-purple)] text-white border-[var(--ngx-purple)] shadow-[var(--ngx-glow-primary-soft)]"
-                              : "bg-white/[0.03] text-white/45 border-white/10 hover:border-white/20 hover:text-white/70"
-                          )}
-                        >
-                          {lv.l}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="ngx-card !p-6">
-                    <span className="ngx-eyebrow !text-[10px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>Días disponibles por semana</span>
-                    <div className="grid grid-cols-5 gap-2">
-                      {[1, 2, 3, 4, 5].map((d) => (
-                        <button
-                          key={d}
-                          type="button"
-                          onClick={() => setValue("weeklyTime", d)}
-                          className={cn(
-                            "py-3 rounded-xl border text-xs font-mono uppercase tracking-[0.14em] transition-all duration-150",
-                            watch("weeklyTime") === d
-                              ? "bg-[var(--ngx-purple)] text-white border-[var(--ngx-purple)] shadow-[var(--ngx-glow-primary-soft)]"
-                              : "bg-white/[0.03] text-white/45 border-white/10 hover:border-white/20 hover:text-white/70"
-                          )}
-                        >
-                          {d}d
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="ngx-section-panel !p-6 md:!p-8">
-                  <span className="ngx-eyebrow !text-[10px] block mb-5" style={{ color: "var(--ngx-fg-3)" }}>Zona de enfoque principal</span>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                    {([
-                      { id: "upper", l: "Tren Superior" }, { id: "lower", l: "Tren Inferior" },
-                      { id: "abs", l: "Core & Abs" }, { id: "full", l: "Full Body" }
-                    ] as const).map((z) => (
-                      <button
-                        key={z.id}
-                        type="button"
-                        onClick={() => setValue("focusZone", z.id)}
-                        className={cn(
-                          "p-4 rounded-xl border text-center cursor-pointer transition-all duration-150 active:scale-[0.97]",
-                          watch("focusZone") === z.id
-                            ? "bg-[var(--ngx-purple)] border-[var(--ngx-purple)] text-white shadow-[var(--ngx-glow-primary-soft)]"
-                            : "bg-white/[0.02] border-white/10 text-white/55 hover:text-white/85 hover:border-white/20"
-                        )}
-                      >
-                        <span className="text-xs font-mono uppercase tracking-[0.16em]">{z.l}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <WizardObjectiveStep watch={watch} setValue={setValue} />
             )}
 
-            {/* STAGE 4: SOFTWARE (MENTAL) */}
+            {/* STAGE 4: CIERRE PRIVADO */}
             {currentStage === 4 && (
-              <div className="w-full max-w-4xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 flex flex-col items-center justify-center h-full space-y-8">
-                <div className="text-center">
-                  <span className="ngx-eyebrow-pill mb-4 mx-auto">Paso 4 · Cierre privado</span>
-                  <h2 className="ngx-h1 mx-auto !text-center" style={{ maxWidth: "26ch" }}>
-                    Cerramos la calibración y activamos tu acceso.
-                  </h2>
-                  <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/55 md:text-base">
-                    Un último ajuste mental y el correo donde quieres recibir tu acceso privado. Después sí generamos la visualización y el siguiente paso.
-                  </p>
-                </div>
-
-                <div className="w-full ngx-section-panel !p-6 md:!p-8 space-y-5">
-                  <CyberSlider
-                    label="Nivel de Disciplina"
-                    {...register("disciplineRating")}
-                    min={1} max={10}
-                    valueDisplay={watch("disciplineRating") + "/10"}
-                    trackColor="amber"
-                  />
-                  <CyberSlider
-                    label="Calidad de Sueño"
-                    {...register("sleepQuality")}
-                    min={1} max={10}
-                    valueDisplay={watch("sleepQuality") + "/10"}
-                    trackColor="violet"
-                  />
-                  <CyberSlider
-                    label="Carga de Estrés"
-                    {...register("stressLevel")}
-                    min={1} max={10}
-                    valueDisplay={watch("stressLevel") + "/10"}
-                    trackColor="red"
-                  />
-                </div>
-
-                <div className="w-full ngx-card !p-5 md:!p-6">
-                  <div>
-                    <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Acceso privado</span>
-                    {user?.email && !usingAnonymousAccess ? (
-                      <>
-                        <p className="mt-2 text-sm text-white">{user.email}</p>
-                        <Input
-                          {...register("email")}
-                          readOnly
-                          className="sr-only"
-                          aria-hidden="true"
-                          tabIndex={-1}
-                        />
-                      </>
-                    ) : (
-                      <>
-                        <div className="relative mt-3">
-                          <Input
-                            {...register("email")}
-                            type="email"
-                            placeholder="tu@email.com"
-                            className="bg-white/5 border-white/10 rounded-2xl py-6 pl-12 text-white focus:border-[var(--ngx-purple)] transition-all"
-                          />
-                          <Eye className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
-                        </div>
-                        <p className="mt-2 text-xs text-white/45 leading-relaxed">
-                          Te enviaremos aquí el enlace privado a tu visualización y a tu roadmap inicial. No te pediremos contraseña en este paso.
-                        </p>
-                      </>
-                    )}
-                    {errors.email ? (
-                      <p className="mt-2 text-left text-xs text-red-300">{errors.email.message}</p>
-                    ) : null}
-                  </div>
-
-                  <label className="mt-4 flex items-start gap-3 cursor-pointer group border-t border-white/[0.06] pt-4">
-                    <input
-                      type="checkbox"
-                      checked={consentEmail}
-                      onChange={(e) => setConsentEmail(e.target.checked)}
-                      className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[var(--ngx-purple)]"
-                    />
-                    <span className="text-xs text-white/55 group-hover:text-white/80 transition-colors leading-relaxed">
-                      Quiero recibir correos de seguimiento y novedades de NGX Transform. <span className="text-white/35">(opcional)</span>
-                    </span>
-                  </label>
-                </div>
-
-                <div className="w-full ngx-card !p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Acceso</span>
-                    <p className="mt-1.5 text-sm text-white">{resolvedEmail || "Pendiente de confirmar"}</p>
-                  </div>
-                  <div>
-                    <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Foto</span>
-                    <p className="mt-1.5 text-sm text-white">{previewUrl ? "Cargada y lista para procesarse" : "No detectada"}</p>
-                  </div>
-                  <div>
-                    <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Objetivo</span>
-                    <p className="mt-1.5 text-sm text-white">{selectedGoalLabel}</p>
-                  </div>
-                  <div>
-                    <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Enfoque</span>
-                    <p className="mt-1.5 text-sm text-white">{selectedFocusLabel}</p>
-                  </div>
-                </div>
-
-                {!canSubmitWizard ? (
-                  <p className="text-center text-xs text-amber-300">
-                    Antes de generar tu visualización necesitamos un correo válido y conservar la foto cargada del paso 1.
-                  </p>
-                ) : null}
-
-                <p className="max-w-2xl text-center text-xs text-white/45 leading-relaxed">
-                  En el siguiente paso generaremos una visualización aproximada de tu potencial con IA. Después podrás ver un roadmap inicial para entender qué necesitarías construir antes de pensar en un sistema más serio.
-                </p>
-
-                <div className="w-full">
-                  <Button
-                    type="submit"
-                    disabled={!canSubmitWizard || loading}
-                    className="w-full rounded-full bg-[var(--ngx-purple)] py-6 text-base font-bold uppercase tracking-[0.14em] text-white shadow-[var(--ngx-glow-primary)] transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.98] disabled:bg-white/[0.06] disabled:text-white/30 disabled:shadow-none disabled:translate-y-0"
-                  >
-                    Generar visualización y siguiente paso
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
+              <WizardClosingStep
+                register={register}
+                watch={watch}
+                errors={errors}
+                authedEmail={user?.email ?? null}
+                usingAnonymousAccess={usingAnonymousAccess}
+                consentEmail={consentEmail}
+                onChangeConsentEmail={setConsentEmail}
+                resolvedEmail={resolvedEmail}
+                selectedGoalLabel={selectedGoalLabel}
+                selectedFocusLabel={selectedFocusLabel}
+                previewUrl={previewUrl}
+                canSubmitWizard={canSubmitWizard}
+                loading={loading}
+              />
             )}
 
             {/* NAVIGATION FOOTER */}
