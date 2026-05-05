@@ -27,21 +27,21 @@ export const generalCopy: VariantCopy = {
       line2: "no te puede transformar.",
     },
     subtitle:
-      "Sube una foto real. GENESIS analiza tu punto de partida, interpreta tu contexto y te entrega una visualización aspiracional, un Readiness Report y una ruta inicial para empezar con claridad.",
+      "Sube una foto real. Recibe una visualización aspiracional, una lectura inicial de tu punto de partida y una ruta clara para empezar con más criterio.",
     cta: "Ver mi punto de partida",
     primaryCta: {
       label: "Ver mi punto de partida",
       intent: "scan_start",
     },
-    secondaryCta: "Ver ejemplo de reporte",
+    secondaryCta: "Ver ejemplo real",
     supportingPoints: [
-      "Gratis · Privado · 3 min.",
-      "GENESIS interpreta tu punto de partida.",
-      "Tú decides el siguiente paso, sin presión.",
+      "Tu punto de partida visible.",
+      "Lo que te frena, explicado.",
+      "Una ruta clara para empezar.",
     ],
     socialProof: {
-      count: "Gratis · Privado · 3 min",
-      label: "Visualización aspiracional + Readiness Report + ruta inicial",
+      count: "Privado por diseño",
+      label: "Visualización aspiracional · lectura inicial · ruta de acción",
     },
     transformationDemo: {
       beforeImage: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&h=1000&fit=crop&crop=faces",
@@ -172,7 +172,7 @@ export const generalCopy: VariantCopy = {
         icon: Users,
         title: "Diagnóstico HYBRID",
         description:
-          "Si tu perfil lo indica, puedes agendar una sesión de 15 minutos con un coach humano para definir si una temporada de 12 semanas tiene sentido para ti.",
+          "Si tu perfil lo indica, puedes agendar una revisión con un coach humano para definir si una temporada de 12 semanas tiene sentido para ti.",
       },
     ],
   },
@@ -222,7 +222,7 @@ export const generalCopy: VariantCopy = {
     highlight: "El coach te ayuda a sostenerlo.",
     subtitle:
       "GENESIS puede darte claridad. Pero si tu historial muestra baja adherencia, estrés alto, lesiones, poca experiencia o falta de estructura, el siguiente paso no debería ser hacerlo solo.",
-    footnote: "15 min · Sin compromiso · Sin presión",
+    footnote: "Sin compromiso · Sin presión · Con criterio humano",
     buttonText: "Agendar diagnóstico HYBRID",
     buttonIntent: "hybrid_diagnosis",
     cards: [
@@ -287,9 +287,9 @@ export const generalCopy: VariantCopy = {
           "No. Es una guía educativa y orientativa. Si tienes dolor, lesiones, condiciones médicas o dudas clínicas, consulta a un profesional antes de iniciar cambios intensos de entrenamiento o alimentación.",
       },
       {
-        question: "¿Cuánto tarda el proceso?",
+        question: "¿Qué necesito para empezar?",
         answer:
-          "El wizard toma menos de 3 minutos. Después verás tu visualización, lectura inicial, ruta de 7 días y siguiente paso recomendado.",
+          "Solo necesitas una foto real y responder unas preguntas de contexto. Con eso, GENESIS puede generar una visualización aspiracional, una lectura inicial y una ruta orientativa para tu siguiente paso.",
       },
       {
         question: "¿Por qué aparece HYBRID?",
@@ -315,12 +315,12 @@ export const generalCopy: VariantCopy = {
   },
 
   explainerVideo: {
-    title: "No es otra app de fitness",
+    title: "Por qué construí esto",
     subtitle:
-      "Es el primer paso para entender tu cuerpo, tu contexto y la ruta que tendría sentido para ti.",
+      "El sistema detrás de NGX Transform, contado por quien lo creó. Sin script ni promesas — solo el porqué.",
     videoUrl: "",
-    posterUrl: "/images/video-poster.jpg",
-    duration: "45s",
+    posterUrl: "/images/founder-poster.jpg",
+    duration: "Demo",
   },
 };
 

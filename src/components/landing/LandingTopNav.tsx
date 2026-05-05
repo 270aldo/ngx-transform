@@ -16,7 +16,7 @@ export function LandingTopNav() {
     <>
       <header className="fixed z-50 pt-5 md:pt-6 top-0 right-0 left-0">
         <div className="max-w-6xl mx-auto px-4">
-          <nav className="landing-surface rounded-full px-4 md:px-5 py-3 flex items-center justify-between border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.35)]">
+          <nav className="landing-surface rounded-full border border-white/10 px-3 py-2.5 md:px-4 flex items-center justify-between shadow-[0_12px_46px_rgba(0,0,0,0.42)] backdrop-blur-2xl">
             <Link href="/" className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#6D00FF] to-[#5B21B6] flex items-center justify-center shadow-[0_0_16px_rgba(109,0,255,0.35)]">
                 <span className="text-white text-[11px] font-body font-bold leading-none">N</span>
@@ -29,18 +29,28 @@ export function LandingTopNav() {
               </div>
             </Link>
 
-            <div className="hidden md:flex items-center gap-1 bg-white/5 rounded-full p-1">
-              <a href="#como-funciona" className="px-4 py-1.5 rounded-full text-xs text-slate-400 hover:text-white hover:bg-white/10 font-body transition-colors">Cómo Funciona</a>
-              <a href="#que-recibes" className="px-4 py-1.5 rounded-full text-xs text-slate-400 hover:text-white hover:bg-white/10 font-body transition-colors">Qué Recibes</a>
-              <a href="#reporte-ejemplo" className="hidden lg:inline-flex px-4 py-1.5 rounded-full text-xs text-slate-400 hover:text-white hover:bg-white/10 font-body transition-colors">Ejemplo</a>
-              <a href="#faq" className="px-4 py-1.5 rounded-full text-xs text-slate-400 hover:text-white hover:bg-white/10 font-body transition-colors">FAQ</a>
+            <div className="hidden md:flex items-center gap-1 rounded-full bg-white/[0.045] p-1">
+              <a href="#como-funciona" className="rounded-full px-4 py-2 text-xs font-medium text-white/55 transition-colors hover:bg-white/10 hover:text-white">Cómo Funciona</a>
+              <a href="#que-recibes" className="rounded-full px-4 py-2 text-xs font-medium text-white/55 transition-colors hover:bg-white/10 hover:text-white">Qué Recibes</a>
+              <a href="#reporte-ejemplo" className="hidden lg:inline-flex rounded-full px-4 py-2 text-xs font-medium text-white/55 transition-colors hover:bg-white/10 hover:text-white">Ejemplo</a>
+              <a href="#faq" className="rounded-full px-4 py-2 text-xs font-medium text-white/55 transition-colors hover:bg-white/10 hover:text-white">FAQ</a>
             </div>
 
             <div className="flex items-center gap-3">
               <Link
                 href="/wizard"
                 onClick={() => trackCta("topnav_primary", hero.primaryCta.intent, hero.primaryCta.label)}
-                className="hidden md:inline-flex px-6 py-2.5 rounded-full bg-[#6D00FF] text-white text-xs font-semibold font-body shadow-[0_0_20px_-5px_rgba(109,0,255,0.5)] hover:shadow-[0_0_30px_-5px_rgba(109,0,255,0.7)] transition-shadow"
+                className="hidden md:inline-flex h-11 items-center justify-center rounded-full px-6 text-xs font-bold font-body text-white transition-all duration-200 hover:-translate-y-0.5"
+                style={{
+                  backgroundColor: "var(--ngx-purple)",
+                  boxShadow: "var(--ngx-glow-primary)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = "var(--ngx-glow-primary-strong)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = "var(--ngx-glow-primary)";
+                }}
               >
                 {hero.primaryCta.label}
               </Link>
