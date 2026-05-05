@@ -1,51 +1,62 @@
 "use client";
 
 import { Layers, RefreshCw, AlertTriangle } from "lucide-react";
+import { useLandingConfig } from "./LandingProvider";
+import type { ProblemCopy } from "@/config/landing/types";
 
-const problems = [
-  {
-    icon: Layers,
-    title: "Tu rutina no sabe cómo vives",
-    description:
-      "No sabe cuánto duermes, cuánto estrés traes, qué lesiones arrastras ni qué equipo tienes disponible.",
-  },
-  {
-    icon: RefreshCw,
-    title: "Tu cuerpo cambia, tu plan no",
-    description:
-      "Empiezas fuerte. Te agotas. Paras. Vuelves con culpa. El problema no es la voluntad: es un sistema que no se adapta.",
-  },
-  {
-    icon: AlertTriangle,
-    title: "Después de los 30, improvisar sale caro",
-    description:
-      "Músculo, energía, sueño y recuperación ya no responden igual. Necesitas precisión, no motivación genérica.",
-  },
-];
+const FALLBACK: ProblemCopy = {
+  sectionLabel: "El problema real",
+  title: "El problema no es tu disciplina.",
+  highlight: "Es que sigues usando planes que no te conocen.",
+  subtitle:
+    "Has probado rutinas, apps, dietas y consejos sueltos. Algunos funcionan unos días. Luego llega tu vida real: estrés, horarios, sueño, cansancio, lesiones o falta de estructura. Ahí se rompe el plan.",
+  cards: [
+    {
+      title: "Tu plan no conoce tu contexto",
+      description:
+        "No sabe cómo duermes, cuánto tiempo tienes, qué equipo usas, qué lesiones arrastras ni qué tan constante has sido antes.",
+    },
+    {
+      title: "Empiezas fuerte, pero el sistema no se adapta",
+      description:
+        "Cuando baja la motivación o se complica la semana, una rutina genérica no ajusta nada. Solo te deja con culpa.",
+    },
+    {
+      title: "Después de los 30, improvisar sale caro",
+      description:
+        "Músculo, energía, recuperación y metabolismo necesitan estrategia. No más planes hechos para alguien que no eres tú.",
+    },
+  ],
+};
+
+const ICONS = [Layers, RefreshCw, AlertTriangle];
 
 export function LandingProblem() {
+  const { config } = useLandingConfig();
+  const copy = config.copy.problem ?? FALLBACK;
+
   return (
     <section id="problema" className="ngx-section">
       <div className="ngx-section-header">
         <div className="animate-on-scroll">
-          <span className="ngx-eyebrow-pill" data-accent="red">El problema real</span>
+          <span className="ngx-eyebrow-pill" data-accent="red">{copy.sectionLabel}</span>
           <h2 className="ngx-section-heading">
-            El problema no es tu disciplina.
+            {copy.title}
             <br />
-            <span className="text-ngx-fg-3">Es que usas un sistema que no te conoce.</span>
+            <span className="text-ngx-fg-3">{copy.highlight}</span>
           </h2>
         </div>
         <p className="animate-on-scroll delay-100 max-w-2xl text-sm md:text-base leading-relaxed text-ngx-fg-2 lg:ml-auto">
-          Llevas años intentando transformar tu cuerpo con apps genéricas, rutinas de internet y dietas que no entienden tu vida real. El resultado se repite: empiezas fuerte, se complica la semana y el plan deja de tener sentido.
+          {copy.subtitle}
         </p>
       </div>
 
       <div className="ngx-card-grid ngx-card-grid-3 items-stretch">
-        {problems.map((problem, index) => {
-          const Icon = problem.icon;
+        {copy.cards.map((card, index) => {
+          const Icon = ICONS[index % ICONS.length];
           return (
             <article
-              key={problem.title}
+              key={card.title}
               className={`animate-on-scroll ${index > 0 ? `delay-${index}00` : ""} ngx-card h-full`}
             >
               <div className="mb-6 flex items-start justify-between gap-4">
@@ -56,8 +67,8 @@ export function LandingProblem() {
                   0{index + 1}
                 </span>
               </div>
-              <h3 className="ngx-card-title mb-2">{problem.title}</h3>
-              <p className="ngx-card-desc">{problem.description}</p>
+              <h3 className="ngx-card-title mb-2">{card.title}</h3>
+              <p className="ngx-card-desc">{card.description}</p>
             </article>
           );
         })}

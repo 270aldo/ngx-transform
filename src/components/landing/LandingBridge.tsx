@@ -24,8 +24,8 @@ export function LandingBridge() {
           }}
         />
 
-        <div className="relative grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-12">
-          <div className="flex flex-col justify-between gap-8">
+        <div className="relative grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-12 lg:items-start">
+          <div className="flex flex-col gap-6">
             <div>
               <span className="ngx-eyebrow-pill">{bridge.sectionLabel}</span>
               <h2 className="ngx-section-heading">
@@ -38,52 +38,59 @@ export function LandingBridge() {
               </p>
             </div>
 
+            <p className="ngx-eyebrow inline-flex self-start rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-1.5">
+              {bridge.footnote}
+            </p>
+
             <div>
-              <p className="ngx-eyebrow inline-flex rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-1.5 mb-5">
-                {bridge.footnote}
+              <a
+                href={buttonHref}
+                target={isExternal ? "_blank" : undefined}
+                rel={isExternal ? "noreferrer noopener" : undefined}
+                onClick={() => trackCta("bridge_primary", bridge.buttonIntent, bridge.buttonText)}
+                className="group inline-flex items-center justify-center gap-2 px-7 rounded-full text-white font-bold font-body text-sm transition-all duration-150 active:scale-[0.97] hover:-translate-y-0.5"
+                style={{
+                  height: "52px",
+                  backgroundColor: "var(--ngx-purple)",
+                  boxShadow: "var(--ngx-glow-primary)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = "var(--ngx-glow-primary-strong)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = "var(--ngx-glow-primary)";
+                }}
+              >
+                {bridge.buttonText}
+              </a>
+              <p className="ngx-caption mt-3">
+                Sin presión. Si no es para ti ahora, también está bien.
               </p>
-              <div>
-                <a
-                  href={buttonHref}
-                  target={isExternal ? "_blank" : undefined}
-                  rel={isExternal ? "noreferrer noopener" : undefined}
-                  onClick={() => trackCta("bridge_primary", bridge.buttonIntent, bridge.buttonText)}
-                  className="group inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-white font-bold font-body text-sm transition-all duration-150 active:scale-[0.97] hover:-translate-y-0.5"
-                  style={{
-                    backgroundColor: "var(--ngx-purple)",
-                    boxShadow: "var(--ngx-glow-primary)",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow = "var(--ngx-glow-primary-strong)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.boxShadow = "var(--ngx-glow-primary)";
-                  }}
-                >
-                  {bridge.buttonText}
-                </a>
-              </div>
             </div>
           </div>
 
-          {/* Stack vertical inside the right column — keeps cards readable
-              instead of squashing 3 into a narrow column at xl. */}
-          <div className="flex flex-col gap-3 md:gap-4">
-            {bridge.cards.map((card) => {
+          {/* Right — cards as ordered steps */}
+          <ol className="flex flex-col gap-3 md:gap-4">
+            {bridge.cards.map((card, index) => {
               const Icon = card.icon;
               return (
-                <article key={card.title} className="ngx-card flex-row !p-4 md:!p-5 flex items-start gap-4">
-                  <span className="ngx-card-icon shrink-0">
-                    <Icon className="w-5 h-5" />
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="ngx-card-title mb-1.5">{card.title}</h3>
-                    <p className="ngx-card-desc">{card.description}</p>
-                  </div>
-                </article>
+                <li key={card.title}>
+                  <article className="ngx-metal-card !p-4 md:!p-5">
+                    <div className="relative z-10 flex items-start gap-4">
+                      <span className="ngx-card-icon shrink-0">
+                        <Icon className="w-5 h-5" />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <span className="ngx-eyebrow text-[10px] block mb-1.5">Paso 0{index + 1}</span>
+                        <h3 className="ngx-card-title mb-1.5">{card.title}</h3>
+                        <p className="ngx-card-desc">{card.description}</p>
+                      </div>
+                    </div>
+                  </article>
+                </li>
               );
             })}
-          </div>
+          </ol>
         </div>
       </div>
     </section>

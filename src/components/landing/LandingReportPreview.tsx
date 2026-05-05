@@ -5,55 +5,56 @@ import { ArrowRight } from "lucide-react";
 import { useLandingConfig } from "./LandingProvider";
 import type { ReportPreviewCopy } from "@/config/landing/types";
 
-/**
- * Fallback copy for variants that don't define reportPreview.
- * Mirrors the canonical content in `general.ts`.
- */
 const FALLBACK: ReportPreviewCopy = {
-  sectionLabel: "Ejemplo de reporte",
-  headline: "Mira lo que recibes antes de subir tu foto.",
+  sectionLabel: "Ejemplo de resultado",
+  headline: "Así debería sentirse tu resultado.",
   subtitle:
-    "El resultado no debe sentirse como una imagen suelta. Debe sentirse como una lectura inicial: dónde estás, qué te frena y qué paso tiene más sentido.",
-  scoreLabel: "Readiness Score",
+    "No como una imagen suelta. Como una primera lectura: dónde estás, qué puede frenarte y qué paso conviene tomar.",
+  scoreLabel: "Score de preparación",
   scoreValue: 72,
   scoreMax: 100,
   scoreDescription:
-    "Listo para empezar, pero con riesgo de abandono si no hay estructura.",
+    "Buen punto para empezar, pero con riesgo de abandono si no hay estructura semanal.",
   dimensions: [
     { label: "Entrenamiento", value: 78 },
     { label: "Nutrición", value: 64 },
     { label: "Recuperación", value: 58 },
-    { label: "Adherencia", value: 71 },
+    { label: "Constancia", value: 71 },
   ],
   insights: [
     {
-      label: "Obstáculo principal",
-      text: "Tu plan actual depende demasiado de motivación y muy poco de estructura semanal.",
+      label: "Lo que puede frenarte",
+      text: "Tu avance depende demasiado de motivación y poco de estructura.",
     },
     {
-      label: "Palanca #1",
-      text: "2-3 sesiones de fuerza bien diseñadas por semana pueden crear el estímulo mínimo para avanzar.",
+      label: "Primera palanca",
+      text: "Fuerza bien programada 2-3 veces por semana para crear base.",
     },
     {
-      label: "Palanca #2",
-      text: "Proteína suficiente, sueño más consistente y ajustes de carga reducen el riesgo de abandonar.",
+      label: "Ajuste clave",
+      text: "Mejorar proteína, sueño y progresión antes de subir intensidad.",
     },
     {
       label: "Siguiente paso",
-      text: "Ruta inicial de 7 días. HYBRID solo si necesitas accountability humana para sostenerla.",
+      text: "Empezar con una ruta inicial o revisar HYBRID si necesitas soporte.",
     },
   ],
   ctaLabel: "Ver mi punto de partida",
   ctaHref: "/wizard",
-  microcopy: "Demo ilustrativo. Tu reporte se genera con tus datos.",
+  microcopy: "Ejemplo ilustrativo. Tu resultado se genera con tus datos.",
 };
+
+const LEFT_BULLETS = [
+  "Lo que puede estar frenándote.",
+  "La palanca que conviene mover primero.",
+  "Un paso concreto para empezar con criterio.",
+] as const;
 
 export function LandingReportPreview() {
   const { config, trackCta } = useLandingConfig();
   const copy = config.copy.reportPreview ?? FALLBACK;
 
   const scorePct = Math.round((copy.scoreValue / copy.scoreMax) * 100);
-  // SVG circle gauge config
   const radius = 52;
   const circumference = 2 * Math.PI * radius;
   const dashOffset = circumference - (scorePct / 100) * circumference;
@@ -70,26 +71,50 @@ export function LandingReportPreview() {
         </p>
       </div>
 
-      <div className="ngx-section-panel">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-12 lg:items-center">
+      <div className="ngx-section-panel !p-4 md:!p-6 lg:!p-8">
+        {/* Mini dashboard header */}
+        <div className="mb-4 flex items-center justify-between border-b border-white/[0.08] pb-4">
+          <span className="ngx-eyebrow">Panel de ejemplo</span>
+          <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-white/45">
+            Demo
+          </span>
+        </div>
+
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-10 lg:items-start">
           {/* Left — narrative + CTA */}
           <div className="animate-on-scroll-left flex flex-col gap-6">
             <div>
               <span className="ngx-eyebrow text-xs">Ejemplo · perfil tipo</span>
               <h3 className="mt-2 font-body font-bold text-2xl md:text-3xl text-ngx-fg-1 leading-tight tracking-[-0.02em]">
-                Una lectura inicial, no una imagen suelta.
+                Una lectura inicial,
+                <br />
+                no una imagen suelta.
               </h3>
               <p className="mt-4 text-sm md:text-base leading-relaxed text-ngx-fg-2">
-                Combina un score de readiness con palancas concretas y un siguiente paso. Así sabes desde el día uno por dónde empezar — y si lo puedes sostener solo o necesitas un coach.
+                Combinas un score de preparación con palancas concretas y un siguiente paso. Sales sabiendo por dónde empezar — y si lo puedes sostener solo o necesitas soporte.
               </p>
             </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <ul className="flex flex-col gap-2.5">
+              {LEFT_BULLETS.map((bullet) => (
+                <li key={bullet} className="flex items-start gap-2.5 text-sm text-ngx-fg-2">
+                  <span
+                    aria-hidden
+                    className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                    style={{ backgroundColor: "var(--ngx-purple-light)" }}
+                  />
+                  <span>{bullet}</span>
+                </li>
+              ))}
+            </ul>
+
+            <div className="flex flex-col gap-3">
               <Link
                 href={copy.ctaHref}
                 onClick={() => trackCta("report_preview_cta", "scan_start", copy.ctaLabel)}
-                className="group inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full text-white font-bold font-body text-sm transition-all duration-150 active:scale-[0.97] hover:-translate-y-0.5"
+                className="group inline-flex h-13 w-full sm:w-auto sm:min-w-[220px] items-center justify-center gap-2 rounded-full px-6 text-white font-bold font-body text-sm transition-all duration-150 active:scale-[0.97] hover:-translate-y-0.5"
                 style={{
+                  height: "52px",
                   backgroundColor: "var(--ngx-purple)",
                   boxShadow: "var(--ngx-glow-primary)",
                 }}

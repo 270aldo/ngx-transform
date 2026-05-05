@@ -98,6 +98,23 @@ export interface BridgeCardCopy {
   description: string;
 }
 
+// ============================================================================
+// Problem (Iteración 4 — narrativa del problema)
+// ============================================================================
+
+export interface ProblemCardCopy {
+  title: string;
+  description: string;
+}
+
+export interface ProblemCopy {
+  sectionLabel: string;
+  title: string;
+  highlight: string;
+  subtitle: string;
+  cards: ProblemCardCopy[];
+}
+
 export interface BridgeCopy {
   sectionLabel: string;
   title: string;
@@ -189,9 +206,19 @@ export interface ReportPreviewCopy {
   microcopy: string;
 }
 
+export interface TrustCardCopy {
+  title: string;
+  description: string;
+}
+
 export interface TrustStripCopy {
   title: string;
-  bullets: string[];
+  /** Optional supporting paragraph under the title in the new 2-col layout. */
+  subtitle?: string;
+  /** Preferred — 4 cards with title + description. */
+  cards?: TrustCardCopy[];
+  /** Legacy — bullets-only fallback. Component prefers `cards` if present. */
+  bullets?: string[];
 }
 
 export interface VariantCopy {
@@ -209,6 +236,8 @@ export interface VariantCopy {
   };
   cta: CTACopy;
   footer: FooterCopy;
+  /** Optional problem narrative section */
+  problem?: ProblemCopy;
   /** Optional FAQ section */
   faq?: FAQCopy;
   /** Optional value stack (qué recibes) section */
