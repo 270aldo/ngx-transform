@@ -63,7 +63,7 @@ export function ComparisonCTA({
     >
       {/* Header */}
       <div className="flex items-center justify-center gap-2 mb-6">
-        <Sparkles size={16} className="text-[#6D00FF]" />
+        <Sparkles size={16} className="text-[var(--ngx-purple-light)]" />
         <h3 className="text-sm font-bold uppercase tracking-widest text-white">
           ¿Por qué necesitas GENESIS?
         </h3>
@@ -85,7 +85,7 @@ export function ComparisonCTA({
           <div className="p-3 text-[10px] font-bold uppercase tracking-wider text-white/40 text-center border-x border-white/10">
             Por tu cuenta
           </div>
-          <div className="p-3 text-[10px] font-bold uppercase tracking-wider text-[#6D00FF] text-center">
+          <div className="p-3 text-[10px] font-bold uppercase tracking-wider text-[var(--ngx-purple-light)] text-center">
             GENESIS
           </div>
         </div>
@@ -111,7 +111,7 @@ export function ComparisonCTA({
 
             {/* With GENESIS */}
             <div className="p-3 text-xs text-white text-center flex items-center justify-center gap-1">
-              <Check size={12} className="text-[#00FF88]" />
+              <Check size={12} style={{ color: "var(--ngx-success)" }} />
               <span className="font-medium">{row.with}</span>
             </div>
           </div>
@@ -120,13 +120,13 @@ export function ComparisonCTA({
 
       {/* CTA Button */}
       <motion.button
-        whileHover={{ scale: 1.02 }}
+        whileHover={{ scale: 1.02, y: -2 }}
         whileTap={{ scale: 0.98 }}
         onClick={handleClick}
-        className="w-full py-4 px-6 rounded-2xl font-bold text-white flex flex-col items-center justify-center gap-1 transition-all"
+        className="w-full py-4 px-6 rounded-full font-bold text-white flex flex-col items-center justify-center gap-1 transition-all"
         style={{
-          background: 'linear-gradient(135deg, #6D00FF 0%, #5B21B6 100%)',
-          boxShadow: '0 8px 32px rgba(109, 0, 255, 0.4)',
+          background: 'linear-gradient(135deg, var(--ngx-purple) 0%, var(--ngx-purple-deep) 100%)',
+          boxShadow: 'var(--ngx-glow-primary)',
         }}
       >
         <div className="flex items-center gap-2">

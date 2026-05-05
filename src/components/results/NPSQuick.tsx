@@ -91,26 +91,24 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="relative overflow-hidden rounded-[32px] landing-surface-strong p-6 md:p-8 lg:p-10"
+        className="ngx-section-panel"
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(109,0,255,0.12),transparent_32%),radial-gradient(circle_at_82%_80%,rgba(184,148,255,0.08),transparent_24%)]" />
 
         <div className="relative z-10">
           <div className="mb-4 flex items-center gap-2">
             <MessageSquareText className="h-4 w-4 text-[#C8A5FF]" />
-            <p className="landing-kicker !mb-0">Cierre rápido</p>
+            <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Cierre rápido</span>
           </div>
 
-          <h3 className="landing-heading text-[2rem] leading-[0.95] text-white md:text-[2.7rem]">
-            ¿El siguiente paso
-            <br />
-            ya te quedó claro?
+          <h3 className="ngx-h1 !text-left">
+            ¿El siguiente paso ya te quedó claro?
           </h3>
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/60 md:text-base">
             No estamos midiendo satisfacción vacía. Estamos validando si el flujo realmente te llevó de impacto visual a dirección concreta.
           </p>
 
-          <div className="mt-6 rounded-[28px] landing-surface p-5 md:p-6">
+          <div className="mt-6 ngx-glass !p-5 md:!p-6">
             <div className="grid grid-cols-5 gap-2 sm:grid-cols-10">
               {SCORE_SCALE.map((value) => {
                 const active = score === value;
@@ -121,7 +119,7 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
                     className={[
                       "min-h-[48px] rounded-2xl border text-sm font-semibold transition-all",
                       active
-                        ? "border-[#6D00FF] bg-[#6D00FF]/18 text-white shadow-[0_0_18px_rgba(109,0,255,0.16)]"
+                        ? "border-[var(--ngx-purple)] bg-[var(--ngx-purple)]/15 text-white shadow-[var(--ngx-glow-primary-soft)]"
                         : "border-white/10 bg-white/[0.03] text-white/68 hover:border-white/18 hover:bg-white/[0.05]",
                     ].join(" ")}
                   >
@@ -144,7 +142,7 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
                       <CheckCircle2 className="h-5 w-5 text-emerald-300" />
                     </div>
                     <div>
-                      <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em] !text-emerald-200/80">Feedback guardado</p>
+                      <p className="ngx-eyebrow !text-[10px] !text-emerald-200/80">Feedback guardado</p>
                       <p className="mt-3 text-base font-semibold text-white">
                         {highIntent ? "Perfecto. Ya hay claridad suficiente para avanzar." : "Gracias. Esto ayuda a afinar el puente hacia el siguiente paso."}
                       </p>
@@ -167,7 +165,11 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
                       </button>
                       <a
                         href={`/s/${shareId}/plan`}
-                        className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl bg-[#6D00FF] px-5 py-4 text-sm font-semibold text-white shadow-[0_0_28px_rgba(109,0,255,0.26)] transition-all hover:bg-[#5F00DE]"
+                        className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full px-5 py-4 text-sm font-bold uppercase tracking-[0.06em] text-white transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97]"
+                        style={{
+                          backgroundColor: "var(--ngx-purple)",
+                          boxShadow: "var(--ngx-glow-primary)",
+                        }}
                       >
                         Ver roadmap
                         <ArrowRight className="h-4 w-4" />
@@ -192,7 +194,7 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
                 </div>
               ) : highIntent ? (
                 <div className="rounded-[24px] border border-white/8 bg-white/[0.03] p-5 md:p-6">
-                  <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">Lectura del resultado</p>
+                  <p className="ngx-eyebrow !text-[10px]">Lectura del resultado</p>
                   <p className="mt-3 text-lg font-semibold text-white">Se siente suficientemente claro como para avanzar.</p>
                   <p className="mt-2 text-sm leading-relaxed text-white/60">
                     Si el flujo ya te dejó claro qué hacer después, guarda ese feedback y, si quieres, comparte tu resultado.
@@ -210,7 +212,11 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
                     <button
                       onClick={submitFeedback}
                       disabled={loading}
-                      className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl bg-[#6D00FF] px-5 py-4 text-sm font-semibold text-white shadow-[0_0_28px_rgba(109,0,255,0.26)] transition-all hover:bg-[#5F00DE] disabled:opacity-70"
+                      className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full px-5 py-4 text-sm font-bold uppercase tracking-[0.06em] text-white transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97] disabled:opacity-70 disabled:translate-y-0"
+                      style={{
+                        backgroundColor: "var(--ngx-purple)",
+                        boxShadow: "var(--ngx-glow-primary)",
+                      }}
                     >
                       <Send className="h-4 w-4" />
                       Guardar feedback
@@ -219,7 +225,7 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
                 </div>
               ) : (
                 <div className="rounded-[24px] border border-white/8 bg-white/[0.03] p-5 md:p-6">
-                  <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">Qué faltó para cerrar</p>
+                  <p className="ngx-eyebrow !text-[10px]">Qué faltó para cerrar</p>
                   <p className="mt-3 text-base font-semibold text-white">Marca lo que rompió claridad.</p>
 
                   <div className="mt-4 grid gap-3">
@@ -230,7 +236,7 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
                         className={[
                           "min-h-[52px] rounded-2xl border px-4 py-3 text-left text-sm transition-all",
                           selectedReason === opt
-                            ? "border-[#6D00FF] bg-[#6D00FF]/15 text-white"
+                            ? "border-[var(--ngx-purple)] bg-[var(--ngx-purple)]/15 text-white"
                             : "border-white/10 bg-white/[0.03] text-white/68 hover:border-white/18 hover:bg-white/[0.05]",
                         ].join(" ")}
                       >
@@ -243,13 +249,17 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
                     value={comment}
                     onChange={(event) => setComment(event.target.value)}
                     placeholder="¿Qué te faltó para que el siguiente paso se sintiera obvio? (opcional)"
-                    className="mt-4 min-h-[120px] w-full rounded-[24px] border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white placeholder:text-white/34 focus:border-[#6D00FF]/45 focus:outline-none"
+                    className="mt-4 min-h-[120px] w-full rounded-2xl border border-white/[0.10] bg-white/[0.03] px-4 py-3 text-sm text-white placeholder:text-white/35 focus:border-[var(--ngx-purple)]/45 focus:outline-none transition-colors"
                   />
 
                   <button
                     onClick={submitFeedback}
                     disabled={loading}
-                    className="mt-4 inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl bg-[#6D00FF] px-5 py-4 text-sm font-semibold text-white shadow-[0_0_28px_rgba(109,0,255,0.26)] transition-all hover:bg-[#5F00DE] disabled:opacity-70"
+                    className="mt-4 inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full px-5 py-4 text-sm font-bold uppercase tracking-[0.06em] text-white transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97] disabled:opacity-70 disabled:translate-y-0"
+                    style={{
+                      backgroundColor: "var(--ngx-purple)",
+                      boxShadow: "var(--ngx-glow-primary)",
+                    }}
                   >
                     <Send className="h-4 w-4" />
                     Enviar feedback

@@ -118,7 +118,7 @@ export function LetterFromFuture({
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header decoration */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#6D00FF] to-transparent" />
+            <div className="absolute top-0 left-0 right-0 h-1" style={{ background: "linear-gradient(to right, transparent, var(--ngx-purple), transparent)" }} />
 
             {/* Close button */}
             <button
@@ -137,7 +137,13 @@ export function LetterFromFuture({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <span className="inline-block px-3 py-1 rounded-full bg-[#6D00FF]/20 text-[#6D00FF] text-xs font-bold tracking-widest mb-3">
+                  <span
+                    className="inline-block px-3 py-1 rounded-full text-xs font-bold tracking-widest mb-3"
+                    style={{
+                      background: "rgba(109, 0, 255, 0.20)",
+                      color: "var(--ngx-purple-light)",
+                    }}
+                  >
                     MES 12
                   </span>
                 </motion.div>
@@ -166,9 +172,9 @@ export function LetterFromFuture({
                 {/* Paper texture effect */}
                 <div className="absolute inset-0 bg-gradient-to-b from-neutral-800/20 to-transparent rounded-xl pointer-events-none" />
 
-                <div className="relative p-6 rounded-xl bg-neutral-900/50 border border-white/5">
+                <div className="relative p-6 rounded-xl bg-white/[0.025] border border-white/[0.08]">
                   {/* Quote mark */}
-                  <div className="absolute top-2 left-4 text-6xl text-[#6D00FF]/20 font-serif leading-none">
+                  <div className="absolute top-2 left-4 text-6xl font-serif leading-none" style={{ color: "rgba(157, 78, 221, 0.20)" }}>
                     &ldquo;
                   </div>
 
@@ -179,7 +185,8 @@ export function LetterFromFuture({
                       <motion.span
                         animate={{ opacity: [1, 0] }}
                         transition={{ duration: 0.5, repeat: Infinity }}
-                        className="inline-block w-0.5 h-5 bg-[#6D00FF] ml-1 align-middle"
+                        className="inline-block w-0.5 h-5 ml-1 align-middle"
+                        style={{ backgroundColor: "var(--ngx-purple)" }}
                       />
                     )}
                   </p>
@@ -196,7 +203,7 @@ export function LetterFromFuture({
                         <p className="text-neutral-400 text-sm">
                           — Tu mejor versión
                         </p>
-                        <p className="text-[#6D00FF] font-bold tracking-wider text-xs mt-1">
+                        <p className="text-[var(--ngx-purple-light)] font-bold tracking-wider text-xs mt-1">
                           MES 12 • PEAK FORM
                         </p>
                       </motion.div>
@@ -227,15 +234,17 @@ export function LetterFromFuture({
                     {onShare && (
                       <button
                         onClick={handleShare}
-                        className={cn(
-                          "w-full flex items-center justify-center gap-3",
-                          "px-6 py-4 rounded-2xl",
-                          "bg-[#6D00FF] hover:bg-[#5800CC]",
-                          "text-white font-bold",
-                          "transition-all duration-200",
-                          "shadow-[0_0_30px_rgba(109,0,255,0.4)]",
-                          "hover:shadow-[0_0_40px_rgba(109,0,255,0.6)]"
-                        )}
+                        className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-full text-white font-bold uppercase tracking-[0.06em] transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97]"
+                        style={{
+                          backgroundColor: "var(--ngx-purple)",
+                          boxShadow: "var(--ngx-glow-primary)",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.boxShadow = "var(--ngx-glow-primary-strong)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.boxShadow = "var(--ngx-glow-primary)";
+                        }}
                       >
                         <Share2 className="w-5 h-5" />
                         <span>Compartir carta + transformación</span>
@@ -244,7 +253,7 @@ export function LetterFromFuture({
 
                     <button
                       onClick={onClose}
-                      className="w-full flex items-center justify-center gap-2 px-6 py-3 text-neutral-400 hover:text-white transition-colors"
+                      className="w-full flex items-center justify-center gap-2 px-6 py-3 text-white/55 hover:text-white transition-colors"
                     >
                       <span>Ver mi transformación</span>
                       <ChevronRight className="w-4 h-4" />
@@ -255,7 +264,7 @@ export function LetterFromFuture({
             </div>
 
             {/* Bottom glow */}
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-[#6D00FF]/20 blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-32 blur-3xl pointer-events-none" style={{ backgroundColor: "rgba(109, 0, 255, 0.20)" }} />
           </motion.div>
         </motion.div>
       )}

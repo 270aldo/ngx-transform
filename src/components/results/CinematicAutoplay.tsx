@@ -149,10 +149,10 @@ export function CinematicAutoplay({
         <div className="flex justify-between items-start p-6">
           {/* Logo */}
           <div>
-            <h1 className="text-2xl font-black italic tracking-tighter">
-              NGX <span className="text-[#6D00FF]">TRANSFORM</span>
+            <h1 className="font-display text-2xl font-black uppercase tracking-tighter">
+              NGX <span style={{ color: "var(--ngx-purple-light)" }}>TRANSFORM</span>
             </h1>
-            <p className="text-xs text-neutral-400 mt-1 tracking-widest">
+            <p className="ngx-eyebrow !text-[10px] mt-1.5" style={{ color: "var(--ngx-fg-3)" }}>
               EXPERIENCIA INMERSIVA
             </p>
           </div>
@@ -162,7 +162,8 @@ export function CinematicAutoplay({
             {showAudio && (
               <button
                 onClick={() => setIsMuted(!isMuted)}
-                className="p-2 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all"
+                aria-label={isMuted ? "Activar audio" : "Silenciar audio"}
+                className="ngx-glass-clear p-2 rounded-full transition-all duration-150 hover:bg-white/[0.10]"
               >
                 {isMuted ? (
                   <VolumeX className="w-5 h-5 text-white" />
@@ -173,7 +174,7 @@ export function CinematicAutoplay({
             )}
             <button
               onClick={handleSkip}
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all text-white text-sm font-medium"
+              className="ngx-glass-clear flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-150 hover:bg-white/[0.10] text-white text-sm font-medium"
             >
               <span>Saltar</span>
               <SkipForward className="w-4 h-4" />
@@ -196,10 +197,10 @@ export function CinematicAutoplay({
               transition={{ duration: 0.5 }}
               className="mb-8"
             >
-              <h2 className="text-5xl font-black italic text-white mb-2">
+              <h2 className="font-display text-5xl font-black uppercase tracking-[-0.01em] text-white mb-2">
                 {currentMilestone.label}
               </h2>
-              <p className="text-lg text-neutral-300">
+              <p className="text-lg text-white/70">
                 {currentMilestone.subtitle}
               </p>
             </motion.div>
@@ -221,10 +222,11 @@ export function CinematicAutoplay({
                   )}
                 >
                   <motion.div
-                    className={cn(
-                      "absolute inset-y-0 left-0 rounded-full",
-                      isActive ? "bg-[#6D00FF]" : "bg-white"
-                    )}
+                    className="absolute inset-y-0 left-0 rounded-full"
+                    style={{
+                      backgroundColor: isActive ? "var(--ngx-purple)" : "white",
+                      boxShadow: isActive ? "0 0 8px rgba(109,0,255,0.50)" : undefined,
+                    }}
                     initial={false}
                     animate={{
                       width: isComplete
@@ -241,7 +243,7 @@ export function CinematicAutoplay({
           </div>
 
           {/* Overall Progress */}
-          <div className="flex justify-between items-center text-xs text-neutral-500">
+          <div className="flex justify-between items-center text-xs font-mono tabular-nums text-white/45">
             <span>
               {currentIndex + 1} de {MILESTONES.length}
             </span>
