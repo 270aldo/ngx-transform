@@ -2,23 +2,17 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Logo } from "@/components/ui/Logo";
-
-const LOADING_STEPS = [
-  "Analizando tu foto...",
-  "Generando mes 4...",
-  "Generando mes 8...",
-  "Generando mes 12...",
-  "Preparando tus resultados...",
-];
+import { RiveOrb } from "@/components/RiveOrb";
+import { LoadingStepper } from "@/components/LoadingStepper";
 
 const TIPS = [
   "La salud muscular es uno de los predictores clave de longevidad.",
-  "Tu sistema GENESIS analiza 12 variables biométricas.",
-  "El 80% de los resultados depende del sistema, no de la motivación.",
+  "El 80% del resultado depende del sistema, no de la motivación.",
+  "GENESIS no diagnostica. Te muestra dirección y un siguiente paso.",
+  "La disciplina vence a la motivación cuando hay estructura.",
 ];
 
 const PROGRESS_BY_COUNT = [12, 45, 75, 100];
@@ -26,7 +20,6 @@ const PROGRESS_BY_COUNT = [12, 45, 75, 100];
 export function LoadingExperience({ shareId }: { shareId: string }) {
   const router = useRouter();
   const { loading: authLoading, getIdToken } = useAuth();
-  const [stepIndex, setStepIndex] = useState(0);
   const [tipIndex, setTipIndex] = useState(0);
   const [status, setStatus] = useState<string>("processing");
   const [imageKeys, setImageKeys] = useState<string[]>([]);
@@ -44,27 +37,13 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
   const stepStates = useMemo(() => {
     return [
       { label: "Analizando tu foto", done: hasAi || imageCount >= 1, active: !hasAi && imageCount === 0 },
-      { label: "Generando mes 4", done: has("m4"), active: hasAi && !has("m4") },
-      { label: "Generando mes 8", done: has("m8"), active: has("m4") && !has("m8") },
-      { label: "Generando mes 12", done: has("m12"), active: has("m8") && !has("m12") },
-      { label: "Preparando tus resultados", done: isReady, active: imageCount >= 3 && !isReady },
+      { label: "Visualizando mes 4", done: has("m4"), active: hasAi && !has("m4") },
+      { label: "Visualizando mes 8", done: has("m8"), active: has("m4") && !has("m8") },
+      { label: "Visualizando mes 12", done: has("m12"), active: has("m8") && !has("m12") },
+      { label: "Preparando tu lectura inicial", done: isReady, active: imageCount >= 3 && !isReady },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageKeys, hasAi, isReady]);
-
-  const stageLabel = useMemo(() => {
-    if (isFailed) return "Proceso detenido";
-    if (isReady) return "¡Listo! Cargando tus resultados...";
-    const activeStep = stepStates.find((s) => s.active);
-    return activeStep ? `${activeStep.label}...` : stepStates[0].label;
-  }, [isFailed, isReady, stepStates]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setStepIndex((prev) => (prev + 1) % LOADING_STEPS.length);
-    }, 3500);
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -196,198 +175,121 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
       </div>
 
-      {/* Ambient glow */}
+      {/* Ambient glows */}
       <div
         className="pointer-events-none absolute left-[-10%] top-[10%] h-[420px] w-[420px] rounded-full blur-[120px]"
         style={{ backgroundColor: "rgba(109,0,255,0.18)" }}
       />
+      <div
+        className="pointer-events-none absolute right-[-8%] bottom-[12%] h-[360px] w-[360px] rounded-full blur-[120px]"
+        style={{ backgroundColor: "rgba(109,0,255,0.10)" }}
+      />
 
-      {/* Scanner ring */}
-      <div className="relative w-64 h-64 mb-10">
-        <div
-          className="absolute inset-0 rounded-full animate-[spin_10s_linear_infinite]"
-          style={{ border: "4px solid rgba(109,0,255,0.30)" }}
-        />
-        <div
-          className="absolute inset-2 rounded-full animate-[spin_15s_linear_infinite_reverse]"
-          style={{ border: "2px dashed rgba(109,0,255,0.50)" }}
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-48 h-48 rounded-full animate-pulse blur-xl" style={{ background: "rgba(109,0,255,0.10)" }} />
-        </div>
-        <div className="absolute inset-0 w-full h-full rounded-full overflow-hidden">
-          <div
-            className="w-full h-2 absolute top-0 animate-[scan_3s_ease-in-out_infinite]"
-            style={{ backgroundColor: "var(--ngx-purple)", boxShadow: "0 0 20px var(--ngx-purple)" }}
-          />
-        </div>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="font-mono font-bold text-4xl tabular-nums tracking-[-0.02em] text-white">
+      {/* Logo */}
+      <div className="mb-4 md:mb-6 z-10">
+        <Logo variant="full" size="md" />
+      </div>
+
+      {/* GENESIS orb — Rive ambient animation with progress overlay */}
+      <div className="mb-8 md:mb-10 z-10">
+        <RiveOrb>
+          <span className="font-mono font-bold text-3xl md:text-4xl tabular-nums tracking-[-0.02em] text-white">
             {Math.round(progress)}%
           </span>
-        </div>
+        </RiveOrb>
       </div>
 
-      {/* Status text */}
-      <div className="text-center z-10 max-w-xl px-6 space-y-4">
-        <div className="flex justify-center">
-          <Logo variant="full" size="lg" />
-        </div>
-        <h2
-          className="ngx-eyebrow text-[12px] !tracking-[0.22em] animate-pulse"
-          style={{ color: "var(--ngx-purple-light)" }}
-        >
-          {stageLabel || LOADING_STEPS[stepIndex]}
-        </h2>
+      {/* Stepper-timeline — single source of step state */}
+      <div className="z-10 w-full max-w-3xl px-6">
+        <LoadingStepper steps={stepStates} failed={isFailed} />
+      </div>
 
-        <div className="h-1 w-full rounded-full overflow-hidden bg-white/[0.06] border border-white/[0.04]">
-          <div
-            className="h-full rounded-full transition-all duration-500 ease-out"
-            style={{
-              width: `${progress}%`,
-              background: "linear-gradient(90deg, var(--ngx-purple), var(--ngx-purple-light))",
-              boxShadow: "0 0 12px rgba(109,0,255,0.40)",
-            }}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 pt-4 text-xs">
-          {stepStates.map((step) => {
-            const stoppedHere = isFailed && !step.done && step.active;
-            const stateLabel = step.done
-              ? "Listo"
-              : stoppedHere
-                ? "Detenido"
-                : step.active
-                  ? "Procesando..."
-                  : "Pendiente";
-            return (
-              <div
-                key={step.label}
-                className={cn(
-                  "rounded-xl border p-3 transition-colors",
-                  step.done
-                    ? "border-[var(--ngx-purple)] bg-[var(--ngx-purple)]/[0.08]"
-                    : step.active && !isFailed
-                      ? "border-[var(--ngx-purple)]/40 bg-white/[0.03]"
-                      : stoppedHere
-                        ? "border-[var(--ngx-error)]/40 bg-[var(--ngx-error)]/[0.05]"
-                        : "border-white/[0.08] bg-white/[0.025]"
-                )}
-              >
-                <p className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
-                  {step.label}
-                </p>
-                <p
-                  className={cn(
-                    "mt-1.5 text-sm font-bold",
-                    step.done ? "text-[var(--ngx-purple-light)]" : stoppedHere ? "text-[var(--ngx-error)]" : "text-white/85"
-                  )}
-                >
-                  {stateLabel}
-                </p>
-                <div className="mt-2 h-1 w-full rounded-full bg-white/[0.06] overflow-hidden">
-                  <div
-                    className={cn(
-                      "h-full rounded-full transition-all duration-300",
-                      step.done
-                        ? "w-full"
-                        : step.active && !isFailed
-                          ? "w-2/3 animate-pulse"
-                          : stoppedHere
-                            ? "w-1/3"
-                            : "w-0"
-                    )}
-                    style={{
-                      background: stoppedHere
-                        ? "var(--ngx-error)"
-                        : "linear-gradient(90deg, var(--ngx-purple), var(--ngx-purple-light))",
-                    }}
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {error && (
-          <div className="space-y-3 pt-2">
-            <p className="text-xs text-[var(--ngx-error)]">{error}</p>
-            <button
-              onClick={async () => {
-                if (retrying) return;
-                setRetrying(true);
-                setError(null);
-                try {
-                  const token = await getIdToken();
-                  if (!token) {
-                    setError("Error de autenticación. Recarga la página.");
-                    setRetrying(false);
-                    return;
-                  }
-                  startedGenerationRef.current = false;
-                  await fetch("/api/analyze", {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                      Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify({ sessionId: shareId }),
-                  });
-                  await fetch("/api/generate-images", {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                      Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify({ sessionId: shareId }),
-                  });
-                } catch (e) {
-                  setError("No pudimos reintentar. Intenta de nuevo en unos segundos.");
-                  console.error("[Loading] Retry failed:", e);
-                } finally {
+      {/* Error + retry */}
+      {error && (
+        <div className="z-10 mt-6 flex flex-col items-center gap-3 px-6 text-center">
+          <p className="text-xs text-[var(--ngx-error)]">{error}</p>
+          <button
+            onClick={async () => {
+              if (retrying) return;
+              setRetrying(true);
+              setError(null);
+              try {
+                const token = await getIdToken();
+                if (!token) {
+                  setError("Error de autenticación. Recarga la página.");
                   setRetrying(false);
+                  return;
                 }
-              }}
-              disabled={retrying}
-              className="rounded-full px-5 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0"
-              style={{
-                backgroundColor: "var(--ngx-purple)",
-                boxShadow: "var(--ngx-glow-primary-soft)",
-              }}
-            >
-              {retrying ? "Reintentando..." : "Reintentar generación"}
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Tip — relative on mobile (avoids overlap with stacked steps), absolute on md+ */}
-      <div className="mt-8 px-6 w-full max-w-lg text-center md:absolute md:mt-0 md:bottom-12">
-        <div className="ngx-glass-clear !p-4 rounded-2xl">
-          <p className="text-sm text-white/65 leading-relaxed" key={tipIndex}>
-            {TIPS[tipIndex]}
-          </p>
+                startedGenerationRef.current = false;
+                await fetch("/api/analyze", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                  },
+                  body: JSON.stringify({ sessionId: shareId }),
+                });
+                await fetch("/api/generate-images", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                  },
+                  body: JSON.stringify({ sessionId: shareId }),
+                });
+              } catch (e) {
+                setError("No pudimos reintentar. Intenta de nuevo en unos segundos.");
+                console.error("[Loading] Retry failed:", e);
+              } finally {
+                setRetrying(false);
+              }
+            }}
+            disabled={retrying}
+            className="rounded-full px-5 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0"
+            style={{
+              backgroundColor: "var(--ngx-purple)",
+              boxShadow: "var(--ngx-glow-primary-soft)",
+            }}
+          >
+            {retrying ? "Reintentando..." : "Reintentar generación"}
+          </button>
         </div>
+      )}
+
+      {/* Tip — relative on mobile (avoids overlap), absolute on md+ */}
+      <div className="mt-8 px-6 w-full max-w-lg text-center md:absolute md:mt-0 md:bottom-10 z-10">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={tipIndex}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.4 }}
+            className="ngx-metal-card !p-5"
+          >
+            <div className="relative z-10">
+              <p className="text-sm text-white/75 leading-relaxed">
+                {TIPS[tipIndex]}
+              </p>
+            </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
 
-      <motion.button
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        onClick={() => router.replace(`/s/${shareId}`)}
-        className="absolute top-6 right-6 ngx-glass-clear text-xs text-white/65 px-3 py-2 rounded-full hover:text-white"
-      >
-        Ver resultados
-      </motion.button>
-
-      <style jsx>{`
-        @keyframes scan {
-          0% { top: 0%; opacity: 0; }
-          10% { opacity: 1; }
-          90% { opacity: 1; }
-          100% { top: 100%; opacity: 0; }
-        }
-      `}</style>
+      {/* "Ver resultados" — only when actually ready, otherwise hidden */}
+      {isReady ? (
+        <motion.button
+          initial={{ opacity: 0, y: -4 }}
+          animate={{ opacity: 1, y: 0 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => router.replace(`/s/${shareId}`)}
+          className="absolute top-6 right-6 z-20 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white shadow-[var(--ngx-glow-primary-soft)] transition-all hover:-translate-y-0.5"
+          style={{ backgroundColor: "var(--ngx-purple)" }}
+        >
+          Ver resultados →
+        </motion.button>
+      ) : null}
     </div>
   );
 }
