@@ -88,27 +88,23 @@ export function StatsDelta({
             initial={animate ? { opacity: 0, y: 20 } : false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className={cn(
-              "relative p-4 rounded-2xl",
-              "bg-gradient-to-br from-neutral-900 to-neutral-950",
-              "border border-white/5"
-            )}
+            className="ngx-card !p-4"
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <span className="text-lg">{stat.icon}</span>
-                <span className="text-xs font-bold text-neutral-400 tracking-wider">
+                <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
                   {stat.label}
                 </span>
               </div>
               {/* Delta indicator */}
               <div
                 className={cn(
-                  "flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold",
-                  isPositive && "bg-emerald-500/20 text-emerald-400",
-                  isNegative && "bg-red-500/20 text-red-400",
-                  !isPositive && !isNegative && "bg-neutral-500/20 text-neutral-400"
+                  "flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-mono font-bold tabular-nums",
+                  isPositive && "bg-[var(--ngx-success)]/15 text-[var(--ngx-success)]",
+                  isNegative && "bg-[var(--ngx-error)]/15 text-[var(--ngx-error)]",
+                  !isPositive && !isNegative && "bg-white/[0.06] text-white/45"
                 )}
               >
                 {isPositive && <TrendingUp className="w-3 h-3" />}
@@ -123,30 +119,35 @@ export function StatsDelta({
 
             {/* Value */}
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-black text-white">
+              <span className="font-mono font-bold text-3xl tabular-nums tracking-[-0.02em] text-white">
                 {animate ? <AnimatedNumber value={toValue} /> : toValue}
               </span>
-              <span className="text-neutral-500 text-sm">/100</span>
+              <span className="text-white/45 text-sm">/100</span>
             </div>
 
             {/* Progress bar */}
-            <div className="mt-3 h-1.5 bg-neutral-800 rounded-full overflow-hidden">
+            <div className="mt-3 h-1.5 bg-white/[0.06] rounded-full overflow-hidden border border-white/[0.04]">
               <motion.div
                 initial={animate ? { width: `${fromValue}%` } : { width: `${toValue}%` }}
                 animate={{ width: `${toValue}%` }}
                 transition={{ duration: 1, delay: index * 0.1, ease: "easeOut" }}
-                className={cn(
-                  "h-full rounded-full",
-                  toValue >= 80 && "bg-gradient-to-r from-[#6D00FF] to-emerald-400",
-                  toValue >= 60 && toValue < 80 && "bg-gradient-to-r from-[#6D00FF] to-[#7D1AFF]",
-                  toValue >= 40 && toValue < 60 && "bg-[#6D00FF]",
-                  toValue < 40 && "bg-gradient-to-r from-amber-500 to-[#6D00FF]"
-                )}
+                className="h-full rounded-full"
+                style={{
+                  background:
+                    toValue >= 80
+                      ? "linear-gradient(90deg, var(--ngx-purple), var(--ngx-success))"
+                      : toValue >= 60
+                        ? "linear-gradient(90deg, var(--ngx-purple), var(--ngx-purple-light))"
+                        : toValue >= 40
+                          ? "var(--ngx-purple)"
+                          : "linear-gradient(90deg, var(--ngx-warning), var(--ngx-purple))",
+                  boxShadow: "0 0 8px rgba(109,0,255,0.30)",
+                }}
               />
             </div>
 
             {/* From value (small) */}
-            <div className="mt-2 text-xs text-neutral-500">
+            <div className="mt-2 text-xs font-mono tabular-nums text-white/45">
               Inicio: {fromValue}
             </div>
           </motion.div>

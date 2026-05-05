@@ -130,7 +130,13 @@ export function ChapterView({
 
         {/* Top badge */}
         <div className="absolute top-6 left-6 z-10">
-          <span className="inline-block px-4 py-2 rounded-full bg-[#6D00FF] text-white text-sm font-bold tracking-wider shadow-lg shadow-[#6D00FF]/30">
+          <span
+            className="inline-block px-4 py-2 rounded-full text-white text-sm font-bold uppercase tracking-[0.04em]"
+            style={{
+              backgroundColor: "var(--ngx-purple)",
+              boxShadow: "var(--ngx-glow-primary-soft)",
+            }}
+          >
             {milestoneInfo.label}
           </span>
         </div>
@@ -141,12 +147,11 @@ export function ChapterView({
             onClick={() => setShowCompare(!showCompare)}
             className={cn(
               "absolute top-6 right-6 z-10",
-              "px-4 py-2 rounded-full",
-              "text-sm font-medium",
-              "transition-all duration-200",
+              "px-4 py-2 rounded-full text-sm font-bold uppercase tracking-[0.04em]",
+              "transition-all duration-150 active:scale-[0.97]",
               showCompare
                 ? "bg-white text-black"
-                : "bg-white/10 backdrop-blur-md text-white hover:bg-white/20"
+                : "ngx-glass-clear text-white hover:bg-white/[0.10]"
             )}
           >
             {showCompare ? "Ver imagen" : "Comparar"}
@@ -160,10 +165,10 @@ export function ChapterView({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <h2 className="text-4xl md:text-5xl font-black italic text-white mb-2">
+            <h2 className="ngx-h1 !text-left text-white mb-2">
               {timelineEntry.title}
             </h2>
-            <p className="text-neutral-300 text-lg">
+            <p className="text-white/65 text-lg">
               {milestoneInfo.subtitle}
             </p>
           </motion.div>
@@ -171,7 +176,10 @@ export function ChapterView({
       </div>
 
       {/* Content Section */}
-      <div className="relative z-10 px-6 py-8 -mt-6 bg-gradient-to-b from-black to-neutral-950 rounded-t-3xl">
+      <div
+        className="relative z-10 px-6 py-8 -mt-6 rounded-t-3xl"
+        style={{ background: "linear-gradient(to bottom, var(--ngx-bg-end), var(--ngx-bg-mid))" }}
+      >
         {/* Stats */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -179,9 +187,9 @@ export function ChapterView({
           transition={{ delay: 0.3 }}
           className="mb-8"
         >
-          <h3 className="text-xs font-bold text-neutral-500 tracking-widest mb-4">
-            PROGRESO
-          </h3>
+          <span className="ngx-eyebrow !text-[10px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>
+            Progreso
+          </span>
           <StatsDelta
             from={baselineStats}
             to={timelineEntry.stats}
@@ -196,10 +204,10 @@ export function ChapterView({
           transition={{ delay: 0.4 }}
           className="mb-8"
         >
-          <h3 className="text-xs font-bold text-neutral-500 tracking-widest mb-4">
-            TU EVOLUCIÓN
-          </h3>
-          <div className="p-5 rounded-2xl bg-neutral-900/50 border border-white/5">
+          <span className="ngx-eyebrow !text-[10px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>
+            Tu evolución
+          </span>
+          <div className="ngx-card !p-5">
             <p
               className={cn(
                 "text-white/80 leading-relaxed",
@@ -211,7 +219,8 @@ export function ChapterView({
             {timelineEntry.description.length > 200 && (
               <button
                 onClick={() => setShowFullNarrative(!showFullNarrative)}
-                className="flex items-center gap-1 mt-3 text-[#6D00FF] text-sm font-medium hover:text-[#8B33FF] transition-colors"
+                className="flex items-center gap-1 mt-3 text-sm font-medium transition-colors hover:text-white"
+                style={{ color: "var(--ngx-purple-light)" }}
               >
                 {showFullNarrative ? (
                   <>
@@ -236,9 +245,15 @@ export function ChapterView({
           transition={{ delay: 0.45 }}
           className="mb-8"
         >
-          <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-[#6D00FF]/10 border border-[#6D00FF]/20">
+          <div
+            className="flex items-center gap-2 px-4 py-3 rounded-xl"
+            style={{
+              background: "rgba(109, 0, 255, 0.10)",
+              border: "1px solid rgba(109, 0, 255, 0.20)",
+            }}
+          >
             <span className="text-sm">🧬</span>
-            <p className="text-sm text-[#A78BFA] leading-snug">
+            <p className="text-sm leading-snug" style={{ color: "var(--ngx-purple-light)" }}>
               {LONGEVITY_CONTEXT[milestone]}
             </p>
           </div>
@@ -251,10 +266,16 @@ export function ChapterView({
           transition={{ delay: 0.5 }}
           className="mb-8"
         >
-          <h3 className="text-xs font-bold text-neutral-500 tracking-widest mb-4">
-            MENTALIDAD
-          </h3>
-          <div className="p-5 rounded-2xl bg-gradient-to-br from-[#6D00FF]/10 to-transparent border border-[#6D00FF]/20">
+          <span className="ngx-eyebrow !text-[10px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>
+            Mentalidad
+          </span>
+          <div
+            className="p-5 rounded-2xl"
+            style={{
+              background: "linear-gradient(135deg, rgba(109,0,255,0.10), transparent)",
+              border: "1px solid rgba(109, 0, 255, 0.20)",
+            }}
+          >
             <div className="flex gap-3">
               <div className="text-2xl">🧠</div>
               <p className="text-white/80 leading-relaxed italic">
@@ -275,14 +296,17 @@ export function ChapterView({
           {onShare && (
             <button
               onClick={() => onShare(milestone)}
-              className={cn(
-                "w-full flex items-center justify-center gap-3",
-                "px-6 py-4 rounded-2xl",
-                "bg-[#6D00FF] hover:bg-[#5800CC]",
-                "text-white font-bold",
-                "transition-all duration-200",
-                "shadow-[0_0_20px_rgba(109,0,255,0.3)]"
-              )}
+              className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-full text-white font-bold uppercase tracking-[0.06em] transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.98]"
+              style={{
+                backgroundColor: "var(--ngx-purple)",
+                boxShadow: "var(--ngx-glow-primary)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = "var(--ngx-glow-primary-strong)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = "var(--ngx-glow-primary)";
+              }}
             >
               <Share2 className="w-5 h-5" />
               <span>Compartir {milestoneInfo.label}</span>
@@ -293,14 +317,7 @@ export function ChapterView({
           {isM12 && onShowLetter && (
             <button
               onClick={onShowLetter}
-              className={cn(
-                "w-full flex items-center justify-center gap-3",
-                "px-6 py-4 rounded-2xl",
-                "bg-white/5 hover:bg-white/10",
-                "border border-white/10",
-                "text-white font-medium",
-                "transition-all duration-200"
-              )}
+              className="ngx-glass-clear w-full flex items-center justify-center gap-3 px-6 py-4 rounded-full text-white font-medium transition-all duration-150 active:scale-[0.98]"
             >
               <MessageCircle className="w-5 h-5" />
               <span>Leer carta de tu yo futuro</span>

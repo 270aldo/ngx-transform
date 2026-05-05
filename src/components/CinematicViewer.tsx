@@ -126,19 +126,20 @@ export function CinematicViewer({
             {/* HEADER */}
             <div className="absolute top-0 left-0 w-full z-20 p-6 flex justify-between items-start">
                 <div>
-                    <h1 className="text-3xl font-black italic tracking-tighter">
-                        NGX <span className="text-[#6D00FF]">VISION</span>
+                    <h1 className="font-display text-3xl font-black uppercase tracking-tighter">
+                        NGX <span style={{ color: "var(--ngx-purple-light)" }}>VISION</span>
                     </h1>
-                    <div className="flex items-center gap-2 mt-1">
-                        <div className="w-2 h-2 rounded-full bg-[#00FF94] animate-pulse" />
-                        <span className="text-[10px] font-bold tracking-[0.2em] text-neutral-400">
+                    <div className="flex items-center gap-2 mt-1.5">
+                        <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: "var(--ngx-success)" }} />
+                        <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
                             PROTOCOL: {activeStep.toUpperCase()}
                         </span>
                     </div>
                 </div>
                 <button
                     onClick={handleShare}
-                    className="p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/10 hover:bg-white/20 transition-all active:scale-95"
+                    className="ngx-glass-clear p-3 rounded-full transition-all duration-150 active:scale-[0.95]"
+                    aria-label="Compartir"
                 >
                     <Share2 className="w-5 h-5 text-white" />
                 </button>
@@ -149,12 +150,12 @@ export function CinematicViewer({
 
                 {/* TOGGLE SWITCH (Physical / Mental) */}
                 <div className="flex justify-center mb-6">
-                    <div className="flex bg-black/40 backdrop-blur-md rounded-full p-1 border border-white/10">
+                    <div className="flex bg-black/40 backdrop-blur-md rounded-full p-1 border border-white/[0.08]">
                         <button
                             onClick={() => setShowMental(false)}
                             className={cn(
-                                "px-6 py-2 rounded-full text-xs font-bold tracking-widest transition-all",
-                                !showMental ? "bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.3)]" : "text-neutral-400 hover:text-white"
+                                "px-6 py-2 rounded-full text-xs font-bold tracking-widest transition-all duration-150",
+                                !showMental ? "bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.3)]" : "text-white/55 hover:text-white"
                             )}
                         >
                             FÍSICO
@@ -162,9 +163,17 @@ export function CinematicViewer({
                         <button
                             onClick={() => setShowMental(true)}
                             className={cn(
-                                "px-6 py-2 rounded-full text-xs font-bold tracking-widest transition-all",
-                                showMental ? "bg-[#6D00FF] text-white shadow-[0_0_15px_rgba(109,0,255,0.5)]" : "text-neutral-400 hover:text-white"
+                                "px-6 py-2 rounded-full text-xs font-bold tracking-widest transition-all duration-150",
+                                showMental ? "text-white" : "text-white/55 hover:text-white"
                             )}
+                            style={
+                                showMental
+                                    ? {
+                                        backgroundColor: "var(--ngx-purple)",
+                                        boxShadow: "var(--ngx-glow-primary-soft)",
+                                    }
+                                    : undefined
+                            }
                         >
                             MENTAL
                         </button>
@@ -176,18 +185,19 @@ export function CinematicViewer({
 
                     {/* LEFT CARD: STATS & ANALYSIS */}
                     <div className={cn(
-                        "bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl p-6 transition-all duration-500 overflow-hidden",
+                        "bg-black/60 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-6 transition-all duration-500 overflow-hidden",
                         showMental ? "opacity-50 scale-95 blur-sm" : "opacity-100 scale-100"
                     )}>
                         <div className="flex justify-between items-start mb-4">
                             <div>
-                                <h2 className="text-xl font-bold italic">{entry.title || "Análisis Biométrico"}</h2>
-                                <p className="text-xs text-neutral-400 mt-1 max-w-[250px] line-clamp-2">{entry.description}</p>
+                                <h2 className="font-body font-bold uppercase text-xl tracking-[-0.005em]">{entry.title || "Análisis Biométrico"}</h2>
+                                <p className="text-xs text-white/55 mt-1.5 max-w-[250px] line-clamp-2">{entry.description}</p>
                             </div>
                             {/* Expand Button */}
                             <button
                                 onClick={() => setIsDetailsOpen(!isDetailsOpen)}
-                                className="text-[10px] font-bold text-[#6D00FF] flex items-center gap-1 hover:text-white transition-colors"
+                                className="ngx-eyebrow !text-[10px] flex items-center gap-1 transition-colors hover:text-white"
+                                style={{ color: "var(--ngx-purple-light)" }}
                             >
                                 {isDetailsOpen ? "MENOS DETALLES" : "VER ANÁLISIS TÁCTICO"}
                                 {isDetailsOpen ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
@@ -202,16 +212,16 @@ export function CinematicViewer({
                         {/* HUD 2.0: EXPANDABLE DETAILS */}
                         <div className={cn(
                             "space-y-4 overflow-hidden transition-all duration-500",
-                            isDetailsOpen ? "max-h-[500px] opacity-100 mt-4 pt-4 border-t border-white/10" : "max-h-0 opacity-0"
+                            isDetailsOpen ? "max-h-[500px] opacity-100 mt-4 pt-4 border-t border-white/[0.08]" : "max-h-0 opacity-0"
                         )}>
                             {/* Focus Points */}
                             <div className="space-y-2">
-                                <h3 className="text-[10px] font-bold text-[#00FF94] flex items-center gap-2">
+                                <h3 className="ngx-eyebrow !text-[10px] flex items-center gap-2" style={{ color: "var(--ngx-success)" }}>
                                     <Target size={12} /> OBJETIVOS TÁCTICOS
                                 </h3>
                                 <ul className="space-y-1">
                                     {entry.expectations?.map((exp, i) => (
-                                        <li key={i} className="text-xs text-neutral-300 pl-4 border-l border-[#00FF94]/30">
+                                        <li key={i} className="text-xs text-white/65 pl-4 border-l" style={{ borderColor: "rgba(0, 245, 170, 0.30)" }}>
                                             {exp}
                                         </li>
                                     ))}
@@ -220,12 +230,12 @@ export function CinematicViewer({
 
                             {/* Risks */}
                             <div className="space-y-2">
-                                <h3 className="text-[10px] font-bold text-[#FF3B30] flex items-center gap-2">
+                                <h3 className="ngx-eyebrow !text-[10px] flex items-center gap-2" style={{ color: "var(--ngx-error)" }}>
                                     <AlertTriangle size={12} /> RIESGOS POTENCIALES
                                 </h3>
                                 <ul className="space-y-1">
                                     {entry.risks?.map((risk, i) => (
-                                        <li key={i} className="text-xs text-neutral-300 pl-4 border-l border-[#FF3B30]/30">
+                                        <li key={i} className="text-xs text-white/65 pl-4 border-l" style={{ borderColor: "rgba(255, 107, 107, 0.30)" }}>
                                             {risk}
                                         </li>
                                     ))}
@@ -235,15 +245,18 @@ export function CinematicViewer({
                     </div>
 
                     {/* RIGHT CARD: MENTAL SHIFT */}
-                    <div className={cn(
-                        "bg-black/60 backdrop-blur-xl border-l-4 border-[#6D00FF] rounded-2xl p-6 transition-all duration-500 flex flex-col justify-center relative overflow-hidden",
-                        !showMental ? "hidden lg:flex opacity-50 scale-95" : "flex opacity-100 scale-100"
-                    )}>
+                    <div
+                        className={cn(
+                            "bg-black/60 backdrop-blur-xl border-l-4 rounded-2xl p-6 transition-all duration-500 flex flex-col justify-center relative overflow-hidden",
+                            !showMental ? "hidden lg:flex opacity-50 scale-95" : "flex opacity-100 scale-100"
+                        )}
+                        style={{ borderLeftColor: "var(--ngx-purple)" }}
+                    >
                         <div className="absolute top-0 right-0 p-4 opacity-20">
                             <Zap size={100} />
                         </div>
 
-                        <h3 className="text-xs font-bold text-[#6D00FF] tracking-widest mb-4 uppercase">Protocolo Mental</h3>
+                        <h3 className="ngx-eyebrow !text-[11px] mb-4" style={{ color: "var(--ngx-purple-light)" }}>Protocolo Mental</h3>
 
                         <blockquote className="text-xl font-medium text-white italic mb-6 relative z-10">
                             &ldquo;{entry.mental || "La disciplina es el puente entre metas y logros."}&rdquo;
@@ -251,12 +264,18 @@ export function CinematicViewer({
 
                         <div className="space-y-3 relative z-10">
                             <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-[#6D00FF]/20 flex items-center justify-center text-[#6D00FF] font-bold text-xs">1</div>
-                                <p className="text-xs text-neutral-300">Visualiza el resultado final cada mañana.</p>
+                                <div
+                                    className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs"
+                                    style={{ background: "rgba(109,0,255,0.20)", color: "var(--ngx-purple-light)" }}
+                                >1</div>
+                                <p className="text-xs text-white/65">Visualiza el resultado final cada mañana.</p>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-[#6D00FF]/20 flex items-center justify-center text-[#6D00FF] font-bold text-xs">2</div>
-                                <p className="text-xs text-neutral-300">Acepta la incomodidad como señal de crecimiento.</p>
+                                <div
+                                    className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs"
+                                    style={{ background: "rgba(109,0,255,0.20)", color: "var(--ngx-purple-light)" }}
+                                >2</div>
+                                <p className="text-xs text-white/65">Acepta la incomodidad como señal de crecimiento.</p>
                             </div>
                         </div>
                     </div>
@@ -279,15 +298,27 @@ export function CinematicViewer({
                                 key={step.key}
                                 onClick={() => handleStepChange(step.key)}
                                 className="group relative flex flex-col items-center gap-3"
+                                aria-label={`Ir a ${step.label}`}
                             >
-                                <div className={cn(
-                                    "w-3 h-3 rounded-full border-2 transition-all duration-300 z-10",
-                                    isActive ? "bg-[#6D00FF] border-[#6D00FF] scale-125 shadow-[0_0_15px_#6D00FF]" :
-                                        isPast ? "bg-white border-white" : "bg-black border-white/30"
-                                )} />
+                                <div
+                                    className={cn(
+                                        "w-3 h-3 rounded-full border-2 transition-all duration-300 z-10",
+                                        isActive ? "scale-125" :
+                                            isPast ? "bg-white border-white" : "bg-black border-white/30"
+                                    )}
+                                    style={
+                                        isActive
+                                            ? {
+                                                backgroundColor: "var(--ngx-purple)",
+                                                borderColor: "var(--ngx-purple)",
+                                                boxShadow: "0 0 15px var(--ngx-purple)",
+                                            }
+                                            : undefined
+                                    }
+                                />
                                 <span className={cn(
                                     "text-[10px] font-bold tracking-widest transition-colors",
-                                    isActive ? "text-white" : "text-neutral-600 group-hover:text-neutral-400"
+                                    isActive ? "text-white" : "text-white/35 group-hover:text-white/65"
                                 )}>
                                     {step.label}
                                 </span>

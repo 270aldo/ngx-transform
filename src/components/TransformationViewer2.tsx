@@ -285,8 +285,10 @@ export function TransformationViewer2({
         <div className="flex items-center justify-between">
           {/* Left: Menu / Back */}
           <button
+            type="button"
+            aria-label={showNav ? "Cerrar navegación" : "Abrir navegación"}
             onClick={() => setShowNav(!showNav)}
-            className="p-2 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all"
+            className="ngx-glass-clear p-2 rounded-full transition-all hover:bg-white/[0.10]"
           >
             {showNav ? (
               <X className="w-5 h-5 text-white" />
@@ -297,10 +299,16 @@ export function TransformationViewer2({
 
           {/* Center: Current milestone */}
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-neutral-400">
+            <span className="font-mono text-xs font-bold tabular-nums text-white/55">
               {currentIndex + 1}/{STEPS.length}
             </span>
-            <span className="px-3 py-1 rounded-full bg-[#6D00FF] text-white text-sm font-bold">
+            <span
+              className="px-3 py-1 rounded-full text-white text-sm font-bold tracking-[0.04em] uppercase"
+              style={{
+                backgroundColor: "var(--ngx-purple)",
+                boxShadow: "var(--ngx-glow-primary-soft)",
+              }}
+            >
               {STEP_LABELS[currentStep]}
             </span>
           </div>
@@ -312,7 +320,7 @@ export function TransformationViewer2({
                 <SocialShareButton shareId={shareId} imageUrl={currentImage} />
               </>
             ) : (
-              <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-white/10 backdrop-blur-md text-sm text-neutral-300">
+              <div className="ngx-glass-clear flex items-center gap-2 px-3 py-2 rounded-full text-sm text-white/65">
                 <Loader2 className="w-4 h-4 animate-spin" />
               </div>
             )}
@@ -331,7 +339,9 @@ export function TransformationViewer2({
             className="fixed inset-0 z-40 bg-black/95 backdrop-blur-lg flex items-center justify-center"
           >
             <div className="space-y-4 text-center">
-              <p className="text-neutral-500 text-sm mb-6">Ir a:</p>
+              <span className="ngx-eyebrow !text-[10px] mb-6 block" style={{ color: "var(--ngx-fg-3)" }}>
+                Ir a
+              </span>
               {STEPS.map((step, index) => (
                 <motion.button
                   key={step}
@@ -340,11 +350,19 @@ export function TransformationViewer2({
                   transition={{ delay: index * 0.1 }}
                   onClick={() => handleStepChange(step)}
                   className={cn(
-                    "block w-full px-8 py-4 rounded-2xl text-xl font-bold transition-all",
+                    "block w-full px-8 py-4 rounded-2xl text-xl font-bold uppercase tracking-[0.02em] transition-all duration-150 active:scale-[0.97]",
                     step === currentStep
-                      ? "bg-[#6D00FF] text-white"
-                      : "bg-white/5 text-neutral-300 hover:bg-white/10"
+                      ? "text-white"
+                      : "bg-white/[0.04] text-white/65 hover:bg-white/[0.08] hover:text-white"
                   )}
+                  style={
+                    step === currentStep
+                      ? {
+                          backgroundColor: "var(--ngx-purple)",
+                          boxShadow: "var(--ngx-glow-primary-soft)",
+                        }
+                      : undefined
+                  }
                 >
                   {STEP_LABELS[step]}
                 </motion.button>
@@ -360,7 +378,7 @@ export function TransformationViewer2({
                     setShowNav(false);
                     setShowCinematic(true);
                   }}
-                  className="mt-8 px-6 py-3 rounded-full text-neutral-400 hover:text-white transition-colors text-sm"
+                  className="mt-8 px-6 py-3 rounded-full text-white/55 hover:text-white transition-colors text-sm"
                 >
                   Reproducir experiencia cinematográfica
                 </motion.button>
@@ -399,7 +417,7 @@ export function TransformationViewer2({
         </AnimatePresence>
 
         {/* v2.1 Viral Section */}
-        <div className="px-6 py-8 bg-gradient-to-t from-neutral-950 to-black space-y-8">
+        <div className="px-6 py-8 space-y-8" style={{ background: "linear-gradient(to top, var(--ngx-bg-mid), var(--ngx-bg-end))" }}>
           {/* Social Counter */}
           {FF_SOCIAL_COUNTER && (
             <div className="text-center">
@@ -436,9 +454,9 @@ export function TransformationViewer2({
           onClick={handlePrevStep}
           disabled={!hasPrev}
           className={cn(
-            "p-4 rounded-full transition-all pointer-events-auto",
+            "p-4 rounded-full transition-all duration-150 pointer-events-auto active:scale-[0.97]",
             hasPrev
-              ? "bg-white/10 backdrop-blur-md hover:bg-white/20 text-white"
+              ? "ngx-glass-clear hover:bg-white/[0.10] text-white"
               : "opacity-0"
           )}
         >
