@@ -32,13 +32,13 @@ export const mayoresCopy: VariantCopy = {
     },
     secondaryCta: "Cómo funciona",
     supportingPoints: [
-      "Gratis · Privado · 3 min.",
-      "Sin presión. Sin promesas falsas.",
-      "Usted decide el siguiente paso.",
+      "Su punto de partida visible.",
+      "Lo que le frena, explicado.",
+      "Una ruta clara para empezar.",
     ],
     socialProof: {
-      count: "Gratis · Privado · 3 min",
-      label: "Visualización aspiracional + ruta inicial HYBRID",
+      count: "Privado por diseño",
+      label: "Visualización aspiracional · lectura inicial · ruta de acción",
     },
     transformationDemo: {
       beforeImage: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&h=1000&fit=crop&crop=faces",
@@ -153,6 +153,6 @@ export const mayoresCopy: VariantCopy = {
       "Una forma sencilla de visualizar dirección, entender contexto y decidir si necesita acompañamiento HYBRID.",
     videoUrl: "",
     posterUrl: "/images/video-poster.jpg",
-    duration: "45s",
+    duration: "Demo",
   },
 };

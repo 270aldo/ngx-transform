@@ -9,6 +9,7 @@ import { LandingHero } from "./LandingHero";
 import { LandingProblem } from "./LandingProblem";
 import { LandingStats } from "./LandingStats";
 import { LandingHowItWorks } from "./LandingHowItWorks";
+import { LandingExplainerVideo } from "./LandingExplainerVideo";
 import { LandingValueStack } from "./LandingValueStack";
 import { LandingReportPreview } from "./LandingReportPreview";
 import { LandingBridge } from "./LandingBridge";
@@ -41,10 +42,11 @@ export function LandingPage({ variant = "general" }: LandingPageProps) {
           <LandingTopNav />
 
           {/* Main Content */}
-          <main className="relative z-10 pt-32 pb-20">
+          <main className="relative z-10 pt-36 pb-20 md:pt-40">
             <LandingHero />
             <LandingProblem />
             <LandingHowItWorks />
+            <LandingExplainerVideo />
             <LandingValueStack />
             <LandingReportPreview />
             <LandingStats />

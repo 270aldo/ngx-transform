@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { Brain, ShieldCheck, Sparkles, Zap } from "lucide-react";
+import { Brain, ShieldCheck, Sparkles } from "lucide-react";
 import { useLandingConfig } from "./LandingProvider";
 
 interface HeroTransformationProps {
@@ -70,20 +70,23 @@ export function HeroTransformation({ className }: HeroTransformationProps) {
 
   return (
     <div className={`animate-on-scroll-scale delay-400 relative w-full ${className ?? ""}`}>
-      <div className="landing-surface rounded-[28px] p-3 md:p-4">
-        <div className="overflow-hidden rounded-[24px] border border-white/8 bg-[#07070A]">
-          {/* Top chrome */}
-          <div className="flex items-center justify-between border-b border-white/6 px-5 py-4">
+      <div className="ngx-card !p-3 md:!p-4">
+        <div className="overflow-hidden rounded-[24px] border border-white/[0.08] bg-[#07070A]">
+          {/* Top chrome — slim */}
+          <div className="flex items-center justify-between border-b border-white/[0.06] px-5 py-3">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#6D00FF]/15 border border-[#6D00FF]/25">
-                <Brain className="h-4 w-4 text-[#B98CFF]" />
+              <div
+                className="flex h-9 w-9 items-center justify-center rounded-2xl"
+                style={{
+                  background: "rgba(109, 0, 255, 0.15)",
+                  border: "1px solid rgba(109, 0, 255, 0.25)",
+                }}
+              >
+                <Brain className="h-4 w-4" style={{ color: "var(--ngx-purple-light)" }} />
               </div>
-              <div className="leading-tight">
-                <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">briefing privado</p>
-                <p className="text-sm font-semibold text-white">Visualización GENESIS</p>
-              </div>
+              <p className="text-sm font-bold text-white tracking-[-0.005em]">Visualización GENESIS</p>
             </div>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] text-slate-400">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] text-white/55">
               <ShieldCheck className="h-3 w-3" />
               No compartida
             </span>
@@ -146,7 +149,14 @@ export function HeroTransformation({ className }: HeroTransformationProps) {
                   <span className="h-1.5 w-1.5 rounded-full bg-white/60" />
                   {demo.beforeLabel ?? "Hoy"}
                 </span>
-                <span className="pointer-events-none absolute top-4 right-4 inline-flex items-center gap-1.5 rounded-full border border-[#6D00FF]/30 bg-[#6D00FF]/15 backdrop-blur-sm px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-[#C5A4FF]">
+                <span
+                  className="pointer-events-none absolute top-4 right-4 inline-flex items-center gap-1.5 rounded-full backdrop-blur-sm px-3 py-1 text-[10px] uppercase tracking-[0.22em]"
+                  style={{
+                    border: "1px solid rgba(109, 0, 255, 0.30)",
+                    background: "rgba(109, 0, 255, 0.15)",
+                    color: "var(--ngx-purple-light)",
+                  }}
+                >
                   <Sparkles className="h-3 w-3" />
                   {demo.afterLabel ?? "Semana 12"}
                 </span>
@@ -183,7 +193,7 @@ export function HeroTransformation({ className }: HeroTransformationProps) {
                 </div>
 
                 {/* Hint pill (bottom) */}
-                <span className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/60 backdrop-blur-sm px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-white/70">
+                <span className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/60 backdrop-blur-sm px-3 py-1 text-[9px] uppercase tracking-[0.22em] text-white/65">
                   Arrastra para ver tu progresión
                 </span>
               </>
@@ -194,30 +204,11 @@ export function HeroTransformation({ className }: HeroTransformationProps) {
             )}
           </div>
 
-          {/* Bottom chrome — meta tags */}
-          <div className="flex flex-wrap items-center gap-2 border-t border-white/6 bg-[#050505]/92 px-4 py-3 md:px-6">
-            {[
-              { icon: Brain, label: "Visualización GENESIS" },
-              { icon: ShieldCheck, label: "Privado" },
-              { icon: Zap, label: "4 etapas" },
-            ].map((item) => {
-              const Icon = item.icon;
-              return (
-                <span
-                  key={item.label}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] text-slate-400"
-                >
-                  <Icon className="h-3 w-3" />
-                  {item.label}
-                </span>
-              );
-            })}
-          </div>
         </div>
       </div>
 
       {/* Ambient glow */}
-      <div className="absolute -inset-6 bg-[#6D00FF]/10 blur-[90px] rounded-full -z-10" />
+      <div className="absolute -inset-6 blur-[90px] rounded-full -z-10" style={{ backgroundColor: "rgba(109, 0, 255, 0.10)" }} />
     </div>
   );
 }
