@@ -13,6 +13,7 @@ import ScrollToSection from "./scroll-to-section";
 import { Metadata } from "next";
 import Link from "next/link";
 import { getSignedUrl } from "@/lib/storage";
+import { DEMO_SESSION, DEMO_URLS } from "./demoStub";
 
 // Feature flag for Results 2.0 experience
 const FF_RESULTS_2 = process.env.NEXT_PUBLIC_FF_RESULTS_2 === "true";
@@ -105,24 +106,46 @@ async function getUrlsLocally(data: SessionDoc, allowOriginal: boolean) {
   return result;
 }
 
-export default async function Page({ params }: { params: Promise<{ shareId: string }> }) {
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ shareId: string }>;
+  searchParams: Promise<{ demo?: string }>;
+}) {
   const { shareId } = await params;
-  const db = getDb();
-  const snap = await db.collection("sessions").doc(shareId).get();
+  const { demo } = await searchParams;
 
-  if (!snap.exists) {
-    return <ErrorFallback title={["Esta sesión", "ya no existe"]} description="Las visualizaciones expiran, se eliminan a petición del propietario, o nunca se generaron. Si tenías el enlace guardado, vuelve a generar tu propia transformación." />;
+  // Dev-only bypass: ?demo=1 returns a stub "ready" session with mocked
+  // AI insights + image URLs so we can iterate visually on the Results
+  // 2.0 funnel without a real Firestore session. Mirrors the pattern
+  // used in /wizard?stage=N and /loading/[shareId]?demo=1.
+  const isDemo = process.env.NODE_ENV === "development" && demo === "1";
+
+  let data: SessionDoc | undefined;
+  let isOwner = false;
+
+  if (isDemo) {
+    data = DEMO_SESSION as SessionDoc;
+    isOwner = true; // owner-equivalent in demo mode
+  } else {
+    const db = getDb();
+    const snap = await db.collection("sessions").doc(shareId).get();
+
+    if (!snap.exists) {
+      return <ErrorFallback title={["Esta sesión", "ya no existe"]} description="Las visualizaciones expiran, se eliminan a petición del propietario, o nunca se generaron. Si tenías el enlace guardado, vuelve a generar tu propia transformación." />;
+    }
+
+    data = snap.data() as SessionDoc | undefined;
+    if (!data) {
+      return <ErrorFallback title={["Datos", "incompletos"]} description="Esta sesión existe pero quedó corrupta o incompleta. Puedes generar una nueva visualización privada en menos de 3 minutos." />;
+    }
+
+    // Check if the authenticated user is the owner — owners always see the full experience.
+    // Reads the __session HTTP cookie set by /api/auth/session (synced by AuthProvider).
+    const authUser = await getAuthUserFromCookie();
+    isOwner = !!authUser?.uid && authUser.uid === data.ownerUid;
   }
-
-  const data = snap.data() as SessionDoc | undefined;
-  if (!data) {
-    return <ErrorFallback title={["Datos", "incompletos"]} description="Esta sesión existe pero quedó corrupta o incompleta. Puedes generar una nueva visualización privada en menos de 3 minutos." />;
-  }
-
-  // Check if the authenticated user is the owner — owners always see the full experience.
-  // Reads the __session HTTP cookie set by /api/auth/session (synced by AuthProvider).
-  const authUser = await getAuthUserFromCookie();
-  const isOwner = !!authUser?.uid && authUser.uid === data.ownerUid;
 
   const shareScope = {
     shareOriginal: data.shareScope?.shareOriginal ?? !!data.shareOriginal,
@@ -136,7 +159,7 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
   const allowProfile = isOwner || shareScope.shareProfile;
 
   const ai = allowInsights ? data.ai : undefined;
-  const urls = await getUrlsLocally(data, allowOriginal);
+  const urls = isDemo ? DEMO_URLS : await getUrlsLocally(data, allowOriginal);
 
   if (!allowInsights) {
     const heroImage = urls.images?.m12 || urls.images?.m8 || urls.images?.m4 || urls.originalUrl;
