@@ -193,8 +193,16 @@ async function readErrorMessage(response: Response, fallback: string) {
 export default function WizardPage() {
   const router = useRouter();
   const DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "1";
+  // Dev-only stage jump for QA: ?stage=2|3|4. Stripped in production builds.
+  const initialStage = (() => {
+    if (process.env.NODE_ENV !== "development") return 1;
+    if (typeof window === "undefined") return 1;
+    const param = new URLSearchParams(window.location.search).get("stage");
+    const n = Number(param);
+    return Number.isInteger(n) && n >= 1 && n <= 4 ? n : 1;
+  })();
   const [loading, setLoading] = useState(false);
-  const [currentStage, setCurrentStage] = useState(1);
+  const [currentStage, setCurrentStage] = useState(initialStage);
   const [formError, setFormError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [accessReady, setAccessReady] = useState(DEMO);
