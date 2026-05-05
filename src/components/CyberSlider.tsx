@@ -4,88 +4,131 @@ import { cn } from "@/lib/utils";
 import React from "react";
 
 interface CyberSliderProps extends React.InputHTMLAttributes<HTMLInputElement> {
-    label: string;
-    valueDisplay?: string | number;
-    suffix?: string;
-    trackColor?: "violet" | "emerald" | "amber" | "blue" | "red";
+  label: string;
+  valueDisplay?: string | number;
+  suffix?: string;
+  trackColor?: "violet" | "emerald" | "amber" | "blue" | "red";
 }
 
+/**
+ * Slider with NEOGEN-X DS styling.
+ * - Wrap uses ngx-glass surface tones (no per-component border/blur).
+ * - Label is .ngx-eyebrow (mono uppercase purple-tinted).
+ * - Value is JetBrains Mono tabular-nums (bold, not italic).
+ * - Track fill uses CSS vars so accent colors stay token-bound.
+ */
 export function CyberSlider({
-    label,
-    valueDisplay,
-    suffix = "",
-    className,
-    trackColor = "violet",
-    ...props
+  label,
+  valueDisplay,
+  suffix = "",
+  className,
+  trackColor = "violet",
+  ...props
 }: CyberSliderProps) {
-    const min = Number(props.min ?? 0);
-    const max = Number(props.max ?? 100);
-    const currentValue = Number(props.value ?? props.defaultValue ?? min);
-    const progress = max > min ? Math.min(100, Math.max(0, ((currentValue - min) / (max - min)) * 100)) : 0;
+  const min = Number(props.min ?? 0);
+  const max = Number(props.max ?? 100);
+  const currentValue = Number(props.value ?? props.defaultValue ?? min);
+  const progress =
+    max > min ? Math.min(100, Math.max(0, ((currentValue - min) / (max - min)) * 100)) : 0;
 
-    const colors = {
-        violet: "accent-[#6D00FF]",
-        emerald: "accent-emerald-500",
-        amber: "accent-amber-500",
-        blue: "accent-[#7D1AFF]",
-        red: "accent-red-500",
-    };
+  // Map color → fill gradient + accent color (CSS-native accent-color for thumb)
+  const trackFill: Record<NonNullable<CyberSliderProps["trackColor"]>, string> = {
+    violet: "linear-gradient(90deg, var(--ngx-purple), var(--ngx-purple-light))",
+    emerald: "linear-gradient(90deg, var(--ngx-success), #5EE2A8)",
+    amber: "linear-gradient(90deg, var(--ngx-warning), #FFB347)",
+    blue: "linear-gradient(90deg, var(--ngx-blue), #5BBFFF)",
+    red: "linear-gradient(90deg, var(--ngx-error), #FF8B95)",
+  };
+  const trackGlow: Record<NonNullable<CyberSliderProps["trackColor"]>, string> = {
+    violet: "0 0 16px rgba(109, 0, 255, 0.40)",
+    emerald: "0 0 16px rgba(0, 245, 170, 0.35)",
+    amber: "0 0 16px rgba(255, 217, 61, 0.30)",
+    blue: "0 0 16px rgba(33, 150, 243, 0.30)",
+    red: "0 0 16px rgba(255, 107, 107, 0.30)",
+  };
+  const valueColor: Record<NonNullable<CyberSliderProps["trackColor"]>, string> = {
+    violet: "var(--ngx-purple-light)",
+    emerald: "var(--ngx-success)",
+    amber: "var(--ngx-warning)",
+    blue: "var(--ngx-blue)",
+    red: "var(--ngx-error)",
+  };
+  const accentClass: Record<NonNullable<CyberSliderProps["trackColor"]>, string> = {
+    violet: "[--accent:#9D4EDD]",
+    emerald: "[--accent:#00F5AA]",
+    amber: "[--accent:#FFD93D]",
+    blue: "[--accent:#2196F3]",
+    red: "[--accent:#FF6B6B]",
+  };
 
-    const textColors = {
-        violet: "text-[#6D00FF]",
-        emerald: "text-emerald-500",
-        amber: "text-amber-500",
-        blue: "text-[#7D1AFF]",
-        red: "text-red-500",
-    };
-
-    const fillColors = {
-        violet: "from-[#6D00FF] to-[#9A5BFF]",
-        emerald: "from-emerald-500 to-lime-400",
-        amber: "from-amber-500 to-orange-400",
-        blue: "from-[#7D1AFF] to-cyan-400",
-        red: "from-red-500 to-rose-400",
-    };
-
-    return (
-        <div className={cn("group rounded-[24px] border border-white/8 bg-black/20 px-4 py-4 backdrop-blur-sm transition-colors hover:border-white/12", className)}>
-            <div className="flex items-end justify-between gap-4">
-                <div>
-                    <label className="text-[10px] font-mono uppercase tracking-[0.22em] text-white/45 group-hover:text-white/70 transition-colors">
-                        {label}
-                    </label>
-                    <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-white/20">
-                        Ajuste activo
-                    </p>
-                </div>
-                <div className="text-right">
-                    <div className="flex items-baseline justify-end gap-1">
-                        <span className={cn("text-[1.85rem] font-black italic tracking-[-0.06em] leading-none", textColors[trackColor])}>
-                            {valueDisplay ?? props.value}
-                        </span>
-                        <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-white/28">{suffix}</span>
-                    </div>
-                </div>
-            </div>
-
-            <div className="mt-4 relative h-3 w-full">
-                <div className="absolute inset-0 rounded-full border border-white/6 bg-white/6" />
-                <div
-                    className={cn("absolute inset-y-0 left-0 rounded-full bg-gradient-to-r shadow-[0_0_22px_rgba(109,0,255,0.18)]", fillColors[trackColor])}
-                    style={{ width: `${progress}%` }}
-                />
-
-                <input
-                    type="range"
-                    className={cn(
-                        "absolute inset-0 z-10 w-full h-full bg-transparent appearance-none cursor-pointer focus:outline-none",
-                        "[&::-webkit-slider-runnable-track]:bg-transparent [&::-moz-range-track]:bg-transparent [&::-moz-range-track]:border-transparent",
-                        "[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white/40 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-[0_0_10px_rgba(255,255,255,0.5)] [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:hover:scale-125",
-                        colors[trackColor]
-                    )}
-                    {...props}
-                />
-            </div>
+  return (
+    <div
+      className={cn(
+        "rounded-2xl border border-white/[0.06] bg-white/[0.02] px-4 py-4 transition-colors hover:border-white/[0.10]",
+        className
+      )}
+    >
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <span
+            className="ngx-eyebrow !text-[10px]"
+            style={{ color: "var(--ngx-fg-3)" }}
+          >
+            {label}
+          </span>
         </div>
-    );
+        <div className="flex items-baseline gap-1.5">
+          <span
+            className="font-mono font-bold text-2xl md:text-[1.65rem] tabular-nums leading-none tracking-[-0.02em]"
+            style={{ color: valueColor[trackColor] }}
+          >
+            {valueDisplay ?? props.value}
+          </span>
+          {suffix ? (
+            <span
+              className="text-[10px] font-mono uppercase tracking-[0.18em]"
+              style={{ color: "var(--ngx-fg-4)" }}
+            >
+              {suffix}
+            </span>
+          ) : null}
+        </div>
+      </div>
+
+      <div className="mt-3 relative h-2.5 w-full">
+        {/* Track base */}
+        <div className="absolute inset-0 rounded-full bg-white/[0.06] border border-white/[0.04]" />
+        {/* Track fill */}
+        <div
+          className="absolute inset-y-0 left-0 rounded-full pointer-events-none"
+          style={{
+            width: `${progress}%`,
+            background: trackFill[trackColor],
+            boxShadow: trackGlow[trackColor],
+          }}
+        />
+
+        <input
+          type="range"
+          className={cn(
+            "absolute inset-0 z-10 w-full h-full bg-transparent appearance-none cursor-pointer focus:outline-none",
+            "[&::-webkit-slider-runnable-track]:bg-transparent",
+            "[&::-moz-range-track]:bg-transparent [&::-moz-range-track]:border-transparent",
+            "[&::-webkit-slider-thumb]:appearance-none",
+            "[&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4",
+            "[&::-webkit-slider-thumb]:rounded-full",
+            "[&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white/40",
+            "[&::-webkit-slider-thumb]:bg-white",
+            "[&::-webkit-slider-thumb]:shadow-[0_0_10px_rgba(255,255,255,0.5)]",
+            "[&::-webkit-slider-thumb]:transition-transform",
+            "[&::-webkit-slider-thumb]:hover:scale-125",
+            // Native accent color on the thumb (Firefox + WebKit fallback)
+            accentClass[trackColor],
+            "accent-[var(--accent)]"
+          )}
+          {...props}
+        />
+      </div>
+    </div>
+  );
 }

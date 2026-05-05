@@ -953,7 +953,7 @@ export default function WizardPage() {
               <div className="w-full max-w-4xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 flex flex-col items-center justify-center h-full space-y-8">
                 <div className="text-center">
                   <span className="ngx-eyebrow-pill mb-4 mx-auto">Paso 4 · Cierre privado</span>
-                  <h2 className="ngx-h1 mx-auto !text-center" style={{ maxWidth: "20ch" }}>
+                  <h2 className="ngx-h1 mx-auto !text-center" style={{ maxWidth: "26ch" }}>
                     Cerramos la calibración y activamos tu acceso.
                   </h2>
                   <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/55 md:text-base">
