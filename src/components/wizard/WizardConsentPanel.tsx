@@ -59,7 +59,7 @@ export function WizardConsentPanel({
         Autorizo que mi foto sea procesada con IA para generar mi visualización aspiracional y mi lectura inicial. Entiendo que no es una predicción garantizada ni una evaluación médica.
       </ConsentRow>
 
-      <div className="border-t border-white/[0.06] pt-3">
+      <div className="border-t border-[color:var(--ngx-border-subtle)] pt-3">
         <ConsentRow
           checked={consentEmail}
           onChange={onChangeEmail}

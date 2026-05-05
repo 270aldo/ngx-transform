@@ -911,6 +911,18 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: var(--ngx-glow-primary-soft);
 }
 
+/* Generic icon-box — sizeless purple chip; component sets h/w via Tailwind */
+.ngx-icon-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ngx-r-card);
+  background: var(--ngx-purple-dim);
+  border: 1px solid var(--ngx-border-card);
+  color: var(--ngx-purple-light);
+  flex-shrink: 0;
+}
+
 /* Card icon-box — 48x48 rounded square with translucent purple bg */
 .ngx-card-icon {
   display: inline-flex;
