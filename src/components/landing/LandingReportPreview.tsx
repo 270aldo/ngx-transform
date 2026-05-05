@@ -85,9 +85,11 @@ export function LandingReportPreview() {
         <div className="grid gap-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-10 lg:items-stretch">
           {/* Mock dashboard — first on mobile (visual anchor), right on desktop */}
           <div className="order-1 lg:order-2 animate-on-scroll-right delay-100 flex flex-col gap-4">
+            {/* Score + Dimensions — stack on most viewports, side-by-side at 2xl+ to balance with narrative col */}
+            <div className="grid gap-4 2xl:grid-cols-2 2xl:items-stretch">
             {/* Score card — hero of the mock */}
-            <div className="ngx-metal-card flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-6 p-5 md:p-6">
-              <div className="relative z-10 mx-auto sm:mx-0 flex-shrink-0 w-[110px] h-[110px] sm:w-[140px] sm:h-[140px]">
+            <div className="ngx-metal-card flex flex-col sm:flex-row sm:items-center 2xl:flex-col 2xl:items-center gap-5 sm:gap-6 p-5 md:p-6">
+              <div className="relative z-10 mx-auto sm:mx-0 2xl:mx-auto flex-shrink-0 w-[110px] h-[110px] sm:w-[140px] sm:h-[140px]">
                 <svg
                   viewBox="0 0 120 120"
                   className="w-full h-full -rotate-90"
@@ -126,7 +128,7 @@ export function LandingReportPreview() {
                   </span>
                 </div>
               </div>
-              <div className="relative z-10 min-w-0 flex-1 text-center sm:text-left">
+              <div className="relative z-10 min-w-0 flex-1 text-center sm:text-left 2xl:text-center">
                 <span className="ngx-eyebrow">{copy.scoreLabel}</span>
                 <p className="mt-2 font-body text-sm md:text-[0.95rem] leading-relaxed text-ngx-fg-2">
                   {copy.scoreDescription}
@@ -160,9 +162,10 @@ export function LandingReportPreview() {
                 </div>
               </div>
             </div>
+            </div>
 
-            {/* Insights — 1-col mobile / 2-col desktop, more breathing room */}
-            <div className="grid gap-4 sm:grid-cols-2">
+            {/* Insights — 1-col mobile / 2-col tablet+desktop / 4-col at 2xl+ to keep right col compact */}
+            <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-4">
               {copy.insights.map((insight) => (
                 <div key={insight.label} className="ngx-metal-card p-5">
                   <div className="relative z-10">
@@ -177,7 +180,7 @@ export function LandingReportPreview() {
           </div>
 
           {/* Narrative + CTA — second on mobile, left on desktop */}
-          <div className="order-2 lg:order-1 animate-on-scroll-left flex flex-col gap-6 lg:justify-between lg:h-full">
+          <div className="order-2 lg:order-1 animate-on-scroll-left flex flex-col gap-6">
             <div>
               <h3 className="font-body font-bold text-2xl md:text-3xl text-ngx-fg-1 leading-tight tracking-[-0.02em]">
                 Una lectura inicial,
@@ -202,7 +205,7 @@ export function LandingReportPreview() {
               ))}
             </ul>
 
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 lg:mt-auto">
               <Link
                 href={copy.ctaHref}
                 onClick={() => trackCta("report_preview_cta", "scan_start", copy.ctaLabel)}

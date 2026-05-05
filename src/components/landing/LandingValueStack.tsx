@@ -35,7 +35,7 @@ export function LandingValueStack() {
               key={item.title}
               className={`group animate-on-scroll ${animationDelay} ngx-metal-card h-full p-5 md:p-6`}
             >
-              <div className="relative z-10 flex items-start gap-4">
+              <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-4">
                 <span className="ngx-card-icon">
                   <Icon className="w-5 h-5" />
                 </span>
