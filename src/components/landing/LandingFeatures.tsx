@@ -18,7 +18,7 @@ export function LandingFeatures() {
             return (
               <div
                 key={feature.title}
-                className="animate-on-scroll md:col-span-2 glass-panel rounded-3xl p-10 relative overflow-hidden border-glow-hover group"
+                className="animate-on-scroll md:col-span-2 glass-panel p-10 relative overflow-hidden border-glow-hover group"
               >
                 <div
                   className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
@@ -53,7 +53,7 @@ export function LandingFeatures() {
             return (
               <div
                 key={feature.title}
-                className={`animate-on-scroll delay-${(i % 3) * 100} glass-panel rounded-3xl p-10 relative overflow-hidden border-glow-hover flex flex-col justify-between`}
+                className={`animate-on-scroll delay-${(i % 3) * 100} glass-panel p-10 relative overflow-hidden border-glow-hover flex flex-col justify-between`}
               >
                 <div>
                   <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-8">
@@ -80,7 +80,7 @@ export function LandingFeatures() {
           return (
             <div
               key={feature.title}
-              className={`animate-on-scroll delay-${(i % 3) * 100} md:col-span-3 glass-panel rounded-3xl p-10 relative overflow-hidden border-glow-hover flex flex-col md:flex-row items-center gap-12`}
+              className={`animate-on-scroll delay-${(i % 3) * 100} md:col-span-3 glass-panel p-10 relative overflow-hidden border-glow-hover flex flex-col md:flex-row items-center gap-12`}
             >
               <div className="flex-1 relative z-10">
                 <h3 className="text-2xl text-white mb-4 font-display font-semibold">

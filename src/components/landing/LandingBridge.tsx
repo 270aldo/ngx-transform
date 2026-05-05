@@ -76,7 +76,7 @@ export function LandingBridge() {
               return (
                 <li key={card.title}>
                   <article className="ngx-metal-card !p-4 md:!p-5">
-                    <div className="relative z-10 flex items-start gap-4">
+                    <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
                       <span className="ngx-card-icon shrink-0">
                         <Icon className="w-5 h-5" />
                       </span>
