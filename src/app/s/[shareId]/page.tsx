@@ -110,65 +110,12 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
   const snap = await db.collection("sessions").doc(shareId).get();
 
   if (!snap.exists) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-transparent text-white px-6">
-        <div className="max-w-lg w-full text-center space-y-6">
-          <p className="text-xs tracking-[0.35em] uppercase text-[#6D00FF] font-mono">NGX Transform</p>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-            Esta sesión<br />ya no existe
-          </h1>
-          <p className="text-base text-slate-300 leading-relaxed">
-            Las visualizaciones expiran, se eliminan a petición del propietario, o nunca se generaron.
-            Si tenías el enlace guardado, vuelve a generar tu propia transformación.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
-            <a
-              href="/wizard"
-              className="px-6 py-3 rounded-full bg-[#6D00FF] text-white text-sm font-semibold hover:bg-[#5B21B6] transition-colors"
-            >
-              Crear mi transformación
-            </a>
-            <a
-              href="/"
-              className="px-6 py-3 rounded-full border border-white/15 text-sm font-semibold text-slate-200 hover:bg-white/5 transition-colors"
-            >
-              Volver al inicio
-            </a>
-          </div>
-        </div>
-      </div>
-    );
+    return <ErrorFallback title={["Esta sesión", "ya no existe"]} description="Las visualizaciones expiran, se eliminan a petición del propietario, o nunca se generaron. Si tenías el enlace guardado, vuelve a generar tu propia transformación." />;
   }
 
   const data = snap.data() as SessionDoc | undefined;
   if (!data) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-transparent text-white px-6">
-        <div className="max-w-lg w-full text-center space-y-6">
-          <p className="text-xs tracking-[0.35em] uppercase text-[#6D00FF] font-mono">NGX Transform</p>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-            Datos<br />incompletos
-          </h1>
-          <p className="text-base text-slate-300 leading-relaxed">
-            Esta sesión existe pero quedó corrupta o incompleta. Puedes generar una nueva visualización privada en menos de 3 minutos.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
-            <a
-              href="/wizard"
-              className="px-6 py-3 rounded-full bg-[#6D00FF] text-white text-sm font-semibold hover:bg-[#5B21B6] transition-colors"
-            >
-              Crear mi transformación
-            </a>
-            <a
-              href="/"
-              className="px-6 py-3 rounded-full border border-white/15 text-sm font-semibold text-slate-200 hover:bg-white/5 transition-colors"
-            >
-              Volver al inicio
-            </a>
-          </div>
-        </div>
-      </div>
-    );
+    return <ErrorFallback title={["Datos", "incompletos"]} description="Esta sesión existe pero quedó corrupta o incompleta. Puedes generar una nueva visualización privada en menos de 3 minutos." />;
   }
 
   // Check if the authenticated user is the owner — owners always see the full experience.
@@ -192,30 +139,30 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
 
   if (!allowInsights) {
     const heroImage = urls.images?.m12 || urls.images?.m8 || urls.images?.m4 || urls.originalUrl;
-    // Distinguir entre default privacidad (sin shareScope explícito) vs decisión activa del creador
     const explicitShareDecision = data.shareScope !== undefined;
     return (
       <div className="min-h-screen bg-transparent text-white">
         <div className="max-w-5xl mx-auto px-6 py-12 space-y-8">
           <div className="space-y-2">
-            <p className="text-xs tracking-[0.35em] uppercase text-[#6D00FF]">NGX Transform</p>
-            <h1 className="text-3xl font-semibold">Transformación privada</h1>
-            <p className="text-sm text-neutral-400">
+            <span className="ngx-eyebrow-pill">NGX Transform</span>
+            <h1 className="ngx-h1 !text-left" style={{ maxWidth: "20ch" }}>Transformación privada</h1>
+            <p className="text-sm leading-relaxed text-white/55 max-w-2xl">
               {explicitShareDecision
                 ? "El creador decidió compartir solo las imágenes. El análisis permanece privado."
                 : "Esta visualización es privada por defecto. Solo el creador puede ver el análisis completo."}
             </p>
           </div>
 
-          <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#0A0A0A]/80 backdrop-blur-xl">
+          <div className="rounded-3xl overflow-hidden border border-white/[0.08] bg-white/[0.02] backdrop-blur-xl">
             {heroImage ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={heroImage}
                 alt="Transformación NGX"
                 className="w-full h-[70vh] object-cover object-center"
               />
             ) : (
-              <div className="flex items-center justify-center h-[60vh] text-neutral-500">
+              <div className="flex items-center justify-center h-[60vh] text-white/40">
                 Imágenes en proceso...
               </div>
             )}
@@ -224,13 +171,17 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
           <div className="flex flex-col sm:flex-row gap-3">
             <a
               href="/wizard"
-              className="px-5 py-3 rounded-full bg-[#6D00FF] text-white text-sm font-semibold text-center"
+              className="rounded-full px-6 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white text-center transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97]"
+              style={{
+                backgroundColor: "var(--ngx-purple)",
+                boxShadow: "var(--ngx-glow-primary)",
+              }}
             >
               Crear mi transformación
             </a>
             <a
               href={`/dashboard/${shareId}`}
-              className="px-5 py-3 rounded-full border border-white/10 text-sm font-semibold text-center text-neutral-200"
+              className="ngx-glass-clear rounded-full px-6 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white text-center transition-all duration-150 active:scale-[0.97]"
             >
               Ver en privado
             </a>
@@ -334,5 +285,51 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
       )}
       <RefreshClient shareId={shareId} active={stillGenerating} />
     </>
+  );
+}
+
+/**
+ * Branded fallback for unrecoverable session states (not found / corrupted).
+ * Uses NEOGEN-X DS tokens.
+ */
+function ErrorFallback({
+  title,
+  description,
+}: {
+  title: [string, string];
+  description: string;
+}) {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-transparent text-white px-6">
+      <div className="max-w-lg w-full text-center space-y-6">
+        <span className="ngx-eyebrow-pill mx-auto">NGX Transform</span>
+        <h1 className="ngx-h1 mx-auto !text-center" style={{ maxWidth: "16ch" }}>
+          {title[0]}
+          <br />
+          {title[1]}
+        </h1>
+        <p className="text-base leading-relaxed text-white/60 max-w-md mx-auto">
+          {description}
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
+          <a
+            href="/wizard"
+            className="rounded-full px-6 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97]"
+            style={{
+              backgroundColor: "var(--ngx-purple)",
+              boxShadow: "var(--ngx-glow-primary)",
+            }}
+          >
+            Crear mi transformación
+          </a>
+          <a
+            href="/"
+            className="ngx-glass-clear rounded-full px-6 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white transition-all duration-150 active:scale-[0.97]"
+          >
+            Volver al inicio
+          </a>
+        </div>
+      </div>
+    </div>
   );
 }
