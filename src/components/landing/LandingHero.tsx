@@ -97,7 +97,7 @@ export function LandingHero() {
             return (
               <div
                 key={item.label}
-                className={`animate-on-scroll ${index > 0 ? `delay-${index}00` : ""} ngx-metal-card rounded-[22px] p-4 md:p-5`}
+                className={`animate-on-scroll ${index > 0 ? `delay-${index}00` : ""} ngx-metal-card p-4 md:p-5`}
               >
                 <div className="relative z-10">
                   <div className="mb-3 flex items-center gap-3">

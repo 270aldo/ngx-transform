@@ -14,7 +14,7 @@ export function LandingStats() {
           {stats.map((stat, i) => (
             <div
               key={stat.label}
-              className={`animate-on-scroll ${i > 0 ? `delay-${i}00` : ""} ngx-metal-card rounded-[22px] p-5 md:p-6 text-left md:text-center`}
+              className={`animate-on-scroll ${i > 0 ? `delay-${i}00` : ""} ngx-metal-card p-5 md:p-6 text-left md:text-center`}
             >
               <div className="relative z-10">
                 <AnimatedCounter
