@@ -11,6 +11,7 @@ import { NPSQuick } from "@/components/results/NPSQuick";
 import RefreshClient from "./refresh-client";
 import ScrollToSection from "./scroll-to-section";
 import { Metadata } from "next";
+import Link from "next/link";
 import { getSignedUrl } from "@/lib/storage";
 
 // Feature flag for Results 2.0 experience
@@ -169,7 +170,7 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <a
+            <Link
               href="/wizard"
               className="rounded-full px-6 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white text-center transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97]"
               style={{
@@ -178,13 +179,13 @@ export default async function Page({ params }: { params: Promise<{ shareId: stri
               }}
             >
               Crear mi transformación
-            </a>
-            <a
+            </Link>
+            <Link
               href={`/dashboard/${shareId}`}
               className="ngx-glass-clear rounded-full px-6 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white text-center transition-all duration-150 active:scale-[0.97]"
             >
               Ver en privado
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -312,7 +313,7 @@ function ErrorFallback({
           {description}
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
-          <a
+          <Link
             href="/wizard"
             className="rounded-full px-6 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97]"
             style={{
@@ -321,13 +322,13 @@ function ErrorFallback({
             }}
           >
             Crear mi transformación
-          </a>
-          <a
+          </Link>
+          <Link
             href="/"
             className="ngx-glass-clear rounded-full px-6 py-3 text-sm font-bold uppercase tracking-[0.14em] text-white transition-all duration-150 active:scale-[0.97]"
           >
             Volver al inicio
-          </a>
+          </Link>
         </div>
       </div>
     </div>
