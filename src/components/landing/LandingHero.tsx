@@ -18,14 +18,20 @@ export function LandingHero() {
   ];
 
   return (
-    <section className="max-w-6xl mx-auto px-4 mb-28 md:mb-40">
-      <div className="relative overflow-hidden rounded-[32px] md:rounded-[40px] ngx-glass ngx-glass-shine ngx-bg-gradient px-6 py-10 md:px-10 md:py-14 lg:px-12 lg:py-16">
-        <div
-          className="pointer-events-none absolute left-[-10%] top-[8%] h-[360px] w-[360px] rounded-full blur-[120px]"
-          style={{ backgroundColor: "rgba(109, 0, 255, 0.22)" }}
-        />
+    <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 md:pt-14 lg:pt-16 mb-28 md:mb-40">
+      {/* Atmospheric glows — no card boundary, hero breathes on the page */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-[-6%] top-[-4%] h-[460px] w-[460px] rounded-full blur-[140px]"
+        style={{ backgroundColor: "rgba(109, 0, 255, 0.22)" }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute right-[-4%] top-[28%] h-[380px] w-[380px] rounded-full blur-[130px]"
+        style={{ backgroundColor: "rgba(109, 0, 255, 0.10)" }}
+      />
 
-        <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(360px,420px)] lg:gap-12">
+      <div className="relative grid items-center gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(380px,500px)] lg:gap-14 xl:gap-16">
           <div className="text-center lg:text-left">
             <div className="ngx-glass-clear inline-flex items-center gap-3 px-4 py-2 rounded-full mb-7 cursor-default">
               <span className="relative flex h-2 w-2">
@@ -91,7 +97,7 @@ export function LandingHero() {
           <HeroTransformation className="w-full" />
         </div>
 
-        <div className="relative z-10 mt-6 md:mt-8 grid gap-3 md:grid-cols-3">
+        <div className="relative mt-12 md:mt-14 grid gap-3 md:grid-cols-3">
           {heroAssurances.map((item, index) => {
             const Icon = item.icon;
             return (
@@ -118,7 +124,6 @@ export function LandingHero() {
             );
           })}
         </div>
-      </div>
     </section>
   );
 }
