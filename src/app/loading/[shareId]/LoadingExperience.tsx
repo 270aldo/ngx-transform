@@ -6,19 +6,21 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Logo } from "@/components/ui/Logo";
+import { RiveOrb } from "@/components/RiveOrb";
 
 const LOADING_STEPS = [
   "Analizando tu foto...",
-  "Generando mes 4...",
-  "Generando mes 8...",
-  "Generando mes 12...",
-  "Preparando tus resultados...",
+  "Visualizando mes 4...",
+  "Visualizando mes 8...",
+  "Visualizando mes 12...",
+  "Preparando tu lectura inicial...",
 ];
 
 const TIPS = [
   "La salud muscular es uno de los predictores clave de longevidad.",
-  "Tu sistema GENESIS analiza 12 variables biométricas.",
-  "El 80% de los resultados depende del sistema, no de la motivación.",
+  "El 80% del resultado depende del sistema, no de la motivación.",
+  "GENESIS no diagnostica. Te muestra dirección y un siguiente paso.",
+  "La disciplina vence a la motivación cuando hay estructura.",
 ];
 
 const PROGRESS_BY_COUNT = [12, 45, 75, 100];
@@ -44,10 +46,10 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
   const stepStates = useMemo(() => {
     return [
       { label: "Analizando tu foto", done: hasAi || imageCount >= 1, active: !hasAi && imageCount === 0 },
-      { label: "Generando mes 4", done: has("m4"), active: hasAi && !has("m4") },
-      { label: "Generando mes 8", done: has("m8"), active: has("m4") && !has("m8") },
-      { label: "Generando mes 12", done: has("m12"), active: has("m8") && !has("m12") },
-      { label: "Preparando tus resultados", done: isReady, active: imageCount >= 3 && !isReady },
+      { label: "Visualizando mes 4", done: has("m4"), active: hasAi && !has("m4") },
+      { label: "Visualizando mes 8", done: has("m8"), active: has("m4") && !has("m8") },
+      { label: "Visualizando mes 12", done: has("m12"), active: has("m8") && !has("m12") },
+      { label: "Preparando tu lectura inicial", done: isReady, active: imageCount >= 3 && !isReady },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageKeys, hasAi, isReady]);
@@ -202,30 +204,13 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
         style={{ backgroundColor: "rgba(109,0,255,0.18)" }}
       />
 
-      {/* Scanner ring */}
-      <div className="relative w-64 h-64 mb-10">
-        <div
-          className="absolute inset-0 rounded-full animate-[spin_10s_linear_infinite]"
-          style={{ border: "4px solid rgba(109,0,255,0.30)" }}
-        />
-        <div
-          className="absolute inset-2 rounded-full animate-[spin_15s_linear_infinite_reverse]"
-          style={{ border: "2px dashed rgba(109,0,255,0.50)" }}
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-48 h-48 rounded-full animate-pulse blur-xl" style={{ background: "rgba(109,0,255,0.10)" }} />
-        </div>
-        <div className="absolute inset-0 w-full h-full rounded-full overflow-hidden">
-          <div
-            className="w-full h-2 absolute top-0 animate-[scan_3s_ease-in-out_infinite]"
-            style={{ backgroundColor: "var(--ngx-purple)", boxShadow: "0 0 20px var(--ngx-purple)" }}
-          />
-        </div>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="font-mono font-bold text-4xl tabular-nums tracking-[-0.02em] text-white">
+      {/* GENESIS orb — Rive ambient animation with progress overlay */}
+      <div className="mb-6 md:mb-10">
+        <RiveOrb>
+          <span className="font-mono font-bold text-3xl md:text-4xl tabular-nums tracking-[-0.02em] text-white">
             {Math.round(progress)}%
           </span>
-        </div>
+        </RiveOrb>
       </div>
 
       {/* Status text */}
@@ -380,14 +365,6 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
         Ver resultados
       </motion.button>
 
-      <style jsx>{`
-        @keyframes scan {
-          0% { top: 0%; opacity: 0; }
-          10% { opacity: 1; }
-          90% { opacity: 1; }
-          100% { top: 100%; opacity: 0; }
-        }
-      `}</style>
     </div>
   );
 }
