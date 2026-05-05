@@ -225,7 +225,7 @@ export function CinematicAutoplay({
                     className="absolute inset-y-0 left-0 rounded-full"
                     style={{
                       backgroundColor: isActive ? "var(--ngx-purple)" : "white",
-                      boxShadow: isActive ? "0 0 8px rgba(109,0,255,0.50)" : undefined,
+                      boxShadow: isActive ? "var(--ngx-glow-primary)" : undefined,
                     }}
                     initial={false}
                     animate={{

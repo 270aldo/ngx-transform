@@ -144,11 +144,11 @@ export function ComparisonCTA({
       {/* Trust badges */}
       <div className="flex items-center justify-center gap-4 mt-4">
         <span className="text-[10px] text-white/30 flex items-center gap-1">
-          <Check size={10} className="text-[#00FF88]" />
+          <Check size={10} className="text-[color:var(--ngx-success)]" />
           Acceso inicial de 7 días
         </span>
         <span className="text-[10px] text-white/30 flex items-center gap-1">
-          <Check size={10} className="text-[#00FF88]" />
+          <Check size={10} className="text-[color:var(--ngx-success)]" />
           Cancela cuando quieras
         </span>
       </div>
