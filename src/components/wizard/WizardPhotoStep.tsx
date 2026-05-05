@@ -64,7 +64,8 @@ export function WizardPhotoStep({
   return (
     <div className="w-full animate-in slide-in-from-right-8 fade-in duration-500">
       <section className="ngx-section-panel">
-        <div className="grid items-start gap-6 lg:gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+        {/* Main 2-col grid: [intro + contrato + helper] | [upload + consent + cta] */}
+        <div className="grid items-stretch gap-6 lg:gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
           <LeftIntro />
 
           <div className="flex flex-col gap-5">
@@ -91,8 +92,7 @@ export function WizardPhotoStep({
               </p>
             )}
 
-            {/* CTA + helper — vertical stack (mobile-first), CTA full width on mobile, auto on desktop */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3 mt-auto">
               <Button
                 type="button"
                 onClick={onContinue}
@@ -109,6 +109,22 @@ export function WizardPhotoStep({
             </div>
           </div>
         </div>
+
+        {/* Trust cards — full width row below the 2-col grid, breaks the asymmetry */}
+        <div className="mt-8 md:mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 items-stretch">
+          {TRUST_CARDS.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div key={item.title} className="ngx-card h-full !p-4 md:!p-5">
+                <span className="ngx-card-icon mb-3" style={{ width: "2.25rem", height: "2.25rem" }}>
+                  <Icon className="h-4 w-4" />
+                </span>
+                <p className="ngx-card-title !text-sm">{item.title}</p>
+                <p className="ngx-card-desc !text-xs mt-1.5">{item.text}</p>
+              </div>
+            );
+          })}
+        </div>
       </section>
     </div>
   );
@@ -119,7 +135,6 @@ function LeftIntro() {
     <div className="flex flex-col">
       <span className="ngx-eyebrow-pill mb-4">Paso 1 · foto base</span>
 
-      {/* Capped headline — no longer crashes the command bar on scroll */}
       <h1 className="ngx-h1 !text-left max-w-[15ch]">
         Sube una foto real.
         <br />
@@ -130,7 +145,6 @@ function LeftIntro() {
         Esta imagen no se usa para juzgarte. Se usa para entender tu punto de partida y generar una visualización aspiracional privada.
       </p>
 
-      {/* Contrato de experiencia — uses ngx-card */}
       <div className="ngx-card mt-6 !p-4 md:!p-5">
         <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
           Contrato de experiencia
@@ -140,23 +154,7 @@ function LeftIntro() {
         </p>
       </div>
 
-      {/* Trust cards — DS .ngx-card with uniform height via h-full inside an items-stretch grid */}
-      <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3 items-stretch">
-        {TRUST_CARDS.map((item) => {
-          const Icon = item.icon;
-          return (
-            <div key={item.title} className="ngx-card h-full !p-4">
-              <span className="ngx-card-icon mb-3" style={{ width: "2.25rem", height: "2.25rem" }}>
-                <Icon className="h-4 w-4" />
-              </span>
-              <p className="ngx-card-title !text-sm">{item.title}</p>
-              <p className="ngx-card-desc !text-xs mt-1.5">{item.text}</p>
-            </div>
-          );
-        })}
-      </div>
-
-      <p className="mt-5 text-xs leading-relaxed text-white/45 px-1">
+      <p className="mt-auto pt-5 text-xs leading-relaxed text-white/45 px-1">
         Si la foto no está lista, no te pediremos más datos. Primero resolvemos la base.
       </p>
     </div>
