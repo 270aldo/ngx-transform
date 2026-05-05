@@ -11,7 +11,7 @@ interface WizardConsentPanelProps {
 
 /**
  * Consent block shown below the upload preview when an image is detected.
- * Two required consents (terms + AI processing) and one optional (email comms).
+ * Uses NEOGEN-X glass styling for consistency with the rest of the wizard.
  */
 export function WizardConsentPanel({
   consentTerms,
@@ -22,7 +22,7 @@ export function WizardConsentPanel({
   onChangeEmail,
 }: WizardConsentPanelProps) {
   return (
-    <div className="space-y-3 rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4 text-left">
+    <div className="ngx-glass !p-4 md:!p-5 space-y-3">
       <ConsentRow
         required
         checked={consentTerms}
@@ -96,7 +96,7 @@ function ConsentRow({
         onChange={(e) => onChange(e.target.checked)}
         className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[var(--ngx-purple)]"
       />
-      <span className="text-xs leading-relaxed text-white/55 transition-colors group-hover:text-white/80">
+      <span className="text-xs leading-relaxed text-white/60 transition-colors group-hover:text-white/85">
         {children}
       </span>
     </label>

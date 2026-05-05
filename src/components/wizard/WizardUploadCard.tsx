@@ -12,7 +12,6 @@ interface WizardUploadCardProps {
   onDragEnter: (event: React.DragEvent) => void;
 }
 
-const CHIPS = ["Privado", "Consentimiento", "Sin login completo"] as const;
 const CHECKLIST = [
   "Cuerpo completo",
   "Buena iluminación",
@@ -21,13 +20,7 @@ const CHECKLIST = [
 ] as const;
 
 /**
- * Upload zone with two states:
- *  - Empty:   icon + headline + spec subline + chips + mini checklist
- *  - Preview: image (object-contain) + protected overlay + "Cambiar foto"
- *
- * The card itself does NOT host the file input — that lives in the parent form
- * for react-hook-form registration. The label element here just delegates clicks
- * and drag-and-drop events.
+ * Upload zone with two states. Uses NEOGEN-X glass + DS spacing.
  */
 export function WizardUploadCard({
   previewUrl,
@@ -39,20 +32,20 @@ export function WizardUploadCard({
   const hasPreview = Boolean(previewUrl);
 
   return (
-    <div className="rounded-[24px] md:rounded-[28px] border border-white/[0.08] bg-white/[0.025] p-4 md:p-5 backdrop-blur-md">
+    <div className="ngx-glass !p-4 md:!p-5">
       {/* Header */}
       <div className="flex items-center justify-between gap-3 border-b border-white/[0.06] pb-4">
         <div>
           <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
             Foto base
           </span>
-          <p className="mt-1.5 text-base md:text-lg font-bold text-white tracking-[-0.01em]">
+          <p className="mt-1.5 text-base font-bold text-white tracking-[-0.005em]">
             Carga tu imagen privada
           </p>
         </div>
         <span
           className={cn(
-            "rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.18em] transition-colors",
+            "rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.18em] transition-colors whitespace-nowrap",
             hasPreview
               ? "border border-[var(--ngx-success)]/30 bg-[var(--ngx-success)]/10 text-[var(--ngx-success)]"
               : "border border-white/10 bg-white/[0.04] text-white/45"
@@ -62,24 +55,20 @@ export function WizardUploadCard({
         </span>
       </div>
 
-      {/* Drop zone label */}
+      {/* Drop zone */}
       <label
         onDrop={onDropFile}
         onDragOver={onDragOver}
         onDragEnter={onDragEnter}
         onClick={onClickPicker}
         className={cn(
-          "group relative mt-4 flex min-h-[300px] md:min-h-[400px] w-full flex-col items-center justify-center overflow-hidden rounded-[22px] md:rounded-[24px] border border-dashed transition-all cursor-pointer",
+          "group relative mt-4 flex min-h-[280px] md:min-h-[360px] w-full flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed transition-all cursor-pointer",
           hasPreview
             ? "border-[var(--ngx-purple)]/45 bg-[var(--ngx-purple)]/[0.05]"
-            : "border-white/[0.12] bg-white/[0.02] hover:border-white/25 hover:bg-white/[0.04]"
+            : "border-white/[0.10] bg-white/[0.015] hover:border-white/[0.22] hover:bg-white/[0.03]"
         )}
       >
-        {hasPreview && previewUrl ? (
-          <PreviewState previewUrl={previewUrl} />
-        ) : (
-          <EmptyState />
-        )}
+        {hasPreview && previewUrl ? <PreviewState previewUrl={previewUrl} /> : <EmptyState />}
       </label>
     </div>
   );
@@ -87,36 +76,32 @@ export function WizardUploadCard({
 
 function EmptyState() {
   return (
-    <div className="max-w-sm px-6 py-8 text-center transition-transform group-hover:scale-[1.01]">
+    <div className="w-full max-w-sm px-6 py-8 text-center transition-transform group-hover:scale-[1.005]">
+      {/* Upload icon — sober, smaller */}
       <div
-        className="mx-auto flex h-16 w-16 md:h-20 md:w-20 items-center justify-center rounded-full"
+        className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl"
         style={{
           background: "rgba(109, 0, 255, 0.12)",
-          border: "1px solid rgba(109, 0, 255, 0.30)",
-          boxShadow: "0 0 30px rgba(109,0,255,0.18)",
+          border: "1px solid rgba(109, 0, 255, 0.25)",
         }}
       >
-        <Upload className="h-7 w-7 md:h-8 md:w-8 text-[var(--ngx-purple)]" />
+        <Upload className="h-6 w-6" style={{ color: "var(--ngx-purple-light)" }} />
       </div>
 
-      <h3 className="mt-5 font-display font-black uppercase tracking-[-0.02em] text-white text-[1.35rem] md:text-[1.5rem] leading-tight">
+      {/* Headline — clean body bold instead of italic chunky display */}
+      <h3 className="mt-4 font-body font-bold text-base md:text-lg text-white leading-tight tracking-[-0.005em]">
         Arrastra tu foto aquí
       </h3>
-      <p className="mt-3 text-xs md:text-sm leading-relaxed text-white/55">
-        JPG o PNG · máximo 8MB · cuerpo completo, buena luz y pose natural.
+      <p className="mt-2 text-xs leading-relaxed text-white/55">
+        JPG, PNG o WEBP · máximo 8MB
       </p>
 
-      <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
-        {CHIPS.map((chip) => (
-          <span
-            key={chip}
-            className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] text-white/55"
-          >
-            {chip}
-          </span>
-        ))}
-      </div>
+      {/* Inline meta — replaces gordo chips. One sober line with bullets. */}
+      <p className="mt-4 text-[10px] uppercase tracking-[0.16em] font-mono text-white/40 leading-relaxed">
+        Privado · Consentimiento · Sin login
+      </p>
 
+      {/* Checklist — same DS, slightly smaller */}
       <ul className="mt-5 grid grid-cols-2 gap-x-4 gap-y-2 text-left">
         {CHECKLIST.map((item) => (
           <li
@@ -127,10 +112,10 @@ function EmptyState() {
               className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full"
               style={{
                 background: "rgba(109,0,255,0.15)",
-                border: "1px solid rgba(109,0,255,0.35)",
+                border: "1px solid rgba(109,0,255,0.30)",
               }}
             >
-              <Check className="h-2 w-2 text-[var(--ngx-purple-light)]" />
+              <Check className="h-2 w-2" style={{ color: "var(--ngx-purple-light)" }} />
             </span>
             {item}
           </li>
@@ -143,7 +128,7 @@ function EmptyState() {
 function PreviewState({ previewUrl }: { previewUrl: string }) {
   return (
     <>
-      {/* Foreground: contained image (no crop) */}
+      {/* Foreground: contained image (no body crop) */}
       <Image
         src={previewUrl}
         alt="Vista previa protegida"
@@ -161,7 +146,7 @@ function PreviewState({ previewUrl }: { previewUrl: string }) {
         unoptimized
       />
       {/* Bottom gradient + label */}
-      <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/85 via-black/15 to-transparent" />
+      <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/85 via-black/15 to-transparent pointer-events-none" />
       <div className="absolute left-4 top-4 z-20 rounded-full border border-white/10 bg-black/55 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-white/75 backdrop-blur-md">
         Vista previa protegida
       </div>
@@ -174,7 +159,7 @@ function PreviewState({ previewUrl }: { previewUrl: string }) {
             Puedes cambiarla antes de continuar al perfil corporal.
           </p>
         </div>
-        <div className="inline-flex items-center gap-2 rounded-full bg-[var(--ngx-purple)] px-4 py-2 text-xs font-bold text-white shadow-[var(--ngx-glow-primary)]">
+        <div className="inline-flex items-center gap-2 rounded-full bg-[var(--ngx-purple)] px-4 py-2 text-xs font-bold text-white shadow-[var(--ngx-glow-primary)] whitespace-nowrap">
           <Upload size={14} />
           Cambiar foto
         </div>
