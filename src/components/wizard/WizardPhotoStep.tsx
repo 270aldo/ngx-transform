@@ -86,11 +86,7 @@ export function WizardPhotoStep({
                 onChangeAI={onChangeAI}
                 onChangeEmail={onChangeEmail}
               />
-            ) : (
-              <p className="text-xs leading-relaxed text-white/45 text-center sm:text-left">
-                Cuando detectemos una imagen válida, te pediremos los consentimientos obligatorios para desbloquear el perfil corporal.
-              </p>
-            )}
+            ) : null}
 
             <div className="flex flex-col gap-3 mt-auto">
               <Button
@@ -103,9 +99,6 @@ export function WizardPhotoStep({
                 {ctaLabel}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-              <p className="text-[11px] leading-relaxed text-white/40 text-center">
-                El correo se confirma al final, justo antes de generar tu visualización privada. Aquí no te pediremos contraseña.
-              </p>
             </div>
           </div>
         </div>
@@ -115,12 +108,14 @@ export function WizardPhotoStep({
           {TRUST_CARDS.map((item) => {
             const Icon = item.icon;
             return (
-              <div key={item.title} className="ngx-card h-full !p-5">
-                <span className="ngx-card-icon mb-4">
-                  <Icon className="h-5 w-5" />
-                </span>
-                <p className="ngx-card-title !text-[0.95rem]">{item.title}</p>
-                <p className="ngx-card-desc !text-xs mt-2">{item.text}</p>
+              <div key={item.title} className="ngx-metal-card h-full !p-5">
+                <div className="relative z-10">
+                  <span className="ngx-card-icon mb-4">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <p className="ngx-card-title !text-[0.95rem]">{item.title}</p>
+                  <p className="ngx-card-desc !text-xs mt-2">{item.text}</p>
+                </div>
               </div>
             );
           })}
@@ -145,18 +140,16 @@ function LeftIntro() {
         Esta imagen no se usa para juzgarte. Se usa para entender tu punto de partida y generar una visualización aspiracional privada.
       </p>
 
-      <div className="ngx-card mt-6 !p-4 md:!p-5">
-        <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
-          Contrato de experiencia
-        </span>
-        <p className="mt-2 text-sm leading-relaxed text-white/75">
-          Esto no es un diagnóstico médico, una predicción exacta ni una evaluación clínica. Es una visualización aspiracional generada con IA para ayudarte a ver una dirección posible y decidir el siguiente paso con honestidad.
-        </p>
+      <div className="ngx-metal-card mt-6 !p-4 md:!p-5">
+        <div className="relative z-10">
+          <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
+            Contrato de experiencia
+          </span>
+          <p className="mt-2 text-sm leading-relaxed text-white/75">
+            Esto no es un diagnóstico médico, una predicción exacta ni una evaluación clínica. Es una visualización aspiracional generada con IA para ayudarte a ver una dirección posible y decidir el siguiente paso con honestidad.
+          </p>
+        </div>
       </div>
-
-      <p className="mt-auto pt-5 text-xs leading-relaxed text-white/45 px-1">
-        Si la foto no está lista, no te pediremos más datos. Primero resolvemos la base.
-      </p>
     </div>
   );
 }
