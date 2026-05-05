@@ -34,17 +34,19 @@ export function LandingTrustStrip() {
       <div className="ngx-section-panel ngx-trust-panel">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,0.55fr)_minmax(0,1.45fr)] lg:gap-12 lg:items-center">
           <div className="animate-on-scroll">
-            <span className="ngx-eyebrow-pill" data-accent="emerald">Privacidad</span>
-            <span
-              className="mb-5 mt-3 inline-flex h-12 w-12 items-center justify-center rounded-2xl border"
-              style={{
-                backgroundColor: "rgba(0, 245, 170, 0.12)",
-                borderColor: "rgba(0, 245, 170, 0.28)",
-              }}
-            >
-              <Lock className="h-6 w-6" style={{ color: "var(--ngx-success)" }} />
-            </span>
-            <h2 className="font-body font-bold text-2xl md:text-3xl leading-tight tracking-[-0.02em] text-ngx-fg-1 max-w-[18ch]">
+            <div className="flex items-center gap-3">
+              <span
+                className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border"
+                style={{
+                  backgroundColor: "rgba(0, 245, 170, 0.12)",
+                  borderColor: "rgba(0, 245, 170, 0.28)",
+                }}
+              >
+                <Lock className="h-5 w-5" style={{ color: "var(--ngx-success)" }} />
+              </span>
+              <span className="ngx-eyebrow-pill" data-accent="emerald">Privacidad</span>
+            </div>
+            <h2 className="mt-5 font-body font-bold text-2xl md:text-3xl leading-tight tracking-[-0.02em] text-ngx-fg-1 max-w-[18ch]">
               {copy.title}
             </h2>
             {copy.subtitle ? (
@@ -60,7 +62,7 @@ export function LandingTrustStrip() {
                 key={card.title}
                 className={`animate-on-scroll ${i > 0 ? `delay-${i}00` : ""}`}
               >
-                <article className="ngx-metal-card h-full !p-4 md:!p-5">
+                <article className="ngx-metal-card h-full !p-4 md:!p-5 !rounded-[28px]">
                   <div className="relative z-10">
                     <h3 className="font-body font-bold text-sm md:text-base text-ngx-fg-1 leading-tight tracking-[-0.01em] mb-1.5">
                       {card.title}

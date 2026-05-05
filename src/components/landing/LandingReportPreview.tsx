@@ -82,7 +82,7 @@ export function LandingReportPreview() {
           </span>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-10 lg:items-start">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-10 lg:items-stretch">
           {/* Mock dashboard — first on mobile (visual anchor), right on desktop */}
           <div className="order-1 lg:order-2 animate-on-scroll-right delay-100 flex flex-col gap-4">
             {/* Score card — hero of the mock */}
@@ -177,7 +177,7 @@ export function LandingReportPreview() {
           </div>
 
           {/* Narrative + CTA — second on mobile, left on desktop */}
-          <div className="order-2 lg:order-1 animate-on-scroll-left flex flex-col gap-6">
+          <div className="order-2 lg:order-1 animate-on-scroll-left flex flex-col gap-6 lg:justify-between lg:h-full">
             <div>
               <h3 className="font-body font-bold text-2xl md:text-3xl text-ngx-fg-1 leading-tight tracking-[-0.02em]">
                 Una lectura inicial,
