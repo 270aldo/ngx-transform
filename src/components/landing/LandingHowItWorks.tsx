@@ -53,7 +53,7 @@ export function LandingHowItWorks() {
                       <Icon className="w-5 h-5 text-white" />
                     </div>
                   </div>
-                  <article className={`flex-1 ngx-card animate-on-scroll ${i > 0 ? `delay-${i}00` : ""}`}>
+                  <article className={`flex-1 ngx-card animate-on-scroll ${i > 0 ? `delay-${i}00` : ""} min-h-[140px]`}>
                     <span className="ngx-eyebrow inline-block mb-2">PASO {item.step}</span>
                     <h3 className="font-body font-bold text-lg text-ngx-fg-1 leading-tight tracking-[-0.015em] mb-2">
                       {item.title}
@@ -66,7 +66,7 @@ export function LandingHowItWorks() {
                 <div
                   className={`hidden md:block ${isLeftCard ? "md:col-start-1 md:justify-self-end" : "md:col-start-3 md:justify-self-start"} w-full md:max-w-[460px] animate-on-scroll${isLeftCard ? "-left" : "-right"} ${i > 0 ? `delay-${i}00` : ""}`}
                 >
-                  <article className="ngx-card !p-7">
+                  <article className="ngx-card !p-7 min-h-[200px]">
                     <span className="ngx-eyebrow inline-block mb-3">PASO {item.step}</span>
                     <h3 className="font-body font-bold text-xl text-ngx-fg-1 leading-tight tracking-[-0.015em] mb-3">
                       {item.title}

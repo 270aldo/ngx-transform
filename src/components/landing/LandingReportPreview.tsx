@@ -141,7 +141,9 @@ export function LandingReportPreview() {
                   <span className="font-mono font-bold text-3xl md:text-[2.25rem] text-ngx-fg-1 leading-none tabular-nums">
                     {copy.scoreValue}
                   </span>
-                  <span className="ngx-caption mt-1">/ {copy.scoreMax}</span>
+                  <span className="font-mono font-semibold text-xs text-white/55 mt-1.5 tabular-nums tracking-[0.05em]">
+                    / {copy.scoreMax}
+                  </span>
                 </div>
               </div>
               <div className="min-w-0 flex-1">
