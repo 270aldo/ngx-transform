@@ -87,53 +87,49 @@ export function HybridOfferSection({ shareId, cohorteInfo }: HybridOfferSectionP
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.55, ease: "easeOut" }}
-        className="relative overflow-hidden rounded-[32px] landing-surface-strong p-6 md:p-8 lg:p-10"
+        className="ngx-section-panel"
       >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(109,0,255,0.14),transparent_34%),radial-gradient(circle_at_88%_25%,rgba(184,148,255,0.08),transparent_24%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(109,0,255,0.14),transparent_34%),radial-gradient(circle_at_88%_25%,rgba(184,148,255,0.08),transparent_24%)] pointer-events-none" />
 
         <div className="relative z-10 grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(340px,0.85fr)]">
           <div>
-            <p className="landing-kicker mb-4">NGX Hybrid</p>
-            <h2 className="landing-heading text-[2.2rem] leading-[0.92] text-white md:text-[3rem]">
-              Cuando el roadmap
-              <br />
-              te haga sentido,
-              <br />
-              HYBRID entra aquí.
+            <span className="ngx-eyebrow-pill mb-4">NGX Hybrid</span>
+            <h2 className="ngx-h1 !text-left">
+              Cuando el roadmap te haga sentido, HYBRID entra aquí.
             </h2>
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/60 md:text-base">
               La visualización abre la conversación. El roadmap pone orden. HYBRID sólo debería aparecer cuando ya quieres ejecutar esa visión dentro de un sistema guiado, no antes.
             </p>
 
-            <div className="mt-7 grid gap-3 sm:grid-cols-3">
+            <div className="mt-7 ngx-card-grid ngx-card-grid-3 items-stretch">
               {[
                 "Sistema GENESIS que adapta tu plan cada semana",
                 "Coach humano que valida y acompaña",
                 "12 semanas con checkpoints y seguimiento real",
               ].map((item) => (
-                <div key={item} className="rounded-[24px] landing-surface px-4 py-4">
-                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl border border-[#6D00FF]/20 bg-[#6D00FF]/10">
-                    <CheckCircle2 className="h-4 w-4 text-[#C8A5FF]" />
-                  </div>
-                  <p className="text-sm leading-relaxed text-white/72">{item}</p>
+                <div key={item} className="ngx-card !p-4 h-full">
+                  <span className="ngx-card-icon mb-3" style={{ width: "2.25rem", height: "2.25rem" }}>
+                    <CheckCircle2 className="h-4 w-4" />
+                  </span>
+                  <p className="ngx-card-desc">{item}</p>
                 </div>
               ))}
             </div>
 
-            <div className="mt-6 rounded-[28px] border border-white/8 bg-white/[0.03] p-5 md:p-6">
-              <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">Cuándo sí tiene sentido</p>
-              <p className="mt-3 text-sm leading-relaxed text-white/72">
+            <div className="mt-6 ngx-card !p-5 md:!p-6">
+              <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Cuándo sí tiene sentido</span>
+              <p className="mt-2 text-sm leading-relaxed text-white/72">
                 Si ya viste tu visualización, entiendes lo que te está frenando y quieres acompañamiento real para ejecutarlo, aquí es donde HYBRID empieza a tener fit.
               </p>
             </div>
 
-            <div className="mt-5 rounded-[28px] border border-white/8 bg-white/[0.03] p-5 md:p-6">
-              <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">Bonus incluido</p>
-              <div className="mt-3 flex items-start gap-3">
-                <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-[#C8A5FF]" />
+            <div className="mt-5 ngx-card !p-5 md:!p-6">
+              <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Bonus incluido</span>
+              <div className="mt-2 flex items-start gap-3">
+                <Sparkles className="mt-0.5 h-5 w-5 shrink-0" style={{ color: "var(--ngx-purple-light)" }} />
                 <div>
-                  <p className="text-base font-semibold text-white">Ebook Conversacional GENESIS</p>
-                  <p className="mt-1 text-sm leading-relaxed text-white/56">
+                  <p className="text-base font-bold text-white">Ebook Conversacional GENESIS</p>
+                  <p className="mt-1 text-sm leading-relaxed text-white/55">
                     Valor referencial: $197. Incluido en tu cohorte para ayudarte a aterrizar el sistema desde las primeras semanas.
                   </p>
                 </div>
@@ -142,53 +138,68 @@ export function HybridOfferSection({ shareId, cohorteInfo }: HybridOfferSectionP
           </div>
 
           <div className="space-y-4">
-            <div className="rounded-[30px] landing-surface p-5 md:p-6">
-              <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">Cohorte actual</p>
+            <div className="ngx-glass !p-5 md:!p-6">
+              <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Cohorte actual</span>
               <div className="mt-4 flex items-end justify-between gap-3">
                 <div>
-                  <p className="text-3xl font-black italic tracking-[-0.06em] text-white md:text-4xl">
+                  <p className="font-mono text-3xl font-bold tabular-nums tracking-[-0.02em] text-white md:text-4xl leading-none">
                     {cohortSpotsLeft}
-                    <span className="ml-2 text-lg font-medium not-italic tracking-normal text-white/35">/ {cohortSpotsTotal}</span>
+                    <span className="ml-2 text-lg font-medium tracking-normal text-white/35">/ {cohortSpotsTotal}</span>
                   </p>
-                  <p className="mt-2 text-sm text-white/52">Plazas estimadas para {cohortLabel}</p>
+                  <p className="mt-2 text-sm text-white/55">Plazas estimadas para {cohortLabel}</p>
                 </div>
-                <span className="rounded-full border border-[#6D00FF]/25 bg-[#6D00FF]/10 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-[#C8A5FF]">
+                <span
+                  className="rounded-full px-3 py-1.5 text-[10px] uppercase tracking-[0.18em]"
+                  style={{
+                    background: "rgba(109,0,255,0.10)",
+                    border: "1px solid rgba(109,0,255,0.25)",
+                    color: "var(--ngx-purple-light)",
+                  }}
+                >
                   Cohorte guiada
                 </span>
               </div>
 
-              <div className="mt-5 h-2 overflow-hidden rounded-full border border-white/8 bg-white/6">
+              <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/[0.06] border border-white/[0.04]">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-[#6D00FF] to-[#B98CFF]"
-                  style={{ width: `${((cohortSpotsTotal - cohortSpotsLeft) / cohortSpotsTotal) * 100}%` }}
+                  className="h-full rounded-full"
+                  style={{
+                    width: `${((cohortSpotsTotal - cohortSpotsLeft) / cohortSpotsTotal) * 100}%`,
+                    background: "linear-gradient(90deg, var(--ngx-purple), var(--ngx-purple-light))",
+                    boxShadow: "0 0 12px rgba(109,0,255,0.40)",
+                  }}
                 />
               </div>
             </div>
 
-            <div className="rounded-[30px] landing-surface p-5 md:p-6">
-              <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">Qué estás comprando aquí</p>
+            <div className="ngx-glass !p-5 md:!p-6">
+              <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Qué estás comprando aquí</span>
               <div className="mt-4 space-y-3 text-sm text-white/72">
                 <div className="flex items-start gap-3">
-                  <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" />
+                  <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" style={{ color: "var(--ngx-success)" }} />
                   <span>Dirección, ajustes y seguimiento para que el sistema no dependa sólo de motivación.</span>
                 </div>
                 <div className="flex items-start gap-3">
-                  <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" />
+                  <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" style={{ color: "var(--ngx-success)" }} />
                   <span>Una capa humana encima de GENESIS para validar decisiones y sostener adherencia.</span>
                 </div>
                 <div className="flex items-start gap-3">
-                  <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-300" />
+                  <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" style={{ color: "var(--ngx-success)" }} />
                   <span>Un marco más serio para convertir potencial en ejecución real.</span>
                 </div>
               </div>
             </div>
 
-            <div className="rounded-[30px] landing-surface p-5 md:p-6">
-              <p className="landing-kicker !text-[0.62rem] !tracking-[0.22em]">Siguiente acción</p>
+            <div className="ngx-glass !p-5 md:!p-6">
+              <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Siguiente acción</span>
               <div className="mt-5 grid gap-3">
                 <button
                   onClick={onCalendly}
-                  className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl bg-[#6D00FF] px-5 py-4 text-sm font-semibold text-white shadow-[0_0_28px_rgba(109,0,255,0.26)] transition-all hover:scale-[1.01] hover:bg-[#5F00DE]"
+                  className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full px-5 py-4 text-sm font-bold uppercase tracking-[0.06em] text-white transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97]"
+                  style={{
+                    backgroundColor: "var(--ngx-purple)",
+                    boxShadow: "var(--ngx-glow-primary)",
+                  }}
                 >
                   <CalendarDays className="h-4 w-4" />
                   Ver si HYBRID es fit
@@ -196,14 +207,14 @@ export function HybridOfferSection({ shareId, cohorteInfo }: HybridOfferSectionP
                 </button>
                 <button
                   onClick={onWhatsapp}
-                  className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm font-medium text-white/86 transition-all hover:bg-white/[0.06]"
+                  className="ngx-glass-clear inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full px-5 py-4 text-sm font-medium text-white/85 transition-all duration-150 hover:bg-white/[0.06] active:scale-[0.97]"
                 >
                   <MessageCircle className="h-4 w-4" />
                   Hablar por WhatsApp
                 </button>
                 <button
                   onClick={onChat}
-                  className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm font-medium text-white/86 transition-all hover:bg-white/[0.06]"
+                  className="ngx-glass-clear inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full px-5 py-4 text-sm font-medium text-white/85 transition-all duration-150 hover:bg-white/[0.06] active:scale-[0.97]"
                 >
                   <Bot className="h-4 w-4" />
                   Resolver dudas con GENESIS
