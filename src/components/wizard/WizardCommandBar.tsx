@@ -30,12 +30,12 @@ export function WizardCommandBar({
 }: WizardCommandBarProps) {
   return (
     <div className="fixed inset-x-0 top-3 z-50 px-3 md:top-6 md:px-4">
-      <div className="mx-auto grid w-full max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-3 md:gap-5 rounded-[24px] md:rounded-[28px] border border-white/10 bg-black/55 px-3 py-3 md:px-4 md:py-3.5 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-2xl">
+      <div className="mx-auto grid w-full max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-3 md:gap-5 rounded-[var(--ngx-r-xl)] border border-[color:var(--ngx-border-subtle)] bg-black/55 px-3 py-3 md:px-4 md:py-3.5 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl">
         {/* Left: back button */}
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full border border-white/10 bg-black/35 px-3 text-[10px] font-medium uppercase tracking-[0.22em] text-white/75 transition-colors hover:bg-black/55 hover:text-white"
+          className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full border border-[color:var(--ngx-border-subtle)] bg-black/35 px-3 text-[10px] font-medium uppercase tracking-[0.22em] text-white/75 transition-colors hover:bg-black/55 hover:text-white"
         >
           <ChevronLeft size={14} />
           <span className="hidden sm:inline">Atrás</span>
@@ -43,15 +43,15 @@ export function WizardCommandBar({
 
         {/* Center: kicker + title + subtitle + step badge */}
         <div className="flex min-w-0 items-center gap-3">
-          <div className="hidden sm:flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[var(--ngx-purple)]/25 bg-gradient-to-br from-[var(--ngx-purple)]/30 to-[var(--ngx-purple-light)]/10">
-            <Sparkles size={18} className="text-[var(--ngx-purple-light)]" />
+          <div className="ngx-icon-box hidden sm:flex h-10 w-10">
+            <Sparkles size={18} className="text-[color:var(--ngx-purple-light)]" />
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
               <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
                 Wizard privado
               </span>
-              <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[9px] uppercase tracking-[0.18em] text-white/55">
+              <span className="rounded-full border border-[color:var(--ngx-border-subtle)] bg-white/[0.04] px-2 py-0.5 text-[9px] uppercase tracking-[0.18em] text-white/55">
                 Paso {current} / {totalSteps}
               </span>
             </div>

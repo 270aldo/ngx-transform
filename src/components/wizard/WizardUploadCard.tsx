@@ -34,7 +34,7 @@ export function WizardUploadCard({
   return (
     <div className="ngx-glass !p-4 md:!p-5">
       {/* Header */}
-      <div className="flex items-center justify-between gap-3 border-b border-white/[0.06] pb-4">
+      <div className="flex items-center justify-between gap-3 border-b border-[color:var(--ngx-border-subtle)] pb-4">
         <div>
           <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
             Foto base
@@ -64,8 +64,8 @@ export function WizardUploadCard({
         className={cn(
           "group relative mt-4 flex min-h-[280px] md:min-h-[360px] w-full flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed transition-all cursor-pointer",
           hasPreview
-            ? "border-[var(--ngx-purple)]/45 bg-[var(--ngx-purple)]/[0.05]"
-            : "border-white/[0.10] bg-white/[0.015] hover:border-white/[0.22] hover:bg-white/[0.03]"
+            ? "border-[color:var(--ngx-border-active)] bg-[var(--ngx-purple)]/[0.05]"
+            : "border-[color:var(--ngx-border-subtle)] bg-white/[0.015] hover:border-white/[0.22] hover:bg-white/[0.03]"
         )}
       >
         {hasPreview && previewUrl ? <PreviewState previewUrl={previewUrl} /> : <EmptyState />}
@@ -78,14 +78,8 @@ function EmptyState() {
   return (
     <div className="w-full max-w-sm px-6 py-8 text-center transition-transform group-hover:scale-[1.005]">
       {/* Upload icon — sober, smaller */}
-      <div
-        className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl"
-        style={{
-          background: "rgba(109, 0, 255, 0.12)",
-          border: "1px solid rgba(109, 0, 255, 0.25)",
-        }}
-      >
-        <Upload className="h-6 w-6" style={{ color: "var(--ngx-purple-light)" }} />
+      <div className="ngx-icon-box mx-auto h-14 w-14">
+        <Upload className="h-6 w-6" />
       </div>
 
       {/* Headline — clean body bold instead of italic chunky display */}
@@ -108,14 +102,8 @@ function EmptyState() {
             key={item}
             className="flex items-center gap-2 text-[11px] leading-tight text-white/55"
           >
-            <span
-              className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full"
-              style={{
-                background: "rgba(109,0,255,0.15)",
-                border: "1px solid rgba(109,0,255,0.30)",
-              }}
-            >
-              <Check className="h-2 w-2" style={{ color: "var(--ngx-purple-light)" }} />
+            <span className="ngx-icon-box h-3.5 w-3.5 !rounded-full">
+              <Check className="h-2 w-2" />
             </span>
             {item}
           </li>
@@ -147,7 +135,7 @@ function PreviewState({ previewUrl }: { previewUrl: string }) {
       />
       {/* Bottom gradient + label */}
       <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/85 via-black/15 to-transparent pointer-events-none" />
-      <div className="absolute left-4 top-4 z-20 rounded-full border border-white/10 bg-black/55 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-white/75 backdrop-blur-md">
+      <div className="absolute left-4 top-4 z-20 rounded-full border border-[color:var(--ngx-border-subtle)] bg-black/55 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-white/75 backdrop-blur-md">
         Vista previa protegida
       </div>
       <div className="absolute bottom-4 left-4 right-4 z-20 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
