@@ -1,30 +1,23 @@
-'use client';
-
 /**
- * Genesis Plan Page
- * Shows PlanPreview with Day 1 + locked days, followed by ComparisonCTA
+ * Legacy /plan page — redirige al destino unificado /s/[shareId]
+ * (v12 Comercial Exit Flow: la conversión vive en HybridOfferV2 dentro de /results).
+ *
+ * El plan AI real (planGenerator) se entrega ahora por email post-compra,
+ * no como gate previo a la conversión.
+ *
+ * Si por alguna razón quieres revivir la página /plan, setea
+ * NEXT_PUBLIC_FF_COLLAPSE_FUNNEL=false y restaura desde git.
  */
 
-import React from 'react';
-import { useParams } from 'next/navigation';
-import { PlanPreview } from '@/components/genesis/PlanPreview';
+import { redirect } from "next/navigation";
 
-export default function PlanPage() {
-  const params = useParams();
-  const shareId = params.shareId as string;
+export const dynamic = "force-dynamic";
 
-  const handleUnlock = () => {
-    // Navigate to booking/conversion page
-    const bookingUrl =
-      process.env.NEXT_PUBLIC_CALENDLY_URL ||
-      process.env.NEXT_PUBLIC_BOOKING_URL ||
-      'https://calendly.com/ngx-genesis';
-    window.open(bookingUrl, '_blank');
-  };
-
-  return (
-    <main className="min-h-screen bg-transparent">
-      <PlanPreview shareId={shareId} onUnlock={handleUnlock} />
-    </main>
-  );
+export default async function LegacyPlanRedirect({
+  params,
+}: {
+  params: Promise<{ shareId: string }>;
+}) {
+  const { shareId } = await params;
+  redirect(`/s/${shareId}#hybrid-offer`);
 }

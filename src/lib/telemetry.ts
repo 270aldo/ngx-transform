@@ -63,7 +63,23 @@ export type FunnelEvent =
   | "hybrid_offer_calendly_click"
   | "hybrid_offer_whatsapp_click"
   | "hybrid_offer_chat_click"
-  | "nps_submitted";
+  | "nps_submitted"
+  // v12 Comercial Exit Flow
+  | "hybrid_offer_v2_viewed"
+  | "mp_checkout_clicked"
+  | "mp_checkout_redirected"
+  | "mp_checkout_completed"
+  | "mp_checkout_failed"
+  | "mp_checkout_pending"
+  | "video_founder_opened"
+  | "video_founder_played"
+  | "video_founder_progress_25"
+  | "video_founder_progress_50"
+  | "video_founder_progress_75"
+  | "video_founder_completed"
+  | "calendly_v2_clicked"
+  | "whatsapp_v2_clicked"
+  | "hybrid_sku_selected";
 
 export interface EventPayload {
   sessionId: string;
@@ -404,4 +420,61 @@ export const telemetry = {
 
   emailSent: (sessionId: string) =>
     trackEvent({ sessionId, event: "email_sent" }),
+
+  // v12 Comercial Exit Flow
+  hybridOfferV2Viewed: (sessionId: string) =>
+    trackEvent({ sessionId, event: "hybrid_offer_v2_viewed" }),
+
+  mpCheckoutClicked: (sessionId: string, sku: "monthly" | "quarterly" | "annual") =>
+    trackEvent({
+      sessionId,
+      event: "mp_checkout_clicked",
+      metadata: { sku, intent: "conversion", location: "hybrid_offer_v2" },
+    }),
+
+  mpCheckoutRedirected: (sessionId: string, sku: string, preferenceId: string) =>
+    trackEvent({
+      sessionId,
+      event: "mp_checkout_redirected",
+      metadata: { sku, preferenceId },
+    }),
+
+  mpCheckoutCompleted: (
+    sessionId: string,
+    metadata: { sku: string; amount: number; paymentId: string }
+  ) => trackEvent({ sessionId, event: "mp_checkout_completed", metadata }),
+
+  mpCheckoutFailed: (sessionId: string, reason: string) =>
+    trackEvent({ sessionId, event: "mp_checkout_failed", metadata: { reason } }),
+
+  mpCheckoutPending: (sessionId: string, paymentId: string) =>
+    trackEvent({ sessionId, event: "mp_checkout_pending", metadata: { paymentId } }),
+
+  videoFounderOpened: (sessionId: string) =>
+    trackEvent({ sessionId, event: "video_founder_opened" }),
+
+  videoFounderPlayed: (sessionId: string) =>
+    trackEvent({ sessionId, event: "video_founder_played" }),
+
+  videoFounderProgress: (sessionId: string, milestone: 25 | 50 | 75) =>
+    trackEvent({
+      sessionId,
+      event: `video_founder_progress_${milestone}` as FunnelEvent,
+    }),
+
+  videoFounderCompleted: (sessionId: string) =>
+    trackEvent({ sessionId, event: "video_founder_completed" }),
+
+  calendlyV2Clicked: (sessionId: string) =>
+    trackEvent({ sessionId, event: "calendly_v2_clicked" }),
+
+  whatsappV2Clicked: (sessionId: string) =>
+    trackEvent({ sessionId, event: "whatsapp_v2_clicked" }),
+
+  hybridSkuSelected: (sessionId: string, sku: "monthly" | "quarterly" | "annual") =>
+    trackEvent({
+      sessionId,
+      event: "hybrid_sku_selected",
+      metadata: { sku },
+    }),
 };

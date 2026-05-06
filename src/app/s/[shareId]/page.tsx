@@ -7,6 +7,7 @@ import { BiometricLoader } from "@/components/BiometricLoader";
 import { TransformationSummary } from "@/components/results/TransformationSummary";
 import { MuscleHealthScore } from "@/components/results/MuscleHealthScore";
 import { HybridOfferSection } from "@/components/results/HybridOfferSection";
+import { HybridOfferV2 } from "@/components/results/HybridOfferV2";
 import { NPSQuick } from "@/components/results/NPSQuick";
 import RefreshClient from "./refresh-client";
 import ScrollToSection from "./scroll-to-section";
@@ -22,6 +23,8 @@ const FF_DRAMATIC_REVEAL = process.env.FF_DRAMATIC_REVEAL !== "false";
 const FF_SOCIAL_COUNTER = process.env.FF_SOCIAL_COUNTER !== "false";
 const FF_SHARE_UNLOCK =
   process.env.FF_SHARE_UNLOCK === "true" || process.env.FF_SHARE_TO_UNLOCK !== "false";
+// v12: salida comercial unificada (4 caminos en /results, sin /demo ni /plan)
+const FF_HYBRID_OFFER_V2 = process.env.NEXT_PUBLIC_FF_HYBRID_OFFER_V2 !== "false";
 
 export const dynamic = "force-dynamic";
 
@@ -280,7 +283,11 @@ export default async function Page({
               imageUrls={urls}
               shareId={shareId}
             />
-            <HybridOfferSection shareId={shareId} />
+            {FF_HYBRID_OFFER_V2 ? (
+              <HybridOfferV2 shareId={shareId} />
+            ) : (
+              <HybridOfferSection shareId={shareId} />
+            )}
             <NPSQuick shareId={shareId} />
           </>
         )}
@@ -303,7 +310,11 @@ export default async function Page({
             imageUrls={urls}
             shareId={shareId}
           />
-          <HybridOfferSection shareId={shareId} />
+          {FF_HYBRID_OFFER_V2 ? (
+            <HybridOfferV2 shareId={shareId} />
+          ) : (
+            <HybridOfferSection shareId={shareId} />
+          )}
           <NPSQuick shareId={shareId} />
         </>
       )}

@@ -1,47 +1,23 @@
-'use client';
-
 /**
- * Genesis Demo Page
- * Shows AgentOrchestration → DemoChat flow
+ * Legacy /demo page — redirige al destino unificado /s/[shareId]
+ * (v12 Comercial Exit Flow: HybridOfferV2 vive en /results, no aquí).
+ *
+ * Mantenido como server component con `redirect()` para preservar
+ * cualquier link compartido viejo (emails D0–D7, social, etc.).
+ *
+ * Si por alguna razón quieres revivir la página /demo (no recomendado),
+ * setea NEXT_PUBLIC_FF_COLLAPSE_FUNNEL=false y restaura desde git.
  */
 
-import React, { useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { AgentOrchestration } from '@/components/genesis/AgentOrchestration';
-import { DemoChat } from '@/components/genesis/DemoChat';
+import { redirect } from "next/navigation";
 
-type DemoPhase = 'orchestration' | 'chat';
+export const dynamic = "force-dynamic";
 
-export default function DemoPage() {
-  const params = useParams();
-  const router = useRouter();
-  const shareId = params.shareId as string;
-
-  const [phase, setPhase] = useState<DemoPhase>('orchestration');
-
-  const handleOrchestrationComplete = () => {
-    setPhase('chat');
-  };
-
-  const handleChatComplete = () => {
-    router.push(`/s/${shareId}/plan`);
-  };
-
-  return (
-    <main className="min-h-screen bg-transparent">
-      {phase === 'orchestration' && (
-        <AgentOrchestration
-          shareId={shareId}
-          onComplete={handleOrchestrationComplete}
-        />
-      )}
-
-      {phase === 'chat' && (
-        <DemoChat
-          shareId={shareId}
-          onComplete={handleChatComplete}
-        />
-      )}
-    </main>
-  );
+export default async function LegacyDemoRedirect({
+  params,
+}: {
+  params: Promise<{ shareId: string }>;
+}) {
+  const { shareId } = await params;
+  redirect(`/s/${shareId}#hybrid-offer`);
 }

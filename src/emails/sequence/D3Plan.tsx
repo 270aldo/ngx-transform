@@ -24,8 +24,8 @@ export default function D3Plan({ name, shareId }: D3PlanProps) {
     process.env.NEXT_PUBLIC_APP_URL ||
     process.env.NEXT_PUBLIC_BASE_URL ||
     "https://transform.ngxgenesis.com";
-  const planUrl = `${baseUrl}/plan/${shareId}`;
-  const offerUrl = `${baseUrl}/s/${shareId}?section=offer`;
+  // v12: el plan AI completo es entregable post-compra. Aquí re-anclamos a la oferta.
+  const offerUrl = `${baseUrl}/s/${shareId}?section=offer#hybrid-offer`;
   const resultsUrl = `${baseUrl}/s/${shareId}`;
   const unsubscribeUrl = buildUnsubscribeUrl(baseUrl, shareId);
   const logoUrl = `${baseUrl}/images/brand/logo.svg`;
@@ -74,19 +74,19 @@ export default function D3Plan({ name, shareId }: D3PlanProps) {
 
               <Section className="text-center my-8">
                 <Button
-                  href={planUrl}
+                  href={offerUrl}
                   className="bg-[#6D00FF] text-white px-8 py-4 rounded-xl font-semibold text-base"
                 >
-                  Ver plan completo
+                  Conocer el sistema HYBRID de 12 semanas
                 </Button>
               </Section>
 
               <Section className="text-center my-5">
                 <Button
-                  href={offerUrl}
+                  href={resultsUrl}
                   className="bg-white text-black px-8 py-4 rounded-xl font-semibold text-base"
                 >
-                  Ver sistema HYBRID de 12 semanas
+                  Volver a mis resultados
                 </Button>
               </Section>
 
