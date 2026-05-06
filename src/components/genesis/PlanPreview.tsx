@@ -96,20 +96,24 @@ export function PlanPreview({ shareId, onUnlock }: PlanPreviewProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] pb-32">
+    <div className="min-h-screen bg-transparent pb-32 text-white">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-[#050505]/80 backdrop-blur-lg border-b border-white/5 p-4">
-        <div className="max-w-lg mx-auto">
+      <div
+        className="sticky top-0 z-10 backdrop-blur-lg border-b border-[color:var(--ngx-border-subtle)] p-4"
+        style={{ backgroundColor: "rgba(5,5,8,0.80)" }}
+      >
+        <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <Calendar size={16} className="text-[#6D00FF]" />
-              <span className="text-sm font-bold text-white">Tu Plan de 7 Días</span>
+              <Calendar size={16} className="text-[color:var(--ngx-purple-light)]" />
+              <span className="text-sm font-bold text-white tracking-wide">Tu Plan de 7 Días</span>
             </div>
             <div
-              className="px-3 py-1 rounded-full text-[10px] font-bold"
+              className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.18em] border"
               style={{
-                backgroundColor: '#6D00FF20',
-                color: '#6D00FF',
+                backgroundColor: "var(--ngx-purple-glass)",
+                borderColor: "rgba(109,0,255,0.30)",
+                color: "var(--ngx-purple-light)",
               }}
             >
               1/7 Desbloqueado
@@ -117,12 +121,12 @@ export function PlanPreview({ shareId, onUnlock }: PlanPreviewProps) {
           </div>
 
           {/* Day navigation */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <button
+              type="button"
               onClick={() => navigateDay('prev')}
               disabled={selectedDay === 0}
-              className="p-2 rounded-lg transition-all disabled:opacity-30"
-              style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
+              className="p-2 rounded-lg transition-all disabled:opacity-30 border border-[color:var(--ngx-border-subtle)] bg-white/[0.04] hover:bg-white/[0.08]"
             >
               <ChevronLeft size={16} className="text-white" />
             </button>
@@ -131,14 +135,20 @@ export function PlanPreview({ shareId, onUnlock }: PlanPreviewProps) {
               {DAY_NAMES.map((name, index) => (
                 <button
                   key={name}
+                  type="button"
                   onClick={() => setSelectedDay(index)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                     selectedDay === index
-                      ? 'bg-[#6D00FF] text-white'
+                      ? 'text-white'
                       : index === 0
                       ? 'bg-white/10 text-white'
                       : 'bg-white/5 text-white/50'
                   }`}
+                  style={
+                    selectedDay === index
+                      ? { backgroundColor: "var(--ngx-purple)", boxShadow: "var(--ngx-glow-primary-soft)" }
+                      : undefined
+                  }
                 >
                   {index + 1}
                   {index > 0 && <Lock size={8} className="inline ml-1 opacity-50" />}
@@ -147,10 +157,10 @@ export function PlanPreview({ shareId, onUnlock }: PlanPreviewProps) {
             </div>
 
             <button
+              type="button"
               onClick={() => navigateDay('next')}
               disabled={selectedDay === 6}
-              className="p-2 rounded-lg transition-all disabled:opacity-30"
-              style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
+              className="p-2 rounded-lg transition-all disabled:opacity-30 border border-[color:var(--ngx-border-subtle)] bg-white/[0.04] hover:bg-white/[0.08]"
             >
               <ChevronRight size={16} className="text-white" />
             </button>
@@ -160,7 +170,7 @@ export function PlanPreview({ shareId, onUnlock }: PlanPreviewProps) {
 
       {/* Content */}
       <div className="p-4">
-        <div className="max-w-lg mx-auto">
+        <div className="max-w-2xl mx-auto">
           <AnimatePresence mode="wait">
             {!isLocked ? (
               // Day 1 - Full content
@@ -235,78 +245,64 @@ export function PlanPreview({ shareId, onUnlock }: PlanPreviewProps) {
 
                 {/* Locked workout */}
                 <div className="relative">
-                  <div
-                    className="rounded-2xl p-5 filter blur-sm pointer-events-none"
-                    style={{
-                      background: 'linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)',
-                      border: '1px solid rgba(255,255,255,0.08)',
-                    }}
-                  >
-                    <div className="flex items-center gap-2 mb-3">
-                      <Dumbbell size={14} className="text-white/30" />
-                      <span className="text-xs font-bold text-white/30">
-                        {LOCKED_DAYS[selectedDay - 1].workout}
-                      </span>
+                  <div className="ngx-metal-card !p-5 filter blur-sm pointer-events-none">
+                    <div className="relative z-10">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Dumbbell size={14} className="text-white/30" />
+                        <span className="text-xs font-bold text-white/30">
+                          {LOCKED_DAYS[selectedDay - 1].workout}
+                        </span>
+                      </div>
+                      <div className="h-32 bg-white/5 rounded-xl" />
                     </div>
-                    <div className="h-32 bg-white/5 rounded-xl" />
                   </div>
 
                   {/* Lock overlay */}
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="flex flex-col items-center gap-2">
-                      <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
-                        <Lock size={20} className="text-white/50" />
-                      </div>
+                    <div className="ngx-icon-box h-12 w-12">
+                      <Lock size={20} className="text-[color:var(--ngx-purple-light)]" />
                     </div>
                   </div>
                 </div>
 
                 {/* Locked meal */}
                 <div className="relative">
-                  <div
-                    className="rounded-2xl p-5 filter blur-sm pointer-events-none"
-                    style={{
-                      background: 'linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)',
-                      border: '1px solid rgba(255,255,255,0.08)',
-                    }}
-                  >
-                    <div className="flex items-center gap-2 mb-3">
-                      <Utensils size={14} className="text-white/30" />
-                      <span className="text-xs font-bold text-white/30">
-                        {LOCKED_DAYS[selectedDay - 1].meals} comidas planificadas
-                      </span>
+                  <div className="ngx-metal-card !p-5 filter blur-sm pointer-events-none">
+                    <div className="relative z-10">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Utensils size={14} className="text-white/30" />
+                        <span className="text-xs font-bold text-white/30">
+                          {LOCKED_DAYS[selectedDay - 1].meals} comidas planificadas
+                        </span>
+                      </div>
+                      <div className="h-24 bg-white/5 rounded-xl" />
                     </div>
-                    <div className="h-24 bg-white/5 rounded-xl" />
                   </div>
 
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
-                      <Lock size={20} className="text-white/50" />
+                    <div className="ngx-icon-box h-12 w-12">
+                      <Lock size={20} className="text-[color:var(--ngx-purple-light)]" />
                     </div>
                   </div>
                 </div>
 
                 {/* Locked checklist */}
                 <div className="relative">
-                  <div
-                    className="rounded-2xl p-5 filter blur-sm pointer-events-none"
-                    style={{
-                      background: 'linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)',
-                      border: '1px solid rgba(255,255,255,0.08)',
-                    }}
-                  >
-                    <div className="flex items-center gap-2 mb-3">
-                      <CheckSquare size={14} className="text-white/30" />
-                      <span className="text-xs font-bold text-white/30">
-                        {LOCKED_DAYS[selectedDay - 1].tasks} tareas del día
-                      </span>
+                  <div className="ngx-metal-card !p-5 filter blur-sm pointer-events-none">
+                    <div className="relative z-10">
+                      <div className="flex items-center gap-2 mb-3">
+                        <CheckSquare size={14} className="text-white/30" />
+                        <span className="text-xs font-bold text-white/30">
+                          {LOCKED_DAYS[selectedDay - 1].tasks} tareas del día
+                        </span>
+                      </div>
+                      <div className="h-20 bg-white/5 rounded-xl" />
                     </div>
-                    <div className="h-20 bg-white/5 rounded-xl" />
                   </div>
 
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
-                      <Lock size={20} className="text-white/50" />
+                    <div className="ngx-icon-box h-12 w-12">
+                      <Lock size={20} className="text-[color:var(--ngx-purple-light)]" />
                     </div>
                   </div>
                 </div>
@@ -318,7 +314,7 @@ export function PlanPreview({ shareId, onUnlock }: PlanPreviewProps) {
                   transition={{ delay: 0.3 }}
                   className="text-center py-6"
                 >
-                  <Sparkles size={24} className="text-[#6D00FF] mx-auto mb-3" />
+                  <Sparkles size={24} className="text-[color:var(--ngx-purple-light)] mx-auto mb-3" />
                   <p className="text-sm text-white/70 mb-1">
                     Desbloquea los 7 días completos
                   </p>
