@@ -179,8 +179,18 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
   }, [shareId, onComplete, calculateProgress]);
 
   return (
-    <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-lg">
+    <div className="min-h-screen bg-transparent flex flex-col items-center justify-center p-4 text-white">
+      {/* Atmospheric glows */}
+      <div
+        className="pointer-events-none absolute left-[-8%] top-[10%] h-[420px] w-[420px] rounded-full blur-[120px]"
+        style={{ backgroundColor: "rgba(109,0,255,0.18)" }}
+      />
+      <div
+        className="pointer-events-none absolute right-[-6%] bottom-[12%] h-[360px] w-[360px] rounded-full blur-[120px]"
+        style={{ backgroundColor: "rgba(109,0,255,0.10)" }}
+      />
+
+      <div className="relative w-full max-w-lg">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -188,12 +198,12 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
           className="text-center mb-6"
         >
           <div className="flex items-center justify-center gap-2 mb-2">
-            <Brain size={20} className="text-[#6D00FF]" />
-            <h1 className="text-lg font-bold text-white">
+            <Brain size={20} className="text-[color:var(--ngx-purple-light)]" />
+            <h1 className="text-lg font-bold text-white tracking-tight">
               GENESIS está analizando tu perfil
             </h1>
           </div>
-          <p className="text-sm text-white/50">{phaseTitle}</p>
+          <p className="text-sm text-white/55">{phaseTitle}</p>
         </motion.div>
 
         {/* Progress Bar */}
@@ -205,7 +215,7 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
         >
           <ProgressBar
             progress={progress}
-            color="#6D00FF"
+            color="var(--ngx-purple)"
             height={8}
             showPercentage
           />
@@ -223,12 +233,12 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
             className="relative w-24 h-24 mb-6"
             animate={{
               boxShadow: isComplete
-                ? '0 0 40px rgba(109, 0, 255, 0.5)'
-                : '0 0 20px rgba(109, 0, 255, 0.3)'
+                ? "var(--ngx-glow-primary-strong)"
+                : "var(--ngx-glow-primary)",
             }}
             style={{
               borderRadius: '50%',
-              background: 'radial-gradient(circle, #6D00FF 0%, #4B0082 100%)',
+              background: 'radial-gradient(circle, var(--ngx-purple) 0%, var(--ngx-purple-dark) 100%)',
               border: '2px solid rgba(109, 0, 255, 0.6)',
             }}
           >
@@ -340,15 +350,12 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="rounded-xl p-4"
-          style={{
-            backgroundColor: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.05)',
-          }}
+          className="ngx-metal-card !p-4"
         >
+          <div className="relative z-10">
           <div className="flex items-center gap-2 mb-3">
-            <Activity size={12} className="text-[#6D00FF]" />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-white/50">
+            <Activity size={12} className="text-[color:var(--ngx-purple-light)]" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/55">
               GENESIS en tiempo real
             </span>
           </div>
@@ -400,6 +407,7 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
               </div>
             )}
           </div>
+          </div>
         </motion.div>
 
         {/* Error recovery */}
@@ -431,7 +439,11 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
                   setFeedMessages([]);
                   setPhaseTitle('Preparando análisis...');
                 }}
-                className="px-4 py-2 bg-[#6D00FF] text-white text-xs font-bold rounded-full hover:bg-[#5800cc] transition-colors"
+                className="px-5 py-2 text-white text-xs font-bold uppercase tracking-[0.14em] rounded-full transition-all hover:-translate-y-0.5 active:scale-[0.97]"
+                style={{
+                  backgroundColor: "var(--ngx-purple)",
+                  boxShadow: "var(--ngx-glow-primary-soft)",
+                }}
               >
                 Reintentar
               </button>
@@ -447,7 +459,7 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
               animate={{ opacity: 1, y: 0 }}
               className="mt-6 text-center"
             >
-              <div className="flex items-center justify-center gap-2 text-[#00FF88]">
+              <div className="flex items-center justify-center gap-2 text-[color:var(--ngx-success)]">
                 <Check size={16} />
                 <span className="text-sm font-bold">Análisis completado</span>
               </div>
