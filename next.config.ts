@@ -3,7 +3,11 @@ import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  turbopack: {
+    root: __dirname,
+  },
   images: {
+    qualities: [75, 88],
     remotePatterns: [
       { protocol: "https", hostname: "storage.googleapis.com" },
       { protocol: "https", hostname: "firebasestorage.googleapis.com" },
