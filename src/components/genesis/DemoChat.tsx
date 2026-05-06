@@ -260,19 +260,23 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] flex flex-col">
+    <div className="min-h-screen bg-transparent flex flex-col text-white">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-[#050505]/80 backdrop-blur-lg border-b border-white/5 p-4">
-        <div className="flex items-center justify-between max-w-lg mx-auto">
+      <div
+        className="sticky top-0 z-10 backdrop-blur-lg border-b border-[color:var(--ngx-border-subtle)] p-4"
+        style={{ backgroundColor: "rgba(5,5,8,0.80)" }}
+      >
+        <div className="flex items-center justify-between max-w-2xl mx-auto">
           <div className="flex items-center gap-2">
-            <Brain size={16} className="text-[#6D00FF]" />
-            <span className="text-sm font-bold text-white">GENESIS</span>
+            <Brain size={16} className="text-[color:var(--ngx-purple-light)]" />
+            <span className="text-sm font-bold text-white tracking-wide">GENESIS</span>
           </div>
           <div
-            className="px-3 py-1 rounded-full text-[10px] font-bold"
+            className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.18em] border"
             style={{
-              backgroundColor: remainingMessages <= 1 ? '#FF444420' : '#6D00FF20',
-              color: remainingMessages <= 1 ? '#FF4444' : '#6D00FF',
+              backgroundColor: remainingMessages <= 1 ? 'rgba(255,107,107,0.10)' : 'var(--ngx-purple-glass)',
+              borderColor: remainingMessages <= 1 ? 'rgba(255,107,107,0.30)' : 'rgba(109,0,255,0.30)',
+              color: remainingMessages <= 1 ? 'var(--ngx-error)' : 'var(--ngx-purple-light)',
             }}
           >
             {remainingMessages}/5 restantes
@@ -282,7 +286,7 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4">
-        <div className="max-w-lg mx-auto space-y-4">
+        <div className="max-w-2xl mx-auto space-y-4">
           <AnimatePresence mode="popLayout">
             {messages.map((message) => {
               const capMeta = CAPABILITY_META[message.capability];
@@ -295,23 +299,23 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
                 >
                   {/* GENESIS message with capability label */}
                   <div className="flex items-start gap-3 mb-3">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-[#6D00FF]/20">
-                      <Brain size={14} className="text-[#6D00FF]" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#6D00FF]">
+                    <span className="ngx-icon-box h-9 w-9 shrink-0">
+                      <Brain size={16} />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[color:var(--ngx-purple-light)]">
                           GENESIS
                         </span>
                         <span className="text-[9px] text-white/30">·</span>
                         <span
-                          className="text-[10px] font-medium uppercase tracking-wider"
+                          className="text-[10px] font-medium uppercase tracking-[0.18em]"
                           style={{ color: capMeta.color }}
                         >
                           {capMeta.label}
                         </span>
                       </div>
-                      <p className="text-sm text-white/80 mt-1">{message.content}</p>
+                      <p className="text-sm text-white/80 mt-1.5 leading-relaxed">{message.content}</p>
                     </div>
                   </div>
 
@@ -327,23 +331,23 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="flex items-center gap-2 text-white/50"
+              className="flex items-center gap-2 text-white/50 pl-12"
             >
               <div className="flex gap-1">
                 <motion.div
                   animate={{ opacity: [0.3, 1, 0.3] }}
                   transition={{ duration: 1, repeat: Infinity }}
-                  className="w-2 h-2 rounded-full bg-[#6D00FF]"
+                  className="w-2 h-2 rounded-full bg-[color:var(--ngx-purple)]"
                 />
                 <motion.div
                   animate={{ opacity: [0.3, 1, 0.3] }}
                   transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
-                  className="w-2 h-2 rounded-full bg-[#6D00FF]"
+                  className="w-2 h-2 rounded-full bg-[color:var(--ngx-purple)]"
                 />
                 <motion.div
                   animate={{ opacity: [0.3, 1, 0.3] }}
                   transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
-                  className="w-2 h-2 rounded-full bg-[#6D00FF]"
+                  className="w-2 h-2 rounded-full bg-[color:var(--ngx-purple)]"
                 />
               </div>
               <span className="text-xs">Analizando...</span>
@@ -353,29 +357,30 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
       </div>
 
       {/* Quick Actions */}
-      <div className="sticky bottom-0 bg-[#050505]/80 backdrop-blur-lg border-t border-white/5 p-4">
-        <div className="max-w-lg mx-auto">
-          <div className="grid grid-cols-2 gap-2">
+      <div
+        className="sticky bottom-0 backdrop-blur-lg border-t border-[color:var(--ngx-border-subtle)] p-4"
+        style={{ backgroundColor: "rgba(5,5,8,0.80)" }}
+      >
+        <div className="max-w-2xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {quickActions.map((action) => (
               <motion.button
                 key={action.id}
-                whileHover={{ scale: 1.02 }}
+                whileHover={{ scale: 1.01, y: -1 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleQuickAction(action)}
                 disabled={isTyping}
-                className="flex items-center justify-between gap-2 p-3 rounded-xl text-left transition-all disabled:opacity-50"
-                style={{
-                  backgroundColor: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                }}
+                className="ngx-metal-card !p-3.5 text-left transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <div className="flex items-center gap-2">
-                  <span className="text-white/50">
-                    {ICON_MAP[action.icon] || <MessageCircle size={14} />}
-                  </span>
-                  <span className="text-xs text-white font-medium">{action.label}</span>
+                <div className="relative z-10 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="text-[color:var(--ngx-purple-light)] shrink-0">
+                      {ICON_MAP[action.icon] || <MessageCircle size={14} />}
+                    </span>
+                    <span className="text-xs text-white font-medium truncate">{action.label}</span>
+                  </div>
+                  <ChevronRight size={14} className="text-white/40 shrink-0" />
                 </div>
-                <ChevronRight size={14} className="text-white/30" />
               </motion.button>
             ))}
           </div>
