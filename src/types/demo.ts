@@ -1,12 +1,12 @@
 /**
  * Types for NGX Transform v4.0 Demo Page
- * State machine for 4-phase GENESIS experience
+ * State machine for GENESIS demo experience
  */
 
 /** Demo page phase state machine */
-export type DemoPhase = 'voice_intro' | 'chat' | 'plan_ready' | 'cta';
+export type DemoPhase = 'chat' | 'plan_ready' | 'cta';
 
-/** User responses from voice intro questions (buttons, not text) */
+/** User responses from demo questions (buttons, not text) */
 export interface DemoUserResponses {
   trainingDays: '2-3' | '4' | '5+' | null;
   goal: 'muscle' | 'fat' | 'both' | null;
@@ -47,23 +47,8 @@ export interface AgentReport {
   message: string;
 }
 
-/** Voice intro script segment */
-export interface VoiceSegment {
-  text: string;
-  audioUrl?: string;
-  duration?: number;
-}
-
-/** GENESIS voice intro response */
-export interface GenesisVoiceResponse {
-  audioUrl: string;
-  transcript: string;
-  duration: number;
-}
-
 /** Demo phase transition event */
 export type DemoPhaseTransition =
-  | { from: 'voice_intro'; to: 'chat'; trigger: 'questions_complete' }
   | { from: 'chat'; to: 'plan_ready'; trigger: 'plan_generated' }
   | { from: 'plan_ready'; to: 'cta'; trigger: 'download_or_share' };
 
@@ -71,7 +56,7 @@ export type DemoPhaseTransition =
 export function createInitialDemoContext(shareId: string): DemoContext {
   return {
     shareId,
-    phase: 'voice_intro',
+    phase: 'chat',
     responses: {
       trainingDays: null,
       goal: null,
@@ -83,15 +68,6 @@ export function createInitialDemoContext(shareId: string): DemoContext {
     hasDownloaded: false,
     hasShared: false,
   };
-}
-
-/** Check if user has answered all voice intro questions */
-export function hasCompletedVoiceIntro(responses: DemoUserResponses): boolean {
-  return (
-    responses.trainingDays !== null &&
-    responses.goal !== null &&
-    responses.equipment !== null
-  );
 }
 
 /** Subscription tier types */

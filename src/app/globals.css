@@ -659,6 +659,14 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: uppercase;
   color: var(--ngx-fg-1);
 }
+.ngx-display-hero {
+  font-size: clamp(46px, 13vw, 64px);
+}
+@media (min-width: 768px) {
+  .ngx-display-hero {
+    font-size: clamp(56px, 9vw, 120px);
+  }
+}
 .ngx-h1 {
   font-family: var(--ngx-font-display);
   font-weight: 800;

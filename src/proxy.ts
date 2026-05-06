@@ -111,7 +111,15 @@ export function proxy(request: NextRequest) {
                 // Add your production domains here
             ];
 
-            if (!allowedOrigins.some((allowed) => origin.startsWith(allowed))) {
+            let normalizedOrigin: string;
+            try {
+                normalizedOrigin = new URL(origin).origin;
+            } catch {
+                console.warn(`[Middleware] Blocked malformed origin: ${origin}`);
+                return new NextResponse("Forbidden", { status: 403 });
+            }
+
+            if (!allowedOrigins.includes(normalizedOrigin)) {
                 console.warn(`[Middleware] Blocked request from origin: ${origin}`);
                 return new NextResponse("Forbidden", { status: 403 });
             }

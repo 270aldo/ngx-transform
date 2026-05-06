@@ -11,6 +11,7 @@ import {
   Preview,
   Img,
 } from "@react-email/components";
+import { buildUnsubscribeUrl } from "@/lib/unsubscribeToken";
 
 interface D5EbookProps {
   name?: string;
@@ -24,7 +25,7 @@ export default function D5Ebook({ name, shareId }: D5EbookProps) {
     "https://transform.ngxgenesis.com";
   const ebookUrl = `${baseUrl}/s/${shareId}/plan`;
   const offerUrl = `${baseUrl}/s/${shareId}?section=offer`;
-  const unsubscribeUrl = `${baseUrl}/unsubscribe?shareId=${shareId}`;
+  const unsubscribeUrl = buildUnsubscribeUrl(baseUrl, shareId);
   const logoUrl = `${baseUrl}/images/brand/logo.svg`;
 
   return (

@@ -12,6 +12,7 @@ import {
   Preview,
   Hr,
 } from "@react-email/components";
+import { buildUnsubscribeUrl } from "@/lib/unsubscribeToken";
 
 interface D0ResultsProps {
   name?: string;
@@ -31,7 +32,7 @@ export default function D0Results({
     process.env.NEXT_PUBLIC_BASE_URL ||
     "https://transform.ngxgenesis.com";
   const resultsUrl = `${baseUrl}/s/${shareId}`;
-  const unsubscribeUrl = `${baseUrl}/unsubscribe?shareId=${shareId}`;
+  const unsubscribeUrl = buildUnsubscribeUrl(baseUrl, shareId);
   const logoUrl = `${baseUrl}/images/brand/logo.svg`;
 
   return (

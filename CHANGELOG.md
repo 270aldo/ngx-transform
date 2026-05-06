@@ -60,7 +60,6 @@
 ### API Endpoints
 - `GET /api/genesis-demo` — SSE streaming for agent orchestration animation.
 - `POST /api/genesis-chat` — DemoChat responses with A2UI widgets.
-- `POST /api/genesis-voice` — Voice agent responses via ElevenLabs.
 
 ### Pages
 - `/s/[shareId]/demo` — Genesis Experience demo page.

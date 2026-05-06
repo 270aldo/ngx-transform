@@ -42,7 +42,7 @@ export function LandingPage({ variant = "general" }: LandingPageProps) {
           <LandingTopNav />
 
           {/* Main Content */}
-          <main className="relative z-10 pt-36 pb-20 md:pt-40">
+          <main className="relative z-10 pt-28 pb-20 sm:pt-32 md:pt-40">
             <LandingHero />
             <LandingProblem />
             <LandingHowItWorks />

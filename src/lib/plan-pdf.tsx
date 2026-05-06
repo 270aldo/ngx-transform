@@ -5,28 +5,8 @@ import {
   Text,
   View,
   StyleSheet,
-  Font,
   pdf,
 } from "@react-pdf/renderer";
-
-// Register custom fonts (using system fonts as fallback)
-Font.register({
-  family: "Inter",
-  fonts: [
-    {
-      src: "https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hjp-Ek-_EeA.woff2",
-      fontWeight: 400,
-    },
-    {
-      src: "https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuI6fAZ9hjp-Ek-_EeA.woff2",
-      fontWeight: 600,
-    },
-    {
-      src: "https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuFuYAZ9hjp-Ek-_EeA.woff2",
-      fontWeight: 700,
-    },
-  ],
-});
 
 // NGX Brand Colors
 const COLORS = {
@@ -49,7 +29,7 @@ const styles = StyleSheet.create({
   page: {
     backgroundColor: COLORS.background,
     padding: 40,
-    fontFamily: "Inter",
+    fontFamily: "Helvetica",
     color: COLORS.text,
   },
   header: {
@@ -180,7 +160,6 @@ const styles = StyleSheet.create({
   agentNoteText: {
     fontSize: 10,
     color: COLORS.textMuted,
-    fontStyle: "italic",
   },
   footer: {
     position: "absolute",

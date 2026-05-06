@@ -17,12 +17,10 @@ import {
   CheckSquare,
   Sparkles,
 } from 'lucide-react';
-import type { AgentType } from '@/types/genesis';
-import { AGENT_META } from '@/lib/genesis-demo/agents';
-import { GlassCard } from '@/components/widgets/GlassCard';
 import { WorkoutCard } from '@/components/widgets/WorkoutCard';
 import { MealPlan } from '@/components/widgets/MealPlan';
 import { ChecklistWidget } from '@/components/widgets/ChecklistWidget';
+import { ComparisonCTA } from '@/components/results/ComparisonCTA';
 
 // Day names
 const DAY_NAMES = ['Día 1', 'Día 2', 'Día 3', 'Día 4', 'Día 5', 'Día 6', 'Día 7'];
@@ -96,7 +94,7 @@ export function PlanPreview({ shareId, onUnlock }: PlanPreviewProps) {
   };
 
   return (
-    <div className="min-h-screen bg-transparent pb-32 text-white">
+    <div className="min-h-screen bg-transparent pb-16 text-white">
       {/* Header */}
       <div
         className="sticky top-0 z-10 backdrop-blur-lg border-b border-[color:var(--ngx-border-subtle)] p-4"
@@ -170,7 +168,7 @@ export function PlanPreview({ shareId, onUnlock }: PlanPreviewProps) {
 
       {/* Content */}
       <div className="p-4">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-2xl mx-auto space-y-10">
           <AnimatePresence mode="wait">
             {!isLocked ? (
               // Day 1 - Full content
@@ -325,6 +323,8 @@ export function PlanPreview({ shareId, onUnlock }: PlanPreviewProps) {
               </motion.div>
             )}
           </AnimatePresence>
+
+          <ComparisonCTA onSubscribe={onUnlock} />
         </div>
       </div>
     </div>

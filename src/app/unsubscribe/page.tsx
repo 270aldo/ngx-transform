@@ -12,22 +12,26 @@ function UnsubscribeContent() {
   const [message, setMessage] = useState("Procesando tu solicitud...");
 
   useEffect(() => {
-    const email = searchParams.get("email");
     const shareId = searchParams.get("shareId");
+    const token = searchParams.get("token");
     const reason = searchParams.get("reason");
 
-    if (!email && !shareId) {
+    if (!shareId || !token) {
       setStatus("error");
       setMessage("Faltan datos para procesar la baja.");
       return;
     }
 
     setStatus("loading");
-    fetch(`/api/unsubscribe?${new URLSearchParams({
-      ...(email ? { email } : {}),
-      ...(shareId ? { shareId } : {}),
-      ...(reason ? { reason } : {}),
-    }).toString()}`)
+    fetch("/api/unsubscribe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        shareId,
+        token,
+        ...(reason ? { reason } : {}),
+      }),
+    })
       .then(async (res) => {
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));

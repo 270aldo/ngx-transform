@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Html, Head, Body, Container, Section, Text, Button, Tailwind, Img } from "@react-email/components";
+import { buildUnsubscribeUrl } from "@/lib/unsubscribeToken";
 
 export default function ResultsEmail({ url }: { url: string }) {
   let origin = "https://transform.ngxgenesis.com";
@@ -10,7 +11,7 @@ export default function ResultsEmail({ url }: { url: string }) {
     const parts = parsed.pathname.split("/");
     const shareId = parts.length >= 3 ? parts[2] : "";
     if (shareId) {
-      unsubscribeUrl = `${parsed.origin}/unsubscribe?shareId=${shareId}`;
+      unsubscribeUrl = buildUnsubscribeUrl(parsed.origin, shareId);
     }
   } catch {
     // ignore malformed URL

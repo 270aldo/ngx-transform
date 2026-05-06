@@ -178,11 +178,6 @@ export default function PrivacyPage() {
                   <td className="py-2">Estados Unidos</td>
                 </tr>
                 <tr>
-                  <td className="py-2 pr-4">ElevenLabs Inc.</td>
-                  <td className="py-2 pr-4">Generación de voz para el asistente GENESIS</td>
-                  <td className="py-2">Estados Unidos</td>
-                </tr>
-                <tr>
                   <td className="py-2 pr-4">Upstash Inc.</td>
                   <td className="py-2 pr-4">Control de límites de uso (rate limiting)</td>
                   <td className="py-2">Estados Unidos</td>

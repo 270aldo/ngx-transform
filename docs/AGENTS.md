@@ -129,10 +129,6 @@ Main flow wrapper: AgentOrchestration -> DemoChat -> PlanPreview -> Conversion C
 
 5 interactions per session. SSE events: `genesis_message`, `agent_status`, `agent_report`, `plan_ready`, `done`, `error`.
 
-### `POST /api/genesis-voice` — Voice
-
-ElevenLabs TTS. Caches 1 hour per shareId. Falls back to text-only.
-
 ## A2UI Widget System
 
 Located in `src/components/widgets/`:
@@ -149,7 +145,7 @@ Results (/s/[shareId])
          |
 Genesis Demo (/s/[shareId]/demo)
     |-- Phase 1: AgentOrchestration (GENESIS + 4 capabilities)
-    |-- Phase 2: DemoChat (5 interactions, GENESIS voice)
+    |-- Phase 2: DemoChat (5 interactions)
     +-- Phase 3: Redirect to plan
          |
 Plan Preview (/s/[shareId]/plan)
@@ -169,7 +165,6 @@ Conversion
 | Genesis types | `src/types/genesis.ts` |
 | SSE endpoint | `src/app/api/genesis-demo/route.ts` |
 | Chat endpoint | `src/app/api/genesis-chat/route.ts` |
-| Voice endpoint | `src/app/api/genesis-voice/route.ts` |
 | AgentOrchestration | `src/components/genesis/AgentOrchestration.tsx` |
 | AgentStatusBar | `src/components/demo/AgentStatusBar.tsx` |
 | GenesisChat | `src/components/demo/GenesisChat.tsx` |
@@ -182,6 +177,5 @@ Conversion
 
 These files still contain user-facing agent name references that may need a follow-up pass:
 
-- `src/lib/elevenlabs-voice.ts:113` — Voice text mentions BLAZE, SAGE, TEMPO
 - `src/components/AgentBridgeCTA.tsx` — Shows BLAZE/NEXUS names to users
 - `src/components/genesis/DemoChat.tsx` — Chat messages from individual agents
