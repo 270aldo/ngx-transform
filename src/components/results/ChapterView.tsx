@@ -16,7 +16,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Share2, ChevronDown, ChevronUp, MessageCircle } from "lucide-react";
+import { Share2, ChevronDown, ChevronUp, MessageCircle, Dna, Quote, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CompareSlider } from "./CompareSlider";
 import { StatsDelta } from "./StatsDelta";
@@ -175,17 +175,18 @@ export function ChapterView({
         </div>
       </div>
 
-      {/* Content Section */}
+      {/* Content Section — constrained on desktop for better legibility */}
       <div
-        className="relative z-10 px-6 py-8 -mt-6 rounded-t-3xl"
+        className="relative z-10 px-6 py-10 md:py-12 -mt-6 rounded-t-3xl"
         style={{ background: "linear-gradient(to bottom, var(--ngx-bg-end), var(--ngx-bg-mid))" }}
       >
+        <div className="max-w-5xl mx-auto">
         {/* Stats */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="mb-8"
+          className="mb-8 md:mb-10"
         >
           <span className="ngx-eyebrow !text-[10px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>
             Progreso
@@ -197,106 +198,115 @@ export function ChapterView({
           />
         </motion.div>
 
-        {/* Narrative */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="mb-8"
-        >
-          <span className="ngx-eyebrow !text-[10px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>
-            Tu evolución
-          </span>
-          <div className="ngx-card !p-5">
-            <p
-              className={cn(
-                "text-white/80 leading-relaxed",
-                !showFullNarrative && "line-clamp-4"
-              )}
+        {/* Two-column on desktop: narrative + longevity stack on left, mentalidad on right */}
+        <div className="grid gap-6 md:gap-8 md:grid-cols-[1.2fr_1fr] mb-8 md:mb-10">
+          {/* Left: Narrative + Longevity */}
+          <div className="flex flex-col gap-6">
+            {/* Narrative */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
             >
-              {timelineEntry.description}
-            </p>
-            {timelineEntry.description.length > 200 && (
-              <button
-                onClick={() => setShowFullNarrative(!showFullNarrative)}
-                className="flex items-center gap-1 mt-3 text-sm font-medium transition-colors hover:text-white"
-                style={{ color: "var(--ngx-purple-light)" }}
-              >
-                {showFullNarrative ? (
-                  <>
-                    <span>Ver menos</span>
-                    <ChevronUp className="w-4 h-4" />
-                  </>
-                ) : (
-                  <>
-                    <span>Leer más</span>
-                    <ChevronDown className="w-4 h-4" />
-                  </>
-                )}
-              </button>
-            )}
-          </div>
-        </motion.div>
+              <div className="ngx-metal-card !p-5 md:!p-6">
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="ngx-icon-box h-9 w-9">
+                      <TrendingUp className="h-4 w-4" />
+                    </span>
+                    <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
+                      Tu evolución
+                    </span>
+                  </div>
+                  <p
+                    className={cn(
+                      "text-white/80 leading-relaxed",
+                      !showFullNarrative && "line-clamp-4"
+                    )}
+                  >
+                    {timelineEntry.description}
+                  </p>
+                  {timelineEntry.description.length > 200 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowFullNarrative(!showFullNarrative)}
+                      className="flex items-center gap-1 mt-3 text-sm font-medium transition-colors hover:text-white"
+                      style={{ color: "var(--ngx-purple-light)" }}
+                    >
+                      {showFullNarrative ? (
+                        <>
+                          <span>Ver menos</span>
+                          <ChevronUp className="w-4 h-4" />
+                        </>
+                      ) : (
+                        <>
+                          <span>Leer más</span>
+                          <ChevronDown className="w-4 h-4" />
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
 
-        {/* Longevity context */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.45 }}
-          className="mb-8"
-        >
-          <div
-            className="flex items-center gap-2 px-4 py-3 rounded-xl"
-            style={{
-              background: "rgba(109, 0, 255, 0.10)",
-              border: "1px solid rgba(109, 0, 255, 0.20)",
-            }}
-          >
-            <span className="text-sm">🧬</span>
-            <p className="text-sm leading-snug" style={{ color: "var(--ngx-purple-light)" }}>
-              {LONGEVITY_CONTEXT[milestone]}
-            </p>
+            {/* Longevity context */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.45 }}
+            >
+              <div className="ngx-metal-card !p-4 md:!p-5">
+                <div className="relative z-10 flex items-center gap-3">
+                  <span className="ngx-icon-box h-9 w-9 shrink-0">
+                    <Dna className="h-4 w-4" />
+                  </span>
+                  <p className="text-sm leading-snug text-white/75">
+                    {LONGEVITY_CONTEXT[milestone]}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
           </div>
-        </motion.div>
 
-        {/* Mental note */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="mb-8"
-        >
-          <span className="ngx-eyebrow !text-[10px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>
-            Mentalidad
-          </span>
-          <div
-            className="p-5 rounded-2xl"
-            style={{
-              background: "linear-gradient(135deg, rgba(109,0,255,0.10), transparent)",
-              border: "1px solid rgba(109, 0, 255, 0.20)",
-            }}
+          {/* Right: Mental note */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="md:h-full"
           >
-            <div className="flex gap-3">
-              <div className="text-2xl">🧠</div>
-              <p className="text-white/80 leading-relaxed italic">
-                &ldquo;{timelineEntry.mental}&rdquo;
-              </p>
+            <div className="ngx-metal-card !p-5 md:!p-6 md:h-full">
+              <div className="relative z-10 flex flex-col h-full">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="ngx-icon-box h-9 w-9">
+                    <Quote className="h-4 w-4" />
+                  </span>
+                  <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
+                    Mentalidad
+                  </span>
+                </div>
+                <p className="text-white/80 leading-relaxed italic">
+                  &ldquo;{timelineEntry.mental}&rdquo;
+                </p>
+              </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
 
-        {/* CTAs */}
+        {/* CTAs — constrained on desktop, side-by-side when both visible */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="space-y-3"
+          className="flex flex-col sm:flex-row gap-3 max-w-2xl mx-auto"
         >
           {/* Share CTA */}
           {onShare && (
             <button
+              type="button"
               onClick={() => onShare(milestone)}
-              className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-full text-white font-bold uppercase tracking-[0.06em] transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.98]"
+              className="flex-1 flex items-center justify-center gap-2.5 px-6 py-4 rounded-full text-white font-bold uppercase tracking-[0.06em] transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.98]"
               style={{
                 backgroundColor: "var(--ngx-purple)",
                 boxShadow: "var(--ngx-glow-primary)",
@@ -316,14 +326,16 @@ export function ChapterView({
           {/* Letter CTA (only for m12) */}
           {isM12 && onShowLetter && (
             <button
+              type="button"
               onClick={onShowLetter}
-              className="ngx-glass-clear w-full flex items-center justify-center gap-3 px-6 py-4 rounded-full text-white font-medium transition-all duration-150 active:scale-[0.98]"
+              className="ngx-glass-clear flex-1 flex items-center justify-center gap-2.5 px-6 py-4 rounded-full text-white font-medium transition-all duration-150 active:scale-[0.98] hover:bg-white/[0.10]"
             >
               <MessageCircle className="w-5 h-5" />
-              <span>Leer carta de tu yo futuro</span>
+              <span>Carta de tu yo futuro</span>
             </button>
           )}
         </motion.div>
+        </div>
       </div>
     </div>
   );

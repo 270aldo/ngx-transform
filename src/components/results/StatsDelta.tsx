@@ -141,7 +141,7 @@ export function StatsDelta({
                         : toValue >= 40
                           ? "var(--ngx-purple)"
                           : "linear-gradient(90deg, var(--ngx-warning), var(--ngx-purple))",
-                  boxShadow: "0 0 8px rgba(109,0,255,0.30)",
+                  boxShadow: "var(--ngx-glow-primary-soft)",
                 }}
               />
             </div>

@@ -73,61 +73,72 @@ export function TransformationSummary({
                 La imagen abre la posibilidad. El valor real empieza cuando conviertes esa reacción en dirección: qué haría falta, qué hábito pesa más y qué sistema sí tendría sentido para ti.
               </p>
 
-              <div className="mt-6 ngx-card !p-5">
-                <span className="ngx-eyebrow !text-[10px]" style={{ color: 'var(--ngx-fg-3)' }}>Esta pieza responde</span>
-                <div className="mt-3 space-y-3">
-                  {bridgeQuestions.map((item) => (
-                    <div key={item} className="flex items-start gap-3">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" style={{ color: 'var(--ngx-purple-light)' }} />
-                      <p className="text-sm leading-relaxed text-white/72">{item}</p>
-                    </div>
-                  ))}
+              <div className="mt-6 ngx-metal-card !p-5">
+                <div className="relative z-10">
+                  <span className="ngx-eyebrow !text-[10px]" style={{ color: 'var(--ngx-fg-3)' }}>Esta pieza responde</span>
+                  <div className="mt-3 space-y-3">
+                    {bridgeQuestions.map((item) => (
+                      <div key={item} className="flex items-start gap-3">
+                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" style={{ color: 'var(--ngx-purple-light)' }} />
+                        <p className="text-sm leading-relaxed text-white/75">{item}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-5 ngx-glass !p-5 md:!p-6">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4" style={{ color: 'var(--ngx-purple-light)' }} />
-                  <span className="ngx-eyebrow !text-[10px]" style={{ color: 'var(--ngx-fg-3)' }}>Resumen orientativo</span>
-                </div>
+              <div className="mt-5 ngx-metal-card !p-5 md:!p-6">
+                <div className="relative z-10">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4" style={{ color: 'var(--ngx-purple-light)' }} />
+                    <span className="ngx-eyebrow !text-[10px]" style={{ color: 'var(--ngx-fg-3)' }}>Resumen orientativo</span>
+                  </div>
 
-                <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                  <div className="rounded-2xl border border-white/[0.08] bg-white/[0.025] px-4 py-4">
-                    <div className="flex items-center gap-2" style={{ color: 'var(--ngx-success)' }}>
-                      <TrendingUp className="h-4 w-4" />
-                      <span className="font-mono text-2xl font-bold tabular-nums text-white">+{weightDelta} kg</span>
+                  <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                    <div className="ngx-metal-card !p-4">
+                      <div className="relative z-10">
+                        <div className="flex items-center gap-2" style={{ color: 'var(--ngx-success)' }}>
+                          <TrendingUp className="h-4 w-4" />
+                          <span className="font-mono text-2xl font-bold tabular-nums text-white">+{weightDelta} kg</span>
+                        </div>
+                        <span className="ngx-eyebrow !text-[10px] mt-2 block" style={{ color: 'var(--ngx-fg-4)' }}>Peso orientativo</span>
+                      </div>
                     </div>
-                    <span className="ngx-eyebrow !text-[10px] mt-2 block" style={{ color: 'var(--ngx-fg-4)' }}>Peso orientativo</span>
-                  </div>
-                  <div className="rounded-2xl border border-white/[0.08] bg-white/[0.025] px-4 py-4">
-                    <div className="flex items-center gap-2" style={{ color: 'var(--ngx-success)' }}>
-                      <TrendingDown className="h-4 w-4" />
-                      <span className="font-mono text-2xl font-bold tabular-nums text-white">{fatDelta}%</span>
+                    <div className="ngx-metal-card !p-4">
+                      <div className="relative z-10">
+                        <div className="flex items-center gap-2" style={{ color: 'var(--ngx-success)' }}>
+                          <TrendingDown className="h-4 w-4" />
+                          <span className="font-mono text-2xl font-bold tabular-nums text-white">{fatDelta}%</span>
+                        </div>
+                        <span className="ngx-eyebrow !text-[10px] mt-2 block" style={{ color: 'var(--ngx-fg-4)' }}>Grasa estimada</span>
+                      </div>
                     </div>
-                    <span className="ngx-eyebrow !text-[10px] mt-2 block" style={{ color: 'var(--ngx-fg-4)' }}>Grasa estimada</span>
-                  </div>
-                  <div className="rounded-2xl border border-white/[0.08] bg-white/[0.025] px-4 py-4">
-                    <div className="flex items-center gap-2" style={{ color: 'var(--ngx-success)' }}>
-                      <TrendingUp className="h-4 w-4" />
-                      <span className="font-mono text-2xl font-bold tabular-nums text-white">+{muscleDelta}%</span>
+                    <div className="ngx-metal-card !p-4">
+                      <div className="relative z-10">
+                        <div className="flex items-center gap-2" style={{ color: 'var(--ngx-success)' }}>
+                          <TrendingUp className="h-4 w-4" />
+                          <span className="font-mono text-2xl font-bold tabular-nums text-white">+{muscleDelta}%</span>
+                        </div>
+                        <span className="ngx-eyebrow !text-[10px] mt-2 block" style={{ color: 'var(--ngx-fg-4)' }}>Músculo estimado</span>
+                      </div>
                     </div>
-                    <span className="ngx-eyebrow !text-[10px] mt-2 block" style={{ color: 'var(--ngx-fg-4)' }}>Músculo estimado</span>
                   </div>
-                </div>
 
-                <p className="mt-5 text-sm leading-relaxed text-white/55">
-                  No es una promesa exacta. Es una visión útil para decidir si ese resultado te mueve lo suficiente como para traducirlo a estructura, hábitos y seguimiento.
-                </p>
+                  <p className="mt-5 text-sm leading-relaxed text-white/55">
+                    No es una promesa exacta. Es una visión útil para decidir si ese resultado te mueve lo suficiente como para traducirlo a estructura, hábitos y seguimiento.
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="ngx-glass !p-5 md:!p-6">
+            <div className="ngx-metal-card !p-5 md:!p-6">
+              <div className="relative z-10">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <span className="ngx-eyebrow !text-[10px]" style={{ color: 'var(--ngx-fg-3)' }}>Secuencia visual</span>
                   <p className="mt-2 text-lg font-bold text-white">De hoy hacia una posibilidad</p>
                 </div>
-                <span className="rounded-full border border-white/[0.08] bg-white/[0.025] px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-white/45">
+                <span className="rounded-full border border-[color:var(--ngx-border-subtle)] bg-white/[0.04] px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-white/55 whitespace-nowrap">
                   4 hitos
                 </span>
               </div>
@@ -136,8 +147,8 @@ export function TransformationSummary({
                 {timelineImages.map((item, index) => (
                   <div
                     key={item.key}
-                    className="overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.025] p-3"
-                  >
+                    className="ngx-metal-card overflow-hidden !p-3"
+                  ><div className="relative z-10">
                     <div
                       className="relative aspect-[4/5] overflow-hidden rounded-[18px] border"
                       style={{
@@ -183,14 +194,17 @@ export function TransformationSummary({
                         </span>
                       ) : null}
                     </div>
+                    </div>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-6 rounded-2xl border border-white/[0.08] bg-white/[0.025] px-4 py-4">
-                <p className="text-sm leading-relaxed text-white/60">
-                  La visualización es aproximada. El roadmap convierte el impacto visual en un siguiente paso más serio y accionable.
-                </p>
+              <div className="mt-6 ngx-metal-card !p-4">
+                <div className="relative z-10">
+                  <p className="text-sm leading-relaxed text-white/65">
+                    La visualización es aproximada. El roadmap convierte el impacto visual en un siguiente paso más serio y accionable.
+                  </p>
+                </div>
               </div>
 
               <motion.button
@@ -210,6 +224,7 @@ export function TransformationSummary({
                 <span>Traducir esta visión a roadmap</span>
                 <ArrowRight className="h-4 w-4" />
               </motion.button>
+              </div>
             </div>
           </div>
         </div>

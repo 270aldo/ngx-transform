@@ -69,7 +69,8 @@ export function MuscleHealthScore({
                   Esta lectura no sustituye una evaluación médica. Sirve para aterrizar el wow de la visualización en algo más útil: contexto, palancas y dirección.
                 </p>
 
-                <div className="mt-8 ngx-glass !p-5 md:!p-6">
+                <div className="mt-8 ngx-metal-card !p-5 md:!p-6">
+                  <div className="relative z-10">
                   <div className="flex items-end justify-between gap-4">
                     <div>
                       <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Indicador inicial</span>
@@ -78,12 +79,12 @@ export function MuscleHealthScore({
                         <span className="ml-2 text-xl font-medium tracking-normal text-white/35 md:text-2xl">/100</span>
                       </p>
                     </div>
-                    <div className="rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-white/45">
+                    <div className="rounded-full border border-[color:var(--ngx-border-subtle)] bg-white/[0.04] px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-white/45 whitespace-nowrap">
                       Score orientativo
                     </div>
                   </div>
 
-                  <div className="mt-5 h-3 overflow-hidden rounded-full border border-white/[0.04] bg-white/[0.06]">
+                  <div className="mt-5 h-3 overflow-hidden rounded-full border border-[color:var(--ngx-border-subtle)] bg-white/[0.06]">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${score}%` }}
@@ -97,29 +98,37 @@ export function MuscleHealthScore({
                   </div>
 
                   <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.025] px-4 py-4">
-                      <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Edad cronológica</span>
-                      <p className="mt-2 font-mono text-2xl font-bold tabular-nums text-white">{chronologicalAge}</p>
+                    <div className="ngx-metal-card !p-4">
+                      <div className="relative z-10">
+                        <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Edad cronológica</span>
+                        <p className="mt-2 font-mono text-2xl font-bold tabular-nums text-white">{chronologicalAge}</p>
+                      </div>
                     </div>
-                    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.025] px-4 py-4">
-                      <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Edad biológica est.</span>
-                      <p className="mt-2 font-mono text-2xl font-bold tabular-nums text-white">{biologicalAge}</p>
+                    <div className="ngx-metal-card !p-4">
+                      <div className="relative z-10">
+                        <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Edad biológica est.</span>
+                        <p className="mt-2 font-mono text-2xl font-bold tabular-nums text-white">{biologicalAge}</p>
+                      </div>
                     </div>
-                    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.025] px-4 py-4">
-                      <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Diferencia</span>
-                      <p
-                        className="mt-2 font-mono text-2xl font-bold tabular-nums"
-                        style={{ color: ageDelta > 0 ? "rgb(252, 211, 77)" : "var(--ngx-success)" }}
-                      >
-                        {ageDelta > 0 ? `+${ageDelta}` : ageDelta}
-                      </p>
+                    <div className="ngx-metal-card !p-4">
+                      <div className="relative z-10">
+                        <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Diferencia</span>
+                        <p
+                          className="mt-2 font-mono text-2xl font-bold tabular-nums"
+                          style={{ color: ageDelta > 0 ? "rgb(252, 211, 77)" : "var(--ngx-success)" }}
+                        >
+                          {ageDelta > 0 ? `+${ageDelta}` : ageDelta}
+                        </p>
+                      </div>
                     </div>
+                  </div>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-4">
-                <div className="ngx-glass !p-5 md:!p-6">
+                <div className="ngx-metal-card !p-5 md:!p-6">
+                  <div className="relative z-10">
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Riesgo de sarcopenia</span>
@@ -142,25 +151,30 @@ export function MuscleHealthScore({
                   <div className="space-y-3">
                     <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Tus 3 palancas accionables</span>
                     {levers.slice(0, 3).map((lever, index) => (
-                      <div key={lever} className="flex items-start gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.025] px-4 py-4">
-                        <div
-                          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-mono text-xs font-bold tabular-nums"
-                          style={{
-                            background: "rgba(109, 0, 255, 0.15)",
-                            color: "var(--ngx-purple-light)",
-                          }}
-                        >
-                          {index + 1}
+                      <div key={lever} className="ngx-metal-card !p-4">
+                        <div className="relative z-10 flex items-start gap-3">
+                          <div
+                            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-mono text-xs font-bold tabular-nums"
+                            style={{
+                              background: "var(--ngx-purple-glass)",
+                              color: "var(--ngx-purple-light)",
+                            }}
+                          >
+                            {index + 1}
+                          </div>
+                          <p className="text-sm leading-relaxed text-white/75">{lever}</p>
                         </div>
-                        <p className="text-sm leading-relaxed text-white/72">{lever}</p>
                       </div>
                     ))}
                   </div>
+                  </div>
                 </div>
 
-                <div className="rounded-2xl p-5 md:p-6" style={{ background: "rgba(245, 158, 11, 0.06)", border: "1px solid rgba(245, 158, 11, 0.18)" }}>
-                  <div className="flex items-start gap-3">
-                    <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-300" />
+                <div className="ngx-metal-card !p-5 md:!p-6" style={{ borderColor: "rgba(245, 158, 11, 0.25)" }}>
+                  <div className="relative z-10 flex items-start gap-3">
+                    <span className="ngx-icon-box h-9 w-9 shrink-0" style={{ background: "rgba(245, 158, 11, 0.12)", borderColor: "rgba(245, 158, 11, 0.30)", color: "rgb(252, 211, 77)" }}>
+                      <AlertTriangle className="h-4 w-4" />
+                    </span>
                     <div>
                       <span className="ngx-eyebrow !text-[10px]" style={{ color: "rgba(252, 211, 77, 0.8)" }}>Error dominante</span>
                       <p className="mt-2 text-sm leading-relaxed text-white/75">{dominantError}</p>
@@ -168,7 +182,8 @@ export function MuscleHealthScore({
                   </div>
                 </div>
 
-                <div className="ngx-glass !p-5 md:!p-6">
+                <div className="ngx-metal-card !p-5 md:!p-6">
+                  <div className="relative z-10">
                   <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Siguiente paso recomendado</span>
                   <p className="mt-2 text-sm leading-relaxed text-white/68">
                     Antes de pensar en HYBRID, conviene entender qué hábitos, estructura y nivel de compromiso te acercarían a esa versión.
@@ -196,6 +211,7 @@ export function MuscleHealthScore({
                       <Shield className="h-4 w-4" />
                       Hablar con un coach
                     </a>
+                  </div>
                   </div>
                 </div>
               </div>
