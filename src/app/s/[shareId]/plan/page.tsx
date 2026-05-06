@@ -29,8 +29,11 @@ export default function PlanPage() {
       <PlanPreview shareId={shareId} onUnlock={handleUnlock} />
 
       {/* Comparison CTA - Fixed at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[#0A0A0A]/85 backdrop-blur-xl border-t border-white/5">
-        <div className="max-w-lg mx-auto p-4">
+      <div
+        className="fixed bottom-0 left-0 right-0 backdrop-blur-xl border-t border-[color:var(--ngx-border-subtle)]"
+        style={{ backgroundColor: "rgba(5,5,8,0.85)" }}
+      >
+        <div className="max-w-2xl mx-auto p-4">
           <ComparisonCTA onSubscribe={handleUnlock} />
         </div>
       </div>
