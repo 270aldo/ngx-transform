@@ -42,8 +42,8 @@ export const jovenesCopy: VariantCopy = {
       label: "Visualización aspiracional · lectura inicial · ruta de acción",
     },
     transformationDemo: {
-      beforeImage: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&h=1000&fit=crop&crop=faces",
-      afterImage: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=800&h=1000&fit=crop&crop=faces",
+      beforeImage: "https://images.unsplash.com/photo-1675026482188-8102367ecc16?w=800&h=1000&fit=crop&crop=faces",
+      afterImage: "https://images.unsplash.com/photo-1645810809381-97f6fd2f7d10?w=800&h=1000&fit=crop&crop=faces",
       beforeLabel: "HOY",
       afterLabel: "12 SEMANAS",
     },

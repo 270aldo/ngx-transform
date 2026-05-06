@@ -11,6 +11,7 @@ import {
   Preview,
   Img,
 } from "@react-email/components";
+import { buildUnsubscribeUrl } from "@/lib/unsubscribeToken";
 
 interface D14FinalProps {
   name?: string;
@@ -31,7 +32,7 @@ export default function D14Final({
     "https://transform.ngxgenesis.com";
   const offerUrl = `${baseUrl}/s/${shareId}?section=offer`;
   const waitlist = waitlistUrl || process.env.NEXT_PUBLIC_WAITLIST_URL || `${baseUrl}/wizard`;
-  const unsubscribeUrl = `${baseUrl}/unsubscribe?shareId=${shareId}`;
+  const unsubscribeUrl = buildUnsubscribeUrl(baseUrl, shareId);
   const logoUrl = `${baseUrl}/images/brand/logo.svg`;
 
   const closeLabel = closeDateLabel || "esta semana";

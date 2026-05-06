@@ -6,7 +6,7 @@
  * Maximum 5 interactions before redirecting to plan
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   MessageCircle,
@@ -136,6 +136,15 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
   const [remainingMessages, setRemainingMessages] = useState(5);
   const [quickActions, setQuickActions] = useState<QuickActionType[]>(INITIAL_QUICK_ACTIONS);
   const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const completedInteractions = 5 - remainingMessages;
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({
+      block: "end",
+      behavior: messages.length > 1 ? "smooth" : "auto",
+    });
+  }, [isTyping, messages.length]);
 
   // v11.0: Initial message from GENESIS (Entrenamiento capability)
   useEffect(() => {
@@ -260,10 +269,10 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
   };
 
   return (
-    <div className="min-h-screen bg-transparent flex flex-col text-white">
+    <div className="h-screen overflow-hidden bg-transparent flex flex-col text-white">
       {/* Header */}
       <div
-        className="sticky top-0 z-10 backdrop-blur-lg border-b border-[color:var(--ngx-border-subtle)] p-4"
+        className="shrink-0 backdrop-blur-lg border-b border-[color:var(--ngx-border-subtle)] p-4"
         style={{ backgroundColor: "rgba(5,5,8,0.80)" }}
       >
         <div className="flex items-center justify-between max-w-2xl mx-auto">
@@ -274,18 +283,18 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
           <div
             className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.18em] border"
             style={{
-              backgroundColor: remainingMessages <= 1 ? 'rgba(255,107,107,0.10)' : 'var(--ngx-purple-glass)',
-              borderColor: remainingMessages <= 1 ? 'rgba(255,107,107,0.30)' : 'rgba(109,0,255,0.30)',
-              color: remainingMessages <= 1 ? 'var(--ngx-error)' : 'var(--ngx-purple-light)',
+              backgroundColor: 'var(--ngx-purple-glass)',
+              borderColor: 'rgba(109,0,255,0.30)',
+              color: 'var(--ngx-purple-light)',
             }}
           >
-            {remainingMessages}/5 restantes
+            Demo {completedInteractions}/5
           </div>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-4 pb-6">
         <div className="max-w-2xl mx-auto space-y-4">
           <AnimatePresence mode="popLayout">
             {messages.map((message) => {
@@ -353,12 +362,14 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
               <span className="text-xs">Analizando...</span>
             </motion.div>
           )}
+
+          <div ref={messagesEndRef} aria-hidden="true" />
         </div>
       </div>
 
       {/* Quick Actions */}
       <div
-        className="sticky bottom-0 backdrop-blur-lg border-t border-[color:var(--ngx-border-subtle)] p-4"
+        className="shrink-0 backdrop-blur-lg border-t border-[color:var(--ngx-border-subtle)] p-4"
         style={{ backgroundColor: "rgba(5,5,8,0.80)" }}
       >
         <div className="max-w-2xl mx-auto">

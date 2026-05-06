@@ -162,12 +162,7 @@ export function TransformationViewer2({
   const handleDramaticRevealComplete = useCallback(() => {
     setShowDramaticReveal(false);
     localStorage.setItem(`ngx-dramatic-seen-${shareId}`, "true");
-
-    // Show share modal if enabled
-    if (shareUnlockEnabled && unlockedContent.length === 0) {
-      setShowShareModal(true);
-    }
-  }, [shareId, shareUnlockEnabled, unlockedContent.length]);
+  }, [shareId]);
 
   // Content unlock handler
   const handleContentUnlock = useCallback(
@@ -280,200 +275,202 @@ export function TransformationViewer2({
 
   return (
     <div className="min-h-screen bg-transparent text-white">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 px-4 py-3">
-        <div className="flex items-center justify-between">
-          {/* Left: Menu / Back */}
-          <button
-            type="button"
-            aria-label={showNav ? "Cerrar navegación" : "Abrir navegación"}
-            onClick={() => setShowNav(!showNav)}
-            className="ngx-glass-clear p-2 rounded-full transition-all hover:bg-white/[0.10]"
-          >
-            {showNav ? (
-              <X className="w-5 h-5 text-white" />
-            ) : (
-              <Menu className="w-5 h-5 text-white" />
-            )}
-          </button>
-
-          {/* Center: Current milestone */}
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-xs font-bold tabular-nums text-white/55">
-              {currentIndex + 1}/{STEPS.length}
-            </span>
-            <span
-              className="px-3 py-1 rounded-full text-white text-sm font-bold tracking-[0.04em] uppercase"
-              style={{
-                backgroundColor: "var(--ngx-purple)",
-                boxShadow: "var(--ngx-glow-primary-soft)",
-              }}
+      <section className="relative min-h-screen overflow-hidden">
+        {/* Header */}
+        <header className="absolute top-0 left-0 right-0 z-30 px-4 py-3">
+          <div className="flex items-center justify-between">
+            {/* Left: Menu / Back */}
+            <button
+              type="button"
+              aria-label={showNav ? "Cerrar navegación" : "Abrir navegación"}
+              onClick={() => setShowNav(!showNav)}
+              className="ngx-glass-clear p-2 rounded-full transition-all hover:bg-white/[0.10]"
             >
-              {STEP_LABELS[currentStep]}
-            </span>
-          </div>
-
-          {/* Right: Actions */}
-          <div className="flex items-center gap-2">
-            {isReady ? (
-              <>
-                <SocialShareButton shareId={shareId} imageUrl={currentImage} />
-              </>
-            ) : (
-              <div className="ngx-glass-clear flex items-center gap-2 px-3 py-2 rounded-full text-sm text-white/65">
-                <Loader2 className="w-4 h-4 animate-spin" />
-              </div>
-            )}
-            <BookingHeaderButton />
-          </div>
-        </div>
-      </header>
-
-      {/* Navigation Overlay */}
-      <AnimatePresence>
-        {showNav && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-black/95 backdrop-blur-lg flex items-center justify-center"
-          >
-            <div className="space-y-4 text-center">
-              <span className="ngx-eyebrow !text-[10px] mb-6 block" style={{ color: "var(--ngx-fg-3)" }}>
-                Ir a
-              </span>
-              {STEPS.map((step, index) => (
-                <motion.button
-                  key={step}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  onClick={() => handleStepChange(step)}
-                  className={cn(
-                    "block w-full px-8 py-4 rounded-2xl text-xl font-bold uppercase tracking-[0.02em] transition-all duration-150 active:scale-[0.97]",
-                    step === currentStep
-                      ? "text-white"
-                      : "bg-white/[0.04] text-white/65 hover:bg-white/[0.08] hover:text-white"
-                  )}
-                  style={
-                    step === currentStep
-                      ? {
-                          backgroundColor: "var(--ngx-purple)",
-                          boxShadow: "var(--ngx-glow-primary-soft)",
-                        }
-                      : undefined
-                  }
-                >
-                  {STEP_LABELS[step]}
-                </motion.button>
-              ))}
-
-              {/* Replay cinematic */}
-              {hasSeenCinematic && (
-                <motion.button
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                  onClick={() => {
-                    setShowNav(false);
-                    setShowCinematic(true);
-                  }}
-                  className="mt-8 px-6 py-3 rounded-full text-white/55 hover:text-white transition-colors text-sm"
-                >
-                  Reproducir experiencia cinematográfica
-                </motion.button>
+              {showNav ? (
+                <X className="w-5 h-5 text-white" />
+              ) : (
+                <Menu className="w-5 h-5 text-white" />
               )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </button>
 
-      {/* Main Content */}
-      <main className="pt-16">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentStep}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.3 }}
-          >
-            <ChapterView
-              milestone={currentStep}
-              timelineEntry={{
-                month: parseInt(currentStep.replace("m", "")),
-                title: currentEntry.title || STEP_LABELS[currentStep],
-                description: currentEntry.description || currentEntry.focus || "",
-                mental: currentEntry.mental,
-                stats: currentEntry.stats || baselineStats,
-              }}
-              baselineStats={baselineStats}
-              currentImage={currentImage}
-              originalImage={originalImage}
-              onShare={handleShare}
-              onShowLetter={currentStep === "m12" ? () => setShowLetter(true) : undefined}
-            />
-          </motion.div>
+            {/* Center: Current milestone */}
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-xs font-bold tabular-nums text-white/55">
+                {currentIndex + 1}/{STEPS.length}
+              </span>
+              <span
+                className="px-3 py-1 rounded-full text-white text-sm font-bold tracking-[0.04em] uppercase"
+                style={{
+                  backgroundColor: "var(--ngx-purple)",
+                  boxShadow: "var(--ngx-glow-primary-soft)",
+                }}
+              >
+                {STEP_LABELS[currentStep]}
+              </span>
+            </div>
+
+            {/* Right: Actions */}
+            <div className="flex items-center gap-2">
+              {isReady ? (
+                <>
+                  <SocialShareButton shareId={shareId} imageUrl={currentImage} />
+                </>
+              ) : (
+                <div className="ngx-glass-clear flex items-center gap-2 px-3 py-2 rounded-full text-sm text-white/65">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                </div>
+              )}
+              <BookingHeaderButton />
+            </div>
+          </div>
+        </header>
+
+        {/* Navigation Overlay */}
+        <AnimatePresence>
+          {showNav && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-40 bg-black/95 backdrop-blur-lg flex items-center justify-center"
+            >
+              <div className="space-y-4 text-center">
+                <span className="ngx-eyebrow !text-[10px] mb-6 block" style={{ color: "var(--ngx-fg-3)" }}>
+                  Ir a
+                </span>
+                {STEPS.map((step, index) => (
+                  <motion.button
+                    key={step}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    onClick={() => handleStepChange(step)}
+                    className={cn(
+                      "block w-full px-8 py-4 rounded-2xl text-xl font-bold uppercase tracking-[0.02em] transition-all duration-150 active:scale-[0.97]",
+                      step === currentStep
+                        ? "text-white"
+                        : "bg-white/[0.04] text-white/65 hover:bg-white/[0.08] hover:text-white"
+                    )}
+                    style={
+                      step === currentStep
+                        ? {
+                            backgroundColor: "var(--ngx-purple)",
+                            boxShadow: "var(--ngx-glow-primary-soft)",
+                          }
+                        : undefined
+                    }
+                  >
+                    {STEP_LABELS[step]}
+                  </motion.button>
+                ))}
+
+                {/* Replay cinematic */}
+                {hasSeenCinematic && (
+                  <motion.button
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                    onClick={() => {
+                      setShowNav(false);
+                      setShowCinematic(true);
+                    }}
+                    className="mt-8 px-6 py-3 rounded-full text-white/55 hover:text-white transition-colors text-sm"
+                  >
+                    Reproducir experiencia cinematográfica
+                  </motion.button>
+                )}
+              </div>
+            </motion.div>
+          )}
         </AnimatePresence>
 
-        {/* v2.1 Viral Section */}
-        <div className="px-6 py-8 space-y-8" style={{ background: "linear-gradient(to top, var(--ngx-bg-mid), var(--ngx-bg-end))" }}>
-          {/* Social Counter */}
-          {FF_SOCIAL_COUNTER && (
-            <div className="text-center">
-              <SocialCounter variant="results" sessionId={sessionId} />
-            </div>
-          )}
+        {/* Main Content */}
+        <main className="pt-16">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.3 }}
+            >
+              <ChapterView
+                milestone={currentStep}
+                timelineEntry={{
+                  month: parseInt(currentStep.replace("m", "")),
+                  title: currentEntry.title || STEP_LABELS[currentStep],
+                  description: currentEntry.description || currentEntry.focus || "",
+                  mental: currentEntry.mental,
+                  stats: currentEntry.stats || baselineStats,
+                }}
+                baselineStats={baselineStats}
+                currentImage={currentImage}
+                originalImage={originalImage}
+                onShare={handleShare}
+                onShowLetter={currentStep === "m12" ? () => setShowLetter(true) : undefined}
+              />
+            </motion.div>
+          </AnimatePresence>
+        </main>
 
-          {/* Agent Bridge CTA (replaces BookingCTA when enabled) */}
-          {FF_AGENT_BRIDGE_CTA && userProfile ? (
-            <AgentBridgeCTA
-              userProfile={userProfile}
-              shareId={shareId}
-              sessionId={sessionId}
-            />
-          ) : (
-            <BookingCTA />
-          )}
-
-          {/* Referral Card */}
-          {FF_REFERRAL_TRACKING && referralCode && (
-            <ReferralCard
-              referralCode={referralCode}
-              referralCount={referralCount}
-              shareId={shareId}
-              sessionId={sessionId}
-            />
-          )}
+        {/* Bottom Navigation Arrows */}
+        <div className="absolute bottom-6 left-0 right-0 z-30 flex justify-between px-6 pointer-events-none">
+          <button
+            onClick={handlePrevStep}
+            disabled={!hasPrev}
+            className={cn(
+              "p-4 rounded-full transition-all duration-150 pointer-events-auto active:scale-[0.97]",
+              hasPrev
+                ? "ngx-glass-clear hover:bg-white/[0.10] text-white"
+                : "opacity-0"
+            )}
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <button
+            onClick={handleNextStep}
+            disabled={!hasNext}
+            className={cn(
+              "p-4 rounded-full transition-all pointer-events-auto",
+              hasNext
+                ? "bg-white/10 backdrop-blur-md hover:bg-white/20 text-white"
+                : "opacity-0"
+            )}
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
         </div>
-      </main>
+      </section>
 
-      {/* Bottom Navigation Arrows */}
-      <div className="fixed bottom-6 left-0 right-0 z-30 flex justify-between px-6 pointer-events-none">
-        <button
-          onClick={handlePrevStep}
-          disabled={!hasPrev}
-          className={cn(
-            "p-4 rounded-full transition-all duration-150 pointer-events-auto active:scale-[0.97]",
-            hasPrev
-              ? "ngx-glass-clear hover:bg-white/[0.10] text-white"
-              : "opacity-0"
-          )}
-        >
-          <ChevronLeft className="w-6 h-6" />
-        </button>
-        <button
-          onClick={handleNextStep}
-          disabled={!hasNext}
-          className={cn(
-            "p-4 rounded-full transition-all pointer-events-auto",
-            hasNext
-              ? "bg-white/10 backdrop-blur-md hover:bg-white/20 text-white"
-              : "opacity-0"
-          )}
-        >
-          <ChevronRight className="w-6 h-6" />
-        </button>
+      {/* v2.1 Viral Section */}
+      <div className="px-6 py-8 space-y-8" style={{ background: "linear-gradient(to top, var(--ngx-bg-mid), var(--ngx-bg-end))" }}>
+        {/* Social Counter */}
+        {FF_SOCIAL_COUNTER && (
+          <div className="text-center">
+            <SocialCounter variant="results" sessionId={sessionId} />
+          </div>
+        )}
+
+        {/* Agent Bridge CTA (replaces BookingCTA when enabled) */}
+        {FF_AGENT_BRIDGE_CTA && userProfile ? (
+          <AgentBridgeCTA
+            userProfile={userProfile}
+            shareId={shareId}
+            sessionId={sessionId}
+          />
+        ) : (
+          <BookingCTA />
+        )}
+
+        {/* Referral Card */}
+        {FF_REFERRAL_TRACKING && referralCode && (
+          <ReferralCard
+            referralCode={referralCode}
+            referralCount={referralCount}
+            shareId={shareId}
+            sessionId={sessionId}
+          />
+        )}
       </div>
 
       {/* Letter From Future Modal */}

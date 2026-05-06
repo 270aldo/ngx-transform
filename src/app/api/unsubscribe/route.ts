@@ -3,10 +3,12 @@ import { z } from "zod";
 import { getDb } from "@/lib/firebaseAdmin";
 import { suppressEmail } from "@/lib/emailSuppression";
 import { unsubscribeSequence } from "@/lib/emailScheduler";
+import { checkRateLimit, getClientIP, getRateLimitHeaders } from "@/lib/rateLimit";
+import { verifyUnsubscribeToken } from "@/lib/unsubscribeToken";
 
 const UnsubscribeSchema = z.object({
-  email: z.string().email().optional(),
-  shareId: z.string().min(1).optional(),
+  shareId: z.string().min(1),
+  token: z.string().min(20).optional(),
   reason: z.string().max(200).optional(),
 });
 
@@ -31,26 +33,32 @@ async function handleUnsubscribe(email: string, shareId?: string, reason?: strin
 
 export async function POST(req: NextRequest) {
   try {
+    const clientIP = getClientIP(req);
+    const rateLimitResult = await checkRateLimit("api:general", clientIP);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please wait a moment." },
+        { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+      );
+    }
+
     const body = await req.json();
     const parsed = UnsubscribeSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 
-    const { email, shareId, reason } = parsed.data;
-
-    if (!email && !shareId) {
-      return NextResponse.json({ error: "email or shareId required" }, { status: 400 });
+    const { shareId, token, reason } = parsed.data;
+    if (!verifyUnsubscribeToken(shareId, token)) {
+      return NextResponse.json({ error: "Invalid or missing unsubscribe token" }, { status: 401 });
     }
 
-    let targetEmail = email || "";
-    if (!targetEmail && shareId) {
-      const db = getDb();
-      const snap = await db.collection("sessions").doc(shareId).get();
-      if (snap.exists) {
-        const data = snap.data() as { email?: string };
-        targetEmail = data.email || "";
-      }
+    let targetEmail = "";
+    const db = getDb();
+    const snap = await db.collection("sessions").doc(shareId).get();
+    if (snap.exists) {
+      const data = snap.data() as { email?: string };
+      targetEmail = data.email || "";
     }
 
     if (!targetEmail) {
@@ -65,35 +73,6 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const email = searchParams.get("email") || undefined;
-  const shareId = searchParams.get("shareId") || undefined;
-  const reason = searchParams.get("reason") || undefined;
-
-  if (!email && !shareId) {
-    return NextResponse.json({ error: "email or shareId required" }, { status: 400 });
-  }
-
-  try {
-    let targetEmail = email || "";
-    if (!targetEmail && shareId) {
-      const db = getDb();
-      const snap = await db.collection("sessions").doc(shareId).get();
-      if (snap.exists) {
-        const data = snap.data() as { email?: string };
-        targetEmail = data.email || "";
-      }
-    }
-
-    if (!targetEmail) {
-      return NextResponse.json({ error: "Email not found" }, { status: 404 });
-    }
-
-    await handleUnsubscribe(targetEmail, shareId, reason);
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("[Unsubscribe] Error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  }
+export async function GET() {
+  return NextResponse.json({ error: "Use POST to confirm unsubscribe" }, { status: 405 });
 }

@@ -7,6 +7,7 @@ import { useLandingConfig } from "./LandingProvider";
 
 interface HeroTransformationProps {
   className?: string;
+  compact?: boolean;
 }
 
 /**
@@ -15,11 +16,11 @@ interface HeroTransformationProps {
  * - Touch + mouse + keyboard (left/right arrows) supported.
  * - Falls back to a static layout if `transformationDemo` is missing.
  */
-export function HeroTransformation({ className }: HeroTransformationProps) {
+export function HeroTransformation({ className, compact = false }: HeroTransformationProps) {
   const { config } = useLandingConfig();
   const demo = config.copy.hero.transformationDemo;
 
-  const [position, setPosition] = useState(50);
+  const [position, setPosition] = useState(compact ? 42 : 50);
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -69,14 +70,16 @@ export function HeroTransformation({ className }: HeroTransformationProps) {
   };
 
   return (
-    <div className={`animate-on-scroll-scale delay-400 relative w-full ${className ?? ""}`}>
-      <div className="ngx-card !p-3 md:!p-4">
-        <div className="overflow-hidden rounded-[24px] border border-white/[0.08] bg-[#07070A]">
+    <div
+      className={`${compact ? "" : "animate-on-scroll-scale delay-400"} relative w-full ${className ?? ""}`}
+    >
+      <div className={`ngx-card ${compact ? "!p-2" : "!p-3 md:!p-4"}`}>
+        <div className={`overflow-hidden ${compact ? "rounded-[18px]" : "rounded-[24px]"} border border-white/[0.08] bg-[#07070A]`}>
           {/* Top chrome — slim */}
-          <div className="flex items-center justify-between border-b border-white/[0.06] px-5 py-3">
+          <div className={`flex items-center justify-between border-b border-white/[0.06] ${compact ? "px-3 py-2" : "px-5 py-3"}`}>
             <div className="flex items-center gap-3">
               <div
-                className="flex h-9 w-9 items-center justify-center rounded-2xl"
+                className={`flex ${compact ? "h-8 w-8 rounded-xl" : "h-9 w-9 rounded-2xl"} items-center justify-center`}
                 style={{
                   background: "rgba(109, 0, 255, 0.15)",
                   border: "1px solid rgba(109, 0, 255, 0.25)",
@@ -84,9 +87,9 @@ export function HeroTransformation({ className }: HeroTransformationProps) {
               >
                 <Brain className="h-4 w-4" style={{ color: "var(--ngx-purple-light)" }} />
               </div>
-              <p className="text-sm font-bold text-white tracking-[-0.005em]">Visualización GENESIS</p>
+              <p className={`${compact ? "text-xs" : "text-sm"} font-bold text-white tracking-normal`}>Visualización GENESIS</p>
             </div>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] text-white/55">
+            <span className={`${compact ? "hidden min-[380px]:inline-flex" : "inline-flex"} items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] text-white/55`}>
               <ShieldCheck className="h-3 w-3" />
               No compartida
             </span>
@@ -95,7 +98,7 @@ export function HeroTransformation({ className }: HeroTransformationProps) {
           {/* Compare canvas */}
           <div
             ref={containerRef}
-            className="relative aspect-[4/5] w-full select-none cursor-ew-resize touch-none"
+            className={`relative ${compact ? "aspect-[21/9] min-h-[150px]" : "aspect-[4/5]"} w-full select-none cursor-ew-resize touch-pan-y`}
             onMouseDown={handleMouseDown}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
@@ -120,7 +123,7 @@ export function HeroTransformation({ className }: HeroTransformationProps) {
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 540px"
-                  className="object-cover"
+                  className="object-cover object-center"
                 />
 
                 {/* BEFORE — clipped layer on top */}
@@ -137,7 +140,7 @@ export function HeroTransformation({ className }: HeroTransformationProps) {
                     fill
                     priority
                     sizes="(max-width: 1024px) 100vw, 540px"
-                    className="object-cover"
+                    className="object-cover object-center"
                   />
                 </div>
 
@@ -145,12 +148,12 @@ export function HeroTransformation({ className }: HeroTransformationProps) {
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 to-transparent" />
 
                 {/* Labels */}
-                <span className="pointer-events-none absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/55 backdrop-blur-sm px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-white/85">
+                <span className={`pointer-events-none absolute ${compact ? "top-3 left-3" : "top-4 left-4"} inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/55 backdrop-blur-sm px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-white/85`}>
                   <span className="h-1.5 w-1.5 rounded-full bg-white/60" />
                   {demo.beforeLabel ?? "Hoy"}
                 </span>
                 <span
-                  className="pointer-events-none absolute top-4 right-4 inline-flex items-center gap-1.5 rounded-full backdrop-blur-sm px-3 py-1 text-[10px] uppercase tracking-[0.22em]"
+                  className={`pointer-events-none absolute ${compact ? "top-3 right-3" : "top-4 right-4"} inline-flex items-center gap-1.5 rounded-full backdrop-blur-sm px-3 py-1 text-[10px] uppercase tracking-[0.22em]`}
                   style={{
                     border: "1px solid rgba(109, 0, 255, 0.30)",
                     background: "rgba(109, 0, 255, 0.15)",
@@ -171,7 +174,7 @@ export function HeroTransformation({ className }: HeroTransformationProps) {
                   }}
                 />
                 <div
-                  className="pointer-events-none absolute top-1/2 -translate-y-1/2 -translate-x-1/2 flex h-12 w-12 items-center justify-center rounded-full border border-white/30 bg-black/70 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_24px_rgba(109,0,255,0.4)]"
+                  className={`pointer-events-none absolute top-1/2 -translate-y-1/2 -translate-x-1/2 flex ${compact ? "h-10 w-10" : "h-12 w-12"} items-center justify-center rounded-full border border-white/30 bg-black/70 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_24px_rgba(109,0,255,0.4)]`}
                   style={{
                     left: `${position}%`,
                     transition: isDragging ? "none" : "left 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
@@ -193,7 +196,7 @@ export function HeroTransformation({ className }: HeroTransformationProps) {
                 </div>
 
                 {/* Hint pill (bottom) */}
-                <span className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/60 backdrop-blur-sm px-3 py-1 text-[9px] uppercase tracking-[0.22em] text-white/65">
+                <span className={`${compact ? "hidden sm:inline-flex" : "inline-flex"} pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-black/60 backdrop-blur-sm px-3 py-1 text-[9px] uppercase tracking-[0.22em] text-white/65`}>
                   Arrastra para ver tu progresión
                 </span>
               </>

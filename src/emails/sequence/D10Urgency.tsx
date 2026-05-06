@@ -11,6 +11,7 @@ import {
   Preview,
   Img,
 } from "@react-email/components";
+import { buildUnsubscribeUrl } from "@/lib/unsubscribeToken";
 
 interface D10UrgencyProps {
   name?: string;
@@ -32,7 +33,7 @@ export default function D10Urgency({
     process.env.NEXT_PUBLIC_BASE_URL ||
     "https://transform.ngxgenesis.com";
   const offerUrl = `${baseUrl}/s/${shareId}?section=offer`;
-  const unsubscribeUrl = `${baseUrl}/unsubscribe?shareId=${shareId}`;
+  const unsubscribeUrl = buildUnsubscribeUrl(baseUrl, shareId);
   const logoUrl = `${baseUrl}/images/brand/logo.svg`;
 
   const monthLabel = cohortLabel || process.env.NEXT_PUBLIC_COHORT_LABEL || "la próxima";

@@ -18,7 +18,7 @@ export function LandingHero() {
   ];
 
   return (
-    <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 md:pt-14 lg:pt-16 mb-28 md:mb-40">
+    <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-0 md:pt-14 lg:pt-16 mb-24 md:mb-40">
       {/* Atmospheric glows — no card boundary, hero breathes on the page */}
       <div
         aria-hidden
@@ -47,7 +47,7 @@ export function LandingHero() {
               Visualización aspiracional · lectura inicial · ruta de acción
             </p>
 
-            <h1 className={`ngx-display ${textScaleClass} origin-left max-w-[14ch] mx-auto lg:mx-0`}>
+            <h1 className={`ngx-display ngx-display-hero ${textScaleClass} origin-left max-w-[12ch] sm:max-w-[14ch] mx-auto lg:mx-0`}>
               {hero.headline.line1}
               <br />
               <span style={{ color: "var(--ngx-fg-2)" }}>{hero.headline.line2}</span>
@@ -60,7 +60,11 @@ export function LandingHero() {
               {hero.subtitle}
             </p>
 
-            <div className="mt-8 grid w-full max-w-[540px] grid-cols-1 gap-3 sm:grid-cols-2 mx-auto lg:mx-0">
+            <div data-testid="mobile-hero-preview" className="mt-6 lg:hidden">
+              <HeroTransformation compact className="mx-auto max-w-[440px]" />
+            </div>
+
+            <div className="mt-6 md:mt-8 grid w-full max-w-[540px] grid-cols-1 gap-3 sm:grid-cols-2 mx-auto lg:mx-0">
               <Link
                 href="/wizard"
                 onClick={() => trackCta("hero_primary", hero.primaryCta.intent, hero.primaryCta.label)}
@@ -94,7 +98,7 @@ export function LandingHero() {
             </p>
           </div>
 
-          <HeroTransformation className="w-full" />
+          <HeroTransformation className="hidden lg:block w-full" />
         </div>
 
         <div className="relative mt-12 md:mt-14 grid gap-3 md:grid-cols-3">

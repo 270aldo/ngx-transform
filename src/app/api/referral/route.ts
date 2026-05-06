@@ -13,6 +13,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { secureCompare } from "@/lib/crypto";
 import {
   recordReferralVisit,
   completeReferral,
@@ -30,6 +31,23 @@ const ReferralRequestSchema = z.object({
   referrerId: z.string().min(1).optional(),
   shareId: z.string().min(1).optional(),
 });
+
+function hasServerApiKey(request: NextRequest): boolean {
+  const expectedKey = process.env.CRON_API_KEY;
+  if (!expectedKey) return false;
+  const providedKey =
+    request.headers.get("X-Api-Key") ||
+    request.headers.get("x-api-key") ||
+    request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+  return secureCompare(providedKey, expectedKey);
+}
+
+function unauthorizedResponse() {
+  return NextResponse.json(
+    { success: false, message: "Unauthorized - API key required" },
+    { status: 401 }
+  );
+}
 
 export async function POST(request: NextRequest) {
   // Check feature flag
@@ -83,6 +101,9 @@ export async function POST(request: NextRequest) {
       }
 
       case "complete": {
+        if (!hasServerApiKey(request)) {
+          return unauthorizedResponse();
+        }
         if (!inviteeId) {
           return NextResponse.json(
             { success: false, message: "inviteeId required" },
@@ -100,6 +121,9 @@ export async function POST(request: NextRequest) {
       }
 
       case "claim": {
+        if (!hasServerApiKey(request)) {
+          return unauthorizedResponse();
+        }
         const targetId = referrerId || shareId;
         if (!targetId) {
           return NextResponse.json(

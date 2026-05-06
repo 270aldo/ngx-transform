@@ -90,12 +90,6 @@ function getRateLimiters(): Map<string, Ratelimit> | null {
     prefix: "rl:genesis-chat",
   }));
 
-  rateLimiters.set("api:genesis-voice", new Ratelimit({
-    redis: redisClient,
-    limiter: Ratelimit.slidingWindow(5, "1 m"), // 5 voice requests per minute
-    prefix: "rl:genesis-voice",
-  }));
-
   rateLimiters.set("api:referral", new Ratelimit({
     redis: redisClient,
     limiter: Ratelimit.slidingWindow(30, "1 m"), // 30 referral actions per minute
@@ -130,7 +124,6 @@ const IN_MEMORY_LIMITS: Record<string, { max: number; windowMs: number }> = {
   "api:plan": { max: 5, windowMs: 3600000 },           // 5/hour
   "api:genesis-demo": { max: 10, windowMs: 60000 },    // 10/min
   "api:genesis-chat": { max: 20, windowMs: 60000 },    // 20/min
-  "api:genesis-voice": { max: 5, windowMs: 60000 },    // 5/min
   "api:referral": { max: 30, windowMs: 60000 },        // 30/min
   "api:unlock": { max: 30, windowMs: 60000 },          // 30/min
   "api:general": { max: 60, windowMs: 60000 },        // 60/min
@@ -323,22 +316,22 @@ export function getRateLimitHeaders(result: RateLimitResult): Record<string, str
  * Extract client IP from request
  */
 export function getClientIP(request: Request): string {
+  // Prefer provider-populated headers over generic forwarded headers.
+  const vercelIP = request.headers.get("x-vercel-forwarded-for");
+  if (vercelIP) {
+    return vercelIP.split(",")[0].trim();
+  }
+
+  const realIP = request.headers.get("x-real-ip");
+  if (realIP) {
+    return realIP.trim();
+  }
+
   // Check common headers for real IP (behind proxies/load balancers)
   const forwardedFor = request.headers.get("x-forwarded-for");
   if (forwardedFor) {
     // Take the first IP in the chain
     return forwardedFor.split(",")[0].trim();
-  }
-
-  const realIP = request.headers.get("x-real-ip");
-  if (realIP) {
-    return realIP;
-  }
-
-  // Vercel-specific header
-  const vercelIP = request.headers.get("x-vercel-forwarded-for");
-  if (vercelIP) {
-    return vercelIP.split(",")[0].trim();
   }
 
   return "unknown";

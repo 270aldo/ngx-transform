@@ -1,11 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useForm, type FieldErrors, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ensureAnonymousSession, getClientStorage } from "@/lib/firebaseClient";
 import { ref, uploadBytes } from "firebase/storage";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/shadcn/ui/button";
 import { useToast } from "@/components/ui/toast-provider";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -152,19 +152,12 @@ async function readErrorMessage(response: Response, fallback: string) {
   }
 }
 
-export default function WizardPage() {
+function WizardPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "1";
-  // Dev-only stage jump for QA: ?stage=2|3|4. Stripped in production builds.
-  const initialStage = (() => {
-    if (process.env.NODE_ENV !== "development") return 1;
-    if (typeof window === "undefined") return 1;
-    const param = new URLSearchParams(window.location.search).get("stage");
-    const n = Number(param);
-    return Number.isInteger(n) && n >= 1 && n <= 4 ? n : 1;
-  })();
   const [loading, setLoading] = useState(false);
-  const [currentStage, setCurrentStage] = useState(initialStage);
+  const [currentStage, setCurrentStage] = useState(1);
   const [formError, setFormError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [accessReady, setAccessReady] = useState(DEMO);
@@ -224,6 +217,17 @@ export default function WizardPage() {
         : watch("focusZone") === "abs"
           ? "Core & abs"
           : "Full body";
+
+  // Dev-only stage jump for QA: ?stage=2|3|4. Runs after hydration to avoid
+  // rendering a different initial step on the server and client.
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "development") return;
+    const param = searchParams.get("stage");
+    const n = Number(param);
+    if (Number.isInteger(n) && n >= 1 && n <= 4) {
+      setCurrentStage(n);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (DEMO) {
@@ -713,7 +717,7 @@ export default function WizardPage() {
 
             {/* NAVIGATION FOOTER */}
             {currentStage > 1 && (
-              <div className="fixed bottom-0 left-0 w-full px-4 pb-5 pt-10 bg-gradient-to-t from-black via-black/90 to-transparent z-40 pointer-events-none md:px-6">
+              <div className="mt-8 w-full pb-2 z-10">
                 <div className="max-w-5xl mx-auto flex items-center justify-between gap-3 rounded-full border border-white/[0.08] bg-black/55 backdrop-blur-2xl px-3 py-3 pointer-events-auto shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
                   <button
                     type="button"
@@ -747,5 +751,17 @@ export default function WizardPage() {
         )}
       </form>
     </div>
+  );
+}
+
+export default function WizardPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[var(--ngx-bg)] text-white" />
+      }
+    >
+      <WizardPageContent />
+    </Suspense>
   );
 }

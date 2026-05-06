@@ -12,6 +12,7 @@ import {
   Hr,
   Img,
 } from "@react-email/components";
+import { buildUnsubscribeUrl } from "@/lib/unsubscribeToken";
 
 interface D7ConversionProps {
   name?: string;
@@ -34,7 +35,7 @@ export default function D7Conversion({
     process.env.NEXT_PUBLIC_CALENDLY_URL ||
     process.env.NEXT_PUBLIC_BOOKING_URL ||
     "https://calendly.com/ngx-genesis";
-  const unsubscribeUrl = `${baseUrl}/unsubscribe?shareId=${shareId}`;
+  const unsubscribeUrl = buildUnsubscribeUrl(baseUrl, shareId);
   const logoUrl = `${baseUrl}/images/brand/logo.svg`;
 
   return (

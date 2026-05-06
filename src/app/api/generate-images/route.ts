@@ -65,10 +65,7 @@ const WORKER_TOKEN = process.env.AI_WORKER_TOKEN || "";
 function isWorkerRequest(req: Request): boolean {
   if (!WORKER_TOKEN) return false;
   const headerToken = req.headers.get("x-worker-token") || "";
-  const url = new URL(req.url);
-  const queryToken = url.searchParams.get("workerToken") || "";
-  const token = headerToken || queryToken;
-  return token === WORKER_TOKEN;
+  return headerToken === WORKER_TOKEN;
 }
 
 // ============================================================================

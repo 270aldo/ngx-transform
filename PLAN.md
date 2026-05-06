@@ -15,7 +15,7 @@
 
 ### Commit `caba3e2` — Build fix + Dead code ronda 3 + Security
 - **P0:** Fix `/unsubscribe` — `useSearchParams()` envuelto en `<Suspense>` (build pasaba de FAIL a PASS)
-- **P1:** 6 componentes orphaned eliminados (GenesisVoiceIntro, PlanDashboard, PlanDownload, EscapeValve, SubscriptionCTA, ShareToUnlock)
+- **P1:** 6 componentes orphaned eliminados (demo intro legacy, PlanDashboard, PlanDownload, EscapeValve, SubscriptionCTA, ShareToUnlock)
 - Barrel files limpiados (demo/index.ts, results/index.ts, viral/index.ts)
 - **P2:** `.gitignore` corregido (`.env*` bloqueaba `.env.example`), `.env.example` ahora tracked
 - 3 feature flags agregados a `.env.example` (FF_DRAMATIC_REVEAL, FF_SOCIAL_COUNTER, FF_AGENT_BRIDGE_CTA)
