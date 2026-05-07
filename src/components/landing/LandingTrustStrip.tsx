@@ -99,16 +99,7 @@ export function LandingTrustStrip() {
               </span>
             </div>
 
-            <h2
-              className="font-body font-black text-white"
-              style={{
-                fontSize: "clamp(1.95rem, 3.6vw, 3.1rem)",
-                letterSpacing: "-0.03em",
-                lineHeight: 1,
-              }}
-            >
-              {copy.title}
-            </h2>
+            <h2 className="ngx-h2 !text-left">{copy.title}</h2>
 
             {copy.subtitle ? (
               <p className="mt-5 max-w-md text-base leading-relaxed text-white/62">
@@ -157,15 +148,8 @@ export function LandingTrustStrip() {
                 </div>
 
                 <div className="min-w-0">
-                  {/* Verbo declarativo grande */}
-                  <h3
-                    className="font-body font-bold text-white"
-                    style={{
-                      fontSize: "clamp(1.15rem, 1.7vw, 1.45rem)",
-                      letterSpacing: "-0.018em",
-                      lineHeight: 1.15,
-                    }}
-                  >
+                  {/* Verbo declarativo */}
+                  <h3 className="ngx-h3 !text-left">
                     {card.title}
                     <span
                       className="ml-1 inline-block"

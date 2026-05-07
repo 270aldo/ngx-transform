@@ -55,14 +55,7 @@ export function LandingBridge() {
                 </span>
               </div>
 
-              <h2
-                className="font-body font-black text-white"
-                style={{
-                  fontSize: "clamp(2rem, 4.2vw, 3.6rem)",
-                  letterSpacing: "-0.035em",
-                  lineHeight: 1,
-                }}
-              >
+              <h2 className="ngx-h1 !text-left">
                 {bridge.title}
                 <br />
                 <span style={{ color: "rgba(255,255,255,0.42)" }}>
@@ -183,16 +176,7 @@ export function LandingBridge() {
                     >
                       Paso 0{index + 1}
                     </span>
-                    <h3
-                      className="mt-2 font-body font-bold text-white"
-                      style={{
-                        fontSize: "clamp(1.2rem, 1.9vw, 1.55rem)",
-                        letterSpacing: "-0.022em",
-                        lineHeight: 1.15,
-                      }}
-                    >
-                      {card.title}
-                    </h3>
+                    <h3 className="ngx-h3 mt-2 !text-left">{card.title}</h3>
                     <p className="mt-3 max-w-lg text-sm leading-relaxed text-white/60 md:text-[0.97rem]">
                       {card.description}
                     </p>

@@ -50,14 +50,7 @@ export function LandingValueStack() {
               </span>
             </div>
 
-            <h2
-              className="font-body font-black text-white"
-              style={{
-                fontSize: "clamp(2.2rem, 4.8vw, 4rem)",
-                letterSpacing: "-0.035em",
-                lineHeight: 0.98,
-              }}
-            >
+            <h2 className="ngx-h1 !text-left">
               {valueStack.title}
               <br />
               <span style={{ color: "rgba(255,255,255,0.45)" }}>
@@ -127,16 +120,7 @@ export function LandingValueStack() {
                 </span>
 
                 {/* Título grande */}
-                <h3
-                  className="font-body font-bold text-white"
-                  style={{
-                    fontSize: "clamp(1.25rem, 2vw, 1.65rem)",
-                    letterSpacing: "-0.022em",
-                    lineHeight: 1.1,
-                  }}
-                >
-                  {item.title}
-                </h3>
+                <h3 className="ngx-h3 !text-left">{item.title}</h3>
 
                 {/* Body */}
                 <p className="mt-3 max-w-md text-sm leading-relaxed text-white/60 md:text-[0.97rem]">
