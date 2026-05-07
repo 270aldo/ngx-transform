@@ -26,7 +26,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // 1. Validar body primero — un payload mal formado merece 400 antes de
+    //    cualquier check de ambiente.
     const parsed = Body.parse(await req.json());
+
+    // 2. Pre-check de credenciales de Mercado Pago. Si falta el access token,
+    //    degradamos suave (503) con mensaje user-friendly en lugar de filtrar
+    //    el detalle técnico del Error que lanza createMpPreference. La UI
+    //    de HybridOfferV2 ya maneja este 503 redirigiendo al usuario a los
+    //    paths secundarios (Calendly / WhatsApp).
+    if (!process.env.MP_ACCESS_TOKEN) {
+      console.warn(
+        "[MP_CREATE_PREFERENCE] MP_ACCESS_TOKEN no configurado — devolviendo 503 graceful."
+      );
+      return NextResponse.json(
+        {
+          ok: false,
+          error:
+            "El pago directo no está activo todavía. Agenda una llamada o escríbenos por WhatsApp y te lo procesamos manual.",
+        },
+        { status: 503 }
+      );
+    }
 
     const config = getHybridSkuConfig(parsed.sku);
     if (!config) {
@@ -110,11 +131,16 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+    // No filtrar `error.message` al cliente: puede contener detalles internos
+    // (env var names, stack traces, llamadas a APIs externas). El detalle
+    // técnico va al log; el cliente recibe un mensaje genérico user-friendly.
     console.error("[MP_CREATE_PREFERENCE]", error);
-    const msg =
-      error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
-      { ok: false, error: msg },
+      {
+        ok: false,
+        error:
+          "No pudimos iniciar el checkout. Intenta de nuevo o agenda una llamada.",
+      },
       { status: 500 }
     );
   }
