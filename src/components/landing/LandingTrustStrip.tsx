@@ -9,12 +9,29 @@ const FALLBACK: TrustStripCopy = {
   subtitle:
     "Esta experiencia usa información sensible. Por eso la explicamos claro antes de pedirte avanzar.",
   cards: [
-    { title: "Procesamiento privado", description: "Tu foto se usa solo para operar esta sesión y generar tu resultado." },
-    { title: "Sin promesa de resultado", description: "La visualización es aspiracional. No confirma cómo vas a verte." },
-    { title: "No es evaluación médica", description: "La lectura es educativa y no sustituye atención profesional." },
-    { title: "Control de datos", description: "Puedes solicitar eliminación de tu información cuando lo necesites." },
+    {
+      title: "Procesamiento privado",
+      description:
+        "Tu foto se usa solo para operar esta sesión y generar tu resultado.",
+    },
+    {
+      title: "Sin promesa de resultado",
+      description:
+        "La visualización es aspiracional. No confirma cómo vas a verte.",
+    },
+    {
+      title: "No es evaluación médica",
+      description: "La lectura es educativa y no sustituye atención profesional.",
+    },
+    {
+      title: "Control de datos",
+      description:
+        "Puedes solicitar eliminación de tu información cuando lo necesites.",
+    },
   ],
 };
+
+const ROMAN_NUMERALS = ["I", "II", "III", "IV"] as const;
 
 function getCards(copy: TrustStripCopy): TrustCardCopy[] {
   if (copy.cards && copy.cards.length > 0) return copy.cards;
@@ -24,59 +41,145 @@ function getCards(copy: TrustStripCopy): TrustCardCopy[] {
   return FALLBACK.cards ?? [];
 }
 
+/**
+ * LandingTrustStrip — "Privacidad". Rediseñado en feat/landing-visual-polish.
+ *
+ * Decisiones:
+ * - Cero cards (sin ngx-metal-card). Layout tipo "declaración de principios"
+ *   o manifiesto legal: numeración romana I/II/III/IV, verbo declarativo
+ *   destacado, body explicativo debajo.
+ * - Mood emerald — distinto del ámbar (Problem) y del purple-light
+ *   (ValueStack). El verde es semánticamente correcto: "seguro / OK".
+ * - Sticky en columna izquierda para que el heading + lock sigan visibles
+ *   mientras el ojo recorre los 4 principios.
+ */
 export function LandingTrustStrip() {
   const { config } = useLandingConfig();
   const copy = config.copy.trustStrip ?? FALLBACK;
   const cards = getCards(copy);
 
   return (
-    <section id="trust" className="ngx-section">
-      <div className="ngx-section-panel ngx-trust-panel">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,0.55fr)_minmax(0,1.45fr)] lg:gap-12 lg:items-center">
-          <div className="animate-on-scroll">
-            <div className="flex items-center gap-3">
+    <section
+      id="trust"
+      className="relative w-full px-4 py-24 md:py-32 scroll-mt-24"
+    >
+      {/* Vignetting emerald sutil — el resto del landing usa purple, esta
+          sección merece su propio mood "frío/seguro". */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at 18% 20%, rgba(0,245,170,0.05), transparent 38%)",
+        }}
+      />
+
+      <div className="relative mx-auto max-w-6xl">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-20 lg:items-start">
+          {/* Header sticky — heading + subtitle */}
+          <div className="animate-on-scroll lg:sticky lg:top-24">
+            <div className="mb-6 flex items-center gap-3">
               <span
-                className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border"
+                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md"
                 style={{
-                  backgroundColor: "rgba(0, 245, 170, 0.12)",
-                  borderColor: "rgba(0, 245, 170, 0.28)",
+                  backgroundColor: "rgba(0, 245, 170, 0.10)",
+                  border: "1px solid rgba(0, 245, 170, 0.32)",
                 }}
               >
-                <Lock className="h-5 w-5" style={{ color: "var(--ngx-success)" }} />
+                <Lock
+                  className="h-4 w-4"
+                  style={{ color: "var(--ngx-success)" }}
+                />
               </span>
-              <span className="ngx-eyebrow-pill" data-accent="emerald">Privacidad</span>
+              <span
+                className="font-mono text-[11px] uppercase tracking-[0.32em]"
+                style={{ color: "var(--ngx-success)" }}
+              >
+                Privacidad
+              </span>
             </div>
-            <h2 className="mt-5 font-body font-bold text-2xl md:text-3xl leading-tight tracking-[-0.02em] text-ngx-fg-1 max-w-[18ch]">
-              {copy.title}
-            </h2>
+
+            <h2 className="ngx-h2 !text-left">{copy.title}</h2>
+
             {copy.subtitle ? (
-              <p className="mt-4 text-sm leading-relaxed text-ngx-fg-2 max-w-md">
+              <p className="mt-5 max-w-md text-base leading-relaxed text-white/62">
                 {copy.subtitle}
               </p>
             ) : null}
+
+            {/* Mini badge inferior — refuerza el mood "manifiesto" */}
+            <div className="mt-8 inline-flex items-center gap-2">
+              <span
+                aria-hidden
+                className="h-px w-8"
+                style={{ background: "rgba(0, 245, 170, 0.45)" }}
+              />
+              <span
+                className="font-mono text-[10px] uppercase tracking-[0.28em]"
+                style={{ color: "rgba(0, 245, 170, 0.65)" }}
+              >
+                Cuatro principios
+              </span>
+            </div>
           </div>
 
-          <ul className="grid gap-3 sm:grid-cols-2">
+          {/* 4 declaraciones de principios — layout declarativo,
+              numeración romana, sin cards. */}
+          <ol className="space-y-10 md:space-y-12">
             {cards.map((card, i) => (
               <li
                 key={card.title}
-                className={`animate-on-scroll ${i > 0 ? `delay-${i}00` : ""}`}
+                className={`animate-on-scroll ${
+                  i > 0 ? `delay-${i}00` : ""
+                } group relative grid grid-cols-[auto_minmax(0,1fr)] gap-6 md:gap-8`}
               >
-                <article className="ngx-metal-card h-full !p-4 md:!p-5 !rounded-[28px]">
-                  <div className="relative z-10">
-                    <h3 className="font-body font-bold text-sm md:text-base text-ngx-fg-1 leading-tight tracking-[-0.01em] mb-1.5">
-                      {card.title}
-                    </h3>
-                    {card.description ? (
-                      <p className="font-body text-xs md:text-sm leading-relaxed text-ngx-fg-2">
-                        {card.description}
-                      </p>
-                    ) : null}
-                  </div>
-                </article>
+                {/* Número romano outlined */}
+                <div className="pt-1">
+                  <span
+                    className="font-mono font-bold tabular-nums leading-none transition-colors"
+                    style={{
+                      fontSize: "clamp(1.15rem, 1.5vw, 1.4rem)",
+                      letterSpacing: "0.02em",
+                      color: "rgba(0, 245, 170, 0.7)",
+                    }}
+                  >
+                    {ROMAN_NUMERALS[i] ?? `0${i + 1}`}
+                  </span>
+                </div>
+
+                <div className="min-w-0">
+                  {/* Verbo declarativo */}
+                  <h3 className="ngx-h3 !text-left">
+                    {card.title}
+                    <span
+                      className="ml-1 inline-block"
+                      style={{ color: "rgba(0, 245, 170, 0.6)" }}
+                    >
+                      .
+                    </span>
+                  </h3>
+
+                  {card.description ? (
+                    <p className="mt-2.5 max-w-lg text-sm leading-relaxed text-white/58 md:text-[0.97rem]">
+                      {card.description}
+                    </p>
+                  ) : null}
+                </div>
+
+                {/* Hairline separator entre principios (excepto el último) */}
+                {i < cards.length - 1 && (
+                  <div
+                    aria-hidden
+                    className="absolute left-0 right-0 -bottom-5 h-px md:-bottom-6"
+                    style={{
+                      background:
+                        "linear-gradient(90deg, rgba(0,245,170,0.10) 0%, rgba(255,255,255,0.04) 30%, transparent 75%)",
+                    }}
+                  />
+                )}
               </li>
             ))}
-          </ul>
+          </ol>
         </div>
       </div>
     </section>

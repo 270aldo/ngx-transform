@@ -1,61 +1,124 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useLandingConfig } from "./LandingProvider";
 
+/**
+ * LandingCTA — cierre del landing. Rediseñado en feat/landing-visual-polish.
+ *
+ * Decisiones:
+ * - Cero card / panel. Layout full-bleed con glow purple radial expandido
+ *   que evoca el producto (CinematicAutoplay del /s/[shareId]).
+ * - Heading clamp generoso (hasta 6rem) — DOMINA la pantalla. Es el
+ *   cierre, no un párrafo más.
+ * - Sparkles eliminado: el ícono lucide chiquito rompía la escala
+ *   cinematográfica. La firma visual la pone el glow + la tipografía.
+ * - Disclaimer mono uppercase tracking-wide al final como crédito.
+ */
 export function LandingCTA() {
   const { config, trackCta } = useLandingConfig();
   const { cta } = config.copy;
 
   return (
-    <section id="cta-final" className="ngx-section" style={{ maxWidth: "60rem", paddingBlockEnd: "5rem" }}>
-      <div className="animate-on-scroll-scale ngx-section-panel text-center !p-6 md:!p-10">
-        <div
-          aria-hidden
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(ellipse 60% 60% at 50% 0%, rgba(109,0,255,0.18), transparent 70%)",
-          }}
-        />
-        <div className="relative">
-          <div
-            className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-6"
-            style={{
-              background: "linear-gradient(135deg, var(--ngx-purple), var(--ngx-purple-deep))",
-              boxShadow: "0 0 32px rgba(109,0,255,0.32)",
-            }}
-          >
-            <Sparkles className="w-6 h-6 text-white" />
+    <section
+      id="cta-final"
+      className="relative w-full px-4 py-32 md:py-44 scroll-mt-24"
+    >
+      {/* Glow radial expandido — el cierre cinematic. Más generoso que
+          el resto del landing para enmarcar el momento "final". */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 90% at 50% 60%, rgba(109,0,255,0.22), transparent 65%), radial-gradient(ellipse 40% 50% at 50% 100%, rgba(184,148,255,0.15), transparent 55%)",
+        }}
+      />
+
+      {/* Frame line — top hairline del cierre, separa simbólicamente del FAQ */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-px max-w-3xl"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, rgba(184,148,255,0.32) 50%, transparent)",
+        }}
+      />
+
+      <div className="relative mx-auto max-w-5xl">
+        <div className="animate-on-scroll-scale flex flex-col items-center text-center">
+          {/* Eyebrow editorial */}
+          <div className="mb-10 flex items-center gap-3">
+            <span
+              aria-hidden
+              className="h-px w-10"
+              style={{ background: "rgba(184,148,255,0.55)" }}
+            />
+            <span
+              className="font-mono text-[11px] uppercase tracking-[0.36em]"
+              style={{ color: "var(--ngx-purple-light)" }}
+            >
+              Cierre · Tu siguiente paso
+            </span>
+            <span
+              aria-hidden
+              className="h-px w-10"
+              style={{ background: "rgba(184,148,255,0.55)" }}
+            />
           </div>
-          <h2 className="ngx-section-heading-soft mx-auto" style={{ maxWidth: "22ch" }}>
+
+          {/* Heading cinematic — usa ngx-h1 del DS (United Sans Cond UPPERCASE
+              weight 800). El glow expandido + el spacing hacen el momentum
+              cinematic, no la fuente. */}
+          <h2 className="ngx-h1" style={{ maxWidth: "20ch" }}>
             {cta.headline}
           </h2>
-          <p className="mt-5 text-sm md:text-base text-ngx-fg-2 max-w-lg mx-auto leading-relaxed">
+
+          {/* Subtitle generoso */}
+          <p
+            className="mx-auto mt-8 max-w-xl leading-relaxed text-white/65"
+            style={{ fontSize: "clamp(0.95rem, 1.3vw, 1.1rem)" }}
+          >
             {cta.subtitle}
           </p>
-          <div className="flex justify-center mt-7">
+
+          {/* CTA grande con glow */}
+          <div className="mt-12">
             <Link
               href="/wizard"
               onClick={() => trackCta("final_cta", cta.intent, cta.buttonText)}
-              className="group inline-flex h-14 items-center gap-2 px-9 rounded-full text-white font-bold font-body text-base transition-all duration-150 active:scale-[0.97] hover:-translate-y-0.5"
+              className="group relative inline-flex items-center gap-3 rounded-full text-white font-bold uppercase tracking-[0.08em] transition-all duration-200 hover:-translate-y-1 active:scale-[0.97]"
               style={{
+                height: "64px",
+                paddingInline: "2.5rem",
+                fontSize: "0.95rem",
                 backgroundColor: "var(--ngx-purple)",
-                boxShadow: "var(--ngx-glow-primary)",
+                boxShadow:
+                  "0 0 0 1px rgba(184,148,255,0.20), 0 18px 50px -8px rgba(109,0,255,0.55), 0 0 80px -10px rgba(184,148,255,0.40)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = "var(--ngx-glow-primary-strong)";
+                e.currentTarget.style.boxShadow =
+                  "0 0 0 1px rgba(184,148,255,0.32), 0 24px 64px -8px rgba(109,0,255,0.70), 0 0 110px -10px rgba(184,148,255,0.55)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = "var(--ngx-glow-primary)";
+                e.currentTarget.style.boxShadow =
+                  "0 0 0 1px rgba(184,148,255,0.20), 0 18px 50px -8px rgba(109,0,255,0.55), 0 0 80px -10px rgba(184,148,255,0.40)";
               }}
             >
               <span>{cta.buttonText}</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
             </Link>
           </div>
-          <p className="mt-5 text-xs text-ngx-fg-3 font-mono uppercase tracking-[0.2em]">
+
+          {/* Footnote disclaimer — crédito final, escala generosa */}
+          <p
+            className="mt-12 font-mono uppercase text-white/35"
+            style={{
+              fontSize: "0.65rem",
+              letterSpacing: "0.36em",
+            }}
+          >
             {cta.footnote}
           </p>
         </div>
