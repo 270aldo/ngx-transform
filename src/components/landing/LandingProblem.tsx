@@ -1,6 +1,5 @@
 "use client";
 
-import { Layers, RefreshCw, AlertTriangle } from "lucide-react";
 import { useLandingConfig } from "./LandingProvider";
 import type { ProblemCopy } from "@/config/landing/types";
 
@@ -29,49 +28,142 @@ const FALLBACK: ProblemCopy = {
   ],
 };
 
-const ICONS = [Layers, RefreshCw, AlertTriangle];
-
 export function LandingProblem() {
   const { config } = useLandingConfig();
   const copy = config.copy.problem ?? FALLBACK;
 
   return (
-    <section id="problema" className="ngx-section">
-      <div className="ngx-section-header">
-        <div className="animate-on-scroll">
-          <span className="ngx-eyebrow-pill" data-accent="red">{copy.sectionLabel}</span>
-          <h2 className="ngx-section-heading">
-            {copy.title}
-            <br />
-            <span className="text-ngx-fg-3">{copy.highlight}</span>
-          </h2>
-        </div>
-        <p className="animate-on-scroll delay-100 max-w-2xl text-sm md:text-base leading-relaxed text-ngx-fg-2 lg:ml-auto">
-          {copy.subtitle}
-        </p>
-      </div>
+    <section
+      id="problema"
+      className="relative w-full px-4 py-24 md:py-32 scroll-mt-24"
+    >
+      {/* Vignetting con tono cálido — diferente del purple del resto del
+          landing. La sección "problema" merece un mood propio: ámbar
+          tenue de "alarma", no glow purple aspiracional. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at 75% 12%, rgba(245,158,11,0.08), transparent 38%), radial-gradient(circle at 12% 80%, rgba(109,0,255,0.06), transparent 32%)",
+        }}
+      />
 
-      <div className="ngx-card-grid ngx-card-grid-3 items-stretch">
-        {copy.cards.map((card, index) => {
-          const Icon = ICONS[index % ICONS.length];
-          return (
-            <article
-              key={card.title}
-              className={`animate-on-scroll ${index > 0 ? `delay-${index}00` : ""} ngx-card h-full`}
+      <div className="relative mx-auto max-w-6xl">
+        {/* HEADER — split asimétrico: heading domina 60% izq, párrafo 40% der */}
+        <div className="grid gap-8 md:gap-12 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:items-end">
+          <div className="animate-on-scroll">
+            <div className="mb-8 flex items-center gap-3">
+              <span
+                aria-hidden
+                className="h-px w-12 shrink-0"
+                style={{ background: "rgba(252, 211, 77, 0.45)" }}
+              />
+              <span
+                className="font-mono text-[11px] uppercase tracking-[0.32em]"
+                style={{ color: "rgb(252, 211, 77)" }}
+              >
+                {copy.sectionLabel}
+              </span>
+            </div>
+
+            <h2
+              className="font-body font-black text-white"
+              style={{
+                fontSize: "clamp(2.4rem, 5.4vw, 4.6rem)",
+                letterSpacing: "-0.04em",
+                lineHeight: 0.95,
+              }}
             >
-              <div className="mb-6 flex items-start justify-between gap-4">
-                <span className="ngx-card-icon" data-accent="red">
-                  <Icon className="w-5 h-5" />
-                </span>
-                <span className="ngx-eyebrow text-[10px]" style={{ color: "rgba(252, 165, 165, 0.55)" }}>
-                  0{index + 1}
+              {copy.title}
+              <br />
+              <span style={{ color: "rgba(255,255,255,0.42)" }}>
+                {copy.highlight}
+              </span>
+            </h2>
+          </div>
+
+          <p
+            className="animate-on-scroll delay-100 max-w-md text-base leading-relaxed text-white/62 lg:text-[1.05rem]"
+            style={{ borderLeft: "1px solid rgba(255,255,255,0.12)", paddingLeft: "1.25rem" }}
+          >
+            {copy.subtitle}
+          </p>
+        </div>
+
+        {/* DIVIDER — elegante hairline gradient, no border-top típico */}
+        <div
+          aria-hidden
+          className="my-16 h-px md:my-20"
+          style={{
+            background:
+              "linear-gradient(90deg, transparent, rgba(255,255,255,0.18) 50%, transparent)",
+          }}
+        />
+
+        {/* PROBLEMAS — sin cards. Cada problema es una entrada editorial:
+            número gigante (7xl/8xl tabular-nums) a la izquierda, título
+            tipográfico fuerte + body al lado. Separadores hairline entre
+            entradas, no boxes alrededor. */}
+        <ol className="space-y-12 md:space-y-16">
+          {copy.cards.map((card, index) => (
+            <li
+              key={card.title}
+              className={`animate-on-scroll ${
+                index > 0 ? `delay-${index}00` : ""
+              } group relative grid gap-6 md:grid-cols-[auto_minmax(0,1fr)] md:gap-12 lg:gap-16`}
+            >
+              {/* Número editorial — outlined en lugar de filled, gigante */}
+              <div className="relative md:pt-2">
+                <span
+                  aria-hidden
+                  className="block font-mono font-bold tabular-nums leading-none transition-colors duration-300"
+                  style={{
+                    fontSize: "clamp(4rem, 7vw, 6.5rem)",
+                    color: "transparent",
+                    WebkitTextStroke:
+                      index === 0
+                        ? "1.5px rgba(252, 211, 77, 0.85)"
+                        : "1.5px rgba(255,255,255,0.18)",
+                    letterSpacing: "-0.06em",
+                  }}
+                >
+                  {String(index + 1).padStart(2, "0")}
                 </span>
               </div>
-              <h3 className="ngx-card-title mb-2">{card.title}</h3>
-              <p className="ngx-card-desc">{card.description}</p>
-            </article>
-          );
-        })}
+
+              <div className="min-w-0">
+                <h3
+                  className="font-body font-bold text-white"
+                  style={{
+                    fontSize: "clamp(1.45rem, 2.4vw, 2.1rem)",
+                    letterSpacing: "-0.025em",
+                    lineHeight: 1.05,
+                  }}
+                >
+                  {card.title}
+                </h3>
+                <p
+                  className="mt-4 max-w-xl leading-relaxed text-white/62 md:text-[1.02rem]"
+                >
+                  {card.description}
+                </p>
+              </div>
+
+              {/* Hairline separator entre items (excepto el último) */}
+              {index < copy.cards.length - 1 && (
+                <div
+                  aria-hidden
+                  className="absolute left-0 right-0 -bottom-6 h-px md:-bottom-8"
+                  style={{
+                    background:
+                      "linear-gradient(90deg, rgba(255,255,255,0.10) 0%, transparent 70%)",
+                  }}
+                />
+              )}
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );
