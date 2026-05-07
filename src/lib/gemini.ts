@@ -198,7 +198,7 @@ FORMATO JSON REQUERIDO (estricto, sin envoltorio markdown, sin texto fuera del J
     "dominant_error": "1 frase ESPAÑOL (30-380 chars) sobre el error más costoso que está cometiendo este perfil específico. Concreto, no banal.",
     "muscle_health_score": "Entero 0-100. Calcúlalo desde sus stats m0 (strength + aesthetics) ponderado contra sleep/discipline/stress.",
     "biological_age_estimate": "Entero. Edad biológica estimada = edad cronológica + penalizaciones por stress alto, sueño bajo y disciplina baja. NUNCA igual a la cronológica si los mental logs muestran fricción.",
-    "sarcopenia_risk": "BAJO | MEDIO | ALTO. ALTO si edad > 40 + sleep < 6 + disciplina < 5; MEDIO si combinaciones intermedias; BAJO en perfiles jóvenes con buena adherencia."
+    "metabolic_risk": "BAJO | MEDIO | ALTO. Riesgo metabólico de pérdida muscular y envejecimiento prematuro. NO es diagnóstico clínico de sarcopenia. ALTO si edad > 40 + sleep < 6 + disciplina < 5; MEDIO si combinaciones intermedias; BAJO en perfiles jóvenes con buena adherencia."
   }
 }
 
@@ -282,7 +282,7 @@ function getV1SystemPrompt(profile: AnalysisParams["profile"]): string {
         "dominant_error": "1 frase ESPAÑOL sobre el error más costoso que comete este perfil específico.",
         "muscle_health_score": 0-100,
         "biological_age_estimate": entero,
-        "sarcopenia_risk": "BAJO | MEDIO | ALTO"
+        "metabolic_risk": "BAJO | MEDIO | ALTO"
       }
     }
 
@@ -292,7 +292,7 @@ function getV1SystemPrompt(profile: AnalysisParams["profile"]): string {
     - "diagnostic.dominant_error": 1 frase concreta (no "deberías entrenar más").
     - "diagnostic.muscle_health_score": derivado de stats m0 ponderado por mental logs.
     - "diagnostic.biological_age_estimate": NUNCA igual a la cronológica si hay fricción real (sueño <7 o disciplina <6).
-    - "diagnostic.sarcopenia_risk": alto si edad >40 + sueño bajo + disciplina baja.
+    - "diagnostic.metabolic_risk": riesgo de pérdida muscular y envejecimiento metabólico, NO sarcopenia clínica. ALTO si edad >40 + sueño bajo + disciplina baja.
   `;
 }
 

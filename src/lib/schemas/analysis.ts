@@ -91,7 +91,13 @@ export const DiagnosticSchema = z
     dominant_error: z.string().min(10).max(400).optional(),
     muscle_health_score: z.number().int().min(0).max(100).optional(),
     biological_age_estimate: z.number().int().min(13).max(120).optional(),
-    sarcopenia_risk: z.enum(["BAJO", "MEDIO", "ALTO"]).optional(),
+    /**
+     * Riesgo metabólico de pérdida muscular y deterioro asociado a
+     * envejecimiento prematuro. NO es diagnóstico clínico de sarcopenia
+     * (ese requiere DEXA/BIA). Etiqueta defendible vs lo que el wizard
+     * efectivamente captura (mental logs + biometría básica).
+     */
+    metabolic_risk: z.enum(["BAJO", "MEDIO", "ALTO"]).optional(),
   })
   .catch({});
 

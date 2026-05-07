@@ -101,16 +101,17 @@ export function SeasonRoadmap() {
           <div className="relative z-10">
             <div className="max-w-3xl">
               <span className="ngx-eyebrow-pill mb-4">
-                Roadmap · NGX HYBRID
+                Estructura · NGX HYBRID
               </span>
               <h2 className="ngx-h1 !text-left">
-                Si esto fuera una temporada real, así se vería.
+                Así se vería tu temporada en HYBRID.
               </h2>
               <p className="mt-4 text-sm leading-relaxed text-white/62 md:text-base">
-                Esto no es un plan que te bajas. Es la estructura de una temporada
-                de 12 semanas con GENESIS adaptando y un coach humano validando.
-                Cuatro fases con criterio claro de salida — no más rutinas en PDF
-                que se pierden en la carpeta de descargas.
+                Esto no es un plan personalizado que te bajas hoy. Es la estructura
+                que sigue una temporada de 12 semanas en NGX HYBRID — GENESIS
+                adapta cada semana, un coach humano valida, y cuatro fases con
+                criterio de salida claro reemplazan el PDF que se pierde en la
+                carpeta de descargas.
               </p>
             </div>
 

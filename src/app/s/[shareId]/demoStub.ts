@@ -92,7 +92,7 @@ export const DEMO_AI: InsightsResult = {
       "Estás entrenando con consistencia pero sin estructura periodizada — el resultado son ganancias erráticas que no se traducen en composición visible.",
     muscle_health_score: 64,
     biological_age_estimate: 36,
-    sarcopenia_risk: "MEDIO",
+    metabolic_risk: "MEDIO",
   },
 };
 

@@ -107,7 +107,7 @@ interface ResolvedSignals {
   score: number;
   chronologicalAge: number;
   biologicalAge: number;
-  sarcopeniaRisk: "BAJO" | "MEDIO" | "ALTO";
+  metabolicRisk: "BAJO" | "MEDIO" | "ALTO";
   leverages: string[];
   dominantError: string;
 }
@@ -155,7 +155,7 @@ function resolveSignals(
     score: diagnostic?.muscle_health_score ?? heuristicScore,
     chronologicalAge: age,
     biologicalAge: diagnostic?.biological_age_estimate ?? heuristicBio,
-    sarcopeniaRisk: diagnostic?.sarcopenia_risk ?? heuristicRisk,
+    metabolicRisk: diagnostic?.metabolic_risk ?? heuristicRisk,
     leverages:
       diagnostic?.leverages?.length && diagnostic.leverages.length >= 2
         ? diagnostic.leverages.slice(0, 3)
@@ -171,7 +171,7 @@ export function MuscleHealthScore({
   className,
 }: MuscleHealthScoreProps) {
   const signals = resolveSignals(diagnostic, userInput);
-  const risk = RISK_CONFIG[signals.sarcopeniaRisk];
+  const risk = RISK_CONFIG[signals.metabolicRisk];
   const ageDelta = signals.biologicalAge - signals.chronologicalAge;
 
   const handleScrollToRoadmap = (
@@ -308,7 +308,7 @@ export function MuscleHealthScore({
                           className="ngx-eyebrow !text-[10px]"
                           style={{ color: "var(--ngx-fg-3)" }}
                         >
-                          Riesgo de sarcopenia
+                          Riesgo metabólico
                         </span>
                         <p className="mt-2 text-base font-bold text-white">
                           Lectura inicial del punto de partida
@@ -335,24 +335,57 @@ export function MuscleHealthScore({
                       >
                         Tus 3 palancas accionables
                       </span>
-                      {signals.leverages.slice(0, 3).map((lever, index) => (
-                        <div key={lever} className="ngx-metal-card !p-4">
-                          <div className="relative z-10 flex items-start gap-3">
-                            <div
-                              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-mono text-xs font-bold tabular-nums"
-                              style={{
-                                background: "var(--ngx-purple-glass)",
-                                color: "var(--ngx-purple-light)",
-                              }}
-                            >
-                              {index + 1}
+                      {signals.leverages.slice(0, 3).map((lever, index) => {
+                        const isPrimary = index === 0;
+                        return (
+                          <div
+                            key={lever}
+                            className="ngx-metal-card !p-4"
+                            style={
+                              isPrimary
+                                ? {
+                                    borderColor: "rgba(109,0,255,0.32)",
+                                    background:
+                                      "linear-gradient(180deg, rgba(109,0,255,0.10), rgba(109,0,255,0.03))",
+                                  }
+                                : undefined
+                            }
+                          >
+                            <div className="relative z-10 flex items-start gap-3">
+                              <div
+                                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-mono text-xs font-bold tabular-nums"
+                                style={{
+                                  background: isPrimary
+                                    ? "var(--ngx-purple)"
+                                    : "var(--ngx-purple-glass)",
+                                  color: isPrimary
+                                    ? "white"
+                                    : "var(--ngx-purple-light)",
+                                }}
+                              >
+                                {index + 1}
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                {isPrimary && (
+                                  <span
+                                    className="ngx-eyebrow !text-[9px] block mb-1"
+                                    style={{ color: "var(--ngx-purple-light)" }}
+                                  >
+                                    Empieza por aquí
+                                  </span>
+                                )}
+                                <p
+                                  className={`text-sm leading-relaxed ${
+                                    isPrimary ? "text-white" : "text-white/75"
+                                  }`}
+                                >
+                                  {lever}
+                                </p>
+                              </div>
                             </div>
-                            <p className="text-sm leading-relaxed text-white/75">
-                              {lever}
-                            </p>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 </div>

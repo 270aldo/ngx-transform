@@ -27,7 +27,7 @@ interface BriefDeliveryProps {
   muscleHealthScore?: number;
   biologicalAge?: number;
   chronologicalAge?: number;
-  sarcopeniaRisk?: "BAJO" | "MEDIO" | "ALTO";
+  metabolicRisk?: "BAJO" | "MEDIO" | "ALTO";
 }
 
 export default function BriefDelivery({
@@ -41,7 +41,7 @@ export default function BriefDelivery({
   muscleHealthScore,
   biologicalAge,
   chronologicalAge,
-  sarcopeniaRisk,
+  metabolicRisk,
 }: BriefDeliveryProps) {
   const baseUrl =
     process.env.NEXT_PUBLIC_APP_URL ||
@@ -156,13 +156,13 @@ export default function BriefDelivery({
                           </Text>
                         </td>
                       )}
-                      {sarcopeniaRisk && (
+                      {metabolicRisk && (
                         <td className="w-1/3 align-top">
                           <Text className="text-base text-white font-bold m-0">
-                            {sarcopeniaRisk}
+                            {metabolicRisk}
                           </Text>
                           <Text className="text-[10px] text-neutral-500 uppercase tracking-wider mt-1">
-                            Riesgo sarcopenia
+                            Riesgo metabólico
                           </Text>
                         </td>
                       )}
@@ -192,13 +192,32 @@ export default function BriefDelivery({
                   <Text className="text-[10px] uppercase tracking-widest text-neutral-500 m-0">
                     Tus 3 palancas accionables
                   </Text>
-                  <ol className="text-sm text-neutral-300 mt-3 pl-5 leading-relaxed">
-                    {leverages!.slice(0, 3).map((lever, idx) => (
-                      <li key={idx} className="mb-2">
-                        {lever}
-                      </li>
-                    ))}
-                  </ol>
+
+                  {/* Palanca #1 destacada como "Empieza por aquí" — un solo
+                      punto de inicio claro reduce fricción cognitiva. */}
+                  <Section className="mt-3 bg-[#6D00FF]/10 border border-[#6D00FF]/30 rounded-xl p-4">
+                    <Text className="text-[10px] uppercase tracking-widest text-[#B894FF] m-0">
+                      Empieza por aquí
+                    </Text>
+                    <Text className="text-sm text-white leading-relaxed mt-2 m-0">
+                      {leverages![0]}
+                    </Text>
+                  </Section>
+
+                  {leverages!.length > 1 && (
+                    <Section className="mt-4">
+                      <Text className="text-[10px] uppercase tracking-widest text-neutral-500 m-0">
+                        Después
+                      </Text>
+                      <ol className="text-sm text-neutral-300 mt-2 pl-5 leading-relaxed">
+                        {leverages!.slice(1, 3).map((lever, idx) => (
+                          <li key={idx} className="mb-2">
+                            {lever}
+                          </li>
+                        ))}
+                      </ol>
+                    </Section>
+                  )}
                 </Section>
               )}
 

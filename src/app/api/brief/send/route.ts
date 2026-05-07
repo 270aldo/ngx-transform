@@ -60,7 +60,7 @@ function deriveSignals(
   muscle_health_score: number;
   biological_age_estimate: number;
   chronologicalAge: number;
-  sarcopenia_risk: "BAJO" | "MEDIO" | "ALTO";
+  metabolic_risk: "BAJO" | "MEDIO" | "ALTO";
   leverages: string[];
   dominant_error: string | undefined;
 } {
@@ -92,7 +92,7 @@ function deriveSignals(
     biological_age_estimate:
       diagnostic?.biological_age_estimate ?? heuristicBio,
     chronologicalAge: age,
-    sarcopenia_risk: diagnostic?.sarcopenia_risk ?? heuristicRisk,
+    metabolic_risk: diagnostic?.metabolic_risk ?? heuristicRisk,
     leverages: diagnostic?.leverages?.length
       ? diagnostic.leverages.slice(0, 3)
       : [
@@ -253,7 +253,7 @@ export async function POST(req: NextRequest) {
         muscleHealthScore: signals.muscle_health_score,
         biologicalAge: signals.biological_age_estimate,
         chronologicalAge: signals.chronologicalAge,
-        sarcopeniaRisk: signals.sarcopenia_risk,
+        metabolicRisk: signals.metabolic_risk,
       }),
     });
 

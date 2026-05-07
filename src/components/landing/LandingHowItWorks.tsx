@@ -26,17 +26,26 @@ export function LandingHowItWorks() {
           return (
             <li key={item.step} className={`animate-on-scroll ${i > 0 ? `delay-${i}00` : ""}`}>
               <article className="ngx-process-card h-full">
-                <div className="relative z-10 flex items-start gap-5">
-                  <span className="ngx-process-number">PASO {item.step}</span>
-                  <div className="min-w-0 flex-1">
-                    <span className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl border" style={{ backgroundColor: "rgba(109,0,255,0.15)", borderColor: "rgba(109,0,255,0.25)" }}>
-                      <Icon className="h-5 w-5" style={{ color: "var(--ngx-purple-light)" }} />
+                <div className="relative z-10">
+                  <div className="mb-5 flex items-center justify-between gap-3">
+                    <span className="ngx-process-number">PASO {item.step}</span>
+                    <span
+                      className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border"
+                      style={{
+                        backgroundColor: "rgba(109,0,255,0.15)",
+                        borderColor: "rgba(109,0,255,0.25)",
+                      }}
+                    >
+                      <Icon
+                        className="h-5 w-5"
+                        style={{ color: "var(--ngx-purple-light)" }}
+                      />
                     </span>
-                    <h3 className="font-body font-bold text-lg text-ngx-fg-1 leading-tight tracking-[-0.015em] mb-2">
-                      {item.title}
-                    </h3>
-                    <p className="ngx-card-desc">{item.description}</p>
                   </div>
+                  <h3 className="font-body font-bold text-lg text-ngx-fg-1 leading-tight tracking-[-0.015em] mb-2">
+                    {item.title}
+                  </h3>
+                  <p className="ngx-card-desc">{item.description}</p>
                 </div>
               </article>
             </li>
