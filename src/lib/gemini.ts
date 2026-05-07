@@ -187,6 +187,18 @@ FORMATO JSON REQUERIDO (estricto, sin envoltorio markdown, sin texto fuera del J
     "wardrobe": "Vestimenta deportiva en INGLÉS (5-95 chars)",
     "background": "Entorno en INGLÉS (5-95 chars)",
     "color_grade": "Color grade en INGLÉS (5-95 chars, ej: 'cinematic teal-orange grade')"
+  },
+  "diagnostic": {
+    "bottleneck": "training_progression | nutrition_consistency | recovery | structure | expectations | accountability — el cuello de botella DOMINANTE de este usuario, basado en sus mental logs y biometría.",
+    "leverages": [
+      "Palanca 1 ESPECÍFICA al usuario en ESPAÑOL (no genérica, 30-180 chars). Ej: 'Subir proteína a 1.6g/kg con 4 ingestas; tu reporte de cero sueño profundo necesita esto antes que volumen de entreno.'",
+      "Palanca 2 ESPECÍFICA en ESPAÑOL.",
+      "Palanca 3 ESPECÍFICA en ESPAÑOL."
+    ],
+    "dominant_error": "1 frase ESPAÑOL (30-380 chars) sobre el error más costoso que está cometiendo este perfil específico. Concreto, no banal.",
+    "muscle_health_score": "Entero 0-100. Calcúlalo desde sus stats m0 (strength + aesthetics) ponderado contra sleep/discipline/stress.",
+    "biological_age_estimate": "Entero. Edad biológica estimada = edad cronológica + penalizaciones por stress alto, sueño bajo y disciplina baja. NUNCA igual a la cronológica si los mental logs muestran fricción.",
+    "metabolic_risk": "BAJO | MEDIO | ALTO. Riesgo metabólico de pérdida muscular y envejecimiento prematuro. NO es diagnóstico clínico de sarcopenia. ALTO si edad > 40 + sleep < 6 + disciplina < 5; MEDIO si combinaciones intermedias; BAJO en perfiles jóvenes con buena adherencia."
   }
 }
 
@@ -263,8 +275,24 @@ function getV1SystemPrompt(profile: AnalysisParams["profile"]): string {
       },
       "overlays": {
         "m0": [{ "x": number, "y": number, "label": "string" }]
+      },
+      "diagnostic": {
+        "bottleneck": "training_progression | nutrition_consistency | recovery | structure | expectations | accountability",
+        "leverages": ["Palanca 1 ESPAÑOL específica al perfil", "Palanca 2 ESPAÑOL", "Palanca 3 ESPAÑOL"],
+        "dominant_error": "1 frase ESPAÑOL sobre el error más costoso que comete este perfil específico.",
+        "muscle_health_score": 0-100,
+        "biological_age_estimate": entero,
+        "metabolic_risk": "BAJO | MEDIO | ALTO"
       }
     }
+
+    DIAGNÓSTICO:
+    - "diagnostic.bottleneck": elige UNO basado en sus mental logs (estrés/sueño/disciplina) y nivel.
+    - "diagnostic.leverages": 3 acciones ESPECÍFICAS al usuario (no genéricas), ESPAÑOL.
+    - "diagnostic.dominant_error": 1 frase concreta (no "deberías entrenar más").
+    - "diagnostic.muscle_health_score": derivado de stats m0 ponderado por mental logs.
+    - "diagnostic.biological_age_estimate": NUNCA igual a la cronológica si hay fricción real (sueño <7 o disciplina <6).
+    - "diagnostic.metabolic_risk": riesgo de pérdida muscular y envejecimiento metabólico, NO sarcopenia clínica. ALTO si edad >40 + sueño bajo + disciplina baja.
   `;
 }
 
@@ -385,6 +413,7 @@ export async function generateInsightsFromImage(
         },
       },
       overlays: v2Result.overlays || {},
+      diagnostic: v2Result.diagnostic,
     };
   }
 

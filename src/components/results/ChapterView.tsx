@@ -60,7 +60,7 @@ const LONGEVITY_CONTEXT: Record<Milestone, string> = {
   m0: "Línea base. Tu cuerpo está perdiendo ~0.5% de masa muscular este año.",
   m4: "+3kg masa magra = reducción estimada de 2 años en edad metabólica.",
   m8: "Tu sensibilidad a insulina ha mejorado. Tu músculo trabaja para ti.",
-  m12: "Has revertido ~5 años de sarcopenia. Este es tu nuevo baseline.",
+  m12: "Has revertido ~5 años de deterioro muscular metabólico. Este es tu nuevo baseline.",
 };
 
 export function ChapterView({

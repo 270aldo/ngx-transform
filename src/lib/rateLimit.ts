@@ -102,6 +102,20 @@ function getRateLimiters(): Map<string, Ratelimit> | null {
     prefix: "rl:unlock",
   }));
 
+  // v12 Comercial Exit Flow
+  rateLimiters.set("api:checkout", new Ratelimit({
+    redis: redisClient,
+    limiter: Ratelimit.slidingWindow(10, "1 m"), // 10 checkout intents per minute per IP
+    prefix: "rl:checkout",
+  }));
+
+  // v12.1 Brief by email — captura tipo lead, ventana corta para evitar abuso
+  rateLimiters.set("api:brief", new Ratelimit({
+    redis: redisClient,
+    limiter: Ratelimit.slidingWindow(3, "1 h"), // 3 briefs per IP per hour
+    prefix: "rl:brief",
+  }));
+
   // General API rate limit (fallback)
   rateLimiters.set("api:general", new Ratelimit({
     redis: redisClient,
@@ -126,6 +140,8 @@ const IN_MEMORY_LIMITS: Record<string, { max: number; windowMs: number }> = {
   "api:genesis-chat": { max: 20, windowMs: 60000 },    // 20/min
   "api:referral": { max: 30, windowMs: 60000 },        // 30/min
   "api:unlock": { max: 30, windowMs: 60000 },          // 30/min
+  "api:checkout": { max: 10, windowMs: 60000 },        // 10/min
+  "api:brief": { max: 3, windowMs: 3600000 },          // 3/hour
   "api:general": { max: 60, windowMs: 60000 },        // 60/min
 };
 

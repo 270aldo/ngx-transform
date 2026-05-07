@@ -202,11 +202,6 @@ export interface DayPlan {
   checklist?: ChecklistData;
 }
 
-export interface PlanPreviewData {
-  days: DayPlan[];
-  shareId: string;
-}
-
 // ============================================
 // SSE STREAMING
 // ============================================

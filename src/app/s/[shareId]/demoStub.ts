@@ -81,6 +81,19 @@ export const DEMO_AI: InsightsResult = {
     },
   },
   overlays: {},
+  diagnostic: {
+    bottleneck: "structure",
+    leverages: [
+      "Subir entrenamiento a 4 sesiones/sem con progresión clara: tu reporte de 4h disponibles permite frecuencia, falta el plan que las ordene.",
+      "Proteína a 1.6g/kg distribuida en 4 ingestas — tu peso de 82kg pide ~130g/día y los mental logs sugieren que estás por debajo.",
+      "Bloquear 7-8h de sueño consistente: tu stressLevel 6/10 indica que la recuperación está siendo el cuello, no el volumen.",
+    ],
+    dominant_error:
+      "Estás entrenando con consistencia pero sin estructura periodizada — el resultado son ganancias erráticas que no se traducen en composición visible.",
+    muscle_health_score: 64,
+    biological_age_estimate: 36,
+    metabolic_risk: "MEDIO",
+  },
 };
 
 export const DEMO_LETTER = `Si pudieras verte ahora, mes 12, te darías cuenta de algo más importante que cualquier cambio físico: dejaste de necesitar la motivación. Construiste un sistema. Y eso es lo que cambia todo.

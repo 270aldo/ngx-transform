@@ -7,6 +7,8 @@ import { BiometricLoader } from "@/components/BiometricLoader";
 import { TransformationSummary } from "@/components/results/TransformationSummary";
 import { MuscleHealthScore } from "@/components/results/MuscleHealthScore";
 import { HybridOfferSection } from "@/components/results/HybridOfferSection";
+import { HybridOfferV2 } from "@/components/results/HybridOfferV2";
+import { SeasonRoadmap } from "@/components/results/SeasonRoadmap";
 import { NPSQuick } from "@/components/results/NPSQuick";
 import RefreshClient from "./refresh-client";
 import ScrollToSection from "./scroll-to-section";
@@ -22,6 +24,8 @@ const FF_DRAMATIC_REVEAL = process.env.FF_DRAMATIC_REVEAL !== "false";
 const FF_SOCIAL_COUNTER = process.env.FF_SOCIAL_COUNTER !== "false";
 const FF_SHARE_UNLOCK =
   process.env.FF_SHARE_UNLOCK === "true" || process.env.FF_SHARE_TO_UNLOCK !== "false";
+// v12: salida comercial unificada (4 caminos en /results, sin /demo ni /plan)
+const FF_HYBRID_OFFER_V2 = process.env.NEXT_PUBLIC_FF_HYBRID_OFFER_V2 !== "false";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +44,8 @@ interface SessionDoc {
     notes?: string;
     focusZone?: string;
     stressLevel?: number;
+    sleepQuality?: number;
+    disciplineRating?: number;
   };
   photo?: { originalStoragePath?: string };
   ai?: InsightsResult;
@@ -274,13 +280,43 @@ export default async function Page({
         {/* Genesis Demo CTA - appears after transformation viewer */}
         {isReady && (
           <>
-            <MuscleHealthScore shareId={shareId} />
+            <MuscleHealthScore
+              shareId={shareId}
+              diagnostic={ai.diagnostic}
+              userInput={
+                allowProfile
+                  ? {
+                      age: data.input?.age,
+                      sleepQuality: data.input?.sleepQuality,
+                      disciplineRating: data.input?.disciplineRating,
+                      stressLevel: data.input?.stressLevel,
+                      weeklyTime: data.input?.weeklyTime,
+                      goal: data.input?.goal,
+                    }
+                  : undefined
+              }
+            />
             <TransformationSummary
               ai={ai}
               imageUrls={urls}
               shareId={shareId}
+              userInput={
+                allowProfile
+                  ? {
+                      weightKg: data.input?.weightKg,
+                      age: data.input?.age,
+                      goal: data.input?.goal,
+                      level: data.input?.level,
+                    }
+                  : undefined
+              }
             />
-            <HybridOfferSection shareId={shareId} />
+            <SeasonRoadmap />
+            {FF_HYBRID_OFFER_V2 ? (
+              <HybridOfferV2 shareId={shareId} />
+            ) : (
+              <HybridOfferSection shareId={shareId} />
+            )}
             <NPSQuick shareId={shareId} />
           </>
         )}
@@ -297,13 +333,43 @@ export default async function Page({
       {/* Genesis Demo CTA - appears after transformation viewer */}
       {isReady && (
         <>
-          <MuscleHealthScore shareId={shareId} />
+          <MuscleHealthScore
+            shareId={shareId}
+            diagnostic={ai.diagnostic}
+            userInput={
+              allowProfile
+                ? {
+                    age: data.input?.age,
+                    sleepQuality: data.input?.sleepQuality,
+                    disciplineRating: data.input?.disciplineRating,
+                    stressLevel: data.input?.stressLevel,
+                    weeklyTime: data.input?.weeklyTime,
+                    goal: data.input?.goal,
+                  }
+                : undefined
+            }
+          />
           <TransformationSummary
             ai={ai}
             imageUrls={urls}
             shareId={shareId}
+            userInput={
+              allowProfile
+                ? {
+                    weightKg: data.input?.weightKg,
+                    age: data.input?.age,
+                    goal: data.input?.goal,
+                    level: data.input?.level,
+                  }
+                : undefined
+            }
           />
-          <HybridOfferSection shareId={shareId} />
+          <SeasonRoadmap />
+          {FF_HYBRID_OFFER_V2 ? (
+            <HybridOfferV2 shareId={shareId} />
+          ) : (
+            <HybridOfferSection shareId={shareId} />
+          )}
           <NPSQuick shareId={shareId} />
         </>
       )}

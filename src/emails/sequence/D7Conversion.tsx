@@ -29,7 +29,8 @@ export default function D7Conversion({
     process.env.NEXT_PUBLIC_APP_URL ||
     process.env.NEXT_PUBLIC_BASE_URL ||
     "https://transform.ngxgenesis.com";
-  const offerUrl = `${baseUrl}/s/${shareId}?section=offer`;
+  // v12: anclaje directo a HybridOfferV2 (checkout MP visible al primer scroll)
+  const offerUrl = `${baseUrl}/s/${shareId}?section=offer#hybrid-offer`;
   const coachUrl =
     bookingUrl ||
     process.env.NEXT_PUBLIC_CALENDLY_URL ||
@@ -85,7 +86,7 @@ export default function D7Conversion({
                   href={offerUrl}
                   className="bg-[#6D00FF] text-white px-8 py-4 rounded-xl font-semibold text-base"
                 >
-                  Aplicar a NGX HYBRID
+                  Entrar a NGX HYBRID hoy
                 </Button>
               </Section>
 
@@ -94,12 +95,15 @@ export default function D7Conversion({
                   href={coachUrl}
                   className="bg-white text-black px-8 py-4 rounded-xl font-semibold text-base"
                 >
-                  Agendar llamada con un coach
+                  Agendar llamada con el equipo
                 </Button>
               </Section>
 
               <Section className="text-center mt-4">
-                <Text className="text-xs text-neutral-500 m-0">Seguimiento cercano • Coach humano incluido • Cancela cuando quieras</Text>
+                <Text className="text-xs text-neutral-500 m-0">
+                  En la página también encontrarás un video corto del fundador
+                  explicando cómo funciona el sistema. Pago seguro vía Mercado Pago.
+                </Text>
               </Section>
 
               <Hr className="border-neutral-800 my-6" />
