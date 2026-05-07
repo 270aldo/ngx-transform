@@ -9,16 +9,22 @@ export {
   TimelineEntrySchema,
   ProfileSummarySchema,
   StyleProfileSchema,
+  DiagnosticSchema,
+  BottleneckSchema,
   type AnalysisOutput,
   type LegacyAnalysis,
   type Stats,
   type ProfileSummary,
   type StyleProfile,
+  type Diagnostic,
+  type Bottleneck,
   validateAnalysisOutput,
   validateAnalysisOutputText,
   attemptJsonRepair,
   migrateV1toV2,
 } from "@/lib/schemas/analysis";
+
+import { DiagnosticSchema } from "@/lib/schemas/analysis";
 
 // ============================================================================
 // Legacy Types (v1) - Kept for backward compatibility
@@ -63,6 +69,7 @@ export const InsightsResultZ = z.object({
     m8: z.array(OverlayPointZ).optional(),
     m12: z.array(OverlayPointZ).optional(),
   }).catch({}),
+  diagnostic: DiagnosticSchema.optional(),
 });
 export type InsightsResult = z.infer<typeof InsightsResultZ>;
 

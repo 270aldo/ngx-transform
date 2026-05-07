@@ -69,6 +69,35 @@ export const StyleProfileSchema = z.object({
   color_grade: z.string().min(5).max(100),
 });
 
+/**
+ * Bloque diagnóstico (v12.1) — alimenta MuscleHealthScore + TransformationSummary
+ * + el brief por email. Todos los campos son opcionales: si Gemini no los
+ * devuelve, los componentes consumidores caen en heurística mínima derivada
+ * del input del usuario, no en defaults hardcoded.
+ */
+export const BottleneckSchema = z.enum([
+  "training_progression",
+  "nutrition_consistency",
+  "recovery",
+  "structure",
+  "expectations",
+  "accountability",
+]);
+
+export const DiagnosticSchema = z
+  .object({
+    bottleneck: BottleneckSchema.optional(),
+    leverages: z.array(z.string().min(4).max(200)).max(5).optional(),
+    dominant_error: z.string().min(10).max(400).optional(),
+    muscle_health_score: z.number().int().min(0).max(100).optional(),
+    biological_age_estimate: z.number().int().min(13).max(120).optional(),
+    sarcopenia_risk: z.enum(["BAJO", "MEDIO", "ALTO"]).optional(),
+  })
+  .catch({});
+
+export type Bottleneck = z.infer<typeof BottleneckSchema>;
+export type Diagnostic = z.infer<typeof DiagnosticSchema>;
+
 // ============================================================================
 // Main Analysis Schema (v2.0)
 // ============================================================================
@@ -134,6 +163,11 @@ export const AnalysisOutputSchema = z.object({
    * Perfil de estilo visual para consistencia
    */
   style_profile: StyleProfileSchema,
+
+  /**
+   * Diagnóstico (v12.1) — opcional, alimenta MuscleHealthScore + brief.
+   */
+  diagnostic: DiagnosticSchema.optional(),
 });
 
 // ============================================================================
@@ -210,6 +244,7 @@ export const LegacyAnalysisSchema = z.object({
       m12: z.array(OverlayPointSchema).optional(),
     })
     .catch({}),
+  diagnostic: DiagnosticSchema.optional(),
 });
 
 export type LegacyAnalysis = z.infer<typeof LegacyAnalysisSchema>;
@@ -327,6 +362,7 @@ type MigratableAnalysis = {
     m8?: Array<{ x: number; y: number; label: string; detail?: string }>;
     m12?: Array<{ x: number; y: number; label: string; detail?: string }>;
   };
+  diagnostic?: Diagnostic;
 };
 
 /**
@@ -405,5 +441,6 @@ export function migrateV1toV2(
       background: "Professional studio or gritty gym environment",
       color_grade: "High contrast, slightly desaturated with accent highlights",
     },
+    diagnostic: v1.diagnostic,
   };
 }

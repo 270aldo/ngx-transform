@@ -22,6 +22,7 @@ import {
   ArrowRight,
   CalendarDays,
   CheckCircle2,
+  Mail,
   MessageCircle,
   PlayCircle,
   ShieldCheck,
@@ -117,6 +118,10 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
   );
   const [checkoutLoading, setCheckoutLoading] = useState<Sku | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [briefState, setBriefState] = useState<
+    "idle" | "loading" | "sent" | "error"
+  >("idle");
+  const [briefMessage, setBriefMessage] = useState<string | null>(null);
 
   const cohortLabel =
     cohorteInfo?.label ?? process.env.NEXT_PUBLIC_COHORT_LABEL ?? "Marzo";
@@ -242,6 +247,49 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
     if (!whatsappUrl) return;
     await emitTelemetry(shareId, "whatsapp_v2_clicked");
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+  };
+
+  const onEmailBrief = async () => {
+    if (briefState === "loading" || briefState === "sent") return;
+    setBriefState("loading");
+    setBriefMessage(null);
+    await emitTelemetry(shareId, "brief_email_requested");
+
+    try {
+      const res = await fetch("/api/brief/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ shareId }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (res.status === 503) {
+        setBriefState("error");
+        setBriefMessage(
+          "El envío de email no está activo todavía. Contáctanos por WhatsApp y te lo mandamos manual."
+        );
+        return;
+      }
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || "No pudimos enviar el brief.");
+      }
+
+      setBriefState("sent");
+      setBriefMessage(
+        data.alreadySent
+          ? "Ya te lo enviamos antes — revisa tu bandeja (y spam)."
+          : "Listo. Lo enviamos a tu correo. Llega en pocos minutos."
+      );
+    } catch (err) {
+      setBriefState("error");
+      setBriefMessage(
+        err instanceof Error
+          ? err.message
+          : "No pudimos enviar el brief. Intenta de nuevo o escríbenos por WhatsApp."
+      );
+    }
   };
 
   const anySkuAvailable = skus.some((s) => s.available);
@@ -603,6 +651,74 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
                 ¿Tienes una duda rápida? Escríbenos por WhatsApp
               </button>
             )}
+
+            {/* CAMINO 5 — Email brief (TERTIARY · captura, no conversión) */}
+            <div className="ngx-glass !p-4 md:!p-5">
+              <div className="flex items-start gap-3">
+                <span
+                  className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+                  style={{
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.10)",
+                  }}
+                >
+                  <Mail className="h-4 w-4 text-white/72" />
+                </span>
+                <div className="flex-1 leading-tight">
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-white/45">
+                    No estás listo hoy
+                  </p>
+                  <p className="mt-0.5 text-sm font-bold text-white">
+                    Recibe tu brief por correo
+                  </p>
+                  <p className="mt-1 text-xs text-white/55">
+                    Tu visualización + diagnóstico + roadmap. Decides cuándo
+                    quieras.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={onEmailBrief}
+                disabled={briefState === "loading" || briefState === "sent"}
+                className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full px-4 py-2.5 text-xs font-bold uppercase tracking-[0.14em] text-white/85 transition-all duration-150 hover:bg-white/[0.04] disabled:cursor-not-allowed disabled:opacity-60"
+                style={{
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid rgba(255,255,255,0.10)",
+                }}
+              >
+                {briefState === "loading" ? (
+                  <>
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    Enviando…
+                  </>
+                ) : briefState === "sent" ? (
+                  <>
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    Brief enviado
+                  </>
+                ) : (
+                  <>
+                    Enviarme mi brief
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </>
+                )}
+              </button>
+
+              {briefMessage && (
+                <p
+                  className="mt-2 text-[11px] leading-relaxed"
+                  style={{
+                    color:
+                      briefState === "error"
+                        ? "#fca5a5"
+                        : "rgba(255,255,255,0.62)",
+                  }}
+                >
+                  {briefMessage}
+                </p>
+              )}
+            </div>
 
             {/* Trust micro-row */}
             <div className="grid grid-cols-3 gap-2 pt-2">

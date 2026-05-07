@@ -3,8 +3,22 @@
 import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { ArrowRight, CheckCircle2, Sparkles, TrendingDown, TrendingUp } from 'lucide-react';
-import type { InsightsResult } from '@/types/ai';
+import {
+  ArrowRight,
+  CheckCircle2,
+  Sparkles,
+  Target,
+  TrendingDown,
+  TrendingUp,
+} from 'lucide-react';
+import type { Bottleneck, InsightsResult } from '@/types/ai';
+
+interface UserInputSnapshot {
+  weightKg?: number;
+  age?: number;
+  goal?: 'definicion' | 'masa' | 'mixto';
+  level?: 'novato' | 'intermedio' | 'avanzado';
+}
 
 interface TransformationSummaryProps {
   ai: InsightsResult;
@@ -12,20 +26,85 @@ interface TransformationSummaryProps {
     originalUrl?: string;
     images?: Record<string, string>;
   };
-  shareId: string;
+  /** Mantenido para compatibilidad con call sites existentes; ya no se usa internamente. */
+  shareId?: string;
+  userInput?: UserInputSnapshot;
+}
+
+const BOTTLENECK_LABELS: Record<Bottleneck, string> = {
+  training_progression: 'Entrenamiento sin progresión trazable',
+  nutrition_consistency: 'Inconsistencia nutricional',
+  recovery: 'Recuperación insuficiente',
+  structure: 'Falta de estructura semanal',
+  expectations: 'Expectativas mal calibradas',
+  accountability: 'Falta de accountability externo',
+};
+
+const BOTTLENECK_DESCRIPTIONS: Record<Bottleneck, string> = {
+  training_progression:
+    'Entrenas con consistencia, pero sin un sistema de progresión semanal. Los músculos dejan de adaptarse a las pocas semanas y entras en un plateau silencioso.',
+  nutrition_consistency:
+    'La calidad del plan importa menos que su estabilidad. Tu nutrición varía demasiado entre días — la inconsistencia neutraliza ganancias antes que cualquier otra variable.',
+  recovery:
+    'Tu volumen de entrenamiento está por encima de lo que recuperas. Más sesiones no es más resultado: la fatiga acumulada está saboteando la adaptación.',
+  structure:
+    'Lo que parece flexibilidad termina siendo improvisación semanal. Sin estructura escrita antes del lunes, las decisiones de cada día consumen más de lo que producen.',
+  expectations:
+    'Estás midiendo el progreso con la ventana equivocada. Cuatro semanas no muestran transformación; la frustración prematura sabotea las ocho siguientes.',
+  accountability:
+    'Operas sin accountability externo. Sin alguien que pregunte de vuelta, la disciplina necesita ser identidad — y eso lleva años, no semanas.',
+};
+
+function computeDeltas(
+  ai: InsightsResult,
+  weightKg: number | undefined,
+  goal: UserInputSnapshot['goal']
+) {
+  const m0 = ai.timeline?.m0?.stats;
+  const m12 = ai.timeline?.m12?.stats;
+
+  if (!m0 || !m12) {
+    return { weightDelta: 4, fatDelta: -5, muscleDelta: 6 };
+  }
+
+  const refWeight = weightKg && weightKg > 30 ? weightKg : 75;
+  const strengthGain = m12.strength - m0.strength; // 0–100 scale
+  const aestheticsGain = m12.aesthetics - m0.aesthetics;
+
+  // Multiplicadores derivan del peso del usuario (no constante arbitraria) y
+  // del objetivo: definición prioriza pérdida de grasa; masa prioriza ganancia.
+  const goalBias =
+    goal === 'masa' ? 1.15 : goal === 'definicion' ? 0.85 : 1.0;
+
+  const weightDelta = Math.round((strengthGain / 100) * refWeight * 0.085 * goalBias);
+  const fatDelta = -Math.max(
+    2,
+    Math.round((aestheticsGain / 100) * 14 * (goal === 'definicion' ? 1.25 : 0.95))
+  );
+  const muscleDelta = Math.max(
+    3,
+    Math.round((strengthGain / 100) * 14 * goalBias)
+  );
+
+  return { weightDelta, fatDelta, muscleDelta };
 }
 
 export function TransformationSummary({
   ai,
   imageUrls,
-  shareId,
+  userInput,
 }: TransformationSummaryProps) {
-  const m0Stats = ai.timeline?.m0?.stats;
-  const m12Stats = ai.timeline?.m12?.stats;
+  const { weightDelta, fatDelta, muscleDelta } = computeDeltas(
+    ai,
+    userInput?.weightKg,
+    userInput?.goal
+  );
 
-  const weightDelta = m0Stats && m12Stats ? Math.round((m12Stats.strength - m0Stats.strength) * 0.1) : 5;
-  const fatDelta = m0Stats && m12Stats ? Math.round((m0Stats.aesthetics - m12Stats.aesthetics) * 0.1) : -5;
-  const muscleDelta = m0Stats && m12Stats ? Math.round((m12Stats.strength - m0Stats.strength) * 0.15) : 7;
+  const bottleneck = ai.diagnostic?.bottleneck;
+  const bottleneckLabel = bottleneck ? BOTTLENECK_LABELS[bottleneck] : null;
+  const bottleneckDescription = bottleneck
+    ? BOTTLENECK_DESCRIPTIONS[bottleneck]
+    : null;
 
   const timelineImages = [
     { label: 'HOY', key: 'm0', url: imageUrls.originalUrl },
@@ -33,14 +112,19 @@ export function TransformationSummary({
     { label: 'MES 8', key: 'm8', url: imageUrls.images?.m8 },
     { label: 'MES 12', key: 'm12', url: imageUrls.images?.m12 },
   ];
+
   const bridgeQuestions = [
     'Qué versión de ti te está llamando de verdad',
     'Qué tan lejos se siente esa versión desde hoy',
     'Si vale la pena convertir ese deseo en un plan real',
   ];
 
-  const handleCTAClick = () => {
-    window.location.href = `/s/${shareId}/plan`;
+  const handleCTAClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    const target = document.getElementById('season-roadmap');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   return (
@@ -99,7 +183,9 @@ export function TransformationSummary({
                       <div className="relative z-10">
                         <div className="flex items-center gap-2" style={{ color: 'var(--ngx-success)' }}>
                           <TrendingUp className="h-4 w-4" />
-                          <span className="font-mono text-2xl font-bold tabular-nums text-white">+{weightDelta} kg</span>
+                          <span className="font-mono text-2xl font-bold tabular-nums text-white">
+                            {weightDelta >= 0 ? `+${weightDelta}` : weightDelta} kg
+                          </span>
                         </div>
                         <span className="ngx-eyebrow !text-[10px] mt-2 block" style={{ color: 'var(--ngx-fg-4)' }}>Peso orientativo</span>
                       </div>
@@ -129,6 +215,34 @@ export function TransformationSummary({
                   </p>
                 </div>
               </div>
+
+              {bottleneckLabel && bottleneckDescription && (
+                <div
+                  className="mt-5 ngx-metal-card !p-5 md:!p-6"
+                  style={{ borderColor: 'rgba(109,0,255,0.28)' }}
+                >
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-2">
+                      <Target
+                        className="h-4 w-4"
+                        style={{ color: 'var(--ngx-purple-light)' }}
+                      />
+                      <span
+                        className="ngx-eyebrow !text-[10px]"
+                        style={{ color: 'var(--ngx-purple-light)' }}
+                      >
+                        Tu palanca principal parece ser
+                      </span>
+                    </div>
+                    <p className="mt-3 text-base font-bold text-white">
+                      {bottleneckLabel}
+                    </p>
+                    <p className="mt-2 text-sm leading-relaxed text-white/65">
+                      {bottleneckDescription}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="ngx-metal-card !p-5 md:!p-6">
@@ -221,7 +335,7 @@ export function TransformationSummary({
                 }}
               >
                 <Sparkles className="h-4 w-4" />
-                <span>Traducir esta visión a roadmap</span>
+                <span>Ver el roadmap de temporada</span>
                 <ArrowRight className="h-4 w-4" />
               </motion.button>
               </div>

@@ -163,6 +163,10 @@ export const TelemetryEventSchema = z.object({
     "calendly_v2_clicked",
     "whatsapp_v2_clicked",
     "hybrid_sku_selected",
+    // v12.1 Brief by email
+    "brief_email_requested",
+    "brief_email_sent",
+    "brief_email_failed",
   ]),
   stage: z.string().optional(),
   model_id: z.string().optional(),

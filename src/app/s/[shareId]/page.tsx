@@ -8,6 +8,7 @@ import { TransformationSummary } from "@/components/results/TransformationSummar
 import { MuscleHealthScore } from "@/components/results/MuscleHealthScore";
 import { HybridOfferSection } from "@/components/results/HybridOfferSection";
 import { HybridOfferV2 } from "@/components/results/HybridOfferV2";
+import { SeasonRoadmap } from "@/components/results/SeasonRoadmap";
 import { NPSQuick } from "@/components/results/NPSQuick";
 import RefreshClient from "./refresh-client";
 import ScrollToSection from "./scroll-to-section";
@@ -43,6 +44,8 @@ interface SessionDoc {
     notes?: string;
     focusZone?: string;
     stressLevel?: number;
+    sleepQuality?: number;
+    disciplineRating?: number;
   };
   photo?: { originalStoragePath?: string };
   ai?: InsightsResult;
@@ -277,12 +280,38 @@ export default async function Page({
         {/* Genesis Demo CTA - appears after transformation viewer */}
         {isReady && (
           <>
-            <MuscleHealthScore shareId={shareId} />
+            <MuscleHealthScore
+              shareId={shareId}
+              diagnostic={ai.diagnostic}
+              userInput={
+                allowProfile
+                  ? {
+                      age: data.input?.age,
+                      sleepQuality: data.input?.sleepQuality,
+                      disciplineRating: data.input?.disciplineRating,
+                      stressLevel: data.input?.stressLevel,
+                      weeklyTime: data.input?.weeklyTime,
+                      goal: data.input?.goal,
+                    }
+                  : undefined
+              }
+            />
             <TransformationSummary
               ai={ai}
               imageUrls={urls}
               shareId={shareId}
+              userInput={
+                allowProfile
+                  ? {
+                      weightKg: data.input?.weightKg,
+                      age: data.input?.age,
+                      goal: data.input?.goal,
+                      level: data.input?.level,
+                    }
+                  : undefined
+              }
             />
+            <SeasonRoadmap />
             {FF_HYBRID_OFFER_V2 ? (
               <HybridOfferV2 shareId={shareId} />
             ) : (
@@ -304,12 +333,38 @@ export default async function Page({
       {/* Genesis Demo CTA - appears after transformation viewer */}
       {isReady && (
         <>
-          <MuscleHealthScore shareId={shareId} />
+          <MuscleHealthScore
+            shareId={shareId}
+            diagnostic={ai.diagnostic}
+            userInput={
+              allowProfile
+                ? {
+                    age: data.input?.age,
+                    sleepQuality: data.input?.sleepQuality,
+                    disciplineRating: data.input?.disciplineRating,
+                    stressLevel: data.input?.stressLevel,
+                    weeklyTime: data.input?.weeklyTime,
+                    goal: data.input?.goal,
+                  }
+                : undefined
+            }
+          />
           <TransformationSummary
             ai={ai}
             imageUrls={urls}
             shareId={shareId}
+            userInput={
+              allowProfile
+                ? {
+                    weightKg: data.input?.weightKg,
+                    age: data.input?.age,
+                    goal: data.input?.goal,
+                    level: data.input?.level,
+                  }
+                : undefined
+            }
           />
+          <SeasonRoadmap />
           {FF_HYBRID_OFFER_V2 ? (
             <HybridOfferV2 shareId={shareId} />
           ) : (

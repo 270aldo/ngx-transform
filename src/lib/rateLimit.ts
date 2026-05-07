@@ -109,6 +109,13 @@ function getRateLimiters(): Map<string, Ratelimit> | null {
     prefix: "rl:checkout",
   }));
 
+  // v12.1 Brief by email — captura tipo lead, ventana corta para evitar abuso
+  rateLimiters.set("api:brief", new Ratelimit({
+    redis: redisClient,
+    limiter: Ratelimit.slidingWindow(3, "1 h"), // 3 briefs per IP per hour
+    prefix: "rl:brief",
+  }));
+
   // General API rate limit (fallback)
   rateLimiters.set("api:general", new Ratelimit({
     redis: redisClient,
@@ -134,6 +141,7 @@ const IN_MEMORY_LIMITS: Record<string, { max: number; windowMs: number }> = {
   "api:referral": { max: 30, windowMs: 60000 },        // 30/min
   "api:unlock": { max: 30, windowMs: 60000 },          // 30/min
   "api:checkout": { max: 10, windowMs: 60000 },        // 10/min
+  "api:brief": { max: 3, windowMs: 3600000 },          // 3/hour
   "api:general": { max: 60, windowMs: 60000 },        // 60/min
 };
 

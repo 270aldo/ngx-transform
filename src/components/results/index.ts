@@ -13,5 +13,8 @@ export { DramaticReveal } from "./DramaticReveal";
 
 // Genesis Demo Components
 export { TransformationSummary } from "./TransformationSummary";
-export { ComparisonCTA } from "./ComparisonCTA";
 export { MuscleHealthScore } from "./MuscleHealthScore";
+
+// v12.1 Diagnostic + Decision Funnel
+export { SeasonRoadmap } from "./SeasonRoadmap";
+export { HybridOfferV2 } from "./HybridOfferV2";
