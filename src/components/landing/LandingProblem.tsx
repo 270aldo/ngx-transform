@@ -67,14 +67,7 @@ export function LandingProblem() {
               </span>
             </div>
 
-            <h2
-              className="font-body font-black text-white"
-              style={{
-                fontSize: "clamp(2.4rem, 5.4vw, 4.6rem)",
-                letterSpacing: "-0.04em",
-                lineHeight: 0.95,
-              }}
-            >
+            <h2 className="ngx-h1 !text-left">
               {copy.title}
               <br />
               <span style={{ color: "rgba(255,255,255,0.42)" }}>
@@ -133,19 +126,8 @@ export function LandingProblem() {
               </div>
 
               <div className="min-w-0">
-                <h3
-                  className="font-body font-bold text-white"
-                  style={{
-                    fontSize: "clamp(1.45rem, 2.4vw, 2.1rem)",
-                    letterSpacing: "-0.025em",
-                    lineHeight: 1.05,
-                  }}
-                >
-                  {card.title}
-                </h3>
-                <p
-                  className="mt-4 max-w-xl leading-relaxed text-white/62 md:text-[1.02rem]"
-                >
+                <h3 className="ngx-h3 !text-left">{card.title}</h3>
+                <p className="mt-4 max-w-xl leading-relaxed text-white/62 md:text-[1.02rem]">
                   {card.description}
                 </p>
               </div>

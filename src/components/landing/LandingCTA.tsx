@@ -68,16 +68,10 @@ export function LandingCTA() {
             />
           </div>
 
-          {/* Heading cinematic */}
-          <h2
-            className="font-body font-black text-white"
-            style={{
-              fontSize: "clamp(2.4rem, 6.5vw, 5.6rem)",
-              letterSpacing: "-0.045em",
-              lineHeight: 0.94,
-              maxWidth: "20ch",
-            }}
-          >
+          {/* Heading cinematic — usa ngx-h1 del DS (United Sans Cond UPPERCASE
+              weight 800). El glow expandido + el spacing hacen el momentum
+              cinematic, no la fuente. */}
+          <h2 className="ngx-h1" style={{ maxWidth: "20ch" }}>
             {cta.headline}
           </h2>
 
