@@ -8,7 +8,8 @@
  * Validación:
  *  - Si `MP_WEBHOOK_SECRET` está configurado, validamos el header
  *    `x-signature` siguiendo el formato oficial de MP.
- *  - Si no, aceptamos pero registramos warning (modo permisivo para tests).
+ *  - En producción, el secreto es obligatorio. En desarrollo, si no existe,
+ *    aceptamos pero registramos warning para facilitar tests locales.
  *
  * Idempotencia:
  *  - Cada paymentId solo se procesa una vez. Si ya está marcado como completed,
@@ -19,7 +20,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import { fetchMpPayment, parseExternalReference } from "@/lib/mercadoPago";
+import { fetchMpPayment, getHybridSkuConfig, parseExternalReference, type HybridSku } from "@/lib/mercadoPago";
 import { getDb } from "@/lib/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
 import { trackEvent } from "@/lib/telemetry";
@@ -39,6 +40,10 @@ interface MpWebhookBody {
 function validateSignature(req: NextRequest, rawBody: string): boolean {
   const secret = process.env.MP_WEBHOOK_SECRET;
   if (!secret) {
+    if (process.env.NODE_ENV === "production") {
+      console.error("[MP_WEBHOOK] MP_WEBHOOK_SECRET no configurado en producción");
+      return false;
+    }
     console.warn(
       "[MP_WEBHOOK] MP_WEBHOOK_SECRET no configurado — aceptando sin validar (no seguro en prod)"
     );
@@ -68,6 +73,16 @@ function validateSignature(req: NextRequest, rawBody: string): boolean {
   const v1 = parts.v1;
   if (!ts || !v1) return false;
 
+  const rawTs = Number(ts);
+  const tsMs = rawTs > 1_000_000_000_000 ? rawTs : rawTs * 1000;
+  if (Number.isFinite(tsMs)) {
+    const maxAgeMs = 10 * 60 * 1000;
+    if (Math.abs(Date.now() - tsMs) > maxAgeMs) {
+      console.error("[MP_WEBHOOK] Signature timestamp outside replay window");
+      return false;
+    }
+  }
+
   // Manifest según docs MP: id:DATA_ID;request-id:REQ_ID;ts:TS;
   const manifest = `id:${dataId};request-id:${requestId};ts:${ts};`;
   const expected = crypto
@@ -88,6 +103,13 @@ export async function POST(req: NextRequest) {
   let rawBody = "";
   try {
     rawBody = await req.text();
+
+    if (process.env.NODE_ENV === "production" && !process.env.MP_WEBHOOK_SECRET) {
+      return NextResponse.json(
+        { ok: false, error: "Webhook not configured" },
+        { status: 503 }
+      );
+    }
 
     if (!validateSignature(req, rawBody)) {
       return NextResponse.json(
@@ -148,10 +170,20 @@ export async function POST(req: NextRequest) {
 
     // Idempotencia — si ya procesamos este paymentId con status final, no reprocesamos
     const snap = await sessionRef.get();
+    if (!snap.exists) {
+      console.error("[MP_WEBHOOK] Session not found for payment:", {
+        shareId: ref.shareId,
+        paymentId,
+      });
+      return NextResponse.json({ ok: true, skipped: "unknown-session" });
+    }
     const existing = snap.data()?.checkout as
       | {
           paymentId?: string;
           status?: string;
+          internalId?: string;
+          amount?: number;
+          currency?: string;
         }
       | undefined;
 
@@ -165,6 +197,48 @@ export async function POST(req: NextRequest) {
     const sku = (payment.metadata?.sku as string) || "unknown";
     const internalId = (payment.metadata?.internalId as string) || ref.internalId;
     const status = payment.status; // approved | pending | rejected | in_process | refunded | etc
+
+    if (existing?.internalId && existing.internalId !== internalId) {
+      console.error("[MP_WEBHOOK] Internal SKU mismatch", {
+        shareId: ref.shareId,
+        expected: existing.internalId,
+        received: internalId,
+        paymentId,
+      });
+      return NextResponse.json({ ok: false, error: "SKU mismatch" }, { status: 409 });
+    }
+
+    const configuredSku = ["monthly", "quarterly", "annual"].includes(sku)
+      ? getHybridSkuConfig(sku as HybridSku)
+      : null;
+    const expectedAmount = configuredSku?.price ?? existing?.amount;
+    const expectedCurrency = configuredSku?.currency ?? existing?.currency;
+    if (
+      typeof expectedAmount === "number" &&
+      typeof payment.transaction_amount === "number" &&
+      Math.abs(payment.transaction_amount - expectedAmount) > 0.01
+    ) {
+      console.error("[MP_WEBHOOK] Amount mismatch", {
+        shareId: ref.shareId,
+        expectedAmount,
+        receivedAmount: payment.transaction_amount,
+        paymentId,
+      });
+      return NextResponse.json({ ok: false, error: "Amount mismatch" }, { status: 409 });
+    }
+    if (
+      expectedCurrency &&
+      payment.currency_id &&
+      payment.currency_id !== expectedCurrency
+    ) {
+      console.error("[MP_WEBHOOK] Currency mismatch", {
+        shareId: ref.shareId,
+        expectedCurrency,
+        receivedCurrency: payment.currency_id,
+        paymentId,
+      });
+      return NextResponse.json({ ok: false, error: "Currency mismatch" }, { status: 409 });
+    }
 
     let mappedStatus: "completed" | "pending" | "failed" | "redirected" = "pending";
     if (status === "approved") mappedStatus = "completed";
@@ -188,6 +262,10 @@ export async function POST(req: NextRequest) {
             : null,
           updatedAt: FieldValue.serverTimestamp(),
         },
+        ...(mappedStatus === "completed" && {
+          hybridStatus: "converted",
+          hybridConvertedAt: FieldValue.serverTimestamp(),
+        }),
         lastActivityAt: FieldValue.serverTimestamp(),
       },
       { merge: true }

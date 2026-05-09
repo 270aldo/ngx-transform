@@ -10,18 +10,26 @@ export async function sendN8NWebhook(
     return;
   }
 
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
+
   try {
-    await fetch(target, {
+    const res = await fetch(target, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      signal: controller.signal,
       body: JSON.stringify({
         ...payload,
         event,
         timestamp: new Date().toISOString(),
       }),
     });
+    if (!res.ok) {
+      console.warn(`[N8N] webhook returned ${res.status}: ${event}`);
+    }
   } catch (error) {
     console.error(`[N8N] webhook failed: ${event}`, error);
+  } finally {
+    clearTimeout(timeout);
   }
 }
-

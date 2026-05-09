@@ -109,11 +109,11 @@ export default function BriefDelivery({
                       <td className="w-1/2 pl-2">
                         <Img
                           src={m12ImageUrl}
-                          alt="MES 12"
+                          alt="SEMANA 12"
                           className="rounded-lg w-full"
                         />
                         <Text className="text-center text-xs text-neutral-500 mt-2">
-                          MES 12 — POTENCIAL
+                          SEMANA 12 — POTENCIAL
                         </Text>
                       </td>
                     </tr>

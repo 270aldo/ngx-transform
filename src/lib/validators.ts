@@ -6,7 +6,7 @@ import { z } from "zod";
 
 export const LeadSchema = z.object({
   email: z.string().email(),
-  source: z.string().optional(),
+  source: z.string().max(120).optional(),
   consent: z.literal(true),
 });
 
@@ -22,7 +22,8 @@ export const ProfileSchema = z.object({
   level: z.enum(["novato", "intermedio", "avanzado"]),
   goal: z.enum(["definicion", "masa", "mixto"]),
   weeklyTime: z.number().min(1).max(14),
-  trainingDaysPerWeek: z.number().min(1).max(7).default(3).optional(),
+  trainingDaysPerWeek: z.number().min(2).max(6).default(3).optional(),
+  sessionDurationMinutes: z.number().min(30).max(75).default(60).optional(),
   trainingHistoryYears: z.number().min(0).max(30).default(0).optional(),
   nutritionQuality: z.number().min(1).max(10).default(6).optional(),
   bodyFatLevel: z.enum(["bajo", "medio", "alto"]).default("medio").optional(),

@@ -24,6 +24,7 @@ export async function GET(req: Request) {
           shareOriginal?: boolean;
           shareInsights?: boolean;
           shareProfile?: boolean;
+          shareImages?: boolean;
         };
         input?: { goal?: string; level?: string };
         createdAt?: Timestamp;
@@ -32,6 +33,7 @@ export async function GET(req: Request) {
         shareOriginal: data.shareScope?.shareOriginal ?? !!data.shareOriginal,
         shareInsights: data.shareScope?.shareInsights ?? false,
         shareProfile: data.shareScope?.shareProfile ?? false,
+        shareImages: data.shareScope?.shareImages ?? false,
       };
       return {
         shareId: data.shareId,

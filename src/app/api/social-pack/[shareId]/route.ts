@@ -59,6 +59,7 @@ export async function GET(
       status?: string;
       assets?: { images?: Record<string, string> };
       unlockState?: { unlocked?: boolean };
+      shareScope?: { shareImages?: boolean };
     };
 
     // Check session is ready
@@ -76,6 +77,15 @@ export async function GET(
           success: false,
           message: "Social pack locked. Share to unlock.",
           locked: true,
+        },
+        { status: 403 }
+      );
+    }
+    if (!data.shareScope?.shareImages) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Images are private. Enable image sharing first.",
         },
         { status: 403 }
       );

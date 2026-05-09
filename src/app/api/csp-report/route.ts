@@ -50,11 +50,11 @@ export async function POST(req: Request) {
     // - Send to logging service: await logToService("csp_violation", report)
     // - Store in Firestore for analysis: await db.collection("csp_reports").add(report)
 
-    return NextResponse.json({ received: true }, { status: 204 });
+    return new NextResponse(null, { status: 204 });
   } catch (error) {
     // CSP reports can have malformed bodies, just acknowledge
     console.error("[CSP-Report] Failed to parse report:", error);
-    return NextResponse.json({ received: true }, { status: 204 });
+    return new NextResponse(null, { status: 204 });
   }
 }
 

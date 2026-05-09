@@ -54,6 +54,12 @@ function getRateLimiters(): Map<string, Ratelimit> | null {
     prefix: "rl:remarketing",
   }));
 
+  rateLimiters.set("api:leads", new Ratelimit({
+    redis: redisClient,
+    limiter: Ratelimit.slidingWindow(10, "1 h"), // 10 lead captures per hour
+    prefix: "rl:leads",
+  }));
+
   rateLimiters.set("api:generate-plan", new Ratelimit({
     redis: redisClient,
     limiter: Ratelimit.slidingWindow(5, "1 h"), // 5 plan generations per hour
@@ -132,6 +138,7 @@ let lastPruneAt = 0;
 const IN_MEMORY_LIMITS: Record<string, { max: number; windowMs: number }> = {
   "api:sessions": { max: 3, windowMs: 86400000 },    // 3/day
   "api:email": { max: 5, windowMs: 3600000 },         // 5/hour
+  "api:leads": { max: 10, windowMs: 3600000 },         // 10/hour
   "api:analyze": { max: 10, windowMs: 3600000 },      // 10/hour
   "api:generate-images": { max: 5, windowMs: 3600000 },// 5/hour
   "api:generate-plan": { max: 5, windowMs: 3600000 },  // 5/hour

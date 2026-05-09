@@ -149,6 +149,15 @@ describe("LeadSchema", () => {
     });
     expect(result.success).toBe(true);
   });
+
+  it("rejects oversized source values", () => {
+    const result = LeadSchema.safeParse({
+      email: "lead@example.com",
+      consent: true,
+      source: "x".repeat(121),
+    });
+    expect(result.success).toBe(false);
+  });
 });
 
 // ============================================================================

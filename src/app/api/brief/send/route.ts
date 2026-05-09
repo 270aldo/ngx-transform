@@ -27,6 +27,7 @@ import {
   getClientIP,
   getRateLimitHeaders,
 } from "@/lib/rateLimit";
+import { getConfiguredFromEmail } from "@/lib/emailConfig";
 import BriefDelivery from "@/emails/transactional/BriefDelivery";
 import type { Bottleneck, Diagnostic, InsightsResult } from "@/types/ai";
 
@@ -35,6 +36,10 @@ export const runtime = "nodejs";
 const Body = z.object({
   shareId: z.string().min(1).max(120),
 });
+
+function getFromEmail(): string | null {
+  return getConfiguredFromEmail("BRIEF_SEND");
+}
 
 const BOTTLENECK_LABELS: Record<Bottleneck, string> = {
   training_progression: "Entrenamiento sin progresión trazable",
@@ -234,12 +239,17 @@ export async function POST(req: NextRequest) {
       : undefined;
 
     const subject = "Tu brief NGX Transform — diagnóstico + roadmap";
+    const from = getFromEmail();
+    if (!from) {
+      console.error("[BRIEF_SEND] RESEND_FROM_EMAIL not configured in production");
+      return NextResponse.json(
+        { ok: false, error: "El envío de correo no está configurado." },
+        { status: 503 }
+      );
+    }
 
     const { data: sendData, error: sendError } = await resend.emails.send({
-      from:
-        process.env.RESEND_FROM_EMAIL ||
-        process.env.EMAIL_FROM ||
-        "NGX Transform <transform@ngxgenesis.com>",
+      from,
       to: email,
       subject,
       react: BriefDelivery({

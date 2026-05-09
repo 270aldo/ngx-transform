@@ -27,13 +27,14 @@ async function getSessionImages(shareId: string): Promise<SessionImages | null> 
     assets?: { images?: Record<string, string> };
     input?: { goal?: string; level?: string };
     shareOriginal?: boolean;
-    shareScope?: { shareOriginal?: boolean };
+    shareScope?: { shareOriginal?: boolean; shareImages?: boolean };
   } | undefined;
   if (!data) return null;
 
   const allowOriginal = data.shareScope?.shareOriginal ?? !!data.shareOriginal;
+  const allowImages = data.shareScope?.shareImages ?? false;
   const originalPath = allowOriginal ? data.photo?.originalStoragePath : undefined;
-  const m12Path = data.assets?.images?.m12;
+  const m12Path = allowImages ? data.assets?.images?.m12 : undefined;
 
   const [originalUrl, m12Url] = await Promise.all([
     originalPath ? getSignedUrl(originalPath, { expiresInSeconds: 604800 }) : Promise.resolve(undefined),
@@ -58,15 +59,18 @@ async function getBestImage(shareId: string) {
     assets?: { images?: Record<string, string> };
     input?: { goal?: string; level?: string };
     shareOriginal?: boolean;
-    shareScope?: { shareOriginal?: boolean };
+    shareScope?: { shareOriginal?: boolean; shareImages?: boolean };
   } | undefined;
   if (!data) return null;
 
   const allowOriginal = data.shareScope?.shareOriginal ?? !!data.shareOriginal;
+  const allowImages = data.shareScope?.shareImages ?? false;
   const targetPath =
-    data.assets?.images?.m12 ||
-    data.assets?.images?.m8 ||
-    data.assets?.images?.m4 ||
+    (allowImages
+      ? data.assets?.images?.m12 ||
+        data.assets?.images?.m8 ||
+        data.assets?.images?.m4
+      : undefined) ||
     (allowOriginal ? data.photo?.originalStoragePath : undefined);
   if (!targetPath) return null;
   const imageUrl = await getSignedUrl(targetPath, { expiresInSeconds: 604800 }); // 7 días para social media crawlers
@@ -79,7 +83,7 @@ async function getBestImage(shareId: string) {
 
 /**
  * PR-3: Split-Screen OG Image
- * HOY (m0 desaturated) vs 12 MESES (m12 vibrant)
+ * HOY (m0 desaturated) vs 12 SEMANAS (m12 vibrant)
  */
 function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel: string }) {
   return (
@@ -169,7 +173,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
         }}
       />
 
-      {/* Right side - 12 MESES (m12) */}
+      {/* Right side - 12 SEMANAS (m12) */}
       <div
         style={{
           width: "50%",
@@ -181,7 +185,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
         {images.m12Url && (
           <img
             src={images.m12Url}
-            alt="12 Meses"
+            alt="12 Semanas"
             style={{
               width: "100%",
               height: "100%",
@@ -196,7 +200,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
             background: "linear-gradient(90deg, #050505 0%, transparent 30%)",
           }}
         />
-        {/* 12 MESES label */}
+        {/* 12 SEMANAS label */}
         <div
           style={{
             position: "absolute",
@@ -226,7 +230,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
               marginTop: 8,
             }}
           >
-            12 MESES
+            12 SEMANAS
           </span>
         </div>
       </div>
@@ -414,7 +418,7 @@ export async function GET(_: Request, context: { params: Promise<{ shareId: stri
                   maxWidth: 720,
                 }}
               >
-                <div style={{ fontSize: 54, fontWeight: 800, lineHeight: 1.05 }}>Tu futuro físico en 12 meses</div>
+                <div style={{ fontSize: 54, fontWeight: 800, lineHeight: 1.05 }}>Tu dirección física en 12 semanas</div>
                 <div style={{ fontSize: 20, color: "#B3B3B3", marginTop: 12 }}>
                   Análisis biométrico, proyección 0/4/8/12m y visuales cinematográficos listos para compartir.
                 </div>

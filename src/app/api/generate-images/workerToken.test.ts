@@ -8,4 +8,20 @@ describe("generate-images worker auth", () => {
     expect(source).not.toContain("workerToken");
     expect(source).toContain('headers.get("x-worker-token")');
   });
+
+  it("expands requested steps to preserve Identity Chain dependencies", () => {
+    const source = readFileSync("src/app/api/generate-images/route.ts", "utf8");
+
+    expect(source).toContain("expandIdentityChainSteps");
+    expect(source).toContain('required.add("m4")');
+    expect(source).toContain('required.add("m8")');
+    expect(source).toContain('required.add("m12")');
+  });
+
+  it("only completes the image job after every milestone exists", () => {
+    const source = readFileSync("src/app/api/generate-images/route.ts", "utf8");
+
+    expect(source).toContain("const allMilestonesComplete = STEP_ORDER.every");
+    expect(source).toContain("markJobPartial");
+  });
 });

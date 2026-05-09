@@ -38,7 +38,7 @@ export default function D0Results({
   return (
     <Html>
       <Head />
-      <Preview>Tu transformación de 12 meses está lista 🔥</Preview>
+      <Preview>Tu transformación de 12 semanas está lista</Preview>
       <Tailwind>
         <Body className="bg-[#0A0A0A] text-neutral-100 font-sans">
           <Container className="mx-auto my-8 max-w-xl">
@@ -46,7 +46,7 @@ export default function D0Results({
             <Section className="text-center mb-8">
               <Img src={logoUrl} alt="NGX Genesis" width="140" className="mx-auto mb-3" />
               <Text className="text-sm text-neutral-500 m-0">
-                Tu proyección de 12 meses
+                Tu proyección de 12 semanas
               </Text>
             </Section>
 
@@ -75,11 +75,11 @@ export default function D0Results({
                       <td className="w-1/2 pl-2">
                         <Img
                           src={m12ImageUrl}
-                          alt="MES 12"
+                          alt="SEMANA 12"
                           className="rounded-lg w-full"
                         />
                         <Text className="text-center text-xs text-neutral-500 mt-2">
-                          MES 12
+                          SEMANA 12
                         </Text>
                       </td>
                     </tr>
@@ -89,7 +89,7 @@ export default function D0Results({
 
               {/* Message */}
               <Text className="text-neutral-300 leading-relaxed">
-                Acabas de ver tu potencial a 12 meses. Este no es solo un
+                Acabas de ver tu potencial a 12 semanas. Este no es solo un
                 filtro - es una proyección basada en tu perfil, tus metas y
                 la ciencia del entrenamiento.
               </Text>
@@ -115,7 +115,7 @@ export default function D0Results({
                 En tu página de resultados encontrarás:
               </Text>
               <ul className="text-sm text-neutral-400 mt-2 pl-4">
-                <li>Timeline completo: HOY → MES 4 → MES 8 → MES 12</li>
+                <li>Timeline completo: HOY → SEMANA 4 → SEMANA 8 → SEMANA 12</li>
                 <li>Análisis mental y físico</li>
                 <li>Tu plan personalizado de 7 días</li>
               </ul>

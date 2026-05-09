@@ -106,6 +106,12 @@ export async function POST(req: Request) {
       console.log(`[Analyze] Session ${sessionId} already analyzed, returning cached`);
       return NextResponse.json({ ok: true, ai: data.ai, cached: true });
     }
+    if (job.status === "failed" && job.retryCount >= job.maxRetries) {
+      return NextResponse.json(
+        { error: "Analysis retry limit reached", status: "failed" },
+        { status: 409 }
+      );
+    }
 
     const photoPath = data.photo?.originalStoragePath;
     if (!photoPath) {
@@ -128,6 +134,12 @@ export async function POST(req: Request) {
     const lock = await acquireJobLock(sessionId, "analysis");
     if (!lock.acquired) {
       telemetry.jobLockDenied(sessionId, "analysis");
+      if (lock.status === "failed") {
+        return NextResponse.json(
+          { error: "Analysis retry limit reached", status: "failed" },
+          { status: 409 }
+        );
+      }
       return NextResponse.json({ ok: true, status: "in_progress" }, { status: 202 });
     }
 

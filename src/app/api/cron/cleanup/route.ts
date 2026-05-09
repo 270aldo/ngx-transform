@@ -80,7 +80,7 @@ async function cleanupAbandonedSessions(): Promise<CleanupResult> {
     const baseQuery = db
       .collection("sessions")
       .where("createdAt", "<", cutoffTimestamp)
-      .where("status", "in", ["pending", "analyzing", "generating", "failed", "partial"])
+      .where("status", "in", ["pending", "processing", "analyzed", "generating", "failed", "partial"])
       .orderBy("createdAt")
       .limit(BATCH_SIZE);
 
@@ -287,7 +287,7 @@ async function cleanupOldRateLimits(): Promise<number> {
     for (const collection of ["rate_limits", "rate_limits_email"]) {
       const oldDocs = await db
         .collection(collection)
-        .where("lastUpdated", "<", cutoff)
+        .where("updatedAt", "<", cutoff)
         .limit(200)
         .get();
 

@@ -28,7 +28,9 @@ export async function GET(_: Request, context: { params: Promise<{ shareId: stri
         shareOriginal?: boolean;
         shareInsights?: boolean;
         shareProfile?: boolean;
+        shareImages?: boolean;
       };
+      ai?: unknown;
       createdAt?: unknown;
     };
 
@@ -36,19 +38,23 @@ export async function GET(_: Request, context: { params: Promise<{ shareId: stri
       shareOriginal: data.shareScope?.shareOriginal ?? !!data.shareOriginal,
       shareInsights: data.shareScope?.shareInsights ?? false,
       shareProfile: data.shareScope?.shareProfile ?? false,
+      shareImages: data.shareScope?.shareImages ?? false,
     };
 
     const images = data.assets?.images || {};
+    const assetKeys = Object.keys(images);
     const signedImages: Record<string, string> = {};
-    await Promise.all(
-      Object.entries(images).map(async ([key, path]) => {
-        try {
-          signedImages[key] = await getSignedUrl(path, { expiresInSeconds: 3600 });
-        } catch (err) {
-          console.error(`[Sessions/Public] Failed to sign ${key}:`, err);
-        }
-      })
-    );
+    if (shareScope.shareImages) {
+      await Promise.all(
+        Object.entries(images).map(async ([key, path]) => {
+          try {
+            signedImages[key] = await getSignedUrl(path, { expiresInSeconds: 3600 });
+          } catch (err) {
+            console.error(`[Sessions/Public] Failed to sign ${key}:`, err);
+          }
+        })
+      );
+    }
 
     let originalUrl: string | undefined;
     if (shareScope.shareOriginal && data.photo?.originalStoragePath) {
@@ -72,6 +78,9 @@ export async function GET(_: Request, context: { params: Promise<{ shareId: stri
       shareId: data.shareId || shareId,
       status: data.status,
       assets: { images: signedImages },
+      assetKeys,
+      hasImages: assetKeys.length > 0,
+      hasAi: data.ai != null,
       originalUrl,
       profile: publicProfile,
       shareScope,

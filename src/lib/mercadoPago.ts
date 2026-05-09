@@ -37,6 +37,20 @@ export interface CreatePreferenceOutput {
   sandboxInitPoint: string;
 }
 
+async function fetchWithTimeout(
+  url: string,
+  init: RequestInit,
+  timeoutMs = 15000
+): Promise<Response> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...init, signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 const DEFAULT_LABELS: Record<HybridSku, string> = {
   monthly: "Acceso mensual",
   quarterly: "12 semanas (cohorte completa)",
@@ -157,16 +171,19 @@ export async function createMpPreference(
     },
   };
 
-  const res = await fetch("https://api.mercadopago.com/checkout/preferences", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-      // Idempotency-Key recomendado por MP para evitar duplicados de preference
-      "X-Idempotency-Key": `${input.shareId}-${input.sku}-${Date.now()}`,
-    },
-    body: JSON.stringify(payload),
-  });
+  const res = await fetchWithTimeout(
+    "https://api.mercadopago.com/checkout/preferences",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+        // Idempotency-Key recomendado por MP para evitar duplicados de preference
+        "X-Idempotency-Key": `${input.shareId}-${input.sku}`,
+      },
+      body: JSON.stringify(payload),
+    }
+  );
 
   if (!res.ok) {
     const text = await res.text().catch(() => "");
@@ -199,6 +216,7 @@ export interface MpPaymentDetails {
   external_reference?: string;
   metadata?: Record<string, unknown>;
   transaction_amount?: number;
+  currency_id?: string;
   payer?: { email?: string };
   date_approved?: string;
 }
@@ -209,7 +227,7 @@ export async function fetchMpPayment(
   const accessToken = process.env.MP_ACCESS_TOKEN;
   if (!accessToken) return null;
 
-  const res = await fetch(
+  const res = await fetchWithTimeout(
     `https://api.mercadopago.com/v1/payments/${paymentId}`,
     {
       headers: { Authorization: `Bearer ${accessToken}` },

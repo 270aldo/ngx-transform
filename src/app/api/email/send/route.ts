@@ -20,12 +20,17 @@ import D7Conversion from "@/emails/sequence/D7Conversion";
 import D10Urgency from "@/emails/sequence/D10Urgency";
 import D14Final from "@/emails/sequence/D14Final";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
+import { getConfiguredFromEmail } from "@/lib/emailConfig";
 
 // Lazy initialization of Resend to avoid build errors
 function getResend(): Resend | null {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return null;
   return new Resend(apiKey);
+}
+
+function getFromEmail(): string | null {
+  return getConfiguredFromEmail("EMAIL_SEND");
 }
 
 const SendEmailSchema = z.object({
@@ -156,6 +161,11 @@ export async function POST(req: NextRequest) {
         message: "Email not sent (Resend not configured)",
       });
     }
+    const from = getFromEmail();
+    if (!from) {
+      console.error("[EMAIL_SEND] RESEND_FROM_EMAIL not configured in production");
+      return NextResponse.json({ error: "Email sender not configured" }, { status: 503 });
+    }
 
     // Build email props
     const emailProps = {
@@ -173,10 +183,7 @@ export async function POST(req: NextRequest) {
 
     // Send email
     const { data, error: resendError } = await resend.emails.send({
-      from:
-        process.env.RESEND_FROM_EMAIL ||
-        process.env.EMAIL_FROM ||
-        "NGX Transform <transform@ngxgenesis.com>",
+      from,
       to: email,
       subject: getEmailSubject(validated.template),
       react: getEmailComponent(validated.template, emailProps),

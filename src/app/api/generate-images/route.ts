@@ -14,7 +14,7 @@
 
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/firebaseAdmin";
-import { GenerateImagesSchema } from "@/lib/validators";
+import { GenerateImagesSchema, getFeatureFlags } from "@/lib/validators";
 import { getSignedUrl, uploadBuffer } from "@/lib/storage";
 import {
   generateTransformedImage,
@@ -22,7 +22,7 @@ import {
   type GenerationResult,
 } from "@/lib/nanobanana";
 import { extractVisualAnchor, extractStyleProfile } from "@/lib/gemini";
-import { getImageConfig, estimateSessionCost } from "@/lib/imageConfig";
+import { getImageConfig, estimateSessionCost, supportsIdentityChain } from "@/lib/imageConfig";
 import { FieldValue } from "firebase-admin/firestore";
 import sharp from "sharp";
 import { telemetry, startTimer } from "@/lib/telemetry";
@@ -35,6 +35,7 @@ import {
   acquireJobLock,
   markJobCompleted,
   markJobFailed,
+  markJobPartial,
   updateJobProgress,
   getPendingMilestones,
   withRetry,
@@ -59,6 +60,25 @@ const PREVIOUS_STEP: Record<NanoStep, NanoStep | null> = {
   m8: "m4",
   m12: "m8",
 };
+
+function expandIdentityChainSteps(requestedSteps: NanoStep[]): NanoStep[] {
+  const required = new Set<NanoStep>();
+
+  for (const step of requestedSteps) {
+    if (step === "m4") required.add("m4");
+    if (step === "m8") {
+      required.add("m4");
+      required.add("m8");
+    }
+    if (step === "m12") {
+      required.add("m4");
+      required.add("m8");
+      required.add("m12");
+    }
+  }
+
+  return STEP_ORDER.filter((step) => required.has(step));
+}
 
 const WORKER_TOKEN = process.env.AI_WORKER_TOKEN || "";
 
@@ -189,6 +209,23 @@ export async function POST(req: Request) {
 
     // Get image config
     const imageConfig = getImageConfig();
+    const MODEL_ID = imageConfig.default.model;
+    const flags = getFeatureFlags();
+
+    // Identity Chain must be real when enabled. If the configured model cannot
+    // use chained references, stop before spending image-generation budget.
+    if (flags.FF_IDENTITY_CHAIN && !supportsIdentityChain(MODEL_ID)) {
+      const reason = "identity_chain_model_unsupported";
+      await telemetry.imageGenerationFailed(sessionId, reason);
+      return NextResponse.json(
+        {
+          error: reason,
+          model: MODEL_ID,
+          requiredModel: "gemini-3-pro-image-preview",
+        },
+        { status: 503 }
+      );
+    }
 
     // Check if already complete
     const job = await getOrCreateJob(sessionId, "image_generation");
@@ -200,14 +237,56 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true, images: existingImages, cached: true });
       }
     }
+    if (job.status === "failed" && job.retryCount >= job.maxRetries) {
+      return NextResponse.json(
+        { error: "Image generation retry limit reached", status: "failed" },
+        { status: 409 }
+      );
+    }
+
+    // Extract Identity Chain data from AI analysis before locking or spending.
+    const aiData = data.ai as AnalysisOutput | InsightsResult | null;
+    const userVisualAnchor = extractVisualAnchor(aiData);
+    const styleProfile = extractStyleProfile(aiData);
+
+    if (flags.FF_IDENTITY_CHAIN && !aiData) {
+      return NextResponse.json(
+        { error: "analysis_not_ready", status: data.status },
+        { status: 409 }
+      );
+    }
+
+    const hasIdentityAnchor =
+      !!aiData && "user_visual_anchor" in aiData && !!aiData.user_visual_anchor;
+
+    if (
+      flags.FF_IDENTITY_CHAIN &&
+      !hasIdentityAnchor
+    ) {
+      const reason = "analysis_missing_identity_anchor";
+      await ref.set(
+        {
+          status: "failed",
+          lastError: reason,
+          updatedAt: FieldValue.serverTimestamp(),
+        },
+        { merge: true }
+      );
+      await markJobFailed(`${sessionId}_image_generation`, reason);
+      await telemetry.imageGenerationFailed(sessionId, reason);
+      return NextResponse.json({ error: reason }, { status: 409 });
+    }
 
     // Get pending milestones (for resumability)
     const pendingMilestones = await getPendingMilestones(sessionId);
     const requestedSteps = (parsed.data.steps ?? ["m4", "m8", "m12"]) as NanoStep[];
+    const requiredSteps = flags.FF_IDENTITY_CHAIN
+      ? expandIdentityChainSteps(requestedSteps)
+      : requestedSteps;
 
     // Filter to only pending steps, but maintain order for Identity Chain
     const stepsToProcess = STEP_ORDER.filter(
-      (s) => requestedSteps.includes(s) && pendingMilestones.includes(s)
+      (s) => requiredSteps.includes(s) && pendingMilestones.includes(s)
     );
 
     if (stepsToProcess.length === 0) {
@@ -237,6 +316,12 @@ export async function POST(req: Request) {
     const lock = await acquireJobLock(sessionId, "image_generation");
     if (!lock.acquired) {
       telemetry.jobLockDenied(sessionId, "image_generation");
+      if (lock.status === "failed") {
+        return NextResponse.json(
+          { error: "Image generation retry limit reached", status: "failed" },
+          { status: 409 }
+        );
+      }
       return NextResponse.json({ ok: true, status: "in_progress" }, { status: 202 });
     }
 
@@ -247,9 +332,6 @@ export async function POST(req: Request) {
 
     await ref.set({ status: "generating", updatedAt: FieldValue.serverTimestamp() }, { merge: true });
 
-    // Get model from config
-    const MODEL_ID = imageConfig.default.model;
-
     // Track start
     await telemetry.imageGenerationStarted(sessionId, MODEL_ID);
 
@@ -259,12 +341,7 @@ export async function POST(req: Request) {
     // Initialize images record (include any existing)
     const images: Record<string, string> = { ...(data.assets?.images || {}) };
 
-    // Extract Identity Chain data from AI analysis
-    const aiData = data.ai as AnalysisOutput | InsightsResult | null;
-    const userVisualAnchor = extractVisualAnchor(aiData);
-    const styleProfile = extractStyleProfile(aiData);
-
-    console.log(`[GenerateImages] Identity Chain enabled`);
+    console.log(`[GenerateImages] Identity Chain ${flags.FF_IDENTITY_CHAIN ? "enabled" : "disabled"}`);
     console.log(
       `[GenerateImages] Visual anchor: ${userVisualAnchor ? `${userVisualAnchor.length} chars` : "none"}`
     );
@@ -289,11 +366,24 @@ export async function POST(req: Request) {
         const prevStep = PREVIOUS_STEP[step];
         let previousStepUrl: string | undefined;
 
+        if (flags.FF_IDENTITY_CHAIN && prevStep && !images[prevStep]) {
+          const reason = `missing_identity_chain_reference:${prevStep}`;
+          console.error(`[GenerateImages] ${reason} before ${step}, aborting chain`);
+          failedSteps.push(step);
+          break;
+        }
+
         if (prevStep && images[prevStep]) {
           try {
             previousStepUrl = await getSignedUrl(images[prevStep], { expiresInSeconds: 3600 });
             console.log(`[GenerateImages] Using ${prevStep} as reference for ${step}`);
           } catch (err) {
+            if (flags.FF_IDENTITY_CHAIN) {
+              const reason = `identity_chain_reference_unavailable:${prevStep}`;
+              console.error(`[GenerateImages] ${reason}:`, err);
+              failedSteps.push(step);
+              break;
+            }
             console.warn(`[GenerateImages] Could not get URL for ${prevStep}:`, err);
           }
         }
@@ -391,10 +481,10 @@ export async function POST(req: Request) {
     }
 
     // Determine final status
-    const allRequestedComplete = stepsToProcess.every((s) => images[s]);
+    const allMilestonesComplete = STEP_ORDER.every((s) => images[s]);
     let finalStatus: "ready" | "partial" | "failed" = "ready";
 
-    if (!allRequestedComplete) {
+    if (!allMilestonesComplete) {
       finalStatus = failedSteps.length === stepsToProcess.length ? "failed" : "partial";
     }
 
@@ -409,7 +499,7 @@ export async function POST(req: Request) {
     );
 
     // Mark job according to result and trigger referral completion
-    if (allRequestedComplete) {
+    if (allMilestonesComplete) {
       await markJobCompleted(`${sessionId}_image_generation`);
       // Trigger referral completion when session is ready (viral loop)
       completeReferral(sessionId).catch((err) =>
@@ -426,6 +516,11 @@ export async function POST(req: Request) {
         `All steps failed: ${failedSteps.join(", ")}`
       );
       await telemetry.imageGenerationFailed(sessionId, `Failed: ${failedSteps.join(", ")}`);
+    } else {
+      await markJobPartial(
+        `${sessionId}_image_generation`,
+        failedSteps.length ? `Failed steps: ${failedSteps.join(", ")}` : undefined
+      );
     }
 
     const totalLatency = timer.stop();

@@ -14,6 +14,7 @@ import {
 } from "@/lib/rateLimit";
 import { requireAuth } from "@/lib/authServer";
 import { sendN8NWebhook } from "@/lib/n8nWebhook";
+import { getConfiguredFromEmail } from "@/lib/emailConfig";
 
 /**
  * Genera un token seguro para acciones destructivas
@@ -157,6 +158,7 @@ export async function POST(req: Request) {
         shareOriginal: false,
         shareInsights: false,
         shareProfile: false,
+        shareImages: false,
       },
       consents: {
         termsAcceptedAt: FieldValue.serverTimestamp(),
@@ -208,8 +210,13 @@ export async function POST(req: Request) {
           "http://localhost:3000";
         const url = String(baseUrl).startsWith("http") ? `${baseUrl}/s/${shareId}` : `https://${baseUrl}/s/${shareId}`;
         const resend = new Resend(key);
+        const from = getConfiguredFromEmail("Sessions");
+        if (!from) {
+          console.warn("[Sessions] RESEND_FROM_EMAIL not configured, skipping preflight email");
+          return;
+        }
         await resend.emails.send({
-          from: "NGX Transform <no-reply@resend.dev>",
+          from,
           to: userEmail,
           subject: "Tus resultados NGX están en proceso",
           html: `<p>Estamos generando tu proyección. Podrás verla aquí:</p><p><a href="${url}">${url}</a></p><p>Puede tardar unos minutos.</p>`,
