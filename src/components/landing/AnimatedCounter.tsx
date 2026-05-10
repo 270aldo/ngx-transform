@@ -27,12 +27,11 @@ export function AnimatedCounter({
   suffixStyle,
 }: AnimatedCounterProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [displayValue, setDisplayValue] = useState<string>("0");
-  const [hasAnimated, setHasAnimated] = useState(false);
-
   // Extract numeric part from value
   const numericValue = parseFloat(value.replace(/[^0-9.]/g, ""));
   const isNumeric = !isNaN(numericValue) && /^\d/.test(value.trim());
+  const [displayValue, setDisplayValue] = useState<string>(isNumeric ? "0" : value);
+  const [hasAnimated, setHasAnimated] = useState(false);
 
   const animate = useCallback(() => {
     if (hasAnimated || !isNumeric) return;
@@ -63,8 +62,8 @@ export function AnimatedCounter({
 
   useEffect(() => {
     if (!isNumeric) {
-      setDisplayValue(value);
-      return;
+      const id = window.setTimeout(() => setDisplayValue(value), 0);
+      return () => window.clearTimeout(id);
     }
 
     const observer = new IntersectionObserver(

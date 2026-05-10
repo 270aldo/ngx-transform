@@ -13,7 +13,7 @@ interface WizardProfileStepProps {
 }
 
 /**
- * Stage 2: Perfil corporal — biometrics + body type.
+ * Stage 2: Perfil corporal — biometrics + composition baseline.
  * Pure view of form state. No business logic.
  */
 export function WizardProfileStep({ register, watch, setValue }: WizardProfileStepProps) {
@@ -85,27 +85,27 @@ export function WizardProfileStep({ register, watch, setValue }: WizardProfileSt
 
         <div className="space-y-4">
           <div className="ngx-glass !p-5 md:!p-6">
-            <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Tipo somático</span>
+            <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Composición visual inicial</span>
             <div className="mt-4 grid grid-cols-1 gap-3">
               <EliteOptionCard
-                title="ECTOMORFO"
-                description="Estructura ligera, metabolismo rápido, dificultad para ganar masa."
-                selected={watch("bodyType") === "ectomorph"}
-                onClick={() => setValue("bodyType", "ectomorph")}
+                title="BASE LIGERA"
+                description="Poca grasa visible o estructura delgada. La prioridad será construir músculo y postura."
+                selected={watch("bodyFatLevel") === "bajo"}
+                onClick={() => setValue("bodyFatLevel", "bajo")}
                 idx={1}
               />
               <EliteOptionCard
-                title="MESOMORFO"
-                description="Atlético natural, gana músculo y pierde grasa con facilidad."
-                selected={watch("bodyType") === "mesomorph"}
-                onClick={() => setValue("bodyType", "mesomorph")}
+                title="BASE INTERMEDIA"
+                description="Punto mixto: recomposición, fuerza progresiva y mejor proporción visual."
+                selected={watch("bodyFatLevel") === "medio"}
+                onClick={() => setValue("bodyFatLevel", "medio")}
                 idx={2}
               />
               <EliteOptionCard
-                title="ENDOMORFO"
-                description="Estructura sólida y ancha, gana fuerza fácilmente."
-                selected={watch("bodyType") === "endomorph"}
-                onClick={() => setValue("bodyType", "endomorph")}
+                title="BASE CON RESERVA"
+                description="Mayor margen de reducción de grasa. La visualización priorizará cintura, energía y músculo funcional."
+                selected={watch("bodyFatLevel") === "alto"}
+                onClick={() => setValue("bodyFatLevel", "alto")}
                 idx={3}
               />
             </div>

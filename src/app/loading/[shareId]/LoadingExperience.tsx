@@ -37,9 +37,9 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
   const stepStates = useMemo(() => {
     return [
       { label: "Analizando tu foto", done: hasAi || imageCount >= 1, active: !hasAi && imageCount === 0 },
-      { label: "Visualizando mes 4", done: has("m4"), active: hasAi && !has("m4") },
-      { label: "Visualizando mes 8", done: has("m8"), active: has("m4") && !has("m8") },
-      { label: "Visualizando mes 12", done: has("m12"), active: has("m8") && !has("m12") },
+      { label: "Visualizando semana 4", done: has("m4"), active: hasAi && !has("m4") },
+      { label: "Visualizando semana 8", done: has("m8"), active: has("m4") && !has("m8") },
+      { label: "Visualizando semana 12", done: has("m12"), active: has("m8") && !has("m12") },
       { label: "Preparando tu lectura inicial", done: isReady, active: imageCount >= 3 && !isReady },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -69,7 +69,7 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
         { hasAi: true, keys: ["m4", "m8", "m12"] },
       ];
       let i = 0;
-      setHasAi(true);
+      const bootstrapId = window.setTimeout(() => setHasAi(true), 0);
       const id = setInterval(() => {
         if (i >= ticks.length) {
           clearInterval(id);
@@ -81,7 +81,10 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
         setProgress(PROGRESS_BY_COUNT[Math.min(t.keys.length, 3)]);
         i++;
       }, 3000);
-      return () => clearInterval(id);
+      return () => {
+        window.clearTimeout(bootstrapId);
+        clearInterval(id);
+      };
     }
 
     let mounted = true;
@@ -93,10 +96,10 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
         if (!mounted) return;
 
         const nextStatus = json?.status || "processing";
-        const images = (json?.assets?.images || {}) as Record<string, string>;
-        const keys = Object.keys(images);
+        const signedImages = (json?.assets?.images || {}) as Record<string, string>;
+        const keys = Array.isArray(json?.assetKeys) ? json.assetKeys : Object.keys(signedImages);
         const count = keys.length;
-        const aiPresent = json?.ai != null && json?.ai !== undefined;
+        const aiPresent = Boolean(json?.hasAi);
 
         setStatus(nextStatus);
         setImageKeys(keys);
@@ -105,7 +108,8 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
 
         if (
           !startedGenerationRef.current &&
-          (nextStatus === "analyzed" || nextStatus === "processing") &&
+          nextStatus === "analyzed" &&
+          aiPresent &&
           count === 0 &&
           !authLoading
         ) {
@@ -229,14 +233,8 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
                   },
                   body: JSON.stringify({ sessionId: shareId }),
                 });
-                await fetch("/api/generate-images", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                  },
-                  body: JSON.stringify({ sessionId: shareId }),
-                });
+                // Polling will trigger image generation after the analysis is
+                // persisted and hasAi=true. This avoids racing with /api/analyze.
               } catch (e) {
                 setError("No pudimos reintentar. Intenta de nuevo en unos segundos.");
                 console.error("[Loading] Retry failed:", e);

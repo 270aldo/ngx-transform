@@ -95,7 +95,7 @@ export default function PrivacyPage() {
               reflejar condiciones relacionadas con la salud.
             </li>
             <li>
-              <strong>Tipo de cuerpo y zona de enfoque:</strong> somatotipo y
+              <strong>Composición corporal y zona de enfoque:</strong> punto de partida visual y
               áreas corporales de interés que, combinados con otros datos,
               pueden considerarse datos de salud.
             </li>

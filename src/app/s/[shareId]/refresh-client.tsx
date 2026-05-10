@@ -15,7 +15,9 @@ export default function RefreshClient({ shareId, active }: { shareId: string; ac
         const json = await res.json();
         const status = json?.status as string | undefined;
         const images = (json?.assets?.images || {}) as Record<string, string>;
-        const count = Object.keys(images).length;
+        const count = Array.isArray(json?.assetKeys)
+          ? json.assetKeys.length
+          : Object.keys(images).length;
 
         if (status !== lastStatusRef.current || count !== lastCountRef.current) {
           lastStatusRef.current = status || null;

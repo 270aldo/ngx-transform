@@ -19,7 +19,7 @@
  * Controlled by feature flags
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
 import type { InsightsResult, TimelineEntry } from "@/types/ai";
@@ -44,9 +44,9 @@ const STEPS: TimelineStep[] = ["m0", "m4", "m8", "m12"];
 
 const STEP_LABELS: Record<TimelineStep, string> = {
   m0: "HOY",
-  m4: "MES 4",
-  m8: "MES 8",
-  m12: "MES 12",
+  m4: "SEMANA 4",
+  m8: "SEMANA 8",
+  m12: "SEMANA 12",
 };
 
 interface TransformationViewer2Props {
@@ -98,50 +98,40 @@ export function TransformationViewer2({
     FF_DRAMATIC_REVEAL = true,
     FF_SOCIAL_COUNTER = true,
     FF_AGENT_BRIDGE_CTA = true,
-    FF_SHARE_TO_UNLOCK = true,
+    FF_SHARE_TO_UNLOCK = false,
     FF_SHARE_UNLOCK,
     FF_REFERRAL_TRACKING = true,
   } = featureFlags;
   const shareUnlockEnabled = FF_SHARE_UNLOCK ?? FF_SHARE_TO_UNLOCK;
 
   // State
-  const [showDramaticReveal, setShowDramaticReveal] = useState(FF_DRAMATIC_REVEAL);
+  const [showDramaticReveal, setShowDramaticReveal] = useState(() => {
+    if (typeof window === "undefined") return FF_DRAMATIC_REVEAL;
+    return FF_DRAMATIC_REVEAL && !localStorage.getItem(`ngx-dramatic-seen-${shareId}`);
+  });
   const [showShareModal, setShowShareModal] = useState(false);
-  const [unlockedContent, setUnlockedContent] = useState<string[]>([]);
-  const [showCinematic, setShowCinematic] = useState(!FF_DRAMATIC_REVEAL); // Only show if no dramatic reveal
+  const [unlockedContent, setUnlockedContent] = useState<string[]>(() => {
+    if (typeof window === "undefined") return [];
+    const unlocked = localStorage.getItem(`ngx-unlocked-${shareId}`);
+    if (!unlocked) return [];
+    try {
+      return JSON.parse(unlocked);
+    } catch {
+      localStorage.removeItem(`ngx-unlocked-${shareId}`);
+      return [];
+    }
+  });
+  const [showCinematic, setShowCinematic] = useState(() => {
+    if (typeof window === "undefined") return !FF_DRAMATIC_REVEAL;
+    return !FF_DRAMATIC_REVEAL && !localStorage.getItem(`ngx-cinematic-seen-${shareId}`);
+  }); // Only show if no dramatic reveal
   const [currentStep, setCurrentStep] = useState<TimelineStep>("m0");
   const [showLetter, setShowLetter] = useState(false);
   const [showNav, setShowNav] = useState(false);
-  const [hasSeenCinematic, setHasSeenCinematic] = useState(false);
-
-  // Check if user has already seen the dramatic reveal / cinematic
-  useEffect(() => {
-    const dramaticKey = `ngx-dramatic-seen-${shareId}`;
-    const cinematicKey = `ngx-cinematic-seen-${shareId}`;
-    const unlockKey = `ngx-unlocked-${shareId}`;
-
-    // Check dramatic reveal
-    if (localStorage.getItem(dramaticKey)) {
-      setShowDramaticReveal(false);
-    }
-
-    // Check cinematic
-    if (localStorage.getItem(cinematicKey)) {
-      setShowCinematic(false);
-      setHasSeenCinematic(true);
-    }
-
-    // Check unlocked content
-    const unlocked = localStorage.getItem(unlockKey);
-    if (unlocked) {
-      try {
-        setUnlockedContent(JSON.parse(unlocked));
-      } catch {
-        // Invalid JSON, reset
-        localStorage.removeItem(unlockKey);
-      }
-    }
-  }, [shareId]);
+  const [hasSeenCinematic, setHasSeenCinematic] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return !!localStorage.getItem(`ngx-cinematic-seen-${shareId}`);
+  });
 
   // Get current data
   const currentEntry = ai.timeline[currentStep] as TimelineEntry;

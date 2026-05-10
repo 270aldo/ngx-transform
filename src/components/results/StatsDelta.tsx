@@ -13,7 +13,7 @@
  * - Responsive grid layout
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -41,10 +41,11 @@ const STAT_CONFIG = [
 
 function AnimatedNumber({ value, duration = 1000 }: { value: number; duration?: number }) {
   const [displayValue, setDisplayValue] = useState(0);
+  const displayValueRef = useRef(0);
 
   useEffect(() => {
     const startTime = Date.now();
-    const startValue = displayValue;
+    const startValue = displayValueRef.current;
 
     const animate = () => {
       const elapsed = Date.now() - startTime;
@@ -54,6 +55,7 @@ function AnimatedNumber({ value, duration = 1000 }: { value: number; duration?: 
       const eased = 1 - Math.pow(1 - progress, 3);
 
       const current = Math.round(startValue + (value - startValue) * eased);
+      displayValueRef.current = current;
       setDisplayValue(current);
 
       if (progress < 1) {

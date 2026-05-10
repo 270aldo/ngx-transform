@@ -6,7 +6,7 @@
  * Consume SSE desde /api/genesis-demo
  */
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Brain,
@@ -17,10 +17,8 @@ import {
   Check,
   Loader2,
   Timer,
-  type LucideIcon,
 } from 'lucide-react';
 import type { AgentType, AgentStatus, AgentState } from '@/types/genesis';
-import { AGENT_META, ORCHESTRATION_PHASES } from '@/lib/genesis-demo/agents';
 import { ProgressBar } from '@/components/widgets/ProgressBar';
 
 // v11.0: 4 capacidades de GENESIS (mapean a módulos internos)
@@ -67,14 +65,6 @@ interface FeedMessage {
 }
 
 export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationProps) {
-  // v11.0: Track capability states instead of individual agents
-  const [capabilityStates, setCapabilityStates] = useState<Record<string, AgentStatus>>({
-    entrenamiento: 'pending',
-    nutricion: 'pending',
-    recuperacion: 'pending',
-    habitos: 'pending',
-  });
-
   // Legacy agent states for SSE compatibility
   const [agentStates, setAgentStates] = useState<Record<AgentType, AgentStatus>>(() => {
     const initial: Record<string, AgentStatus> = {};
@@ -84,7 +74,6 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
     return initial as Record<AgentType, AgentStatus>;
   });
 
-  const [currentPhase, setCurrentPhase] = useState<number>(0);
   const [phaseTitle, setPhaseTitle] = useState<string>('Preparando análisis...');
   const [feedMessages, setFeedMessages] = useState<FeedMessage[]>([]);
   const [progress, setProgress] = useState<number>(0);
@@ -101,8 +90,7 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
     return Math.round((completedCapabilities / 4) * 100);
   }, []);
 
-  // Update capability states when agent states change
-  useEffect(() => {
+  const capabilityStates = useMemo(() => {
     const newCapStates: Record<string, AgentStatus> = {};
     GENESIS_CAPABILITIES.forEach((cap) => {
       const statuses = cap.legacyAgents.map((agent) => agentStates[agent]);
@@ -114,7 +102,7 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
         newCapStates[cap.key] = 'pending';
       }
     });
-    setCapabilityStates(newCapStates);
+    return newCapStates;
   }, [agentStates]);
 
   const [hasError, setHasError] = useState(false);
@@ -129,7 +117,6 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
     eventSource.addEventListener('phase', (e) => {
       if (!mountedRef.current) return;
       const data = JSON.parse(e.data);
-      setCurrentPhase(data.phase);
       setPhaseTitle(data.title);
     });
 

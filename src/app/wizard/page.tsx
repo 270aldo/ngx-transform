@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { useForm, type FieldErrors, type Resolver } from "react-hook-form";
+import { useForm, useWatch, type FieldErrors, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ensureAnonymousSession, getClientStorage } from "@/lib/firebaseClient";
 import { ref, uploadBytes } from "firebase/storage";
@@ -26,6 +26,14 @@ import {
 
 type FormValues = WizardFormValues;
 const FormSchema = WizardFormSchema;
+
+function createSessionSeed(): string {
+  const randomPart =
+    typeof crypto !== "undefined" && crypto.randomUUID
+      ? crypto.randomUUID()
+      : Math.random().toString(36).slice(2);
+  return randomPart.replace(/-/g, "").slice(0, 12);
+}
 
 const STAGE_LABELS: Record<number, { title: string; subtitle: string }> = {
   1: {
@@ -176,14 +184,16 @@ function WizardPageContent() {
   const requiredConsentsAccepted = consentTerms && consentAI;
   const stageMeta = STAGE_LABELS[currentStage] ?? STAGE_LABELS[1];
 
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
+  const { register, handleSubmit, control, watch, setValue, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(FormSchema) as Resolver<FormValues>,
     defaultValues: {
       email: "",
       sex: "male",
       level: "novato",
       goal: "definicion",
-      weeklyTime: 5,
+      trainingDaysPerWeek: 3,
+      sessionDurationMinutes: 60,
+      weeklyTime: 3,
       bodyType: "mesomorph",
       bodyFatLevel: "medio",
       aestheticPreference: "cinematic",
@@ -196,25 +206,29 @@ function WizardPageContent() {
     },
   });
 
-  const photoFile = watch("photo");
-  const watchedEmail = watch("email");
+  const photoFile = useWatch({ control, name: "photo" });
+  const watchedEmail = useWatch({ control, name: "email" });
+  const watchedGoal = useWatch({ control, name: "goal" });
+  const watchedFocusZone = useWatch({ control, name: "focusZone" });
+  const watchedTrainingDays = useWatch({ control, name: "trainingDaysPerWeek" });
+  const watchedSessionMinutes = useWatch({ control, name: "sessionDurationMinutes" });
   const selectedPhoto = photoFile?.[0] ?? null;
   const resolvedEmail = (watchedEmail || user?.email || "").trim();
   const usingAnonymousAccess = Boolean(user?.isAnonymous);
   const canAdvancePastIdentity = Boolean(previewUrl && requiredConsentsAccepted && accessReady);
   const canSubmitWizard = Boolean(previewUrl && requiredConsentsAccepted && resolvedEmail && accessReady);
   const selectedGoalLabel =
-    watch("goal") === "definicion"
-      ? "Definición extrema"
-      : watch("goal") === "masa"
-        ? "Hipertrofia masiva"
-        : "Híbrido atlético";
+    watchedGoal === "definicion"
+      ? "Recomposición atlética"
+      : watchedGoal === "masa"
+        ? "Construir músculo funcional"
+        : "Híbrido de rendimiento";
   const selectedFocusLabel =
-    watch("focusZone") === "upper"
+    watchedFocusZone === "upper"
       ? "Tren superior"
-      : watch("focusZone") === "lower"
+      : watchedFocusZone === "lower"
         ? "Tren inferior"
-        : watch("focusZone") === "abs"
+        : watchedFocusZone === "abs"
           ? "Core & abs"
           : "Full body";
 
@@ -225,31 +239,54 @@ function WizardPageContent() {
     const param = searchParams.get("stage");
     const n = Number(param);
     if (Number.isInteger(n) && n >= 1 && n <= 4) {
-      setCurrentStage(n);
+      const id = window.setTimeout(() => setCurrentStage(n), 0);
+      return () => window.clearTimeout(id);
     }
   }, [searchParams]);
 
   useEffect(() => {
-    if (DEMO) {
-      setAccessReady(true);
-      setAccessError(null);
-      return;
-    }
-
-    if (authLoading) return;
-
     let cancelled = false;
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    const defer = (fn: () => void) => {
+      const id = setTimeout(() => {
+        if (!cancelled) fn();
+      }, 0);
+      timers.push(id);
+    };
 
-    if (user) {
-      setAccessReady(true);
-      setAccessError(null);
+    if (DEMO) {
+      defer(() => {
+        setAccessReady(true);
+        setAccessError(null);
+      });
       return () => {
         cancelled = true;
+        timers.forEach(clearTimeout);
       };
     }
 
-    setAccessReady(false);
-    setAccessError(null);
+    if (authLoading) {
+      return () => {
+        cancelled = true;
+        timers.forEach(clearTimeout);
+      };
+    }
+
+    if (user) {
+      defer(() => {
+        setAccessReady(true);
+        setAccessError(null);
+      });
+      return () => {
+        cancelled = true;
+        timers.forEach(clearTimeout);
+      };
+    }
+
+    defer(() => {
+      setAccessReady(false);
+      setAccessError(null);
+    });
 
     void ensureAnonymousSession()
       .then(() => {
@@ -268,6 +305,7 @@ function WizardPageContent() {
 
     return () => {
       cancelled = true;
+      timers.forEach(clearTimeout);
     };
   }, [DEMO, authLoading, user]);
 
@@ -277,19 +315,30 @@ function WizardPageContent() {
     }
   }, [user?.email, watchedEmail, setValue]);
 
+  const trainingDays = watchedTrainingDays || 3;
+  const sessionMinutes = watchedSessionMinutes || 60;
   useEffect(() => {
-    setFormError(null);
+    const weeklyHours = Math.max(1, Math.min(14, (trainingDays * sessionMinutes) / 60));
+    setValue("weeklyTime", weeklyHours, { shouldValidate: true, shouldDirty: true });
+  }, [trainingDays, sessionMinutes, setValue]);
+
+  useEffect(() => {
+    const id = window.setTimeout(() => setFormError(null), 0);
+    return () => window.clearTimeout(id);
   }, [currentStage]);
 
   useEffect(() => {
     if (!selectedPhoto) {
-      setPreviewUrl(null);
-      return;
+      const id = window.setTimeout(() => setPreviewUrl(null), 0);
+      return () => window.clearTimeout(id);
     }
 
     const objectUrl = URL.createObjectURL(selectedPhoto);
-    setPreviewUrl(objectUrl);
-    return () => URL.revokeObjectURL(objectUrl);
+    const id = window.setTimeout(() => setPreviewUrl(objectUrl), 0);
+    return () => {
+      window.clearTimeout(id);
+      URL.revokeObjectURL(objectUrl);
+    };
   }, [selectedPhoto]);
 
   const onFormError = (errs: FieldErrors<FormValues>) => {
@@ -460,7 +509,7 @@ function WizardPageContent() {
       // Staged processing states for the private visualization flow
       setProcessStage("upload"); setProcessProgress(20); await new Promise(r => setTimeout(r, 800));
 
-      const sessionSeed = (typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)).replace(/-/g, "").slice(0, 12);
+      const sessionSeed = createSessionSeed();
       const ext = file.name.split(".").pop() || "jpg";
       const uid = authUser.uid;
       const storagePath = `uploads/${uid}/${sessionSeed}/original.${ext}`;
@@ -474,7 +523,15 @@ function WizardPageContent() {
 
       setProcessStage("analyze"); setProcessProgress(50);
 
-      const profile = { ...values, notes: values.notes || "" };
+      const profile = {
+        ...values,
+        weeklyTime: Math.max(
+          1,
+          Math.min(14, ((values.trainingDaysPerWeek || 3) * (values.sessionDurationMinutes || 60)) / 60)
+        ),
+        bodyType: values.bodyType || "mesomorph",
+        notes: values.notes || "",
+      };
       const token = DEMO ? null : await authUser.getIdToken();
 
       // Get landing variant for analytics tracking
@@ -571,11 +628,8 @@ function WizardPageContent() {
           type="file"
           accept="image/jpeg,image/png,image/webp"
           className="sr-only"
-          {...register("photo", { onChange: onPhotoInputChange })}
-          ref={(el) => {
-            inputRef.current = el;
-            register("photo").ref(el);
-          }}
+          onChange={onPhotoInputChange}
+          ref={inputRef}
         />
 
         {formError && !loading ? (

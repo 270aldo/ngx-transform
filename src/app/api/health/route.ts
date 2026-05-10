@@ -174,7 +174,7 @@ async function checkGemini(): Promise<ServiceHealth> {
         dailyRemaining: `$${spendStats.daily.remaining.toFixed(2)}`,
       },
     };
-  } catch (error) {
+  } catch {
     return {
       status: "degraded",
       message: "Could not check spend stats",

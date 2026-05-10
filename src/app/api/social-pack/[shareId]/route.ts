@@ -15,7 +15,7 @@ import { recordDownload } from "@/lib/viral/shareUnlock";
 
 // Feature flag
 const FF_SHARE_UNLOCK =
-  process.env.FF_SHARE_UNLOCK === "true" || process.env.FF_SHARE_TO_UNLOCK !== "false";
+  process.env.FF_SHARE_UNLOCK === "true" || process.env.FF_SHARE_TO_UNLOCK === "true";
 
 export async function GET(
   request: NextRequest,

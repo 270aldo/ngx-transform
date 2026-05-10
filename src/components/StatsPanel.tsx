@@ -27,8 +27,8 @@ interface StatsPanelProps {
 
 const stepLabels: Record<TimelineStep, string> = {
   m0: "PUNTO DE PARTIDA",
-  m4: "MES 4",
-  m8: "MES 8",
+  m4: "SEMANA 4",
+  m8: "SEMANA 8",
   m12: "META FINAL",
   summary: "RESUMEN",
 };
@@ -94,7 +94,7 @@ const phaseContent: Record<TimelineStep, {
   },
   m12: {
     focusTitle: "Transformación Completa",
-    focusDescription: "Al mes 12 habrás completado una transformación integral. No solo tu físico será diferente, sino tu relación con el ejercicio y la nutrición. Este no es el final, es el nuevo estándar de tu vida.",
+    focusDescription: "En la semana 12 habrás completado una primera temporada integral. No solo tu físico será diferente, sino tu relación con el ejercicio y la nutrición. Este no es el final, es el nuevo estándar de tu vida.",
     focusIcon: Award,
     focusColor: "text-emerald-400",
     milestones: [

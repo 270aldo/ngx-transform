@@ -58,10 +58,6 @@ export interface ImageMetadata {
 // Constants
 // ============================================================================
 
-// Minimum acceptable dimensions
-const MIN_WIDTH = 512;
-const MIN_HEIGHT = 512;
-
 // Maximum file size (20MB - generous for 4K images)
 const MAX_SIZE_BYTES = 20 * 1024 * 1024;
 

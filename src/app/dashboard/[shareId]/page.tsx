@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState, use } from "react";
+import { useEffect, useMemo, useState, use, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Brain, Sparkles, TrendingUp, Activity, ArrowRight } from "lucide-react";
+import { Sparkles, Activity, ArrowRight } from "lucide-react";
 import { ComparisonSlider } from "@/components/ComparisonSlider";
 import { EliteCard } from "@/components/EliteCard";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -23,6 +23,28 @@ interface SessionDoc {
     originalUrl?: string;
     images?: Record<string, string>;
   };
+}
+
+function BentoCard({
+  children,
+  className,
+  delay = 0,
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  return (
+    <div
+      className={cn(
+        "relative bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl overflow-hidden animate-in fade-in zoom-in duration-500 fill-mode-backwards shadow-2xl shadow-black/50",
+        className
+      )}
+      style={{ animationDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
 }
 
 export default function DashboardDetailPage({ params }: { params: Promise<{ shareId: string }> }) {
@@ -106,20 +128,6 @@ export default function DashboardDetailPage({ params }: { params: Promise<{ shar
       </div>
     );
   }
-
-  // --- BENTO GRID LAYOUT ---
-
-  const BentoCard = ({ children, className, delay = 0 }: { children: React.ReactNode, className?: string, delay?: number }) => (
-    <div
-      className={cn(
-        "relative bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl overflow-hidden animate-in fade-in zoom-in duration-500 fill-mode-backwards shadow-2xl shadow-black/50",
-        className
-      )}
-      style={{ animationDelay: `${delay}ms` }}
-    >
-      {children}
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-[#050505] text-white p-4 md:p-8 font-sans selection:bg-[#6D00FF]/30 pb-20">

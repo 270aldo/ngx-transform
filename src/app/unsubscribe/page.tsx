@@ -8,21 +8,20 @@ type Status = "idle" | "loading" | "success" | "error";
 
 function UnsubscribeContent() {
   const searchParams = useSearchParams();
-  const [status, setStatus] = useState<Status>("idle");
-  const [message, setMessage] = useState("Procesando tu solicitud...");
+  const shareId = searchParams.get("shareId");
+  const token = searchParams.get("token");
+  const reason = searchParams.get("reason");
+  const missingParams = !shareId || !token;
+  const [status, setStatus] = useState<Status>(missingParams ? "error" : "loading");
+  const [message, setMessage] = useState(
+    missingParams ? "Faltan datos para procesar la baja." : "Procesando tu solicitud..."
+  );
 
   useEffect(() => {
-    const shareId = searchParams.get("shareId");
-    const token = searchParams.get("token");
-    const reason = searchParams.get("reason");
-
-    if (!shareId || !token) {
-      setStatus("error");
-      setMessage("Faltan datos para procesar la baja.");
+    if (missingParams) {
       return;
     }
 
-    setStatus("loading");
     fetch("/api/unsubscribe", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -47,7 +46,7 @@ function UnsubscribeContent() {
         setStatus("error");
         setMessage(err instanceof Error ? err.message : "Error al procesar la baja");
       });
-  }, [searchParams]);
+  }, [missingParams, reason, shareId, token]);
 
   return (
     <>

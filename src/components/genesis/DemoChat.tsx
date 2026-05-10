@@ -131,13 +131,19 @@ interface DemoChatProps {
   onComplete: () => void;
 }
 
-export function DemoChat({ shareId, onComplete }: DemoChatProps) {
+export function DemoChat({ onComplete }: DemoChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [remainingMessages, setRemainingMessages] = useState(5);
   const [quickActions, setQuickActions] = useState<QuickActionType[]>(INITIAL_QUICK_ACTIONS);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const messageIdRef = useRef(0);
   const completedInteractions = 5 - remainingMessages;
+
+  const nextMessageId = () => {
+    messageIdRef.current += 1;
+    return `msg-${messageIdRef.current}`;
+  };
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
@@ -159,12 +165,16 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
       },
     };
 
-    setIsTyping(true);
-    setTimeout(() => {
+    const setupTimer = setTimeout(() => setIsTyping(true), 0);
+    const messageTimer = setTimeout(() => {
       setMessages([initialMessage]);
       setIsTyping(false);
       setRemainingMessages(4);
     }, 1000);
+    return () => {
+      clearTimeout(setupTimer);
+      clearTimeout(messageTimer);
+    };
   }, []);
 
   const handleQuickAction = (action: QuickActionType) => {
@@ -182,7 +192,7 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
     switch (action.widgetType) {
       case 'meal':
         response = {
-          id: `msg-${Date.now()}`,
+          id: nextMessageId(),
           agent: 'GENESIS',
           capability: 'nutricion',
           content: 'Aquí está tu plan nutricional optimizado para tu objetivo de definición.',
@@ -193,7 +203,7 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
 
       case 'insight':
         response = {
-          id: `msg-${Date.now()}`,
+          id: nextMessageId(),
           agent: 'GENESIS',
           capability,
           content: 'Este es el análisis de por qué tu plan está diseñado así.',
@@ -204,7 +214,7 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
 
       case 'checklist':
         response = {
-          id: `msg-${Date.now()}`,
+          id: nextMessageId(),
           agent: 'GENESIS',
           capability: 'habitos',
           content: 'Tu rutina matutina para empezar el día con energía.',
@@ -215,7 +225,7 @@ export function DemoChat({ shareId, onComplete }: DemoChatProps) {
 
       case 'workout':
         response = {
-          id: `msg-${Date.now()}`,
+          id: nextMessageId(),
           agent: 'GENESIS',
           capability: 'entrenamiento',
           content: 'Aquí tienes tu entrenamiento completo del Día 1.',

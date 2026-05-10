@@ -16,6 +16,7 @@ interface SessionSummary {
     shareOriginal?: boolean;
     shareInsights?: boolean;
     shareProfile?: boolean;
+    shareImages?: boolean;
   };
   goal?: string;
   level?: string;
@@ -149,6 +150,11 @@ export default function DashboardPage() {
                       desc: "Permite mostrar tu foto inicial en el enlace público.",
                     },
                     {
+                      key: "shareImages",
+                      title: "Compartir imágenes generadas",
+                      desc: "Permite mostrar tus visualizaciones en el enlace público.",
+                    },
+                    {
                       key: "shareInsights",
                       title: "Compartir análisis",
                       desc: "Muestra insights y texto generado en el enlace público.",
@@ -165,6 +171,8 @@ export default function DashboardPage() {
                         ? scope.shareOriginal ?? session.shareOriginal
                         : item.key === "shareInsights"
                         ? scope.shareInsights ?? false
+                        : item.key === "shareImages"
+                        ? scope.shareImages ?? false
                         : scope.shareProfile ?? false;
                     return (
                       <div key={item.key} className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3">

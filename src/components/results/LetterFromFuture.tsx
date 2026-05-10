@@ -39,33 +39,47 @@ export function LetterFromFuture({
 
   // Typewriter effect
   useEffect(() => {
+    let setupTimer: ReturnType<typeof setTimeout> | undefined;
+    let typeInterval: ReturnType<typeof setInterval> | undefined;
+    let ctaTimer: ReturnType<typeof setTimeout> | undefined;
+
     if (!isOpen || !content) {
-      setDisplayedText("");
-      setIsTyping(false);
-      setShowCTA(false);
-      return;
+      setupTimer = setTimeout(() => {
+        setDisplayedText("");
+        setIsTyping(false);
+        setShowCTA(false);
+      }, 0);
+      return () => {
+        if (setupTimer) clearTimeout(setupTimer);
+      };
     }
 
-    setIsTyping(true);
-    setDisplayedText("");
-    setShowCTA(false);
+    setupTimer = setTimeout(() => {
+      setIsTyping(true);
+      setDisplayedText("");
+      setShowCTA(false);
 
-    let currentIndex = 0;
-    const typingSpeed = 30; // ms per character
+      let currentIndex = 0;
+      const typingSpeed = 30; // ms per character
 
-    const typeInterval = setInterval(() => {
-      if (currentIndex < content.length) {
-        setDisplayedText(content.slice(0, currentIndex + 1));
-        currentIndex++;
-      } else {
-        clearInterval(typeInterval);
-        setIsTyping(false);
-        // Show CTA after typing completes
-        setTimeout(() => setShowCTA(true), 500);
-      }
-    }, typingSpeed);
+      typeInterval = setInterval(() => {
+        if (currentIndex < content.length) {
+          setDisplayedText(content.slice(0, currentIndex + 1));
+          currentIndex++;
+        } else {
+          if (typeInterval) clearInterval(typeInterval);
+          setIsTyping(false);
+          // Show CTA after typing completes
+          ctaTimer = setTimeout(() => setShowCTA(true), 500);
+        }
+      }, typingSpeed);
+    }, 0);
 
-    return () => clearInterval(typeInterval);
+    return () => {
+      if (setupTimer) clearTimeout(setupTimer);
+      if (typeInterval) clearInterval(typeInterval);
+      if (ctaTimer) clearTimeout(ctaTimer);
+    };
   }, [isOpen, content]);
 
   // Skip to end
@@ -144,7 +158,7 @@ export function LetterFromFuture({
                       color: "var(--ngx-purple-light)",
                     }}
                   >
-                    MES 12
+                    SEMANA 12
                   </span>
                 </motion.div>
                 <motion.h2
@@ -204,7 +218,7 @@ export function LetterFromFuture({
                           — Tu mejor versión
                         </p>
                         <p className="text-[var(--ngx-purple-light)] font-bold tracking-wider text-xs mt-1">
-                          MES 12 • PEAK FORM
+                          SEMANA 12 • PEAK FORM
                         </p>
                       </motion.div>
                     )}

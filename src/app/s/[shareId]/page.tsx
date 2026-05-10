@@ -23,7 +23,7 @@ const FF_EXPOSE_ORIGINAL = process.env.FF_EXPOSE_ORIGINAL !== "false";
 const FF_DRAMATIC_REVEAL = process.env.FF_DRAMATIC_REVEAL !== "false";
 const FF_SOCIAL_COUNTER = process.env.FF_SOCIAL_COUNTER !== "false";
 const FF_SHARE_UNLOCK =
-  process.env.FF_SHARE_UNLOCK === "true" || process.env.FF_SHARE_TO_UNLOCK !== "false";
+  process.env.FF_SHARE_UNLOCK === "true" || process.env.FF_SHARE_TO_UNLOCK === "true";
 // v12: salida comercial unificada (4 caminos en /results, sin /demo ni /plan)
 const FF_HYBRID_OFFER_V2 = process.env.NEXT_PUBLIC_FF_HYBRID_OFFER_V2 !== "false";
 
@@ -58,6 +58,7 @@ interface SessionDoc {
     shareOriginal?: boolean;
     shareInsights?: boolean;
     shareProfile?: boolean;
+    shareImages?: boolean;
   };
 }
 
@@ -73,7 +74,7 @@ export async function generateMetadata({ params }: { params: Promise<{ shareId: 
   const ogUrl = `${absoluteBase}/api/og/${shareId}`;
 
   return {
-    title: "Mi Transformación de 12 Meses - NGX",
+    title: "Mi Transformación de 12 Semanas - NGX",
     description: "He descubierto mi máximo potencial con NGX. Mira mi proyección física y mental.",
     openGraph: {
       images: [ogUrl],
@@ -81,7 +82,7 @@ export async function generateMetadata({ params }: { params: Promise<{ shareId: 
   };
 }
 
-async function getUrlsLocally(data: SessionDoc, allowOriginal: boolean) {
+async function getUrlsLocally(data: SessionDoc, allowOriginal: boolean, allowImages: boolean) {
   const result: { originalUrl?: string; images?: Record<string, string> } = {};
 
   // 1. Original Photo (Always sign for the visualization page if allowed)
@@ -95,7 +96,7 @@ async function getUrlsLocally(data: SessionDoc, allowOriginal: boolean) {
   }
 
   // 2. Generated Images
-  if (data.assets?.images) {
+  if (allowImages && data.assets?.images) {
     result.images = {};
     await Promise.all(
       Object.entries(data.assets.images).map(async ([key, path]) => {
@@ -157,15 +158,17 @@ export default async function Page({
     shareOriginal: data.shareScope?.shareOriginal ?? !!data.shareOriginal,
     shareInsights: data.shareScope?.shareInsights ?? false,
     shareProfile: data.shareScope?.shareProfile ?? false,
+    shareImages: data.shareScope?.shareImages ?? false,
   };
 
   // Owner always gets full access regardless of shareScope
   const allowOriginal = isOwner || (FF_EXPOSE_ORIGINAL && shareScope.shareOriginal);
+  const allowImages = isOwner || shareScope.shareImages;
   const allowInsights = isOwner || shareScope.shareInsights;
   const allowProfile = isOwner || shareScope.shareProfile;
 
   const ai = allowInsights ? data.ai : undefined;
-  const urls = isDemo ? DEMO_URLS : await getUrlsLocally(data, allowOriginal);
+  const urls = isDemo ? DEMO_URLS : await getUrlsLocally(data, allowOriginal, allowImages);
 
   if (!allowInsights) {
     const heroImage = urls.images?.m12 || urls.images?.m8 || urls.images?.m4 || urls.originalUrl;
@@ -178,8 +181,10 @@ export default async function Page({
             <h1 className="ngx-h1 !text-left" style={{ maxWidth: "20ch" }}>Transformación privada</h1>
             <p className="text-sm leading-relaxed text-white/55 max-w-2xl">
               {explicitShareDecision
-                ? "El creador decidió compartir solo las imágenes. El análisis permanece privado."
+                ? "El creador decidió qué partes compartir. El análisis y las imágenes permanecen privadas salvo autorización explícita."
                 : "Esta visualización es privada por defecto. Solo el creador puede ver el análisis completo."}
+              {" "}
+              Tus imágenes no son públicas. Puedes compartirlas cuando tú decidas.
             </p>
           </div>
 
@@ -237,7 +242,7 @@ export default async function Page({
     ...data,
     assets: {
       ...data.assets,
-      images: urls.images || data.assets?.images // Prefer signed URLs if available
+      images: urls.images || {}
     },
   };
 
@@ -249,6 +254,9 @@ export default async function Page({
 
   const stillGenerating = data.status !== "ready";
   const isReady = data.status === "ready";
+  const letterFromFuture =
+    (ai as { letter_from_future?: string } | undefined)?.letter_from_future ||
+    data.letter_from_future;
 
   // Use Results 2.0 experience if feature flag is enabled
   if (FF_RESULTS_2) {
@@ -260,7 +268,7 @@ export default async function Page({
           imageUrls={urls}
           shareId={shareId}
           isReady={isReady}
-          letterFromFuture={data.letter_from_future}
+          letterFromFuture={letterFromFuture}
           userProfile={
             allowProfile
               ? {

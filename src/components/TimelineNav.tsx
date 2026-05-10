@@ -10,9 +10,9 @@ interface TimelineNavProps {
 
 const steps: { key: TimelineStep; label: string }[] = [
   { key: "m0", label: "HOY" },
-  { key: "m4", label: "MES 4" },
-  { key: "m8", label: "MES 8" },
-  { key: "m12", label: "MES 12" },
+  { key: "m4", label: "SEMANA 4" },
+  { key: "m8", label: "SEMANA 8" },
+  { key: "m12", label: "SEMANA 12" },
   { key: "summary", label: "RESUMEN" },
 ];
 

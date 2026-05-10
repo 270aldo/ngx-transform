@@ -36,11 +36,63 @@ export function GenesisChat({ shareId, responses, onPlanReady }: GenesisChatProp
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Start chat stream on mount
-  useEffect(() => {
-    startChatStream();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const addMessage = useCallback((msg: Omit<ChatMessage, "id" | "timestamp">) => {
+    setMessages((prev) => [
+      ...prev,
+      {
+        ...msg,
+        id: `msg-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        timestamp: Date.now(),
+      },
+    ]);
   }, []);
+
+  const handleStreamEvent = useCallback((event: {
+    type: string;
+    content?: string;
+    agent?: "blaze" | "sage" | "tempo";
+    status?: "pending" | "loading" | "complete";
+  }) => {
+    switch (event.type) {
+      case "genesis_message":
+        addMessage({ type: "genesis", content: event.content || "" });
+        break;
+
+      case "agent_status":
+        if (event.agent && event.status) {
+          setAgentStatus((prev) => ({
+            ...prev,
+            [event.agent!]: event.status,
+          }));
+        }
+        break;
+
+      case "agent_report":
+        addMessage({
+          type: "agent_report",
+          content: event.content || "",
+          agent: event.agent,
+        });
+        break;
+
+      case "plan_ready":
+        addMessage({ type: "genesis", content: event.content || "" });
+        setPlanReady(true);
+        // Delay before transitioning to plan phase
+        setTimeout(() => {
+          onPlanReady();
+        }, 2000);
+        break;
+
+      case "done":
+        // Stream complete
+        break;
+
+      case "error":
+        addMessage({ type: "system", content: event.content || "Error desconocido" });
+        break;
+    }
+  }, [addMessage, onPlanReady]);
 
   const startChatStream = useCallback(async () => {
     setIsStreaming(true);
@@ -92,65 +144,13 @@ export function GenesisChat({ shareId, responses, onPlanReady }: GenesisChatProp
     } finally {
       setIsStreaming(false);
     }
-  }, [shareId, responses]);
+  }, [addMessage, handleStreamEvent, responses, shareId]);
 
-  const handleStreamEvent = useCallback((event: {
-    type: string;
-    content?: string;
-    agent?: "blaze" | "sage" | "tempo";
-    status?: "pending" | "loading" | "complete";
-  }) => {
-    switch (event.type) {
-      case "genesis_message":
-        addMessage({ type: "genesis", content: event.content || "" });
-        break;
-
-      case "agent_status":
-        if (event.agent && event.status) {
-          setAgentStatus((prev) => ({
-            ...prev,
-            [event.agent!]: event.status,
-          }));
-        }
-        break;
-
-      case "agent_report":
-        addMessage({
-          type: "agent_report",
-          content: event.content || "",
-          agent: event.agent,
-        });
-        break;
-
-      case "plan_ready":
-        addMessage({ type: "genesis", content: event.content || "" });
-        setPlanReady(true);
-        // Delay before transitioning to plan phase
-        setTimeout(() => {
-          onPlanReady();
-        }, 2000);
-        break;
-
-      case "done":
-        // Stream complete
-        break;
-
-      case "error":
-        addMessage({ type: "system", content: event.content || "Error desconocido" });
-        break;
-    }
-  }, [onPlanReady]);
-
-  const addMessage = useCallback((msg: Omit<ChatMessage, "id" | "timestamp">) => {
-    setMessages((prev) => [
-      ...prev,
-      {
-        ...msg,
-        id: `msg-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-        timestamp: Date.now(),
-      },
-    ]);
-  }, []);
+  // Start chat stream on mount
+  useEffect(() => {
+    const id = window.setTimeout(() => startChatStream(), 0);
+    return () => window.clearTimeout(id);
+  }, [startChatStream]);
 
   return (
     <motion.div
@@ -206,7 +206,6 @@ export function GenesisChat({ shareId, responses, onPlanReady }: GenesisChatProp
 }
 
 function MessageBubble({ message }: { message: ChatMessage }) {
-  const isGenesis = message.type === "genesis";
   const isAgentReport = message.type === "agent_report";
   const isSystem = message.type === "system";
 

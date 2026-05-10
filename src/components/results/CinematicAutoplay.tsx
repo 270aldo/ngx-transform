@@ -30,9 +30,9 @@ interface MilestoneConfig {
 
 const MILESTONES: MilestoneConfig[] = [
   { key: "m0", duration: 2, label: "HOY", subtitle: "Tu punto de partida" },
-  { key: "m4", duration: 2, label: "MES 4", subtitle: "Primeras transformaciones" },
-  { key: "m8", duration: 2, label: "MES 8", subtitle: "Progreso notable" },
-  { key: "m12", duration: 3, label: "MES 12", subtitle: "Tu mejor versión" },
+  { key: "m4", duration: 2, label: "SEMANA 4", subtitle: "Primeras transformaciones" },
+  { key: "m8", duration: 2, label: "SEMANA 8", subtitle: "Progreso notable" },
+  { key: "m12", duration: 3, label: "SEMANA 12", subtitle: "Tu mejor versión" },
 ];
 
 interface CinematicAutoplayProps {

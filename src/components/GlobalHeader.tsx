@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
 import { getClientAuth } from "@/lib/firebaseClient";
@@ -17,11 +17,8 @@ export function GlobalHeader() {
   const { user, loading } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
-
-  const userInitial = useMemo(() => {
-    if (!user?.email) return "U";
-    return user.email.trim().charAt(0).toUpperCase();
-  }, [user?.email]);
+  const userEmail = user?.email ?? "";
+  const userInitial = userEmail ? userEmail.trim().charAt(0).toUpperCase() : "U";
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -37,7 +34,8 @@ export function GlobalHeader() {
   }, [menuOpen]);
 
   useEffect(() => {
-    setMenuOpen(false);
+    const id = window.setTimeout(() => setMenuOpen(false), 0);
+    return () => window.clearTimeout(id);
   }, [pathname]);
 
   // Ocultar en páginas que renderizan su propio encabezado inmersivo
@@ -76,7 +74,7 @@ export function GlobalHeader() {
                 aria-haspopup="menu"
                 aria-expanded={menuOpen}
               >
-                <span className="hidden sm:inline">{user.email || "Usuario"}</span>
+                <span className="hidden sm:inline">{userEmail || "Usuario"}</span>
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#6D00FF]/20 text-[#B98CFF] text-xs font-semibold border border-[#6D00FF]/40">
                   {userInitial}
                 </span>
@@ -89,7 +87,7 @@ export function GlobalHeader() {
                 >
                   <div className="px-4 py-3 border-b border-white/10">
                     <p className="text-xs text-neutral-400">Sesión activa</p>
-                    <p className="text-sm text-white truncate">{user.email || "Usuario"}</p>
+                    <p className="text-sm text-white truncate">{userEmail || "Usuario"}</p>
                   </div>
                   <div className="py-2">
                     <Link

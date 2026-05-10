@@ -68,7 +68,8 @@ export function DramaticReveal({
       const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
       return () => clearTimeout(timer);
     } else if (phase === "countdown" && countdown === 0) {
-      setPhase("reveal");
+      const timer = setTimeout(() => setPhase("reveal"), 0);
+      return () => clearTimeout(timer);
     }
   }, [phase, countdown]);
 
@@ -208,9 +209,9 @@ export function DramaticReveal({
             >
               <span className="px-4 py-2 rounded-full bg-white/10 text-sm text-white/80 backdrop-blur-sm">
                 {currentImage === "m0" && "HOY"}
-                {currentImage === "m4" && "MES 4"}
-                {currentImage === "m8" && "MES 8"}
-                {currentImage === "m12" && "MES 12"}
+                {currentImage === "m4" && "SEMANA 4"}
+                {currentImage === "m8" && "SEMANA 8"}
+                {currentImage === "m12" && "SEMANA 12"}
               </span>
             </motion.div>
 
@@ -222,7 +223,7 @@ export function DramaticReveal({
                 className="absolute bottom-20 left-1/2 -translate-x-1/2 text-center"
               >
                 <p className="text-xl md:text-2xl font-semibold text-white">
-                  Este eres tú en 12 meses
+                  Esta es tu dirección de 12 semanas
                 </p>
               </motion.div>
             )}

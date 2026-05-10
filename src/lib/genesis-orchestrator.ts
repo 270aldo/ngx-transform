@@ -87,7 +87,7 @@ export interface AgentAnalysis {
  * Generate BLAZE analysis based on user responses
  */
 export function generateBlazeAnalysis(responses: DemoUserResponses): AgentAnalysis {
-  const { trainingDays, goal, equipment } = responses;
+  const { trainingDays, equipment } = responses;
 
   // Determine split based on training days
   let structure: string;

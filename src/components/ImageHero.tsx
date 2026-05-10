@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface ImageHeroProps {
@@ -20,9 +21,12 @@ export function ImageHero({ imageUrl }: ImageHeroProps) {
           className="absolute inset-0"
         >
           {imageUrl ? (
-            <img
+            <Image
               src={imageUrl}
               alt="Transformación NGX Vision"
+              fill
+              sizes="100vw"
+              unoptimized
               className="w-full h-full object-cover object-center"
             />
           ) : (

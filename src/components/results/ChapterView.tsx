@@ -51,9 +51,9 @@ interface ChapterViewProps {
 
 const MILESTONE_LABELS: Record<Milestone, { label: string; subtitle: string }> = {
   m0: { label: "HOY", subtitle: "Tu punto de partida" },
-  m4: { label: "MES 4", subtitle: "Primera transformación" },
-  m8: { label: "MES 8", subtitle: "Progreso consolidado" },
-  m12: { label: "MES 12", subtitle: "Tu mejor versión" },
+  m4: { label: "SEMANA 4", subtitle: "Primera transformación" },
+  m8: { label: "SEMANA 8", subtitle: "Progreso consolidado" },
+  m12: { label: "SEMANA 12", subtitle: "Tu mejor versión" },
 };
 
 const LONGEVITY_CONTEXT: Record<Milestone, string> = {

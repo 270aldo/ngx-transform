@@ -20,7 +20,7 @@ import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimi
 
 // Feature flag
 const FF_SHARE_UNLOCK =
-  process.env.FF_SHARE_UNLOCK === "true" || process.env.FF_SHARE_TO_UNLOCK !== "false";
+  process.env.FF_SHARE_UNLOCK === "true" || process.env.FF_SHARE_TO_UNLOCK === "true";
 
 const UnlockRequestSchema = z.object({
   shareId: z.string().min(1),

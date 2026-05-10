@@ -75,7 +75,7 @@ export function SocialShareButton({ shareId, imageUrl }: SocialShareButtonProps)
     ? `${window.location.origin}/s/${shareId}`
     : `/s/${shareId}`;
 
-  const shareText = "Mira mi proyección de transformación física de 12 meses con NGX Vision";
+  const shareText = "Mira mi proyección de transformación física de 12 semanas con NGX Transform";
 
   const handleCopy = async () => {
     try {

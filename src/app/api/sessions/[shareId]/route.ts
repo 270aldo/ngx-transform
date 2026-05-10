@@ -88,7 +88,6 @@ export async function GET(_: Request, context: { params: Promise<{ shareId: stri
       createdAt: data.createdAt,
     });
   } catch (e: unknown) {
-    const message = e instanceof Error ? e.message : "Unknown error";
     console.error(e);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
@@ -135,7 +134,6 @@ export async function DELETE(req: Request, context: { params: Promise<{ shareId:
     await ref.delete();
     return NextResponse.json({ ok: true });
   } catch (e: unknown) {
-    const message = e instanceof Error ? e.message : "Unknown error";
     console.error(e);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

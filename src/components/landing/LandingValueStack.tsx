@@ -138,7 +138,7 @@ export function LandingValueStack() {
 /* ────────────── Micro-mocks del producto ────────────── */
 
 function VisualMock() {
-  // Dos mini-frames lado a lado: HOY (gris) → MES 12 (purple glow)
+  // Dos mini-frames lado a lado: HOY (gris) → SEMANA 12 (purple glow)
   return (
     <div className="flex items-end gap-2">
       <div

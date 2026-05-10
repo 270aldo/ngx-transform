@@ -12,7 +12,7 @@ import type { InsightsResult } from "@/types/ai";
 
 export const DEMO_AI: InsightsResult = {
   insightsText:
-    "Tu lectura inicial muestra una base sólida con margen claro de mejora en composición corporal y consistencia. La proyección a 12 meses es realista si sostienes estructura y recuperación adecuada.",
+    "Tu lectura inicial muestra una base sólida con margen claro de mejora en composición corporal y consistencia. La proyección a 12 semanas es realista si sostienes estructura y recuperación adecuada.",
   timeline: {
     m0: {
       month: 0,
@@ -71,7 +71,7 @@ export const DEMO_AI: InsightsResult = {
         "Lo que se construyó en doce meses se sostiene en los siguientes doce. No buscaste un cambio puntual — construiste un sistema.",
       stats: { strength: 88, aesthetics: 85, endurance: 86, mental: 88 },
       expectations: [
-        "Composición corporal premium para tu somatotipo",
+        "Composición corporal premium para tu punto de partida",
         "Disciplina como identidad, no como esfuerzo",
         "Capacidad de mantener forma sin obsesión",
       ],
@@ -96,7 +96,7 @@ export const DEMO_AI: InsightsResult = {
   },
 };
 
-export const DEMO_LETTER = `Si pudieras verte ahora, mes 12, te darías cuenta de algo más importante que cualquier cambio físico: dejaste de necesitar la motivación. Construiste un sistema. Y eso es lo que cambia todo.
+export const DEMO_LETTER = `Si pudieras verte ahora, semana 12, te darías cuenta de algo más importante que cualquier cambio físico: dejaste de necesitar la motivación. Construiste un sistema. Y eso es lo que cambia todo.
 
 No fue lineal. Hubo semanas donde quisiste rendirte. Pero la diferencia esta vez fue que no te quedaste solo. Tuviste estructura. Tuviste a alguien revisando tu caso cuando aparecía la duda.
 
@@ -133,6 +133,7 @@ export const DEMO_SESSION = {
     shareOriginal: true,
     shareInsights: true,
     shareProfile: true,
+    shareImages: true,
   },
 };
 
