@@ -29,6 +29,7 @@ import { telemetry, startTimer } from "@/lib/telemetry";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 import { checkSpendLimit, recordSpend } from "@/lib/spendLimiter";
 import { requireAuth } from "@/lib/authServer";
+import { hasInternalApiKey } from "@/lib/internalApiAuth";
 import { getAiGenerationFlag } from "@/lib/aiKillSwitch";
 import {
   getOrCreateJob,
@@ -78,14 +79,6 @@ function expandIdentityChainSteps(requestedSteps: NanoStep[]): NanoStep[] {
   }
 
   return STEP_ORDER.filter((step) => required.has(step));
-}
-
-const WORKER_TOKEN = process.env.AI_WORKER_TOKEN || "";
-
-function isWorkerRequest(req: Request): boolean {
-  if (!WORKER_TOKEN) return false;
-  const headerToken = req.headers.get("x-worker-token") || "";
-  return headerToken === WORKER_TOKEN;
 }
 
 // ============================================================================
@@ -148,7 +141,7 @@ export async function POST(req: Request) {
     const { sessionId } = parsed.data;
     parsedSessionId = sessionId;
 
-    const isWorker = isWorkerRequest(req);
+    const isWorker = hasInternalApiKey(req);
 
     // Kill switch for AI generation
     const aiFlag = await getAiGenerationFlag();

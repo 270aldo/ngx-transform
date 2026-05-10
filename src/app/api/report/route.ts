@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { FieldValue } from "firebase-admin/firestore";
 import { z } from "zod";
 import { getAuthUserAny } from "@/lib/authServer";
-import { secureCompare } from "@/lib/crypto";
 import { getDb } from "@/lib/firebaseAdmin";
+import { hasInternalApiKey } from "@/lib/internalApiAuth";
 import { checkRateLimit, getClientIP, getRateLimitHeaders } from "@/lib/rateLimit";
 import {
   buildSeasonReportPrompt,
@@ -53,19 +53,8 @@ interface StoredTransformReport {
   updatedAt?: unknown;
 }
 
-function hasServerApiKey(request: NextRequest): boolean {
-  const expectedKey = process.env.CRON_API_KEY;
-  if (!expectedKey) return false;
-  const providedKey =
-    request.headers.get("X-Api-Key") ||
-    request.headers.get("x-api-key") ||
-    request.headers.get("x-cron-key") ||
-    request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
-  return secureCompare(providedKey, expectedKey);
-}
-
 async function canManageReport(request: NextRequest, session: ReportSessionDocument): Promise<boolean> {
-  if (hasServerApiKey(request)) return true;
+  if (hasInternalApiKey(request)) return true;
   const authUser = await getAuthUserAny(request);
   return !!authUser?.uid && !!session.ownerUid && authUser.uid === session.ownerUid;
 }
@@ -143,13 +132,15 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const clientIP = getClientIP(request);
-  const rateLimitResult = await checkRateLimit("api:report", clientIP);
-  if (!rateLimitResult.success) {
-    return NextResponse.json(
-      { error: "Too many report requests. Please wait a moment." },
-      { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
-    );
+  if (!hasInternalApiKey(request)) {
+    const clientIP = getClientIP(request);
+    const rateLimitResult = await checkRateLimit("api:report", clientIP);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "Too many report requests. Please wait a moment." },
+        { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+      );
+    }
   }
 
   const parsed = ReportRequestSchema.safeParse(await parseBody(request));

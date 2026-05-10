@@ -4,9 +4,11 @@ import { describe, expect, it } from "vitest";
 describe("generate-images worker auth", () => {
   it("does not accept worker tokens from query parameters", () => {
     const source = readFileSync("src/app/api/generate-images/route.ts", "utf8");
+    const authSource = readFileSync("src/lib/internalApiAuth.ts", "utf8");
 
     expect(source).not.toContain("workerToken");
-    expect(source).toContain('headers.get("x-worker-token")');
+    expect(authSource).not.toContain("searchParams");
+    expect(authSource).toContain('headers.get("x-worker-token")');
   });
 
   it("expands requested steps to preserve Identity Chain dependencies", () => {

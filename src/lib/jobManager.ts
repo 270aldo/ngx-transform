@@ -15,7 +15,7 @@ import { FieldValue } from "firebase-admin/firestore";
 // Types
 // ============================================================================
 
-export type JobType = "analysis" | "image_generation";
+export type JobType = "analysis" | "image_generation" | "season_pipeline";
 
 export type JobStatus =
   | "pending"
