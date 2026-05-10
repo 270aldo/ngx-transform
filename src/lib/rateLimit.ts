@@ -66,6 +66,12 @@ function getRateLimiters(): Map<string, Ratelimit> | null {
     prefix: "rl:plan",
   }));
 
+  rateLimiters.set("api:report", new Ratelimit({
+    redis: redisClient,
+    limiter: Ratelimit.slidingWindow(5, "1 h"), // 5 report generations per hour
+    prefix: "rl:report",
+  }));
+
   rateLimiters.set("api:plan", new Ratelimit({
     redis: redisClient,
     limiter: Ratelimit.slidingWindow(5, "1 h"), // 5 plan generations per hour
@@ -142,6 +148,7 @@ const IN_MEMORY_LIMITS: Record<string, { max: number; windowMs: number }> = {
   "api:analyze": { max: 10, windowMs: 3600000 },      // 10/hour
   "api:generate-images": { max: 5, windowMs: 3600000 },// 5/hour
   "api:generate-plan": { max: 5, windowMs: 3600000 },  // 5/hour
+  "api:report": { max: 5, windowMs: 3600000 },          // 5/hour
   "api:plan": { max: 5, windowMs: 3600000 },           // 5/hour
   "api:genesis-demo": { max: 10, windowMs: 60000 },    // 10/min
   "api:genesis-chat": { max: 20, windowMs: 60000 },    // 20/min
@@ -192,6 +199,7 @@ const CRITICAL_ENDPOINTS = new Set([
   "api:generate-images",
   "api:plan",
   "api:generate-plan",
+  "api:report",
 ]);
 
 function allowFallbackInProd(endpoint: string): boolean {
