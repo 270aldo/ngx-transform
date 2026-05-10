@@ -189,7 +189,7 @@ export async function getDueSequences(): Promise<EmailSequence[]> {
  */
 export function getEmailSubject(stage: EmailStage): string {
   const subjects: Record<EmailStage, string> = {
-    D0: "Tu transformación de 12 semanas está lista",
+    D0: "Tu Season Vision Report está listo",
     D1: "¿Ya viste tu transformación completa?",
     D3: "Tu plan personalizado de 7 días está listo",
     D5: "GENESIS escribió esto para ti",

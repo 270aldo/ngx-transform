@@ -97,7 +97,7 @@ const SAMPLE_INSIGHT = {
   title: 'Tu Plan Personalizado',
   trend: 'positive' as const,
   trendValue: '+85%',
-  insight: 'Basado en tu perfil de nivel intermedio con 3 años de experiencia, hemos diseñado un programa que combina fuerza progresiva con HIIT para maximizar la definición muscular en 12 semanas.',
+  insight: 'Basado en tu perfil de nivel intermedio con 3 años de experiencia, hemos diseñado un programa que combina fuerza progresiva con HIIT para maximizar la definición muscular por Seasons.',
   recommendation: 'Tu ventana anabólica óptima es de 30-45 minutos post-entreno. Prioriza proteína de rápida absorción en este período.',
 };
 

@@ -12,6 +12,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import type { Bottleneck, InsightsResult } from '@/types/ai';
+import { getSeasonMilestoneLabel } from '@/lib/seasonMilestones';
 
 interface UserInputSnapshot {
   weightKg?: number;
@@ -107,10 +108,10 @@ export function TransformationSummary({
     : null;
 
   const timelineImages = [
-    { label: 'HOY', key: 'm0', url: imageUrls.originalUrl },
-    { label: 'SEMANA 4', key: 'm4', url: imageUrls.images?.m4 },
-    { label: 'SEMANA 8', key: 'm8', url: imageUrls.images?.m8 },
-    { label: 'SEMANA 12', key: 'm12', url: imageUrls.images?.m12 },
+    { label: getSeasonMilestoneLabel('m0'), key: 'm0', url: imageUrls.originalUrl },
+    { label: getSeasonMilestoneLabel('m4'), key: 'm4', url: imageUrls.images?.m4 },
+    { label: getSeasonMilestoneLabel('m8'), key: 'm8', url: imageUrls.images?.m8 },
+    { label: getSeasonMilestoneLabel('m12'), key: 'm12', url: imageUrls.images?.m12 },
   ];
 
   const bridgeQuestions = [
@@ -151,7 +152,7 @@ export function TransformationSummary({
             <div>
               <span className="ngx-eyebrow-pill mb-4">Puente de visualización</span>
               <h2 className="ngx-h1 !text-left">
-                Tu visualización a 12 semanas.
+                Tu visión de temporada.
               </h2>
               <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/60 md:text-base">
                 La imagen abre la posibilidad. El valor real empieza cuando conviertes esa reacción en dirección: qué haría falta, qué hábito pesa más y qué sistema sí tendría sentido para ti.

@@ -37,16 +37,17 @@ import { SocialCounter } from "./SocialCounter";
 import { AgentBridgeCTA } from "./AgentBridgeCTA";
 import { ReferralCard } from "./ReferralCard";
 import { cn } from "@/lib/utils";
+import { getSeasonMilestoneLabel } from "@/lib/seasonMilestones";
 
 export type TimelineStep = "m0" | "m4" | "m8" | "m12";
 
 const STEPS: TimelineStep[] = ["m0", "m4", "m8", "m12"];
 
 const STEP_LABELS: Record<TimelineStep, string> = {
-  m0: "HOY",
-  m4: "SEMANA 4",
-  m8: "SEMANA 8",
-  m12: "SEMANA 12",
+  m0: getSeasonMilestoneLabel("m0"),
+  m4: getSeasonMilestoneLabel("m4"),
+  m8: getSeasonMilestoneLabel("m8"),
+  m12: getSeasonMilestoneLabel("m12"),
 };
 
 interface TransformationViewer2Props {

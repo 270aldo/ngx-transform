@@ -36,7 +36,7 @@ interface PhaseContent {
 const PHASES: PhaseContent[] = [
   {
     number: 1,
-    weeks: "Semanas 1-3",
+    weeks: "Bloque 1",
     title: "Fundación",
     focus: "Baseline, técnica, frecuencia",
     outcomes: [
@@ -48,7 +48,7 @@ const PHASES: PhaseContent[] = [
   },
   {
     number: 2,
-    weeks: "Semanas 4-7",
+    weeks: "Bloque 2",
     title: "Construcción",
     focus: "Progresión de fuerza, recomposición",
     outcomes: [
@@ -60,7 +60,7 @@ const PHASES: PhaseContent[] = [
   },
   {
     number: 3,
-    weeks: "Semanas 8-11",
+    weeks: "Bloque 3",
     title: "Optimización",
     focus: "Refinar lo que funciona, reducir fricción",
     outcomes: [
@@ -72,7 +72,7 @@ const PHASES: PhaseContent[] = [
   },
   {
     number: 4,
-    weeks: "Semana 12",
+    weeks: "Cierre",
     title: "Evaluación",
     focus: "Decidir siguiente temporada",
     outcomes: [

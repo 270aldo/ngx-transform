@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { getSeasonMilestoneLabel } from "@/lib/seasonMilestones";
 
 interface DramaticRevealProps {
   images: {
@@ -208,10 +209,7 @@ export function DramaticReveal({
               className="absolute top-8 left-1/2 -translate-x-1/2"
             >
               <span className="px-4 py-2 rounded-full bg-white/10 text-sm text-white/80 backdrop-blur-sm">
-                {currentImage === "m0" && "HOY"}
-                {currentImage === "m4" && "SEMANA 4"}
-                {currentImage === "m8" && "SEMANA 8"}
-                {currentImage === "m12" && "SEMANA 12"}
+                {getSeasonMilestoneLabel(currentImage)}
               </span>
             </motion.div>
 
@@ -223,7 +221,7 @@ export function DramaticReveal({
                 className="absolute bottom-20 left-1/2 -translate-x-1/2 text-center"
               >
                 <p className="text-xl md:text-2xl font-semibold text-white">
-                  Esta es tu dirección de 12 semanas
+                  Esta es tu visión de temporada
                 </p>
               </motion.div>
             )}

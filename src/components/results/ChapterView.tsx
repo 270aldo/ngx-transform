@@ -18,6 +18,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Share2, ChevronDown, ChevronUp, MessageCircle, Dna, Quote, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SEASON_MILESTONE_COPY } from "@/lib/seasonMilestones";
 import { CompareSlider } from "./CompareSlider";
 import { StatsDelta } from "./StatsDelta";
 
@@ -50,10 +51,10 @@ interface ChapterViewProps {
 }
 
 const MILESTONE_LABELS: Record<Milestone, { label: string; subtitle: string }> = {
-  m0: { label: "HOY", subtitle: "Tu punto de partida" },
-  m4: { label: "SEMANA 4", subtitle: "Primera transformación" },
-  m8: { label: "SEMANA 8", subtitle: "Progreso consolidado" },
-  m12: { label: "SEMANA 12", subtitle: "Tu mejor versión" },
+  m0: SEASON_MILESTONE_COPY.m0,
+  m4: SEASON_MILESTONE_COPY.m4,
+  m8: SEASON_MILESTONE_COPY.m8,
+  m12: SEASON_MILESTONE_COPY.m12,
 };
 
 const LONGEVITY_CONTEXT: Record<Milestone, string> = {
@@ -97,7 +98,7 @@ export function ChapterView({
               <CompareSlider
                 beforeImage={originalImage}
                 afterImage={currentImage}
-                beforeLabel="ANTES"
+                beforeLabel={SEASON_MILESTONE_COPY.m0.label}
                 afterLabel={milestoneInfo.label}
                 className="h-full rounded-none"
               />

@@ -205,7 +205,7 @@ export default function DashboardDetailPage({ params }: { params: Promise<{ shar
             <>
               <Image
                 src={m12}
-                alt="Proyección Mes 12"
+                alt="Proyección Season 3"
                 fill
                 sizes="(min-width: 1024px) 75vw, 100vw"
                 className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
@@ -233,7 +233,7 @@ export default function DashboardDetailPage({ params }: { params: Promise<{ shar
         <BentoCard className="col-span-1 row-span-1 p-6 flex flex-col justify-between bg-[#0F0F0F]" delay={100}>
           <div>
             <h3 className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-              <Activity size={12} /> Biometría 12M
+              <Activity size={12} /> Biometría Season 3
             </h3>
             <div className="space-y-4">
               {[

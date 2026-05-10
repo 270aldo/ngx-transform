@@ -17,6 +17,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SkipForward, Volume2, VolumeX } from "lucide-react";
+import { SEASON_MILESTONE_COPY } from "@/lib/seasonMilestones";
 import { cn } from "@/lib/utils";
 
 type Milestone = "m0" | "m4" | "m8" | "m12";
@@ -29,10 +30,10 @@ interface MilestoneConfig {
 }
 
 const MILESTONES: MilestoneConfig[] = [
-  { key: "m0", duration: 2, label: "HOY", subtitle: "Tu punto de partida" },
-  { key: "m4", duration: 2, label: "SEMANA 4", subtitle: "Primeras transformaciones" },
-  { key: "m8", duration: 2, label: "SEMANA 8", subtitle: "Progreso notable" },
-  { key: "m12", duration: 3, label: "SEMANA 12", subtitle: "Tu mejor versión" },
+  { key: "m0", duration: 2, ...SEASON_MILESTONE_COPY.m0 },
+  { key: "m4", duration: 2, ...SEASON_MILESTONE_COPY.m4 },
+  { key: "m8", duration: 2, ...SEASON_MILESTONE_COPY.m8 },
+  { key: "m12", duration: 3, ...SEASON_MILESTONE_COPY.m12 },
 ];
 
 interface CinematicAutoplayProps {

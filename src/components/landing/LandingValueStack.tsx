@@ -138,7 +138,7 @@ export function LandingValueStack() {
 /* ────────────── Micro-mocks del producto ────────────── */
 
 function VisualMock() {
-  // Dos mini-frames lado a lado: HOY (gris) → SEMANA 12 (purple glow)
+  // Dos mini-frames lado a lado: punto de partida → Season 3.
   return (
     <div className="flex items-end gap-2">
       <div
@@ -149,8 +149,8 @@ function VisualMock() {
           border: "1px solid rgba(255,255,255,0.10)",
         }}
       >
-        <span className="absolute bottom-1 left-1.5 font-mono text-[8px] uppercase tracking-[0.18em] text-white/40">
-          Hoy
+        <span className="absolute bottom-1 left-1.5 font-mono text-[7px] uppercase leading-[0.95] tracking-[0.10em] text-white/40">
+          Punto<br />partida
         </span>
       </div>
       <span
@@ -171,7 +171,7 @@ function VisualMock() {
           className="absolute bottom-1 left-1.5 font-mono text-[8px] uppercase tracking-[0.18em]"
           style={{ color: "var(--ngx-purple-light)" }}
         >
-          Mes 12
+          Season 3
         </span>
       </div>
     </div>

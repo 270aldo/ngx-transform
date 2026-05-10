@@ -7,9 +7,9 @@ import { RiveOrb } from "@/components/RiveOrb";
 const LOADING_STEPS = [
   "Leyendo tu foto base...",
   "Calibrando tu punto de partida...",
-  "Visualizando semana 4...",
-  "Visualizando semana 8...",
-  "Construyendo proyección a 12 semanas...",
+  "Visualizando Season 1...",
+  "Visualizando Season 2...",
+  "Construyendo Season 3...",
   "Preparando tu lectura inicial...",
 ] as const;
 

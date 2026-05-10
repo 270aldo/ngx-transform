@@ -106,7 +106,7 @@ function getV2SystemPrompt(profile: AnalysisParams["profile"]): string {
   const goals = profile.goals ?? profile.goal;
 
   return `Eres un Entrenador de Alto Rendimiento Elite y Experto en Fisiología Deportiva con capacidades de análisis forense visual.
-Tu misión: Analizar la foto y datos del usuario para proyectar su evolución física en 12 semanas basándote en PRINCIPIOS CIENTÍFICOS REALES (adaptación fisiológica, hipertrofia, recomposición).
+Tu misión: Analizar la foto y datos del usuario para proyectar su Season Vision Report basándote en PRINCIPIOS CIENTÍFICOS REALES (adaptación fisiológica, hipertrofia, recomposición).
 
 DATOS DEL USUARIO:
 - Edad: ${profile.age}, Sexo: ${profile.sex}
@@ -158,19 +158,19 @@ FORMATO JSON REQUERIDO (estricto, sin envoltorio markdown, sin texto fuera del J
     },
     "m4": {
       "month": 4,
-      "title": "Nombre fase semana 4 (ESPAÑOL)",
+      "title": "Nombre fase Season 1 (ESPAÑOL)",
       "description": "Cambios tempranos visibles, adaptación neuromuscular en ESPAÑOL (50-450 chars).",
       "stats": { "strength": int, "aesthetics": int, "endurance": int, "mental": int },
       "image_prompt": "ENGLISH prompt - subject training hard, gym setting, athletic.",
-      "mental": "Mentalidad semana 4 ESPAÑOL."
+      "mental": "Mentalidad Season 1 ESPAÑOL."
     },
     "m8": {
       "month": 8,
-      "title": "Nombre fase semana 8 (ESPAÑOL)",
+      "title": "Nombre fase Season 2 (ESPAÑOL)",
       "description": "Ganancias musculares notables, definición en ESPAÑOL.",
       "stats": { "strength": int, "aesthetics": int, "endurance": int, "mental": int },
       "image_prompt": "ENGLISH prompt - dynamic athlete pose, lifestyle setting.",
-      "mental": "Mentalidad semana 8 ESPAÑOL."
+      "mental": "Mentalidad Season 2 ESPAÑOL."
     },
     "m12": {
       "month": 12,
@@ -181,7 +181,7 @@ FORMATO JSON REQUERIDO (estricto, sin envoltorio markdown, sin texto fuera del J
       "mental": "Mentalidad final ESPAÑOL."
     }
   },
-  "letter_from_future": "Carta motivacional del yo de la semana 12 al yo presente, ESPAÑOL, tono estoico y empático, 100-550 caracteres.",
+  "letter_from_future": "Carta motivacional del yo de Season 3 al yo presente, ESPAÑOL, tono estoico y empático, 100-550 caracteres.",
   "style_profile": {
     "lighting": "Descripción de iluminación en INGLÉS (5-95 chars, ej: 'dramatic rim lighting, golden hour')",
     "wardrobe": "Vestimenta deportiva en INGLÉS (5-95 chars)",
@@ -219,7 +219,7 @@ function getV1SystemPrompt(profile: AnalysisParams["profile"]): string {
 
   return `
     Eres un Entrenador de Alto Rendimiento Elite y Futurista (Estoico, Clínico, Motivacional).
-    Tu objetivo es analizar la foto y datos del usuario para proyectar su evolución física y mental en 12 semanas.
+    Tu objetivo es analizar la foto y datos del usuario para proyectar su Season Vision Report físico y mental.
 
     DATOS DEL USUARIO:
     - Edad: ${profile.age}, Sexo: ${profile.sex}
@@ -244,9 +244,9 @@ function getV1SystemPrompt(profile: AnalysisParams["profile"]): string {
 
     Genera un JSON con una línea de tiempo de 4 fases (OUTPUT IN SPANISH):
     - "m0" (Actual): Análisis del punto de partida.
-    - "m4" (Fundación): Cambios visibles tempranos, adaptación.
-    - "m8" (Expansión): Ganancias musculares notables, definición.
-    - "m12" (Cúspide): Estado final transformado.
+    - "m4" (Season 1): Cambios visibles tempranos, adaptación.
+    - "m8" (Season 2): Ganancias musculares notables, definición.
+    - "m12" (Season 3): Estado final transformado.
 
     Para cada fase:
     1. "title": Nombre de fase poderoso (ej: "GÉNESIS", "METAMORFOSIS").

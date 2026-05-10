@@ -46,8 +46,8 @@ export const generalCopy: VariantCopy = {
     transformationDemo: {
       beforeImage: "https://images.unsplash.com/photo-1675026482188-8102367ecc16?w=800&h=1000&fit=crop&crop=faces",
       afterImage: "https://images.unsplash.com/photo-1645810809381-97f6fd2f7d10?w=800&h=1000&fit=crop&crop=faces",
-      beforeLabel: "HOY",
-      afterLabel: "12 SEMANAS",
+      beforeLabel: "Punto de partida",
+      afterLabel: "Season 3",
     },
   },
 

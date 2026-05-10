@@ -53,7 +53,7 @@ export default function D1Reminder({ name, shareId }: D1ReminderProps) {
               </Text>
 
               <Text className="text-neutral-300 leading-relaxed mt-4">
-                Ayer generamos tu proyección de 12 semanas basada en tu perfil
+                Ayer generamos tu Season Vision Report basado en tu perfil
                 único. Si aún no la has explorado completamente, hay mucho más
                 que ver:
               </Text>

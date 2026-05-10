@@ -158,7 +158,7 @@ export function LetterFromFuture({
                       color: "var(--ngx-purple-light)",
                     }}
                   >
-                    SEMANA 12
+                    SEASON 3
                   </span>
                 </motion.div>
                 <motion.h2
@@ -218,7 +218,7 @@ export function LetterFromFuture({
                           — Tu mejor versión
                         </p>
                         <p className="text-[var(--ngx-purple-light)] font-bold tracking-wider text-xs mt-1">
-                          SEMANA 12 • PEAK FORM
+                          SEASON 3 • PEAK FORM
                         </p>
                       </motion.div>
                     )}

@@ -25,7 +25,7 @@ export const jovenesCopy: VariantCopy = {
       line2: "Tu sistema sí.",
     },
     subtitle:
-      "Sube una foto. GENESIS analiza tu punto de partida y te muestra una proyección aspiracional de lo que podrías construir en 12 semanas si dejas de improvisar y empiezas a entrenar con sistema.",
+      "Sube una foto. GENESIS analiza tu punto de partida y te muestra una proyección aspiracional de lo que podrías construir por Seasons si dejas de improvisar y empiezas a entrenar con sistema.",
     cta: "Escanear mi punto de partida",
     primaryCta: {
       label: "Escanear mi punto de partida",
@@ -44,8 +44,8 @@ export const jovenesCopy: VariantCopy = {
     transformationDemo: {
       beforeImage: "https://images.unsplash.com/photo-1675026482188-8102367ecc16?w=800&h=1000&fit=crop&crop=faces",
       afterImage: "https://images.unsplash.com/photo-1645810809381-97f6fd2f7d10?w=800&h=1000&fit=crop&crop=faces",
-      beforeLabel: "HOY",
-      afterLabel: "12 SEMANAS",
+      beforeLabel: "Punto de partida",
+      afterLabel: "Season 3",
     },
   },
 

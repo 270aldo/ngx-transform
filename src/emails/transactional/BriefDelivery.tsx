@@ -99,21 +99,21 @@ export default function BriefDelivery({
                       <td className="w-1/2 pr-2">
                         <Img
                           src={m0ImageUrl}
-                          alt="HOY"
+                          alt="Punto de partida"
                           className="rounded-lg w-full"
                         />
                         <Text className="text-center text-xs text-neutral-500 mt-2">
-                          HOY
+                          Punto de partida
                         </Text>
                       </td>
                       <td className="w-1/2 pl-2">
                         <Img
                           src={m12ImageUrl}
-                          alt="SEMANA 12"
+                          alt="Season 3"
                           className="rounded-lg w-full"
                         />
                         <Text className="text-center text-xs text-neutral-500 mt-2">
-                          SEMANA 12 — POTENCIAL
+                          Season 3 — Potencial
                         </Text>
                       </td>
                     </tr>

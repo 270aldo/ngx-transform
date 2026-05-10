@@ -2,6 +2,7 @@
 import { ImageResponse } from "next/og";
 import { getDb } from "@/lib/firebaseAdmin";
 import { getSignedUrl } from "@/lib/storage";
+import { getSeasonMilestoneLabel } from "@/lib/seasonMilestones";
 
 export const runtime = "nodejs";
 export const revalidate = 3600; // 1 hora de cache ISR para mejor performance
@@ -84,7 +85,7 @@ async function getBestImage(shareId: string) {
 
 /**
  * PR-3: Split-Screen OG Image
- * HOY (m0 desaturated) vs 12 SEMANAS (m12 vibrant)
+ * Punto de partida (m0 desaturated) vs Season 3 (m12 vibrant)
  */
 function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel: string }) {
   return (
@@ -98,7 +99,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
         overflow: "hidden",
       }}
     >
-      {/* Left side - HOY (m0) */}
+      {/* Left side - m0 */}
       <div
         style={{
           width: "50%",
@@ -110,7 +111,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
         {images.originalUrl && (
           <img
             src={images.originalUrl}
-            alt="Hoy"
+            alt={getSeasonMilestoneLabel("m0")}
             style={{
               width: "100%",
               height: "100%",
@@ -126,7 +127,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
             background: "linear-gradient(90deg, transparent 70%, #050505 100%)",
           }}
         />
-        {/* HOY label */}
+        {/* Baseline label */}
         <div
           style={{
             position: "absolute",
@@ -155,7 +156,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
               marginTop: 8,
             }}
           >
-            HOY
+            {getSeasonMilestoneLabel("m0")}
           </span>
         </div>
       </div>
@@ -174,7 +175,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
         }}
       />
 
-      {/* Right side - 12 SEMANAS (m12) */}
+      {/* Right side - m12 */}
       <div
         style={{
           width: "50%",
@@ -186,7 +187,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
         {images.m12Url && (
           <img
             src={images.m12Url}
-            alt="12 Semanas"
+            alt={getSeasonMilestoneLabel("m12")}
             style={{
               width: "100%",
               height: "100%",
@@ -201,7 +202,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
             background: "linear-gradient(90deg, #050505 0%, transparent 30%)",
           }}
         />
-        {/* 12 SEMANAS label */}
+        {/* Season 3 label */}
         <div
           style={{
             position: "absolute",
@@ -220,7 +221,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
               fontWeight: 600,
             }}
           >
-            TU MEJOR VERSIÓN
+            VISIÓN COMPLETA
           </span>
           <span
             style={{
@@ -231,7 +232,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
               marginTop: 8,
             }}
           >
-            12 SEMANAS
+            {getSeasonMilestoneLabel("m12")}
           </span>
         </div>
       </div>
@@ -419,9 +420,9 @@ export async function GET(_: Request, context: { params: Promise<{ shareId: stri
                   maxWidth: 720,
                 }}
               >
-                <div style={{ fontSize: 54, fontWeight: 800, lineHeight: 1.05 }}>Tu dirección física en 12 semanas</div>
+                <div style={{ fontSize: 54, fontWeight: 800, lineHeight: 1.05 }}>Tu Season Vision Report</div>
                 <div style={{ fontSize: 20, color: "#B3B3B3", marginTop: 12 }}>
-                  Análisis biométrico, proyección 0/4/8/12m y visuales cinematográficos listos para compartir.
+                  Análisis biométrico, Seasons visuales y dirección inicial lista para compartir.
                 </div>
               </div>
               <div style={{ textAlign: "right" }}>

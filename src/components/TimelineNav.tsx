@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { getSeasonMilestoneLabel } from "@/lib/seasonMilestones";
 import type { TimelineStep } from "./TransformationViewer";
 
 interface TimelineNavProps {
@@ -9,10 +10,10 @@ interface TimelineNavProps {
 }
 
 const steps: { key: TimelineStep; label: string }[] = [
-  { key: "m0", label: "HOY" },
-  { key: "m4", label: "SEMANA 4" },
-  { key: "m8", label: "SEMANA 8" },
-  { key: "m12", label: "SEMANA 12" },
+  { key: "m0", label: getSeasonMilestoneLabel("m0") },
+  { key: "m4", label: getSeasonMilestoneLabel("m4") },
+  { key: "m8", label: getSeasonMilestoneLabel("m8") },
+  { key: "m12", label: getSeasonMilestoneLabel("m12") },
   { key: "summary", label: "RESUMEN" },
 ];
 
@@ -70,7 +71,7 @@ export function TimelineNav({ currentStep, onStepChange }: TimelineNavProps) {
               {/* Label */}
               <span
                 className={`
-                  text-[10px] sm:text-xs font-medium transition-colors duration-300
+                  max-w-[72px] text-center text-[10px] sm:text-xs font-medium leading-tight transition-colors duration-300
                   ${isActive
                     ? "text-white"
                     : isPast

@@ -74,8 +74,8 @@ export async function generateMetadata({ params }: { params: Promise<{ shareId: 
   const ogUrl = `${absoluteBase}/api/og/${shareId}`;
 
   return {
-    title: "Mi Transformación de 12 Semanas - NGX",
-    description: "He descubierto mi máximo potencial con NGX. Mira mi proyección física y mental.",
+    title: "Mi Season Vision Report - NGX",
+    description: "He descubierto mi dirección física con NGX. Mira mi Season Vision Report.",
     openGraph: {
       images: [ogUrl],
     },

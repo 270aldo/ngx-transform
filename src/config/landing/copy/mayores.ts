@@ -24,7 +24,7 @@ export const mayoresCopy: VariantCopy = {
       line2: "Necesita estrategia.",
     },
     subtitle:
-      "Suba una foto. GENESIS analiza su punto de partida y le muestra una proyección aspiracional de cómo podría mejorar fuerza, composición y vitalidad en una temporada de 12 semanas con un sistema serio.",
+      "Suba una foto. GENESIS analiza su punto de partida y le muestra una proyección aspiracional de cómo podría mejorar fuerza, composición y vitalidad con una temporada seria.",
     cta: "Ver mi punto de partida",
     primaryCta: {
       label: "Ver mi punto de partida",
@@ -43,8 +43,8 @@ export const mayoresCopy: VariantCopy = {
     transformationDemo: {
       beforeImage: "https://images.unsplash.com/photo-1675026482188-8102367ecc16?w=800&h=1000&fit=crop&crop=faces",
       afterImage: "https://images.unsplash.com/photo-1645810809381-97f6fd2f7d10?w=800&h=1000&fit=crop&crop=faces",
-      beforeLabel: "HOY",
-      afterLabel: "12 SEMANAS",
+      beforeLabel: "Punto de partida",
+      afterLabel: "Season 3",
     },
   },
 

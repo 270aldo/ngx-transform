@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import type { InsightsResult } from "@/types/ai";
+import { getSeasonMilestoneLabel } from "@/lib/seasonMilestones";
 import { cn } from "@/lib/utils";
 import { NeonRadar } from "@/components/NeonRadar";
 import { Share2, ChevronUp, ChevronDown, AlertTriangle, Target, Zap } from "lucide-react";
@@ -30,10 +31,10 @@ export function CinematicViewer({
     }, [imageUrls]);
 
     const steps: { key: StepKey; label: string }[] = [
-        { key: "m0", label: "HOY" },
-        { key: "m4", label: "SEMANA 4" },
-        { key: "m8", label: "SEMANA 8" },
-        { key: "m12", label: "SEMANA 12" },
+        { key: "m0", label: getSeasonMilestoneLabel("m0") },
+        { key: "m4", label: getSeasonMilestoneLabel("m4") },
+        { key: "m8", label: getSeasonMilestoneLabel("m8") },
+        { key: "m12", label: getSeasonMilestoneLabel("m12") },
     ];
 
     const currentImg = imageUrls.images?.[activeStep] || imageUrls.originalUrl || "";
@@ -132,7 +133,7 @@ export function CinematicViewer({
                     <div className="flex items-center gap-2 mt-1.5">
                         <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: "var(--ngx-success)" }} />
                         <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
-                            PROTOCOL: {activeStep.toUpperCase()}
+                            PROTOCOL: {getSeasonMilestoneLabel(activeStep).toUpperCase()}
                         </span>
                     </div>
                 </div>
@@ -317,7 +318,7 @@ export function CinematicViewer({
                                     }
                                 />
                                 <span className={cn(
-                                    "text-[10px] font-bold tracking-widest transition-colors",
+                                    "max-w-[78px] text-center text-[10px] font-bold tracking-widest leading-tight transition-colors",
                                     isActive ? "text-white" : "text-white/35 group-hover:text-white/65"
                                 )}>
                                     {step.label}

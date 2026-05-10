@@ -12,7 +12,7 @@ interface HeroTransformationProps {
 
 /**
  * Hero comparison: dynamic before/after slider in a single framed canvas.
- * - Drag the vertical handle to reveal week 12 progressively.
+ * - Drag the vertical handle to reveal Season 3 progressively.
  * - Touch + mouse + keyboard (left/right arrows) supported.
  * - Falls back to a static layout if `transformationDemo` is missing.
  */
@@ -108,7 +108,7 @@ export function HeroTransformation({ className, compact = false }: HeroTransform
             }}
             onKeyDown={handleKeyDown}
             role="slider"
-            aria-label="Comparativa antes y semana 12. Arrastra para ver la transformación."
+            aria-label="Comparativa entre punto de partida y Season 3. Arrastra para ver la transformación."
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={Math.round(position)}
@@ -116,10 +116,10 @@ export function HeroTransformation({ className, compact = false }: HeroTransform
           >
             {demo && demo.beforeImage && demo.afterImage ? (
               <>
-                {/* AFTER (week 12) — full layer underneath */}
+                {/* AFTER (Season 3) — full layer underneath */}
                 <Image
                   src={demo.afterImage}
-                  alt={demo.afterLabel ?? "Semana 12"}
+                  alt={demo.afterLabel ?? "Season 3"}
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 540px"
@@ -136,7 +136,7 @@ export function HeroTransformation({ className, compact = false }: HeroTransform
                 >
                   <Image
                     src={demo.beforeImage}
-                    alt={demo.beforeLabel ?? "Antes"}
+                    alt={demo.beforeLabel ?? "Punto de partida"}
                     fill
                     priority
                     sizes="(max-width: 1024px) 100vw, 540px"
@@ -150,7 +150,7 @@ export function HeroTransformation({ className, compact = false }: HeroTransform
                 {/* Labels */}
                 <span className={`pointer-events-none absolute ${compact ? "top-3 left-3" : "top-4 left-4"} inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/55 backdrop-blur-sm px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-white/85`}>
                   <span className="h-1.5 w-1.5 rounded-full bg-white/60" />
-                  {demo.beforeLabel ?? "Hoy"}
+                  {demo.beforeLabel ?? "Punto de partida"}
                 </span>
                 <span
                   className={`pointer-events-none absolute ${compact ? "top-3 right-3" : "top-4 right-4"} inline-flex items-center gap-1.5 rounded-full backdrop-blur-sm px-3 py-1 text-[10px] uppercase tracking-[0.22em]`}
@@ -161,7 +161,7 @@ export function HeroTransformation({ className, compact = false }: HeroTransform
                   }}
                 >
                   <Sparkles className="h-3 w-3" />
-                  {demo.afterLabel ?? "Semana 12"}
+                  {demo.afterLabel ?? "Season 3"}
                 </span>
 
                 {/* Vertical divider + handle */}

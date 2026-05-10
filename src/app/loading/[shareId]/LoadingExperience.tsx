@@ -7,6 +7,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { Logo } from "@/components/ui/Logo";
 import { RiveOrb } from "@/components/RiveOrb";
 import { LoadingStepper } from "@/components/LoadingStepper";
+import { getSeasonMilestoneLabel } from "@/lib/seasonMilestones";
 
 const TIPS = [
   "La salud muscular es uno de los predictores clave de longevidad.",
@@ -37,9 +38,9 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
   const stepStates = useMemo(() => {
     return [
       { label: "Analizando tu foto", done: hasAi || imageCount >= 1, active: !hasAi && imageCount === 0 },
-      { label: "Visualizando semana 4", done: has("m4"), active: hasAi && !has("m4") },
-      { label: "Visualizando semana 8", done: has("m8"), active: has("m4") && !has("m8") },
-      { label: "Visualizando semana 12", done: has("m12"), active: has("m8") && !has("m12") },
+      { label: `Visualizando ${getSeasonMilestoneLabel("m4")}`, done: has("m4"), active: hasAi && !has("m4") },
+      { label: `Visualizando ${getSeasonMilestoneLabel("m8")}`, done: has("m8"), active: has("m4") && !has("m8") },
+      { label: `Visualizando ${getSeasonMilestoneLabel("m12")}`, done: has("m12"), active: has("m8") && !has("m12") },
       { label: "Preparando tu lectura inicial", done: isReady, active: imageCount >= 3 && !isReady },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps

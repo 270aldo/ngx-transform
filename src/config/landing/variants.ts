@@ -25,7 +25,7 @@ export const variants: Record<VariantId, VariantConfig> = {
     meta: {
       title: "NGX Transform - Visualiza tu Transformación con IA",
       description:
-        "IA que proyecta tu evolución física en 12 semanas. Crea tu acceso, sube tu foto y recibe una proyección personalizada con procesamiento seguro.",
+        "IA que genera tu Season Vision Report. Crea tu acceso, sube tu foto y recibe una proyección personalizada con procesamiento seguro.",
     },
   },
 

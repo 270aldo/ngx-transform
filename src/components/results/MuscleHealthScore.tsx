@@ -70,7 +70,7 @@ const BOTTLENECK_TO_LEVERAGES: Record<Bottleneck, string[]> = {
   expectations: [
     "Objetivos de proceso (3 sesiones/sem) antes que de resultado (perder X kg)",
     "Métrica primaria mensual, no diaria — el espejo y la báscula mienten en ventana corta",
-    "Definir éxito como adherencia >85%, no como transformación visible en 4 semanas",
+    "Definir éxito como adherencia >85%, no como transformación visible en una ventana corta",
   ],
   accountability: [
     "Reportar progreso semanal a alguien que pregunte de vuelta",
@@ -89,7 +89,7 @@ const BOTTLENECK_TO_ERROR: Record<Bottleneck, string> = {
   structure:
     "Entrenas sin estructura semanal clara: lo que parece flexibilidad termina siendo improvisación, y la improvisación cuesta meses.",
   expectations:
-    "Estás midiendo el progreso con la ventana equivocada: 4 semanas no muestran transformación, y la frustración prematura sabotea los siguientes 8.",
+    "Estás midiendo el progreso con la ventana equivocada: una ventana corta no muestra transformación, y la frustración prematura sabotea la siguiente etapa.",
   accountability:
     "Estás operando sin accountability externo: sin alguien que pregunte de vuelta, la disciplina necesita ser identidad — y eso lleva años, no semanas.",
 };
