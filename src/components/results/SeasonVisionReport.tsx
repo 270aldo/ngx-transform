@@ -92,9 +92,9 @@ function getDelta(from: number, to: number) {
 function getObservation(entry: TimelineEntry | undefined, index: number) {
   if (entry?.description) return entry.description;
   const fallbacks = [
-    "Primer cambio visible: postura, energía y señales de adaptación empiezan a responder.",
-    "La estructura empieza a consolidarse. El cuerpo ya no depende solo de motivación.",
-    "La visión completa muestra qué dirección tendría sentido sostener con un sistema real.",
+    "Season 1 muestra la primera adaptación visible sobre el punto de partida.",
+    "Season 2 muestra una etapa intermedia con más estructura, consistencia y control.",
+    "Season 3 muestra la visualización final del ciclo completo de transformación.",
   ];
   return fallbacks[index];
 }
@@ -108,7 +108,7 @@ function getCtaTargets() {
   const whatsappNumber = whatsappRaw.replace(/[^\d]/g, "");
   const whatsappUrl = whatsappNumber
     ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-        "Hola, acabo de ver mi Season Vision Report en NGX Transform y quiero entender HYBRID."
+        "Hola, acabo de ver mi Season Vision Report en NGX Transform y quiero revisar el siguiente paso."
       )}`
     : "";
 
@@ -142,76 +142,109 @@ export function SeasonVisionReport({
   ].filter(Boolean) as Array<{ label: string; value: string }>;
 
   return (
-    <article className="relative min-h-screen text-white">
-      <section className="relative min-h-[92vh] overflow-hidden px-4 pb-12 pt-20 md:pt-24">
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_15%,rgba(109,0,255,0.22),transparent_34%),radial-gradient(circle_at_76%_18%,rgba(184,148,255,0.12),transparent_26%)]" />
-        <div className="relative z-10 mx-auto grid max-w-7xl gap-8 lg:grid-cols-[minmax(0,0.86fr)_minmax(460px,1.14fr)] lg:items-center">
-          <div className="max-w-2xl">
-            <span className="ngx-eyebrow-pill mb-5">GENESIS · Season Vision Report</span>
-            <h1 className="ngx-h1 !text-left">
-              Tu dirección física, convertida en reporte.
-            </h1>
-            <p className="mt-5 text-base leading-relaxed text-white/64 md:text-lg">
-              GENESIS tomó tu punto de partida, tu contexto y las visualizaciones de temporada para separar lo aspiracional de lo accionable: qué se ve posible, qué te frena y qué siguiente paso tiene sentido.
-            </p>
+    <article className="relative text-white">
+      <section className="relative px-4 py-8 md:py-12">
+        <div className="mx-auto max-w-6xl">
+          <div className="ngx-section-panel">
+            <div
+              className="absolute inset-0 opacity-25 pointer-events-none"
+              style={{
+                backgroundImage: "url('/images/backgrounds/results-abstract.svg')",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(109,0,255,0.12),transparent_32%),radial-gradient(circle_at_82%_22%,rgba(184,148,255,0.08),transparent_22%)] pointer-events-none" />
 
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <a
-                href="#season-visuals"
-                className="inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-full px-5 py-3 text-sm font-bold uppercase tracking-[0.08em] text-white transition-all duration-150 hover:-translate-y-0.5"
-                style={{
-                  backgroundColor: "var(--ngx-purple)",
-                  boxShadow: "var(--ngx-glow-primary)",
-                }}
-              >
-                Ver mis Seasons
-                <ArrowRight className="h-4 w-4" />
-              </a>
-              <a
-                href="#report-actions"
-                className="ngx-glass-clear inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-full px-5 py-3 text-sm font-bold uppercase tracking-[0.08em] text-white transition-all duration-150 hover:bg-white/[0.10]"
-              >
-                Siguiente paso
-              </a>
-            </div>
-
-            <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {statLabels.map((stat) => (
-                <div key={stat.key} className="border-t border-white/[0.10] pt-3">
-                  <p className="font-mono text-2xl font-bold tabular-nums text-white">
-                    {getDelta(baselineStats[stat.key], finalStats[stat.key])}
-                  </p>
-                  <p className="mt-1 text-[10px] uppercase tracking-[0.18em] text-white/45">
-                    {stat.label}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="relative">
-            <div className="grid gap-3 sm:grid-cols-2">
-              <ImagePanel
-                label={getSeasonMilestoneLabel("m0")}
-                imageUrl={originalImage}
-                alt="Punto de partida"
-                muted
-              />
-              <ImagePanel
-                label={getSeasonMilestoneLabel("m12")}
-                imageUrl={heroAfterImage}
-                alt="Season 3"
-                accent
-              />
-            </div>
-            <div className="mt-3 flex items-center justify-between gap-3 rounded-2xl border border-white/[0.08] bg-black/40 px-4 py-3 backdrop-blur-md">
+            <div className="relative z-10 grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center">
               <div>
-                <p className="text-[10px] uppercase tracking-[0.18em] text-white/40">Estado</p>
-                <p className="mt-1 text-sm font-medium text-white/78">
-                  {isReady ? "Reporte listo" : "Reporte parcial mientras se generan visuales"}
+                <span className="ngx-eyebrow-pill mb-4">Season Vision Report</span>
+                <h1 className="ngx-h1 !text-left">
+                  Punto de partida, Season 1, Season 2 y Season 3.
+                </h1>
+                <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/62 md:text-base">
+                  Este reporte muestra tu punto de partida y tres visualizaciones generadas con IA para representar una posible evolución física durante el ciclo.
                 </p>
+
+                <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  {statLabels.map((stat) => (
+                    <div key={stat.key} className="ngx-metal-card !p-4">
+                      <div className="relative z-10">
+                        <p className="font-mono text-2xl font-bold tabular-nums text-white">
+                          {getDelta(baselineStats[stat.key], finalStats[stat.key])}
+                        </p>
+                        <p className="mt-2 text-[10px] uppercase tracking-[0.16em] text-white/42">
+                          {stat.label}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                  <a
+                    href="#season-visuals"
+                    className="inline-flex min-h-[54px] items-center justify-center gap-2.5 rounded-full px-5 py-3 text-sm font-bold uppercase tracking-[0.08em] text-white transition-all duration-150 hover:-translate-y-0.5"
+                    style={{
+                      backgroundColor: "var(--ngx-purple)",
+                      boxShadow: "var(--ngx-glow-primary)",
+                    }}
+                  >
+                    Ver visualizaciones
+                    <ArrowRight className="h-4 w-4" />
+                  </a>
+                  <a
+                    href="#report-actions"
+                    className="ngx-glass-clear inline-flex min-h-[54px] items-center justify-center gap-2.5 rounded-full px-5 py-3 text-sm font-bold uppercase tracking-[0.08em] text-white transition-all duration-150 hover:bg-white/[0.10]"
+                  >
+                    Ver siguiente paso
+                  </a>
+                </div>
               </div>
-              <SocialShareButton shareId={shareId} imageUrl={heroAfterImage} />
+
+              <div className="ngx-metal-card !p-5 md:!p-6">
+                <div className="relative z-10">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
+                        Secuencia visual
+                      </span>
+                      <p className="mt-2 text-lg font-bold text-white">De hoy a Season 3</p>
+                    </div>
+                    <SocialShareButton shareId={shareId} imageUrl={heroAfterImage} />
+                  </div>
+
+                  <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    <ImagePanel
+                      label={getSeasonMilestoneLabel("m0")}
+                      imageUrl={originalImage}
+                      alt="Punto de partida"
+                      muted
+                    />
+                    {SEASON_STEPS.map((step) => (
+                      <ImagePanel
+                        key={step}
+                        label={getSeasonMilestoneLabel(step)}
+                        imageUrl={imageUrls.images?.[step]}
+                        alt={getSeasonMilestoneLabel(step)}
+                        accent={step === "m12"}
+                      />
+                    ))}
+                  </div>
+
+                  <div className="mt-5 flex items-center justify-between gap-3 border-t border-white/[0.08] pt-4">
+                    <div>
+                      <p className="text-[10px] uppercase tracking-[0.18em] text-white/40">Estado</p>
+                      <p className="mt-1 text-sm font-medium text-white/78">
+                        {isReady ? "Reporte listo" : "Reporte parcial mientras se generan visualizaciones"}
+                      </p>
+                    </div>
+                    <span className="rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-white/50">
+                      4 hitos
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -223,8 +256,8 @@ export function SeasonVisionReport({
             <div className="ngx-section-panel !p-6 md:!p-8">
               <div className="relative z-10">
                 <span className="ngx-eyebrow-pill mb-4">Baseline</span>
-                <h2 className="text-3xl font-bold tracking-[-0.02em] text-white md:text-4xl">
-                  Tu punto de partida no es un juicio. Es el mapa.
+                <h2 className="ngx-section-heading">
+                  Baseline del punto de partida.
                 </h2>
                 <p className="mt-4 text-sm leading-relaxed text-white/62">
                   {ai.insightsText}
@@ -270,7 +303,7 @@ export function SeasonVisionReport({
                   <p className="text-[10px] uppercase tracking-[0.18em] text-white/40">Error dominante</p>
                   <p className="mt-2 text-sm leading-relaxed text-white/70">
                     {ai.diagnostic?.dominant_error ||
-                      "La lectura inicial sugiere que el cuello de botella no es solo esfuerzo: es la falta de un sistema que convierta intención en ejecución repetible."}
+                      "La lectura inicial identifica el factor principal que puede limitar el avance si no se trabaja con estructura."}
                   </p>
                 </div>
               </div>
@@ -281,11 +314,13 @@ export function SeasonVisionReport({
 
       <section id="season-visuals" className="px-4 py-12 scroll-mt-24">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-8 max-w-3xl">
-            <span className="ngx-eyebrow-pill mb-4">Tres visualizaciones</span>
-            <h2 className="ngx-h1 !text-left">Season 1, 2 y 3 no son fechas. Son estados.</h2>
+          <div className="ngx-section-header">
+            <div>
+              <span className="ngx-eyebrow-pill mb-4">Tres visualizaciones</span>
+              <h2 className="ngx-section-heading">Season 1, Season 2 y Season 3.</h2>
+            </div>
             <p className="mt-4 text-sm leading-relaxed text-white/60 md:text-base">
-              Cada visual muestra una etapa distinta de la misma dirección: adaptación, consolidación y visión completa.
+              Cada visualización representa una etapa distinta del ciclo: adaptación inicial, consolidación y cierre de temporada.
             </p>
           </div>
 
@@ -295,27 +330,27 @@ export function SeasonVisionReport({
               const stats = getStats(entry);
               const imageUrl = imageUrls.images?.[step];
               return (
-                <section key={step} className="relative overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.035]">
-                  <div className="relative aspect-[4/5] overflow-hidden bg-black/50">
-                    {imageUrl ? (
-                      <img
-                        src={imageUrl}
-                        alt={getSeasonMilestoneLabel(step)}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center text-[10px] uppercase tracking-[0.18em] text-white/35">
-                        Procesando visual
+                <section key={step} className="ngx-metal-card !p-4 md:!p-5">
+                  <div className="relative z-10">
+                    <div className="relative aspect-[4/5] overflow-hidden rounded-[18px] border border-white/[0.08] bg-black/50">
+                      {imageUrl ? (
+                        <img
+                          src={imageUrl}
+                          alt={getSeasonMilestoneLabel(step)}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-[10px] uppercase tracking-[0.18em] text-white/35">
+                          Procesando visual
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent" />
+                      <div className="absolute left-3 top-3 rounded-full border border-white/[0.10] bg-black/55 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur-md">
+                        {getSeasonMilestoneLabel(step)}
                       </div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent" />
-                    <div className="absolute left-4 top-4 rounded-full border border-white/[0.10] bg-black/55 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur-md">
-                      {getSeasonMilestoneLabel(step)}
                     </div>
-                  </div>
 
-                  <div className="p-5">
-                    <h3 className="text-xl font-bold leading-tight text-white">
+                    <h3 className="mt-5 text-xl font-bold leading-tight text-white">
                       {entry.title || getSeasonMilestoneLabel(step)}
                     </h3>
                     <p className="mt-3 text-sm leading-relaxed text-white/62">
@@ -328,7 +363,7 @@ export function SeasonVisionReport({
                         <span className="text-[10px] uppercase tracking-[0.18em] text-white/40">Observación GENESIS</span>
                       </div>
                       <p className="mt-2 text-sm leading-relaxed text-white/72">
-                        {entry.mental || "Sostener el sistema importa más que perseguir intensidad aislada."}
+                        {entry.mental || "La consistencia del sistema define si esta etapa puede sostenerse."}
                       </p>
                     </div>
 
@@ -353,13 +388,13 @@ export function SeasonVisionReport({
       </section>
 
       <section className="px-4 py-8">
-        <div className="mx-auto max-w-6xl rounded-[28px] border border-amber-400/20 bg-amber-400/[0.055] p-5 md:p-6">
+        <div className="mx-auto max-w-6xl rounded-[24px] border border-white/[0.08] bg-white/[0.035] p-5 md:p-6">
           <div className="flex flex-col gap-4 md:flex-row md:items-start">
-            <ShieldCheck className="h-6 w-6 shrink-0 text-amber-200" />
+            <ShieldCheck className="h-6 w-6 shrink-0" style={{ color: "var(--ngx-purple-light)" }} />
             <div>
               <h2 className="text-lg font-bold text-white">Lectura aspiracional, no diagnóstico.</h2>
               <p className="mt-2 text-sm leading-relaxed text-white/66">
-                Este Season Vision Report usa IA para visualizar una dirección posible con base en tu foto y tus datos. No promete resultados, no sustituye evaluación médica y no debe interpretarse como diagnóstico corporal, metabólico o psicológico.
+                Este Season Vision Report usa IA para generar visualizaciones a partir de una foto y datos de perfil. No promete resultados, no sustituye evaluación médica y no debe interpretarse como diagnóstico corporal, metabólico o psicológico.
               </p>
             </div>
           </div>
@@ -372,9 +407,9 @@ export function SeasonVisionReport({
             <div className="relative z-10 grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center">
               <div>
                 <span className="ngx-eyebrow-pill mb-4">Siguiente paso</span>
-                <h2 className="ngx-h1 !text-left">Convierte esta visión en ejecución.</h2>
+                <h2 className="ngx-section-heading">Revisar el siguiente paso.</h2>
                 <p className="mt-4 text-sm leading-relaxed text-white/62 md:text-base">
-                  Si la visualización te movió, el siguiente paso no es otra imagen. Es decidir si quieres estructura, revisión humana y seguimiento real.
+                  Si quieres usar este reporte como punto de partida, puedes revisar las opciones de acompañamiento y solicitar una lectura del caso.
                 </p>
               </div>
 
@@ -387,7 +422,7 @@ export function SeasonVisionReport({
                     boxShadow: "var(--ngx-glow-primary)",
                   }}
                 >
-                  Ver opciones HYBRID
+                  Ver opciones
                   <ArrowRight className="h-4 w-4" />
                 </a>
                 <a
@@ -395,7 +430,7 @@ export function SeasonVisionReport({
                   className="ngx-glass-clear inline-flex min-h-[58px] items-center justify-center gap-2.5 rounded-2xl px-5 py-4 text-sm font-bold uppercase tracking-[0.08em] text-white transition-all duration-150 hover:bg-white/[0.10]"
                 >
                   <FileText className="h-4 w-4" />
-                  Recibir brief
+                  Solicitar revisión
                 </a>
                 {bookingUrl ? (
                   <a
@@ -443,10 +478,10 @@ function ImagePanel({
 }) {
   return (
     <div
-      className="relative aspect-[4/5] overflow-hidden rounded-[28px] border bg-white/[0.035]"
+      className="relative aspect-[4/5] overflow-hidden rounded-[18px] border bg-white/[0.035]"
       style={{
         borderColor: accent ? "rgba(109,0,255,0.45)" : "rgba(255,255,255,0.08)",
-        boxShadow: accent ? "var(--ngx-glow-primary-soft)" : undefined,
+        boxShadow: accent ? "0 0 24px rgba(109,0,255,0.16)" : undefined,
       }}
     >
       {imageUrl ? (
@@ -461,7 +496,7 @@ function ImagePanel({
         </div>
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-      <div className="absolute inset-x-4 bottom-4">
+      <div className="absolute inset-x-3 bottom-3">
         <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/70">
           {label}
         </p>
