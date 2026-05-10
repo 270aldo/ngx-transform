@@ -58,6 +58,11 @@ interface SkuCardData {
 const WHATSAPP_TEXT =
   "Hola, acabo de ver mis resultados en NGX Transform y quiero entrar a HYBRID.";
 
+const HYBRID_OFFER_WEBHOOK_EVENTS: Partial<Record<string, string>> = {
+  calendly_v2_clicked: "hybrid_offer_calendly_click",
+  whatsapp_v2_clicked: "hybrid_offer_whatsapp_click",
+};
+
 function readNum(envVar?: string): number | null {
   if (!envVar) return null;
   const n = Number(envVar);
@@ -82,6 +87,8 @@ async function emitTelemetry(
   event: string,
   metadata?: Record<string, unknown>
 ) {
+  const webhookEvent = HYBRID_OFFER_WEBHOOK_EVENTS[event];
+
   await Promise.allSettled([
     fetch("/api/telemetry", {
       method: "POST",
@@ -93,11 +100,13 @@ async function emitTelemetry(
         metadata: { ...metadata, location: "hybrid_offer_v2" },
       }),
     }),
-    fetch("/api/events/hybrid-offer", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ event, shareId }),
-    }).catch(() => {}),
+    webhookEvent
+      ? fetch("/api/events/hybrid-offer", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ event: webhookEvent, shareId }),
+        }).catch(() => {})
+      : Promise.resolve(),
   ]);
 }
 
