@@ -166,25 +166,30 @@ export function SeasonVisionReport({
                   Este reporte muestra tu punto de partida y tres visualizaciones generadas con IA para representar una posible evolución física durante el ciclo.
                 </p>
 
-                <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                  {statLabels.map((stat) => (
-                    <div key={stat.key} className="ngx-metal-card !p-4">
-                      <div className="relative z-10">
-                        <p className="font-mono text-2xl font-bold tabular-nums text-white">
-                          {getDelta(baselineStats[stat.key], finalStats[stat.key])}
-                        </p>
-                        <p className="mt-2 text-[10px] uppercase tracking-[0.16em] text-white/42">
-                          {stat.label}
-                        </p>
+                <div className="mt-8">
+                  <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.18em] text-white/45">
+                    Delta proyectado · Hoy → Season 3
+                  </p>
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    {statLabels.map((stat) => (
+                      <div key={stat.key} className="ngx-metal-card !p-4">
+                        <div className="relative z-10">
+                          <p className="font-mono text-2xl font-bold tabular-nums text-white">
+                            {getDelta(baselineStats[stat.key], finalStats[stat.key])}
+                          </p>
+                          <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/55">
+                            {stat.label}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
 
-                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                   <a
                     href="#season-visuals"
-                    className="inline-flex min-h-[54px] items-center justify-center gap-2.5 rounded-full px-5 py-3 text-sm font-bold uppercase tracking-[0.08em] text-white transition-all duration-150 hover:-translate-y-0.5"
+                    className="inline-flex min-h-[54px] items-center justify-center gap-2.5 whitespace-nowrap rounded-full px-6 py-3 text-sm font-bold uppercase tracking-[0.08em] text-white transition-all duration-150 hover:-translate-y-0.5"
                     style={{
                       backgroundColor: "var(--ngx-purple)",
                       boxShadow: "var(--ngx-glow-primary)",
@@ -195,7 +200,7 @@ export function SeasonVisionReport({
                   </a>
                   <a
                     href="#report-actions"
-                    className="ngx-glass-clear inline-flex min-h-[54px] items-center justify-center gap-2.5 rounded-full px-5 py-3 text-sm font-bold uppercase tracking-[0.08em] text-white transition-all duration-150 hover:bg-white/[0.10]"
+                    className="ngx-glass-clear inline-flex min-h-[54px] items-center justify-center gap-2.5 whitespace-nowrap rounded-full px-6 py-3 text-sm font-bold uppercase tracking-[0.08em] text-white/85 transition-all duration-150 hover:bg-white/[0.10] hover:text-white"
                   >
                     Ver siguiente paso
                   </a>
@@ -209,12 +214,12 @@ export function SeasonVisionReport({
                       <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
                         Secuencia visual
                       </span>
-                      <p className="mt-2 text-lg font-bold text-white">De hoy a Season 3</p>
+                      <p className="mt-1.5 text-base font-bold text-white md:text-lg">De hoy a Season 3</p>
                     </div>
                     <SocialShareButton shareId={shareId} imageUrl={heroAfterImage} />
                   </div>
 
-                  <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
                     <ImagePanel
                       label={getSeasonMilestoneLabel("m0")}
                       imageUrl={originalImage}
@@ -233,13 +238,10 @@ export function SeasonVisionReport({
                   </div>
 
                   <div className="mt-5 flex items-center justify-between gap-3 border-t border-white/[0.08] pt-4">
-                    <div>
-                      <p className="text-[10px] uppercase tracking-[0.18em] text-white/40">Estado</p>
-                      <p className="mt-1 text-sm font-medium text-white/78">
-                        {isReady ? "Reporte listo" : "Reporte parcial mientras se generan visualizaciones"}
-                      </p>
-                    </div>
-                    <span className="rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-white/50">
+                    <p className="text-sm font-medium text-white/78">
+                      {isReady ? "Reporte listo" : "Reporte parcial mientras se generan visualizaciones"}
+                    </p>
+                    <span className="whitespace-nowrap rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-white/55">
                       4 hitos
                     </span>
                   </div>
@@ -266,10 +268,19 @@ export function SeasonVisionReport({
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
                   <div className="rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4">
                     <p className="text-[10px] uppercase tracking-[0.18em] text-white/40">Muscle Health Score</p>
-                    <p className="mt-3 font-mono text-5xl font-bold tabular-nums text-white">
+                    <p className="mt-3 font-mono text-5xl font-bold tabular-nums leading-none text-white">
                       {readinessScore}
-                      <span className="ml-2 text-lg text-white/35">/100</span>
+                      <span className="ml-2 text-lg font-medium text-white/35">/100</span>
                     </p>
+                    <div className="mt-4 h-1 w-full overflow-hidden rounded-full bg-white/[0.06]">
+                      <div
+                        className="h-full rounded-full"
+                        style={{
+                          width: `${Math.max(0, Math.min(100, readinessScore))}%`,
+                          background: "linear-gradient(90deg, rgba(109,0,255,0.55) 0%, var(--ngx-purple-light) 100%)",
+                        }}
+                      />
+                    </div>
                   </div>
                   <div className="rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4">
                     <p className="text-[10px] uppercase tracking-[0.18em] text-white/40">Palanca principal</p>
@@ -285,11 +296,14 @@ export function SeasonVisionReport({
               <div className="relative z-10">
                 <span className="ngx-eyebrow-pill mb-4" data-accent="neutral">Contexto usado</span>
                 {profileItems.length > 0 ? (
-                  <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="grid gap-2 sm:grid-cols-2">
                     {profileItems.map((item) => (
-                      <div key={item.label} className="flex items-center justify-between gap-4 border-b border-white/[0.08] py-3">
-                        <span className="text-xs uppercase tracking-[0.16em] text-white/40">{item.label}</span>
-                        <span className="text-sm font-semibold text-white/86">{item.value}</span>
+                      <div
+                        key={item.label}
+                        className="flex items-center justify-between gap-3 rounded-xl border border-white/[0.06] bg-white/[0.025] px-3.5 py-2.5"
+                      >
+                        <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-white/45">{item.label}</span>
+                        <span className="text-sm font-semibold text-white/90">{item.value}</span>
                       </div>
                     ))}
                   </div>
@@ -357,12 +371,23 @@ export function SeasonVisionReport({
                       {getObservation(entry, index)}
                     </p>
 
-                    <div className="mt-5 rounded-2xl border border-white/[0.08] bg-black/22 p-4">
+                    <div
+                      className="mt-5 rounded-2xl border p-4"
+                      style={{
+                        background: "rgba(109, 0, 255, 0.07)",
+                        borderColor: "rgba(109, 0, 255, 0.18)",
+                      }}
+                    >
                       <div className="flex items-center gap-2">
                         <Activity className="h-4 w-4" style={{ color: "var(--ngx-purple-light)" }} />
-                        <span className="text-[10px] uppercase tracking-[0.18em] text-white/40">Observación GENESIS</span>
+                        <span
+                          className="text-[10px] font-semibold uppercase tracking-[0.18em]"
+                          style={{ color: "var(--ngx-purple-light)" }}
+                        >
+                          Observación GENESIS
+                        </span>
                       </div>
-                      <p className="mt-2 text-sm leading-relaxed text-white/72">
+                      <p className="mt-2 text-sm leading-relaxed text-white/78">
                         {entry.mental || "La consistencia del sistema define si esta etapa puede sostenerse."}
                       </p>
                     </div>
@@ -370,10 +395,10 @@ export function SeasonVisionReport({
                     <div className="mt-5 grid grid-cols-2 gap-2">
                       {statLabels.map((stat) => (
                         <div key={stat.key} className="rounded-xl border border-white/[0.08] bg-white/[0.035] p-3">
-                          <p className="font-mono text-lg font-bold tabular-nums text-white">
+                          <p className="font-mono text-xl font-bold tabular-nums leading-none text-white">
                             {stats[stat.key]}
                           </p>
-                          <p className="mt-1 text-[9px] uppercase tracking-[0.14em] text-white/40">
+                          <p className="mt-1.5 text-[10px] font-medium uppercase tracking-[0.16em] text-white/50">
                             {stat.label}
                           </p>
                         </div>
@@ -413,46 +438,55 @@ export function SeasonVisionReport({
                 </p>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-2">
-                <a
-                  href="#hybrid-offer"
-                  className="inline-flex min-h-[58px] items-center justify-center gap-2.5 rounded-2xl px-5 py-4 text-sm font-bold uppercase tracking-[0.08em] text-white transition-all duration-150 hover:-translate-y-0.5"
-                  style={{
-                    backgroundColor: "var(--ngx-purple)",
-                    boxShadow: "var(--ngx-glow-primary)",
-                  }}
-                >
-                  Ver opciones
-                  <ArrowRight className="h-4 w-4" />
-                </a>
-                <a
-                  href="#hybrid-offer"
-                  className="ngx-glass-clear inline-flex min-h-[58px] items-center justify-center gap-2.5 rounded-2xl px-5 py-4 text-sm font-bold uppercase tracking-[0.08em] text-white transition-all duration-150 hover:bg-white/[0.10]"
-                >
-                  <FileText className="h-4 w-4" />
-                  Solicitar revisión
-                </a>
-                {bookingUrl ? (
+              <div className="grid gap-4">
+                <div className="grid gap-3 sm:grid-cols-2">
                   <a
-                    href={bookingUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ngx-glass-clear inline-flex min-h-[58px] items-center justify-center gap-2.5 rounded-2xl px-5 py-4 text-sm font-bold uppercase tracking-[0.08em] text-white transition-all duration-150 hover:bg-white/[0.10]"
+                    href="#hybrid-offer"
+                    className="inline-flex min-h-[58px] items-center justify-center gap-2.5 whitespace-nowrap rounded-2xl px-5 py-4 text-sm font-bold uppercase tracking-[0.08em] text-white transition-all duration-150 hover:-translate-y-0.5"
+                    style={{
+                      backgroundColor: "var(--ngx-purple)",
+                      boxShadow: "var(--ngx-glow-primary)",
+                    }}
                   >
-                    <CalendarDays className="h-4 w-4" />
-                    Agendar revisión
+                    Ver opciones
+                    <ArrowRight className="h-4 w-4" />
                   </a>
-                ) : null}
-                {whatsappUrl ? (
                   <a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ngx-glass-clear inline-flex min-h-[58px] items-center justify-center gap-2.5 rounded-2xl px-5 py-4 text-sm font-bold uppercase tracking-[0.08em] text-white transition-all duration-150 hover:bg-white/[0.10]"
+                    href="#hybrid-offer"
+                    className="ngx-glass-clear inline-flex min-h-[58px] items-center justify-center gap-2.5 whitespace-nowrap rounded-2xl px-5 py-4 text-sm font-bold uppercase tracking-[0.08em] text-white/85 transition-all duration-150 hover:bg-white/[0.10] hover:text-white"
                   >
-                    <MessageCircle className="h-4 w-4" />
-                    WhatsApp
+                    <FileText className="h-4 w-4" />
+                    Solicitar revisión
                   </a>
+                </div>
+                {(bookingUrl || whatsappUrl) ? (
+                  <div className="flex flex-wrap items-center gap-2 border-t border-white/[0.06] pt-4">
+                    <p className="mr-2 text-[10px] font-medium uppercase tracking-[0.18em] text-white/40">
+                      Otros canales
+                    </p>
+                    {bookingUrl ? (
+                      <a
+                        href={bookingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.04] px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-white/75 transition hover:bg-white/[0.08] hover:text-white"
+                      >
+                        <CalendarDays className="h-3.5 w-3.5" />
+                        Agendar revisión
+                      </a>
+                    ) : null}
+                    {whatsappUrl ? (
+                      <a
+                        href={whatsappUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.04] px-4 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-white/75 transition hover:bg-white/[0.08] hover:text-white"
+                      >
+                        <MessageCircle className="h-3.5 w-3.5" />
+                        WhatsApp
+                      </a>
+                    ) : null}
+                  </div>
                 ) : null}
               </div>
             </div>
