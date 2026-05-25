@@ -19,19 +19,19 @@ export function LandingHero() {
 
   return (
     <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-0 md:pt-14 lg:pt-16 mb-24 md:mb-40">
-      {/* Atmospheric glows — no card boundary, hero breathes on the page */}
+      {/* Atmospheric glows — cinematic brand energy without wrapping the hero in a card */}
       <div
         aria-hidden
         className="pointer-events-none absolute left-[-6%] top-[-4%] h-[460px] w-[460px] rounded-full blur-[140px]"
-        style={{ backgroundColor: "rgba(109, 0, 255, 0.22)" }}
+        style={{ backgroundColor: "rgba(109, 0, 255, 0.28)" }}
       />
       <div
         aria-hidden
         className="pointer-events-none absolute right-[-4%] top-[28%] h-[380px] w-[380px] rounded-full blur-[130px]"
-        style={{ backgroundColor: "rgba(109, 0, 255, 0.10)" }}
+        style={{ backgroundColor: "rgba(184, 148, 255, 0.14)" }}
       />
 
-      <div className="relative grid items-center gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(380px,500px)] lg:gap-14 xl:gap-16">
+      <div className="relative grid items-center gap-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(460px,560px)] lg:gap-14 xl:gap-16">
           <div className="text-center lg:text-left">
             <div className="ngx-glass-clear inline-flex items-center gap-3 px-4 py-2 rounded-full mb-7 cursor-default">
               <span className="relative flex h-2 w-2">
@@ -60,6 +60,12 @@ export function LandingHero() {
               {hero.subtitle}
             </p>
 
+            {hero.punchline ? (
+              <p className="mx-auto mt-5 max-w-[560px] border-l border-white/[0.12] pl-4 text-left font-mono text-[0.68rem] uppercase leading-relaxed tracking-[0.24em] text-white/50 lg:mx-0">
+                {hero.punchline}
+              </p>
+            ) : null}
+
             <div data-testid="mobile-hero-preview" className="mt-6 lg:hidden">
               <HeroTransformation compact className="mx-auto max-w-[440px]" />
             </div>
@@ -68,17 +74,7 @@ export function LandingHero() {
               <Link
                 href="/wizard"
                 onClick={() => trackCta("hero_primary", hero.primaryCta.intent, hero.primaryCta.label)}
-                className="group inline-flex h-14 w-full items-center justify-center gap-2 rounded-full px-6 text-[0.95rem] font-bold font-body text-white transition-all duration-200 active:scale-[0.97] hover:-translate-y-0.5"
-                style={{
-                  backgroundColor: theme.primary,
-                  boxShadow: "var(--ngx-glow-primary)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = "var(--ngx-glow-primary-strong)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = "var(--ngx-glow-primary)";
-                }}
+                className="ngx-primary-cta group inline-flex w-full px-6 text-[0.92rem]"
               >
                 <span>{hero.primaryCta.label}</span>
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -86,7 +82,7 @@ export function LandingHero() {
               <a
                 href="#reporte-ejemplo"
                 onClick={() => trackCta("hero_report_preview", "view_report_example", hero.secondaryCta)}
-                className="group inline-flex h-14 w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.055] px-6 text-[0.95rem] font-bold font-body text-white transition-all duration-200 hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.08] active:scale-[0.97]"
+                className="ngx-secondary-cta group inline-flex w-full px-6 text-[0.92rem]"
               >
                 <PlayCircle className="h-5 w-5 text-white/80 transition-transform group-hover:scale-105" />
                 <span>{hero.secondaryCta}</span>
@@ -101,21 +97,24 @@ export function LandingHero() {
           <HeroTransformation className="hidden lg:block w-full" />
         </div>
 
-        <div className="relative mt-12 md:mt-14 grid gap-3 md:grid-cols-3">
+        <div className="relative mt-12 md:mt-14 grid gap-0 overflow-hidden rounded-[24px] border border-white/[0.06] bg-white/[0.025] md:grid-cols-3">
           {heroAssurances.map((item, index) => {
             const Icon = item.icon;
             return (
               <div
                 key={item.label}
-                className={`animate-on-scroll ${index > 0 ? `delay-${index}00` : ""} ngx-metal-card p-4 md:p-5`}
+                className={`animate-on-scroll ${index > 0 ? `delay-${index}00` : ""} relative p-4 md:p-5`}
               >
+                {index > 0 ? (
+                  <div className="absolute left-0 top-5 hidden h-[calc(100%-2.5rem)] w-px bg-white/[0.07] md:block" />
+                ) : null}
                 <div className="relative z-10">
                   <div className="mb-3 flex items-center gap-3">
                     <div
-                      className="flex h-9 w-9 items-center justify-center rounded-xl border"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border"
                       style={{
-                        borderColor: "var(--ngx-border-card)",
-                        backgroundColor: "var(--ngx-purple-dim)",
+                        borderColor: "rgba(255,255,255,0.08)",
+                        backgroundColor: "rgba(255,255,255,0.04)",
                       }}
                     >
                       <Icon className="h-4 w-4" style={{ color: "var(--ngx-purple-light)" }} />

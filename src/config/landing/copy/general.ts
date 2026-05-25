@@ -28,9 +28,10 @@ export const generalCopy: VariantCopy = {
     },
     subtitle:
       "Sube una foto real. Recibe una visualización aspiracional, una lectura inicial de tu punto de partida y una ruta clara para empezar con más criterio.",
-    cta: "Ver mi punto de partida",
+    punchline: "La imagen puede incomodarte. Bien. Ese es el punto de partida honesto.",
+    cta: "Iniciar mi scan",
     primaryCta: {
-      label: "Ver mi punto de partida",
+      label: "Iniciar mi scan",
       intent: "scan_start",
     },
     secondaryCta: "Ver ejemplo real",
@@ -236,7 +237,7 @@ export const generalCopy: VariantCopy = {
         text: "Empezar con una ruta inicial o revisar HYBRID si necesitas soporte.",
       },
     ],
-    ctaLabel: "Ver mi punto de partida",
+    ctaLabel: "Iniciar mi scan",
     ctaHref: "/wizard",
     microcopy: "Ejemplo ilustrativo. Tu resultado se genera con tus datos.",
   },
@@ -306,24 +307,24 @@ export const generalCopy: VariantCopy = {
           "Es una visualización aspiracional generada con IA. No es una predicción garantizada, no es una promesa médica y no confirma resultados futuros. Sirve para visualizar una posibilidad y abrir una conversación más honesta sobre tu punto de partida.",
       },
       {
+        question: "¿Sustituye a un médico, nutriólogo o entrenador?",
+        answer:
+          "No. NGX Transform es una experiencia educativa y orientativa. Si tienes dolor, lesiones, condiciones médicas o dudas clínicas, consulta a un profesional antes de iniciar cambios intensos de entrenamiento o alimentación.",
+      },
+      {
         question: "¿Qué pasa con mi foto?",
         answer:
           "Se procesa con tu consentimiento explícito para generar tu sesión privada. No la vendemos, no la publicamos y no la usamos como testimonio sin permiso. Puedes solicitar eliminación cuando quieras desde tu sesión o por el canal de privacidad.",
       },
       {
+        question: "¿Qué es HYBRID y cuándo aparece?",
+        answer:
+          "HYBRID es el acompañamiento de 12 semanas que combina GENESIS con revisión humana. Aparece después del reporte, cuando ya entiendes tu punto de partida y quieres ejecutar la ruta con más estructura.",
+      },
+      {
         question: "¿Necesito crear cuenta para empezar?",
         answer:
           "No necesitas una cuenta completa para iniciar el scan. El flujo puede crear una sesión privada para guardar tu resultado y permitirte volver a consultarlo. Si después quieres seguimiento, historial o HYBRID, se te pedirá completar el acceso.",
-      },
-      {
-        question: "¿En qué se diferencia ASCEND de HYBRID?",
-        answer:
-          "ASCEND es autoguiado con GENESIS para personas con buena constancia y experiencia. HYBRID suma un coach humano que valida estrategia, adapta el proceso y te ayuda a sostenerlo cuando necesitas más soporte.",
-      },
-      {
-        question: "¿El plan de 7 días sustituye a un médico o nutriólogo?",
-        answer:
-          "No. Es una guía educativa y orientativa. Si tienes dolor, lesiones, condiciones médicas o dudas clínicas, consulta a un profesional antes de iniciar cambios intensos de entrenamiento o alimentación.",
       },
       {
         question: "¿Qué necesito para empezar?",

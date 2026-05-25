@@ -1,0 +1,27 @@
+- generic [active] [ref=e1] [box=0,0,1435,8227]:
+  - main [ref=e2] [box=0,0,1435,8227]:
+    - generic [ref=e3] [box=0,0,1435,8227]:
+      - navigation [ref=e6] [box=158,24,1120,66]:
+        - link "N NGX Transform by Genesis" [ref=e7] [cursor=pointer] [box=175,40,175,34]:
+          - /url: /
+        - generic [ref=e13] [box=523,37,379,40]
+        - link "Ver mi punto de partida" [ref=e19] [cursor=pointer] [box=1076,35,185,44]:
+          - /url: /wizard
+      - main [ref=e20] [box=0,0,1435,7985]:
+        - generic [ref=e21] [box=78,160,1280,990]
+        - generic [ref=e101] [box=142,1310,1152,692]
+        - generic [ref=e137] [box=142,2002,1152,824]
+        - generic [ref=e192] [box=142,2826,1152,667]
+        - generic [ref=e246] [box=142,3493,1152,1297]
+        - generic [ref=e331] [box=203,4819,1030,129]
+        - generic [ref=e350] [box=223,5210,990,471]
+        - generic [ref=e403] [box=223,5883,990,239]
+        - generic [ref=e434] [box=334,6315,768,1050]
+        - generic [ref=e487] [box=351,7425,733,340]
+      - generic [ref=e502] [box=158,8130,1120,33]:
+        - generic [ref=e503] [box=158,8130,153,33]
+        - generic [ref=e508] [box=557,8138,212,16]
+        - paragraph [ref=e512] [box=1015,8138,262,16]: © 2026 NGX. Todos los derechos reservados.
+  - button "Open Next.js Dev Tools" [ref=e518] [cursor=pointer] [box=22,846,32,32]:
+    - img [ref=e519] [box=22,842,40,40]
+  - alert [ref=e522] [box=-1,8226,1,1]

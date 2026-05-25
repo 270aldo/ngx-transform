@@ -94,7 +94,7 @@ export function WizardPhotoStep({
                 onClick={onContinue}
                 disabled={!canAdvance}
                 aria-label={ctaLabel}
-                className="h-auto w-full rounded-full bg-[var(--ngx-purple)] px-7 py-4 text-sm font-bold uppercase tracking-[0.14em] text-white shadow-[var(--ngx-glow-primary)] transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.98] disabled:bg-white/[0.06] disabled:text-white/30 disabled:shadow-none disabled:cursor-not-allowed disabled:translate-y-0"
+                className="ngx-primary-cta inline-flex h-auto w-full px-7 py-4 text-sm disabled:cursor-not-allowed"
               >
                 {ctaLabel}
                 <ArrowRight className="ml-2 h-4 w-4" />

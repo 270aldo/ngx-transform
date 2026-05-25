@@ -315,7 +315,7 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
         transition={{ duration: 0.55, ease: "easeOut" }}
         className="ngx-section-panel relative overflow-hidden"
       >
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_18%_15%,rgba(109,0,255,0.15),transparent_38%),radial-gradient(circle_at_88%_25%,rgba(184,148,255,0.08),transparent_28%)]" />
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_18%_15%,rgba(109,0,255,0.07),transparent_40%)]" />
 
         <div className="relative z-10 grid gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(380px,1fr)]">
           {/* COLUMNA IZQUIERDA — Tesis */}
@@ -560,11 +560,7 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
               <button
                 onClick={onCheckout}
                 disabled={!selectedSku || !anySkuAvailable || !!checkoutLoading}
-                className="mt-4 inline-flex w-full min-h-[52px] items-center justify-center gap-2 rounded-full px-5 py-4 text-sm font-bold uppercase tracking-[0.06em] text-white transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
-                style={{
-                  backgroundColor: "var(--ngx-purple)",
-                  boxShadow: "var(--ngx-glow-primary)",
-                }}
+                className="ngx-primary-cta mt-4 inline-flex w-full px-5 py-4 text-sm disabled:cursor-not-allowed"
               >
                 {checkoutLoading ? (
                   <>

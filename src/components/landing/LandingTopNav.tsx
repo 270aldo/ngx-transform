@@ -40,17 +40,7 @@ export function LandingTopNav() {
               <Link
                 href="/wizard"
                 onClick={() => trackCta("topnav_primary", hero.primaryCta.intent, hero.primaryCta.label)}
-                className="hidden md:inline-flex h-11 items-center justify-center rounded-full px-6 text-xs font-bold font-body text-white transition-all duration-200 hover:-translate-y-0.5"
-                style={{
-                  backgroundColor: "var(--ngx-purple)",
-                  boxShadow: "var(--ngx-glow-primary)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = "var(--ngx-glow-primary-strong)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = "var(--ngx-glow-primary)";
-                }}
+                className="ngx-primary-cta hidden !min-h-0 px-6 py-3 text-xs md:inline-flex"
               >
                 {hero.primaryCta.label}
               </Link>
@@ -86,7 +76,7 @@ export function LandingTopNav() {
             <a href="#faq" className="text-2xl text-white font-display" onClick={closeMenu}>FAQ</a>
             <Link
               href="/wizard"
-              className="px-8 py-4 rounded-full bg-[#6D00FF] text-white font-semibold text-lg font-body"
+              className="ngx-primary-cta inline-flex px-8 py-4 text-lg"
               onClick={() => {
                 trackCta("mobile_menu_primary", hero.primaryCta.intent, hero.primaryCta.label);
                 closeMenu();

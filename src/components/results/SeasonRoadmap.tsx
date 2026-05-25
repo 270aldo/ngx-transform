@@ -96,7 +96,7 @@ export function SeasonRoadmap() {
     >
       <div className="mx-auto max-w-6xl">
         <div className="ngx-section-panel relative overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_22%_18%,rgba(109,0,255,0.12),transparent_36%),radial-gradient(circle_at_78%_28%,rgba(184,148,255,0.08),transparent_28%)]" />
+          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_22%_18%,rgba(109,0,255,0.06),transparent_38%)]" />
 
           <div className="relative z-10">
             <div className="max-w-3xl">

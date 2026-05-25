@@ -13,7 +13,7 @@ describe("LandingHero mobile conversion layout", () => {
 
     const subtitleIndex = html.indexOf("Sube una foto real");
     const previewIndex = html.indexOf('data-testid="mobile-hero-preview"');
-    const ctaIndex = html.indexOf("Ver mi punto de partida");
+    const ctaIndex = html.indexOf("Iniciar mi scan");
 
     expect(subtitleIndex).toBeGreaterThan(-1);
     expect(previewIndex).toBeGreaterThan(subtitleIndex);

@@ -3,7 +3,7 @@
 Aplicación Next.js con Tailwind v4, shadcn/ui v4, Firebase y Gemini (texto + imagen), orientada a generar análisis visual realista 0/4/8/12 meses.
 
 ## Resumen técnico
-- Framework: Next.js 16.0.7 (App Router), React 19, TypeScript 5
+- Framework: Next.js 16.2.4 (App Router), React 19, TypeScript 5
 - Estilos: Tailwind CSS v4 (tokens/vars), shadcn/ui v4 (Radix)
 - IA:
   - Gemini (texto): `@google/generative-ai` con validación zod estricto
@@ -12,12 +12,13 @@ Aplicación Next.js con Tailwind v4, shadcn/ui v4, Firebase y Gemini (texto + im
 - Emails: Resend + @react-email/components
 
 ## Scripts
-- `npm run dev`: dev server
-- `npm run build`: build prod
-- `npm start`: server prod
-- `npm run lint`: lint con eslint-config-next
+- `pnpm dev`: dev server
+- `pnpm build`: build prod
+- `pnpm start`: server prod
+- `pnpm lint`: lint con eslint-config-next
+- `pnpm test`: suite Vitest
 
-## Variables de entorno (app/.env.local)
+## Variables de entorno (`.env.local`)
 - Cliente Firebase (NEXT_PUBLIC_*): API_KEY, AUTH_DOMAIN, PROJECT_ID, STORAGE_BUCKET, MESSAGING_SENDER_ID, APP_ID
 - Admin Firebase: FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY
 - Gemini: GEMINI_API_KEY, GEMINI_IMAGE_MODEL (opcional)
@@ -30,8 +31,9 @@ Consejos:
 ## Arquitectura
 - App Router (`src/app`):
   - `/wizard`: flujo de generación (lead → upload → session → analyze → images)
-  - `/s/[shareId]`: resultados reales (sticky 3 columnas)
-  - `/demo/result`: preview con datos mock para validar UI
+  - `/loading/[shareId]`: progreso de análisis/generación con retry
+  - `/s/[shareId]`: Season Vision Report + oferta HYBRID
+  - `/s/[shareId]?demo=1`: preview de resultados con datos mock en desarrollo
 
 - Librerías clave (`src/lib`):
   - `firebaseAdmin.ts`, `storage.ts`: Admin SDK (signed URLs, uploads)
@@ -42,11 +44,12 @@ Consejos:
 
 - UI:
   - `src/components/shadcn/ui/*`: base shadcn (button/input/textarea/card/progress/separator/tabs/select/tooltip/dialog)
-  - `src/components/results/*`: layout modular de Resultados (ImageViewer, InsightsCard, ActionsCard, ProfileSummaryCard)
-  - `src/components/TimelineViewer.tsx`: tabs 0/4/8/12 con overlay/minimap
+  - `src/components/landing/*`: landing por variantes (`/`, `/j`, `/m`)
+  - `src/components/results/*`: Season Vision Report, roadmap, oferta HYBRID, NPS
+  - `src/components/wizard/*`: wizard privado por etapas
 
 ## Estilo NGX (dark premium)
-- Tipografía: JetBrains Mono (display/métricas), DM Sans (body/UI)
+- Tipografía: United Sans Cond (display), Inter (body/UI), JetBrains Mono (métricas/labels)
 - Colores tokens (globals.css):
   - `--primary: #6D00FF` (Electric Violet)
   - `--accent: #5B21B6` (Deep Purple)
@@ -72,11 +75,11 @@ Consejos:
 - Archivos grandes y secretos: nunca en repo (usa .env.local y .gitignore)
 
 ## Desarrollo local
-1) Configura `.env.local` en `app/` con tus claves
-2) Instala deps: `npm install`
-3) Dev: `npm run dev` → http://localhost:3000
-4) Demo UI: `/demo/result` (sin backends)
-5) Flujo real: `/wizard` → `/s/[id]`
+1) Configura `.env.local` en la raíz con tus claves
+2) Instala deps: `pnpm install`
+3) Dev: `pnpm dev` → http://localhost:3000
+4) Demo results: `/s/demo?demo=1` (sin Firestore)
+5) Flujo real: `/wizard` → `/loading/[id]` → `/s/[id]`
 
 ## Roadmap inmediato
 - Fase 2: sincronizar tabs Visor/Timeline + deep-link (#m4)

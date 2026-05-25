@@ -1,0 +1,55 @@
+- generic [active] [ref=e1] [box=0,0,1435,1152]:
+  - main [ref=e2] [box=0,0,1435,1152]:
+    - generic [ref=e3] [box=0,0,1435,1152]:
+      - generic [ref=e5] [box=142,24,1152,97]:
+        - button "Atrás" [ref=e6] [box=159,53,92,40]:
+          - img [ref=e7] [box=172,66,14,14]
+          - generic [ref=e9] [box=194,65,44,15]: Atrás
+        - generic [ref=e10] [box=270,39,655,67]:
+          - img [ref=e12] [box=281,64,18,18]
+          - generic [ref=e15] [box=322,39,603,67]:
+            - generic [ref=e16] [box=322,39,603,20]:
+              - generic [ref=e17] [box=322,41,109,15]: Wizard privado
+              - generic [ref=e18] [box=440,39,78,20]: Paso 1 / 4
+            - generic [ref=e20] [box=322,61,75,24]: Foto base
+            - paragraph [ref=e21] [box=322,87,603,20]: Sube una imagen real y acepta el consentimiento privado
+        - generic [ref=e22] [box=945,52,331,41]:
+          - generic [ref=e23] [box=952,59,59,27]: Foto
+          - generic [ref=e24] [box=1017,59,75,27]: Perfil
+          - generic [ref=e25] [box=1098,59,90,27]: Objetivo
+          - generic [ref=e26] [box=1195,59,75,27]: Cierre
+      - generic [ref=e27] [box=142,0,1152,1152]:
+        - button "Choose File" [ref=e28] [box=165,143,1,1]
+        - generic [ref=e52] [box=166,144,1104,896]:
+          - generic [ref=e53] [box=215,193,1006,594]:
+            - generic [ref=e54] [box=215,193,463,594]:
+              - generic [ref=e55] [box=215,193,463,25]: Paso 1 · foto base
+              - heading "Sube una foto real. GENESIS prepara tu lectura inicial." [level=1] [ref=e56] [box=215,238,367,266]:
+                - text: Sube una foto real.
+                - text: GENESIS prepara tu lectura inicial.
+              - paragraph [ref=e57] [box=215,524,463,74]: Esta imagen no se usa para juzgarte. Se usa para entender tu punto de partida y generar una visualización aspiracional privada.
+              - generic [ref=e59] [box=236,643,421,123]:
+                - text: Contrato de experiencia
+                - paragraph [ref=e60] [box=236,675,421,91]: Esto no es un diagnóstico médico, una predicción exacta ni una evaluación clínica. Es una visualización aspiracional generada con IA para ayudarte a ver una dirección posible y decidir el siguiente paso con honestidad.
+            - generic [ref=e61] [box=709,193,511,594]:
+              - generic [ref=e62] [box=709,193,511,489]:
+                - generic [ref=e63] [box=730,214,469,71]
+                - generic [ref=e68] [cursor=pointer] [box=773,344,384,274]
+              - generic [ref=e93] [box=709,735,511,52]:
+                - button "Sube una foto para continuar" [disabled] [box=709,735,511,52]
+          - generic [ref=e94] [box=215,827,1006,164]:
+            - generic [ref=e96] [box=236,848,283,122]:
+              - img [ref=e98] [box=250,862,20,20]
+              - paragraph [ref=e101] [box=236,912,283,18]: Privado por diseño
+              - paragraph [ref=e102] [box=236,938,283,32]: Tu foto solo se usa para operar esta sesión y generar tu resultado privado.
+            - generic [ref=e104] [box=576,848,283,122]:
+              - img [ref=e106] [box=590,862,20,20]
+              - paragraph [ref=e109] [box=576,912,283,18]: Sin promesas mágicas
+              - paragraph [ref=e110] [box=576,938,283,32]: La imagen inspira. El sistema y la consistencia son lo que transforman.
+            - generic [ref=e112] [box=917,848,283,122]:
+              - img [ref=e114] [box=931,862,20,20]
+              - paragraph [ref=e117] [box=917,912,283,18]: Sin cuenta completa
+              - paragraph [ref=e118] [box=917,938,283,32]: Avanza sin fricción. El correo se confirma al final para guardar tu acceso.
+  - button "Open Next.js Dev Tools" [ref=e46] [cursor=pointer] [box=22,846,32,32]:
+    - img [ref=e47] [box=22,842,40,40]
+  - alert [ref=e50] [box=-1,1151,1,1]

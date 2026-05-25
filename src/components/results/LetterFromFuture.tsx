@@ -248,17 +248,7 @@ export function LetterFromFuture({
                     {onShare && (
                       <button
                         onClick={handleShare}
-                        className="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-full text-white font-bold uppercase tracking-[0.06em] transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97]"
-                        style={{
-                          backgroundColor: "var(--ngx-purple)",
-                          boxShadow: "var(--ngx-glow-primary)",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.boxShadow = "var(--ngx-glow-primary-strong)";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.boxShadow = "var(--ngx-glow-primary)";
-                        }}
+                        className="ngx-primary-cta inline-flex w-full px-6 py-4"
                       >
                         <Share2 className="w-5 h-5" />
                         <span>Compartir carta + transformación</span>

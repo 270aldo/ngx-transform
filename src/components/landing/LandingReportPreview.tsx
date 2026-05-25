@@ -22,7 +22,7 @@ const FALLBACK: ReportPreviewCopy = {
     "Buen punto para empezar, pero con riesgo de abandono si no hay estructura semanal.",
   dimensions: [],
   insights: [],
-  ctaLabel: "Ver mi punto de partida",
+  ctaLabel: "Iniciar mi scan",
   ctaHref: "/wizard",
   microcopy: "Ejemplo ilustrativo. Tu resultado se genera con tus datos.",
 };
@@ -71,13 +71,9 @@ const RISK_BADGE = {
 /**
  * LandingReportPreview — "Así debería sentirse tu resultado".
  *
- * Rediseñado en feat/landing-visual-polish:
- * - Sin wrapper ngx-section-panel (síndrome card-glass-purple eliminado)
- * - Cero ngx-metal-card anidadas — datos del producto fluyen como
- *   bloques editoriales separados por hairlines
- * - Tipografía del DS (ngx-h1 / ngx-h3) coherente con Hero
- * - Mantiene mockup fiel del producto (MuscleHealthScore + bottleneck
- *   + roadmap) pero presentado como editorial, no como dashboard apretado
+ * Una sola composición desktop: narrativa sticky a la izquierda y reporte
+ * agrupado a la derecha. Evita el doble split que dejaba aire muerto entre
+ * header, CTA y mockup.
  */
 export function LandingReportPreview() {
   const { config, trackCta } = useLandingConfig();
@@ -94,7 +90,7 @@ export function LandingReportPreview() {
   return (
     <section
       id="reporte-ejemplo"
-      className="relative w-full px-4 py-24 md:py-32 scroll-mt-24"
+      className="relative w-full px-4 pt-16 pb-24 md:pt-20 md:pb-28 scroll-mt-0"
     >
       {/* Vignetting purple suave — la sección está en el centro del landing,
           tono brand neutro */}
@@ -108,9 +104,9 @@ export function LandingReportPreview() {
       />
 
       <div className="relative mx-auto max-w-6xl">
-        {/* HEADER de sección — split asimétrico (mismo recipe que Bridge/Problem) */}
-        <div className="mb-16 grid gap-8 md:gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:items-end md:mb-20">
-          <div className="animate-on-scroll">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:items-start lg:gap-16">
+          {/* COLUMNA IZQUIERDA — narrativa sticky */}
+          <div className="animate-on-scroll-left lg:sticky lg:top-24">
             <div className="mb-6 flex items-center gap-3">
               <span
                 aria-hidden
@@ -124,25 +120,16 @@ export function LandingReportPreview() {
                 {copy.sectionLabel}
               </span>
             </div>
-            <h2 className="ngx-h1 !text-left">{copy.headline}</h2>
-          </div>
 
-          <p
-            className="animate-on-scroll delay-100 max-w-md text-base leading-relaxed text-white/62"
-            style={{
-              borderLeft: "1px solid rgba(255,255,255,0.10)",
-              paddingLeft: "1.25rem",
-            }}
-          >
-            {copy.subtitle}
-          </p>
-        </div>
+            <h2 className="ngx-h1 !text-left max-w-[12ch]">
+              {copy.headline}
+            </h2>
 
-        {/* CONTENIDO — split sticky narrative left + editorial data right */}
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-16 lg:items-start">
-          {/* COLUMNA IZQUIERDA — narrativa sticky (sin card) */}
-          <div className="order-2 lg:order-1 animate-on-scroll-left lg:sticky lg:top-24 flex flex-col gap-6">
-            <div>
+            <p className="mt-5 max-w-md text-base leading-relaxed text-white/62">
+              {copy.subtitle}
+            </p>
+
+            <div className="mt-10">
               <h3 className="ngx-h3 !text-left">
                 Una lectura inicial,
                 <br />
@@ -155,7 +142,7 @@ export function LandingReportPreview() {
               </p>
             </div>
 
-            <ul className="flex flex-col gap-2.5">
+            <ul className="mt-6 flex flex-col gap-2.5">
               {LEFT_BULLETS.map((bullet) => (
                 <li
                   key={bullet}
@@ -171,25 +158,13 @@ export function LandingReportPreview() {
               ))}
             </ul>
 
-            <div className="flex flex-col gap-3">
+            <div className="mt-8 flex flex-col gap-3">
               <Link
                 href={copy.ctaHref}
                 onClick={() =>
                   trackCta("report_preview_cta", "scan_start", copy.ctaLabel)
                 }
-                className="group inline-flex w-full items-center justify-center gap-2 rounded-full px-6 text-sm font-bold uppercase tracking-[0.06em] text-white transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97] sm:w-auto sm:min-w-[220px]"
-                style={{
-                  height: "52px",
-                  backgroundColor: "var(--ngx-purple)",
-                  boxShadow: "var(--ngx-glow-primary)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow =
-                    "var(--ngx-glow-primary-strong)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = "var(--ngx-glow-primary)";
-                }}
+                className="ngx-primary-cta group inline-flex w-full px-6 text-sm sm:w-auto sm:min-w-[220px]"
               >
                 <span>{copy.ctaLabel}</span>
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -200,12 +175,12 @@ export function LandingReportPreview() {
             </div>
           </div>
 
-          {/* COLUMNA DERECHA — datos del producto en stream editorial */}
-          <div className="order-1 lg:order-2 animate-on-scroll-right delay-100 space-y-12">
+          {/* COLUMNA DERECHA — reporte agrupado */}
+          <div className="animate-on-scroll-right delay-100 ngx-section-panel !p-0 overflow-hidden">
             {/* HERO STATS — score circular dominante + edad bio + metabolic */}
-            <div className="grid gap-8 md:grid-cols-[auto_minmax(0,1fr)] md:items-center md:gap-10">
+            <div className="grid gap-7 p-5 md:grid-cols-[auto_minmax(0,1fr)] md:items-center md:gap-8 md:p-7">
               {/* Score circular grande (sin card) */}
-              <div className="relative h-[160px] w-[160px] flex-shrink-0 mx-auto md:mx-0">
+              <div className="relative mx-auto h-[148px] w-[148px] flex-shrink-0 md:mx-0">
                 <svg
                   viewBox="0 0 144 144"
                   className="h-full w-full -rotate-90"
@@ -281,7 +256,7 @@ export function LandingReportPreview() {
             <Hairline />
 
             {/* BOTTLENECK */}
-            <div>
+            <div className="p-5 md:p-7">
               <div className="flex items-center gap-2 mb-3">
                 <Target
                   className="h-4 w-4"
@@ -305,7 +280,7 @@ export function LandingReportPreview() {
             <Hairline />
 
             {/* PALANCAS — palanca #1 destacada como "Empieza por aquí" */}
-            <div>
+            <div className="p-5 md:p-7">
               <div className="flex items-center gap-2 mb-5">
                 <CheckCircle2
                   className="h-4 w-4"
@@ -379,7 +354,7 @@ export function LandingReportPreview() {
             <Hairline />
 
             {/* ERROR DOMINANTE */}
-            <div className="flex items-start gap-4">
+            <div className="flex items-start gap-4 p-5 md:p-7">
               <span
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
                 style={{
@@ -406,7 +381,7 @@ export function LandingReportPreview() {
             <Hairline />
 
             {/* ROADMAP — timeline horizontal inline (no cards) */}
-            <div>
+            <div className="p-5 md:p-7">
               <span
                 className="font-mono text-[10px] uppercase tracking-[0.28em] block mb-5"
                 style={{ color: "rgba(184,148,255,0.7)" }}

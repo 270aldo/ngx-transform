@@ -26,9 +26,10 @@ export const jovenesCopy: VariantCopy = {
     },
     subtitle:
       "Sube una foto. GENESIS analiza tu punto de partida y te muestra una proyección aspiracional de lo que podrías construir por Seasons si dejas de improvisar y empiezas a entrenar con sistema.",
-    cta: "Escanear mi punto de partida",
+    punchline: "La imagen puede incomodarte. Bien. Ese es el punto de partida honesto.",
+    cta: "Iniciar mi scan",
     primaryCta: {
-      label: "Escanear mi punto de partida",
+      label: "Iniciar mi scan",
       intent: "scan_start",
     },
     secondaryCta: "Cómo funciona",
@@ -138,7 +139,7 @@ export const jovenesCopy: VariantCopy = {
     headline: "Deja de coleccionar intentos.",
     subtitle:
       "Haz el scan, mira tu punto de partida y decide si vas a seguir improvisando o vas a construir una temporada con sistema.",
-    buttonText: "Ver mi scan",
+    buttonText: "Iniciar mi scan",
     footnote: "Visualización aspiracional. El resultado depende de ejecución real.",
   },
 

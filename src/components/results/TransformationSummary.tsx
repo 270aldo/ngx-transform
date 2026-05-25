@@ -139,14 +139,14 @@ export function TransformationSummary({
       <div className="mx-auto max-w-5xl">
         <div className="ngx-section-panel">
           <div
-            className="absolute inset-0 opacity-25 pointer-events-none"
+            className="absolute inset-0 opacity-[0.16] pointer-events-none"
             style={{
               backgroundImage: "url('/images/backgrounds/results-abstract.svg')",
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
           />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(109,0,255,0.12),transparent_32%),radial-gradient(circle_at_82%_22%,rgba(184,148,255,0.08),transparent_22%)] pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(109,0,255,0.06),transparent_34%)] pointer-events-none" />
 
           <div className="relative z-10 grid gap-8 lg:grid-cols-[minmax(0,0.84fr)_minmax(0,1.16fr)] lg:items-start">
             <div>
@@ -329,11 +329,7 @@ export function TransformationSummary({
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}
                 onClick={handleCTAClick}
-                className="mt-6 inline-flex min-h-[54px] w-full items-center justify-center gap-3 rounded-full px-5 py-4 text-white text-sm font-bold uppercase tracking-[0.06em] transition-all duration-150 hover:-translate-y-0.5"
-                style={{
-                  backgroundColor: 'var(--ngx-purple)',
-                  boxShadow: 'var(--ngx-glow-primary)',
-                }}
+                className="ngx-primary-cta mt-6 inline-flex w-full px-5 py-4 text-sm"
               >
                 <Sparkles className="h-4 w-4" />
                 <span>Ver el roadmap de temporada</span>

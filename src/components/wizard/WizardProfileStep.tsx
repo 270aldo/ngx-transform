@@ -1,7 +1,6 @@
 "use client";
 
 import type { UseFormRegister, UseFormSetValue, UseFormWatch } from "react-hook-form";
-import { cn } from "@/lib/utils";
 import { CyberSlider } from "@/components/CyberSlider";
 import { EliteOptionCard } from "@/components/EliteOptionCard";
 import type { WizardFormValues } from "./wizardSchema";
@@ -64,12 +63,8 @@ export function WizardProfileStep({ register, watch, setValue }: WizardProfileSt
                   key={s}
                   type="button"
                   onClick={() => setValue("sex", s)}
-                  className={cn(
-                    "py-3 rounded-xl border text-[10px] font-mono uppercase tracking-[0.18em] transition-all duration-150",
-                    watch("sex") === s
-                      ? "bg-[var(--ngx-purple)] text-white border-[var(--ngx-purple)] shadow-[var(--ngx-glow-primary-soft)]"
-                      : "bg-white/[0.03] text-white/45 border-[color:var(--ngx-border-subtle)] hover:border-white/20 hover:text-white/70"
-                  )}
+                  data-selected={watch("sex") === s}
+                  className="ngx-choice-button py-3 text-[10px] font-mono uppercase tracking-[0.18em]"
                 >
                   {s === "male" ? "Masculino" : "Femenino"}
                 </button>

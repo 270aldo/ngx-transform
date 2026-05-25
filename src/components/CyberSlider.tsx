@@ -40,11 +40,11 @@ export function CyberSlider({
     red: "linear-gradient(90deg, var(--ngx-error), #FF8B95)",
   };
   const trackGlow: Record<NonNullable<CyberSliderProps["trackColor"]>, string> = {
-    violet: "0 0 16px rgba(109, 0, 255, 0.40)",
-    emerald: "0 0 16px rgba(0, 245, 170, 0.35)",
-    amber: "0 0 16px rgba(255, 217, 61, 0.30)",
-    blue: "0 0 16px rgba(33, 150, 243, 0.30)",
-    red: "0 0 16px rgba(255, 107, 107, 0.30)",
+    violet: "0 0 10px rgba(109, 0, 255, 0.24)",
+    emerald: "0 0 10px rgba(0, 245, 170, 0.22)",
+    amber: "0 0 10px rgba(255, 217, 61, 0.20)",
+    blue: "0 0 10px rgba(33, 150, 243, 0.20)",
+    red: "0 0 10px rgba(255, 107, 107, 0.20)",
   };
   const valueColor: Record<NonNullable<CyberSliderProps["trackColor"]>, string> = {
     violet: "var(--ngx-purple-light)",
@@ -64,7 +64,7 @@ export function CyberSlider({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-white/[0.06] bg-white/[0.02] px-4 py-4 transition-colors hover:border-white/[0.10]",
+        "rounded-[var(--ngx-r-card)] border border-white/[0.08] bg-white/[0.03] px-4 py-4 transition-colors hover:border-white/[0.13]",
         className
       )}
     >
@@ -79,7 +79,7 @@ export function CyberSlider({
         </div>
         <div className="flex items-baseline gap-1.5">
           <span
-            className="font-mono font-bold text-2xl md:text-[1.65rem] tabular-nums leading-none tracking-[-0.02em]"
+            className="font-mono font-bold text-2xl md:text-[1.65rem] tabular-nums leading-none tracking-normal"
             style={{ color: valueColor[trackColor] }}
           >
             {valueDisplay ?? props.value}

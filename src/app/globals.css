@@ -142,15 +142,15 @@
   --ngx-agent-vision: #E91E63;
 
   /* Surfaces */
-  --ngx-surface-card:     rgba(10, 10, 10, 0.85);
-  --ngx-surface-elevated: rgba(20, 20, 25, 0.60);
-  --ngx-surface-glass:    rgba(20, 20, 25, 0.40);
+  --ngx-surface-card:     rgba(16, 16, 19, 0.92);
+  --ngx-surface-elevated: rgba(24, 24, 28, 0.88);
+  --ngx-surface-glass:    rgba(18, 18, 22, 0.78);
 
   /* Liquid-glass */
-  --ngx-glass-clear-bg:       rgba(255, 255, 255, 0.06);
-  --ngx-glass-clear-border:   rgba(255, 255, 255, 0.08);
-  --ngx-glass-regular-bg:     rgba(255, 255, 255, 0.04);
-  --ngx-glass-regular-border: rgba(255, 255, 255, 0.06);
+  --ngx-glass-clear-bg:       rgba(19, 19, 23, 0.74);
+  --ngx-glass-clear-border:   rgba(255, 255, 255, 0.095);
+  --ngx-glass-regular-bg:     rgba(16, 16, 20, 0.82);
+  --ngx-glass-regular-border: rgba(255, 255, 255, 0.085);
 
   /* Foregrounds */
   --ngx-fg-1: #FFFFFF;
@@ -165,16 +165,16 @@
   /* Borders */
   --ngx-border-subtle: rgba(255, 255, 255, 0.08);
   --ngx-border-active: rgba(109, 0, 255, 0.40);
-  --ngx-border-card:   rgba(109, 0, 255, 0.15);
+  --ngx-border-card:   rgba(109, 0, 255, 0.18);
 
   /* Radii */
   --ngx-r-micro:  4px;
   --ngx-r-bar:    6px;
   --ngx-r-chip:   12px;
-  --ngx-r-button: 14px;
-  --ngx-r-card:   16px;
-  --ngx-r-lg:     20px;
-  --ngx-r-xl:     24px;
+  --ngx-r-button: 12px;
+  --ngx-r-card:   12px;
+  --ngx-r-lg:     14px;
+  --ngx-r-xl:     18px;
   --ngx-r-pill:   9999px;
 
   /* Spacing */
@@ -187,14 +187,14 @@
 
   /* Shadows / glows */
   --ngx-shadow-glass:
-    0 8px 24px rgba(0, 0, 0, 0.55),
-    0 1px 0 rgba(255, 255, 255, 0.04) inset;
+    0 14px 34px rgba(0, 0, 0, 0.42),
+    0 1px 0 rgba(255, 255, 255, 0.045) inset;
   --ngx-shadow-card:
-    0 4px 12px rgba(0, 0, 0, 0.4),
-    0 1px 0 rgba(255, 255, 255, 0.05) inset;
-  --ngx-glow-primary:      0 8px 24px rgba(109, 0, 255, 0.35);
-  --ngx-glow-primary-soft: 0 4px 12px rgba(109, 0, 255, 0.15);
-  --ngx-glow-primary-strong: 0 12px 32px rgba(109, 0, 255, 0.50);
+    0 12px 30px rgba(0, 0, 0, 0.34),
+    0 1px 0 rgba(255, 255, 255, 0.045) inset;
+  --ngx-glow-primary:      0 14px 36px rgba(109, 0, 255, 0.42);
+  --ngx-glow-primary-soft: 0 8px 24px rgba(109, 0, 255, 0.24);
+  --ngx-glow-primary-strong: 0 18px 56px rgba(109, 0, 255, 0.58);
   --ngx-glow-success: 0 8px 24px rgba(0, 245, 170, 0.25);
   --ngx-glow-warning: 0 8px 24px rgba(249, 115, 22, 0.25);
   --ngx-glow-error:   0 8px 24px rgba(255, 107, 107, 0.25);
@@ -210,37 +210,12 @@
   --ngx-ease-std:    cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Type families */
-  --ngx-font-display: "United Sans Cond", "United Sans", "Oswald", "Impact",
+  --ngx-font-display: "United Sans Cond", "Oswald", "Impact",
                       "Helvetica Neue", sans-serif;
-  --ngx-font-body:    "Inter", var(--font-inter), "Neue Haas Grotesk",
+  --ngx-font-body:    "Inter", var(--font-inter),
                       "Helvetica Neue", "Arial", sans-serif;
   --ngx-font-mono:    var(--font-jetbrains), "JetBrains Mono", "SF Mono",
                       ui-monospace, Menlo, Consolas, monospace;
-}
-
-/* Self-hosted fonts (supply files in /public/fonts) */
-@font-face {
-  font-family: "Neue Haas Grotesk Text Pro";
-  src: local("Neue Haas Grotesk Text Pro"),
-       url("/fonts/NeueHaasGroteskTextPro-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Neue Haas Grotesk Text Pro";
-  src: local("Neue Haas Grotesk Text Pro Medium"),
-       url("/fonts/NeueHaasGroteskTextPro-Medium.woff2") format("woff2");
-  font-weight: 500 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "United Sans";
-  src: local("United Sans"), url("/fonts/UnitedSans-Bold.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
 }
 
 @theme inline {
@@ -342,23 +317,20 @@ h1, h2, h3, h4, h5, h6 {
 
 .landing-surface {
   background:
-    linear-gradient(180deg, rgba(18, 18, 22, 0.9), rgba(8, 8, 10, 0.94)),
-    radial-gradient(circle at top, rgba(109, 0, 255, 0.08), transparent 60%);
+    linear-gradient(180deg, rgba(22, 22, 26, 0.88), rgba(10, 10, 12, 0.94));
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 20px 60px rgba(0, 0, 0, 0.35);
+    0 16px 44px rgba(0, 0, 0, 0.34);
 }
 
 .landing-surface-strong {
   background:
-    linear-gradient(180deg, rgba(14, 14, 18, 0.96), rgba(6, 6, 8, 0.98)),
-    radial-gradient(circle at 20% 20%, rgba(109, 0, 255, 0.16), transparent 45%),
-    radial-gradient(circle at 80% 20%, rgba(184, 148, 255, 0.08), transparent 30%);
+    linear-gradient(180deg, rgba(18, 18, 22, 0.96), rgba(7, 7, 9, 0.98));
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 25px 80px rgba(0, 0, 0, 0.46);
+    0 22px 64px rgba(0, 0, 0, 0.44);
 }
 
 .landing-divider {
@@ -373,17 +345,17 @@ h1, h2, h3, h4, h5, h6 {
   content: "";
   position: absolute;
   inset: -10% -10% 0 -10%;
-  background: radial-gradient(60% 40% at 50% 0%, rgba(109,0,255,0.12), transparent 60%),
-              radial-gradient(40% 40% at 80% 20%, rgba(91,33,182,0.10), transparent 60%);
+  background: radial-gradient(60% 40% at 50% 0%, rgba(109,0,255,0.075), transparent 62%),
+              radial-gradient(40% 40% at 80% 20%, rgba(91,33,182,0.055), transparent 64%);
   filter: blur(40px);
   pointer-events: none;
 }
 
 .card {
-  background: linear-gradient(180deg, rgba(18,18,18,0.9), rgba(10,10,10,0.9));
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 10px 30px rgba(0,0,0,0.35);
+  background: linear-gradient(180deg, rgba(20,20,23,0.92), rgba(11,11,13,0.94));
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.035) inset, 0 12px 30px rgba(0,0,0,0.32);
 }
 
 .hr-soft {
@@ -655,7 +627,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 900;
   font-size: clamp(56px, 9vw, 120px);
   line-height: 0.9;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   text-transform: uppercase;
   color: var(--ngx-fg-1);
 }
@@ -735,24 +707,29 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Liquid glass surfaces */
 .ngx-glass {
-  background: var(--ngx-glass-regular-bg);
-  backdrop-filter: blur(24px) saturate(150%);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
-  border: 1px solid var(--ngx-glass-regular-border);
+  background:
+    radial-gradient(620px 420px at 8% -12%, rgba(109, 0, 255, 0.12), transparent 58%),
+    var(--ngx-glass-regular-bg);
+  backdrop-filter: blur(14px) saturate(125%);
+  -webkit-backdrop-filter: blur(14px) saturate(125%);
+  border: 1px solid rgba(109, 0, 255, 0.14);
   border-radius: var(--ngx-r-card);
+  box-shadow:
+    var(--ngx-shadow-card),
+    0 0 28px rgba(109, 0, 255, 0.08);
 }
 .ngx-glass-clear {
   background: var(--ngx-glass-clear-bg);
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(120%);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
   border: 1px solid var(--ngx-glass-clear-border);
   border-radius: var(--ngx-r-card);
 }
 .ngx-glass-tinted {
-  background: rgba(109, 0, 255, 0.08);
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
-  border: 1px solid rgba(109, 0, 255, 0.25);
+  background: rgba(109, 0, 255, 0.10);
+  backdrop-filter: blur(12px) saturate(120%);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
+  border: 1px solid rgba(109, 0, 255, 0.22);
   border-radius: var(--ngx-r-card);
 }
 
@@ -846,7 +823,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 800;
   font-size: clamp(2rem, 4.5vw, 3rem);
   line-height: 1.0;
-  letter-spacing: -0.005em;
+  letter-spacing: 0;
   text-transform: uppercase;
   color: var(--ngx-fg-1);
   max-width: 22ch;
@@ -857,7 +834,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   font-size: clamp(1.75rem, 4vw, 2.5rem);
   line-height: 1.1;
-  letter-spacing: -0.025em;
+  letter-spacing: 0;
   color: var(--ngx-fg-1);
   max-width: 24ch;
 }
@@ -868,14 +845,14 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   padding: 0.25rem 0.75rem;
   border-radius: var(--ngx-r-pill);
-  background: var(--ngx-purple-dim);
-  border: 1px solid rgba(109, 0, 255, 0.20);
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.10);
   font-family: var(--ngx-font-body);
   font-weight: 700;
   font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--ngx-purple-light);
+  color: rgba(232, 232, 232, 0.76);
   margin-bottom: 1.25rem;
 }
 /* Variants for sections that need a non-purple accent */
@@ -900,11 +877,13 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
   display: flex;
   flex-direction: column;
-  background: var(--ngx-glass-regular-bg);
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
-  border: 1px solid var(--ngx-border-subtle);
-  border-radius: var(--ngx-r-lg); /* 20px */
+  background:
+    radial-gradient(720px 420px at 14% -10%, rgba(109, 0, 255, 0.18), transparent 58%),
+    linear-gradient(180deg, rgba(22, 22, 28, 0.92), rgba(10, 10, 13, 0.96));
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgba(109, 0, 255, 0.16);
+  border-radius: var(--ngx-r-card);
   padding: 1.25rem; /* mobile */
   transition: border-color var(--ngx-dur-short) var(--ngx-ease-std),
               transform var(--ngx-dur-short) var(--ngx-ease-std),
@@ -914,9 +893,11 @@ h1, h2, h3, h4, h5, h6 {
   .ngx-card { padding: 1.75rem; }
 }
 .ngx-card:hover {
-  border-color: var(--ngx-border-active);
+  border-color: rgba(157, 78, 221, 0.42);
   transform: translateY(-2px);
-  box-shadow: var(--ngx-glow-primary-soft);
+  box-shadow:
+    var(--ngx-shadow-card),
+    0 0 32px rgba(109, 0, 255, 0.18);
 }
 
 /* Generic icon-box — sizeless purple chip; component sets h/w via Tailwind */
@@ -924,10 +905,12 @@ h1, h2, h3, h4, h5, h6 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--ngx-r-card);
-  background: var(--ngx-purple-dim);
+  border-radius: var(--ngx-r-chip);
+  background:
+    linear-gradient(180deg, rgba(109, 0, 255, 0.18), rgba(109, 0, 255, 0.08));
   border: 1px solid var(--ngx-border-card);
   color: var(--ngx-purple-light);
+  box-shadow: 0 0 18px rgba(109, 0, 255, 0.16);
   flex-shrink: 0;
 }
 
@@ -939,9 +922,11 @@ h1, h2, h3, h4, h5, h6 {
   width: 3rem;
   height: 3rem;
   border-radius: var(--ngx-r-chip);
-  background: var(--ngx-purple-dim);
+  background:
+    linear-gradient(180deg, rgba(109, 0, 255, 0.20), rgba(109, 0, 255, 0.08));
   border: 1px solid var(--ngx-border-card);
   color: var(--ngx-purple-light);
+  box-shadow: 0 0 22px rgba(109, 0, 255, 0.16);
   flex-shrink: 0;
 }
 .ngx-card-icon[data-accent="red"] {
@@ -961,7 +946,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   font-size: 1.0625rem; /* 17px */
   line-height: 1.2;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   color: var(--ngx-fg-1);
 }
 .ngx-card-desc {
@@ -1002,17 +987,111 @@ h1, h2, h3, h4, h5, h6 {
   .ngx-card-grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
+/* Buttons and selectable controls */
+.ngx-primary-cta {
+  min-height: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  border-radius: var(--ngx-r-pill);
+  background: linear-gradient(180deg, #7D1AFF 0%, var(--ngx-purple) 100%);
+  color: white;
+  border: 1px solid rgba(184, 148, 255, 0.22);
+  box-shadow: var(--ngx-glow-primary);
+  font-family: var(--ngx-font-body);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition:
+    transform 160ms var(--ngx-ease-out),
+    box-shadow 160ms var(--ngx-ease-out),
+    border-color 160ms var(--ngx-ease-out),
+    opacity 160ms var(--ngx-ease-out);
+}
+.ngx-primary-cta:hover {
+  transform: translateY(-1px);
+  border-color: rgba(184, 148, 255, 0.34);
+  box-shadow: var(--ngx-glow-primary-strong);
+}
+.ngx-primary-cta:active {
+  transform: scale(0.98);
+}
+.ngx-primary-cta:disabled,
+.ngx-primary-cta[aria-disabled="true"] {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.32);
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.ngx-secondary-cta {
+  min-height: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  border-radius: var(--ngx-r-pill);
+  background: rgba(255, 255, 255, 0.045);
+  color: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.105);
+  font-family: var(--ngx-font-body);
+  font-weight: 750;
+  transition:
+    transform 160ms var(--ngx-ease-out),
+    background 160ms var(--ngx-ease-out),
+    border-color 160ms var(--ngx-ease-out);
+}
+.ngx-secondary-cta:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+.ngx-secondary-cta:active {
+  transform: scale(0.98);
+}
+
+.ngx-choice-button {
+  border-radius: var(--ngx-r-card);
+  border: 1px solid var(--ngx-border-subtle);
+  background: rgba(255, 255, 255, 0.035);
+  color: rgba(255, 255, 255, 0.58);
+  transition:
+    transform 140ms var(--ngx-ease-out),
+    border-color 140ms var(--ngx-ease-out),
+    background 140ms var(--ngx-ease-out),
+    color 140ms var(--ngx-ease-out),
+    box-shadow 140ms var(--ngx-ease-out);
+}
+.ngx-choice-button:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.055);
+}
+.ngx-choice-button[data-selected="true"] {
+  background:
+    linear-gradient(180deg, rgba(109, 0, 255, 0.34), rgba(109, 0, 255, 0.18));
+  border-color: rgba(184, 148, 255, 0.62);
+  color: white;
+  box-shadow:
+    var(--ngx-glow-primary-soft),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
 /* Section panel — wraps a section in a single glass card (CTA, Stats inner, Bridge, ReportPreview) */
 .ngx-section-panel {
   position: relative;
   overflow: hidden;
-  border-radius: clamp(20px, 3vw, 32px);
+  border-radius: clamp(16px, 2vw, 22px);
   background:
-    radial-gradient(800px 600px at 15% 0%, rgba(109, 0, 255, 0.16), transparent 60%),
-    var(--ngx-glass-regular-bg);
-  backdrop-filter: blur(24px) saturate(150%);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
-  border: 1px solid var(--ngx-border-subtle);
+    radial-gradient(900px 620px at 8% -12%, rgba(109, 0, 255, 0.20), transparent 60%),
+    linear-gradient(180deg, rgba(20, 20, 26, 0.90), rgba(7, 7, 10, 0.96));
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgba(109, 0, 255, 0.16);
+  box-shadow:
+    var(--ngx-shadow-card),
+    0 0 48px rgba(109, 0, 255, 0.08);
   padding: 1.5rem;
 }
 @media (min-width: 768px) {
@@ -1039,16 +1118,16 @@ section[id] {
 .ngx-metal-card {
   position: relative;
   overflow: hidden;
-  border-radius: var(--ngx-r-xl);
+  border-radius: var(--ngx-r-lg);
   background:
-    linear-gradient(145deg, rgba(24, 24, 30, 0.94) 0%, rgba(8, 8, 11, 0.98) 45%, rgba(32, 32, 38, 0.88) 100%),
-    radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.08), transparent 32%),
-    radial-gradient(circle at 80% 100%, rgba(109, 0, 255, 0.12), transparent 36%);
-  border: 1px solid rgba(255, 255, 255, 0.085);
+    linear-gradient(145deg, rgba(26, 24, 34, 0.96) 0%, rgba(9, 9, 13, 0.98) 48%, rgba(31, 23, 45, 0.94) 100%),
+    radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.08), transparent 34%),
+    radial-gradient(circle at 82% 100%, rgba(109, 0, 255, 0.22), transparent 38%);
+  border: 1px solid rgba(157, 78, 221, 0.18);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.07),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.025),
-    0 18px 50px rgba(0, 0, 0, 0.36);
+    inset 0 1px 0 rgba(255, 255, 255, 0.075),
+    0 16px 44px rgba(0, 0, 0, 0.36),
+    0 0 34px rgba(109, 0, 255, 0.10);
   transition:
     transform 220ms var(--ngx-ease-out),
     border-color 220ms var(--ngx-ease-out),
@@ -1059,25 +1138,11 @@ section[id] {
 .ngx-metal-card::before {
   content: "";
   position: absolute;
-  inset: -40%;
+  inset: 0;
   background:
-    linear-gradient(
-      115deg,
-      transparent 0%,
-      transparent 34%,
-      rgba(255, 255, 255, 0.06) 40%,
-      rgba(232, 232, 232, 0.22) 46%,
-      rgba(109, 0, 255, 0.22) 50%,
-      rgba(192, 192, 192, 0.18) 55%,
-      transparent 64%,
-      transparent 100%
-    );
-  transform: translateX(-72%) rotate(0deg);
-  opacity: 0;
+    linear-gradient(115deg, transparent 0%, transparent 36%, rgba(232, 232, 232, 0.12) 47%, rgba(109, 0, 255, 0.20) 52%, transparent 64%, transparent 100%);
+  opacity: 0.58;
   pointer-events: none;
-  transition:
-    transform 700ms var(--ngx-ease-out),
-    opacity 220ms var(--ngx-ease-out);
 }
 
 .ngx-metal-card::after {
@@ -1087,25 +1152,19 @@ section[id] {
   pointer-events: none;
   border-radius: inherit;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 30%),
     radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.08), transparent 42%);
-  opacity: 0.55;
+  opacity: 0.62;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .ngx-metal-card:hover {
-    transform: translateY(-5px);
-    border-color: rgba(232, 232, 232, 0.18);
+    transform: translateY(-4px);
+    border-color: rgba(184, 148, 255, 0.32);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.12),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.04),
-      0 24px 70px rgba(0, 0, 0, 0.48),
-      0 0 34px rgba(109, 0, 255, 0.18);
-  }
-
-  .ngx-metal-card:hover::before {
-    opacity: 1;
-    transform: translateX(72%) rotate(0deg);
+      inset 0 1px 0 rgba(255, 255, 255, 0.11),
+      0 22px 62px rgba(0, 0, 0, 0.46),
+      0 0 42px rgba(109, 0, 255, 0.18);
   }
 }
 
@@ -1116,12 +1175,12 @@ section[id] {
 .ngx-process-card {
   position: relative;
   overflow: hidden;
-  border-radius: 24px;
+  border-radius: 16px;
   padding: 24px;
   background:
-    linear-gradient(145deg, rgba(20, 20, 26, 0.92), rgba(7, 7, 10, 0.98)),
-    radial-gradient(circle at 0% 0%, rgba(109, 0, 255, 0.12), transparent 38%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+    radial-gradient(640px 420px at 0% 0%, rgba(109, 0, 255, 0.14), transparent 44%),
+    linear-gradient(145deg, rgba(22, 22, 28, 0.94), rgba(8, 8, 11, 0.98));
+  border: 1px solid rgba(109, 0, 255, 0.16);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
     0 18px 48px rgba(0, 0, 0, 0.34);
@@ -1144,8 +1203,8 @@ section[id] {
   letter-spacing: 0.22em;
   color: var(--ngx-purple-light);
   text-transform: uppercase;
-  border: 1px solid rgba(109, 0, 255, 0.28);
-  background: rgba(109, 0, 255, 0.10);
+  border: 1px solid rgba(109, 0, 255, 0.32);
+  background: rgba(109, 0, 255, 0.12);
   border-radius: 9999px;
   padding: 7px 10px;
   white-space: nowrap;
@@ -1158,7 +1217,7 @@ section[id] {
 
 .ngx-trust-panel {
   background:
-    linear-gradient(145deg, rgba(16, 16, 22, 0.94), rgba(6, 6, 8, 0.98)),
     radial-gradient(circle at 0% 0%, rgba(0, 245, 170, 0.08), transparent 32%),
-    radial-gradient(circle at 100% 100%, rgba(109, 0, 255, 0.12), transparent 40%);
+    radial-gradient(circle at 100% 100%, rgba(109, 0, 255, 0.14), transparent 42%),
+    linear-gradient(145deg, rgba(16, 16, 22, 0.94), rgba(6, 6, 8, 0.98));
 }

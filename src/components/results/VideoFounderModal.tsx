@@ -364,11 +364,7 @@ function VideoPlaceholder({
           {onCalendly && (
             <button
               onClick={onCalendly}
-              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold uppercase tracking-[0.06em] text-white transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97]"
-              style={{
-                backgroundColor: "var(--ngx-purple)",
-                boxShadow: "var(--ngx-glow-primary)",
-              }}
+              className="ngx-primary-cta inline-flex !min-h-[44px] px-5 py-2.5 text-sm"
             >
               <Calendar className="h-4 w-4" />
               Agendar llamada

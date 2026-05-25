@@ -1,5 +1,14 @@
 # Release Checklist
 
+## Estado local verificado
+- [x] `pnpm lint`
+- [x] `pnpm test` (25 archivos, 98 tests)
+- [x] `pnpm build` (39 rutas)
+- [x] `/api/health` responde en local con Firebase, Redis y Gemini configurados
+- [x] QA visual local de landing, wizard y resultados con capturas desktop/mobile
+
+> Los checks marcados abajo siguen pendientes de confirmación en producción/Vercel o requieren datos legales/comerciales externos.
+
 ## Seguridad y privacidad
 - [ ] `FF_DELETE_TOKEN_REQUIRED=true` en prod
 - [ ] Clientes usan `X-Delete-Token` (no query params) para borrado
@@ -36,7 +45,7 @@
 - [ ] Alertas externas (Sentry/Logtail/Datadog) conectadas
 
 ## QA
-- [ ] `npm run test:auth` (si hay tokens)
-- [ ] `npm run test:smoke`
+- [ ] `pnpm test:auth` (si hay tokens)
+- [ ] `pnpm test:smoke`
 - [ ] Smoke manual de wizard y share
 - [ ] Landing y CTAs alineados con auth-before-wizard (`/auth?next=/wizard`)

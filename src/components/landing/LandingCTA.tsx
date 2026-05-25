@@ -88,23 +88,8 @@ export function LandingCTA() {
             <Link
               href="/wizard"
               onClick={() => trackCta("final_cta", cta.intent, cta.buttonText)}
-              className="group relative inline-flex items-center gap-3 rounded-full text-white font-bold uppercase tracking-[0.08em] transition-all duration-200 hover:-translate-y-1 active:scale-[0.97]"
-              style={{
-                height: "64px",
-                paddingInline: "2.5rem",
-                fontSize: "0.95rem",
-                backgroundColor: "var(--ngx-purple)",
-                boxShadow:
-                  "0 0 0 1px rgba(184,148,255,0.20), 0 18px 50px -8px rgba(109,0,255,0.55), 0 0 80px -10px rgba(184,148,255,0.40)",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow =
-                  "0 0 0 1px rgba(184,148,255,0.32), 0 24px 64px -8px rgba(109,0,255,0.70), 0 0 110px -10px rgba(184,148,255,0.55)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow =
-                  "0 0 0 1px rgba(184,148,255,0.20), 0 18px 50px -8px rgba(109,0,255,0.55), 0 0 80px -10px rgba(184,148,255,0.40)";
-              }}
+              className="ngx-primary-cta group inline-flex px-10 text-[0.95rem]"
+              style={{ minHeight: "64px" }}
             >
               <span>{cta.buttonText}</span>
               <ArrowRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />

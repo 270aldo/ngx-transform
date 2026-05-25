@@ -89,7 +89,7 @@ export function HybridOfferSection({ shareId, cohorteInfo }: HybridOfferSectionP
         transition={{ duration: 0.55, ease: "easeOut" }}
         className="ngx-section-panel"
       >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(109,0,255,0.14),transparent_34%),radial-gradient(circle_at_88%_25%,rgba(184,148,255,0.08),transparent_24%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(109,0,255,0.06),transparent_36%)] pointer-events-none" />
 
         <div className="relative z-10 grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(340px,0.85fr)]">
           <div>
@@ -195,11 +195,7 @@ export function HybridOfferSection({ shareId, cohorteInfo }: HybridOfferSectionP
               <div className="mt-5 grid gap-3">
                 <button
                   onClick={onCalendly}
-                  className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full px-5 py-4 text-sm font-bold uppercase tracking-[0.06em] text-white transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97]"
-                  style={{
-                    backgroundColor: "var(--ngx-purple)",
-                    boxShadow: "var(--ngx-glow-primary)",
-                  }}
+                  className="ngx-primary-cta inline-flex px-5 py-4 text-sm"
                 >
                   <CalendarDays className="h-4 w-4" />
                   Ver si HYBRID es fit

@@ -1,0 +1,161 @@
+- generic [active] [ref=e1] [box=0,0,1435,1672]:
+  - main [ref=e2] [box=0,0,1435,1672]:
+    - main [ref=e4] [box=0,0,1435,1672]:
+      - generic [ref=e5] [box=0,0,1435,1672]:
+        - generic [ref=e7] [box=382,16,672,75]:
+          - generic [ref=e8] [box=382,16,672,25]:
+            - generic [ref=e9] [box=382,19,145,20]:
+              - img [ref=e10] [box=382,21,16,16]
+              - generic [ref=e12] [box=406,19,121,20]: Tu Plan de 7 Días
+            - generic [ref=e13] [box=899,16,154,25]: 1/7 Desbloqueado
+          - generic [ref=e14] [box=382,57,672,34]:
+            - button [disabled] [ref=e15] [box=382,57,34,34]:
+              - img [ref=e16] [box=391,66,16,16]
+            - generic [ref=e18] [box=560,60,315,28]:
+              - button "1" [ref=e19] [box=560,60,29,28]
+              - button "2" [ref=e20] [box=593,60,44,28]:
+                - text: "2"
+                - img [ref=e21] [box=617,71,8,8]
+              - button "3" [ref=e24] [box=641,60,44,28]:
+                - text: "3"
+                - img [ref=e25] [box=665,71,8,8]
+              - button "4" [ref=e28] [box=689,60,44,28]:
+                - text: "4"
+                - img [ref=e29] [box=713,71,8,8]
+              - button "5" [ref=e32] [box=737,60,43,28]:
+                - text: "5"
+                - img [ref=e33] [box=760,71,8,8]
+              - button "6" [ref=e36] [box=784,60,44,28]:
+                - text: "6"
+                - img [ref=e37] [box=808,71,8,8]
+              - button "7" [ref=e40] [box=832,60,43,28]:
+                - text: "7"
+                - img [ref=e41] [box=855,71,8,8]
+            - button [ref=e44] [box=1020,57,34,34]:
+              - img [ref=e45] [box=1029,66,16,16]
+        - generic [ref=e49] [box=382,124,672,1392]:
+          - generic [ref=e50] [box=382,124,672,52]:
+            - heading "Día 1 - GÉNESIS" [level=2] [ref=e51] [box=382,124,672,28]
+            - paragraph [ref=e52] [box=382,156,672,20]: Tu transformación comienza hoy
+          - generic [ref=e53] [box=382,200,672,450]:
+            - generic [ref=e54] [box=382,200,672,16]:
+              - img [ref=e55] [box=382,201,14,14]
+              - generic [ref=e61] [box=404,200,121,16]: Entrenamiento
+            - generic [ref=e63] [box=403,249,630,364]:
+              - generic [ref=e64] [box=403,249,630,26]:
+                - img [ref=e66] [box=410,256,12,12]
+                - generic [ref=e74] [box=437,255,136,15]: GENESIS · Coach IA
+              - generic [ref=e75] [box=403,291,630,44]:
+                - generic [ref=e76] [box=403,291,192,44]
+                - generic [ref=e78] [box=970,291,63,23]
+              - generic [ref=e82] [box=403,351,630,16]:
+                - generic [ref=e83] [box=403,351,55,16]
+                - generic [ref=e88] [box=473,351,65,16]
+              - generic [ref=e92] [box=403,383,630,156]:
+                - generic [ref=e93] [box=403,383,630,39]
+                - generic [ref=e97] [box=403,430,630,39]
+                - generic [ref=e101] [box=403,477,630,39]
+                - generic [ref=e105] [box=403,524,630,15]: +2 ejercicios más
+              - generic [ref=e106] [box=403,555,630,58]:
+                - img [ref=e107] [box=416,571,12,12]
+                - text: Mantén 60-90 segundos de descanso entre series para maximizar la hipertrofia. Enfócate en la conexión mente-músculo.
+          - generic [ref=e113] [box=382,666,672,358]:
+            - generic [ref=e114] [box=382,666,672,16]:
+              - img [ref=e115] [box=382,667,14,14]
+              - generic [ref=e118] [box=404,666,79,16]: Nutrición
+            - generic [ref=e120] [box=403,715,630,272]:
+              - generic [ref=e121] [box=403,715,630,26]:
+                - img [ref=e123] [box=410,722,12,12]
+                - generic [ref=e131] [box=437,721,136,15]: GENESIS · Coach IA
+              - generic [ref=e132] [box=403,757,630,20]:
+                - generic [ref=e133] [box=403,757,214,20]
+                - generic [ref=e138] [box=948,759,84,16]: 2200 kcal total
+              - generic [ref=e139] [box=403,793,630,194]:
+                - generic [ref=e140] [box=403,793,630,32]
+                - generic [ref=e144] [box=403,833,630,34]
+                - generic [ref=e148] [box=403,875,630,32]
+                - generic [ref=e152] [box=403,915,630,32]
+                - generic [ref=e156] [box=403,955,630,32]
+          - generic [ref=e160] [box=382,1040,672,476]:
+            - generic [ref=e161] [box=382,1040,672,16]:
+              - img [ref=e162] [box=382,1041,14,14]
+              - generic [ref=e165] [box=404,1040,114,16]: Tareas del Día
+            - generic [ref=e167] [box=403,1089,630,390]:
+              - generic [ref=e168] [box=403,1089,630,26]:
+                - img [ref=e170] [box=410,1096,12,12]
+                - generic [ref=e178] [box=437,1095,136,15]: GENESIS · Coach IA
+              - generic [ref=e179] [box=403,1131,630,20]:
+                - heading "Rutina Completa - Día 1" [level=3] [ref=e180] [box=403,1131,184,20]
+                - generic [ref=e181] [box=952,1134,80,15]: 0/6 completados
+              - generic [ref=e185] [box=403,1187,630,292]:
+                - generic [ref=e186] [box=403,1187,630,42]
+                - generic [ref=e191] [box=403,1237,630,42]
+                - generic [ref=e196] [box=403,1287,630,42]
+                - generic [ref=e201] [box=403,1337,630,42]
+                - generic [ref=e206] [box=403,1387,630,42]
+                - generic [ref=e211] [box=403,1437,630,42]
+      - generic [ref=e218] [box=462,468,512,416]:
+        - generic [ref=e219] [box=462,468,512,20]:
+          - img [ref=e220] [box=598,470,16,16]
+          - heading "¿Por qué necesitas GENESIS?" [level=3] [ref=e223] [box=622,468,215,20]
+        - generic [ref=e224] [box=462,512,512,246]:
+          - generic [ref=e225] [box=463,513,510,40]:
+            - generic [ref=e226] [box=463,513,170,39]: Aspecto
+            - generic [ref=e227] [box=633,513,170,39]: Por tu cuenta
+            - generic [ref=e228] [box=803,513,170,39]: GENESIS
+          - generic [ref=e229] [box=463,553,510,41]:
+            - generic [ref=e230] [box=463,553,170,40]: Rutinas
+            - generic [ref=e231] [box=633,553,170,40]:
+              - img [ref=e232] [box=681,567,12,12]
+              - generic [ref=e235] [box=697,565,58,16]: Genéricas
+            - generic [ref=e236] [box=803,553,170,40]:
+              - img [ref=e237] [box=836,567,12,12]
+              - generic [ref=e239] [box=852,565,87,16]: Personalizadas
+          - generic [ref=e240] [box=463,594,510,41]:
+            - generic [ref=e241] [box=463,594,170,40]: Nutrición
+            - generic [ref=e242] [box=633,594,170,40]:
+              - img [ref=e243] [box=680,608,12,12]
+              - generic [ref=e246] [box=696,606,58,16]: Templates
+            - generic [ref=e247] [box=803,594,170,40]:
+              - img [ref=e248] [box=849,608,12,12]
+              - generic [ref=e250] [box=865,606,62,16]: Adaptativa
+          - generic [ref=e251] [box=463,635,510,41]:
+            - generic [ref=e252] [box=463,635,170,40]: Ajustes
+            - generic [ref=e253] [box=633,635,170,40]:
+              - img [ref=e254] [box=682,649,12,12]
+              - generic [ref=e257] [box=698,647,55,16]: Manuales
+            - generic [ref=e258] [box=803,635,170,40]:
+              - img [ref=e259] [box=843,649,12,12]
+              - generic [ref=e261] [box=859,647,72,16]: Automáticos
+          - generic [ref=e262] [box=463,676,510,41]:
+            - generic [ref=e263] [box=463,676,170,40]: Soporte
+            - generic [ref=e264] [box=633,676,170,40]:
+              - img [ref=e265] [box=698,690,12,12]
+              - generic [ref=e268] [box=714,688,23,16]: FAQ
+            - generic [ref=e269] [box=803,676,170,40]:
+              - img [ref=e270] [box=839,690,12,12]
+              - generic [ref=e272] [box=855,688,81,16]: GENESIS 24/7
+          - generic [ref=e273] [box=463,717,510,40]:
+            - generic [ref=e274] [box=463,717,170,40]: Progreso
+            - generic [ref=e275] [box=633,717,170,40]:
+              - img [ref=e276] [box=689,731,12,12]
+              - generic [ref=e279] [box=705,729,41,16]: Tú solo
+            - generic [ref=e280] [box=803,717,170,40]:
+              - img [ref=e281] [box=852,731,12,12]
+              - generic [ref=e283] [box=868,729,56,16]: Guiado IA
+        - button "Desbloquear mi plan completo Accede a los 7 días + 4 capacidades de IA" [ref=e284] [box=456,779,522,72]:
+          - generic [ref=e285] [box=554,796,327,20]:
+            - img [ref=e286] [box=554,797,18,18]
+            - generic [ref=e289] [box=580,796,274,20]: Desbloquear mi plan completo
+            - img [ref=e290] [box=863,797,18,18]
+          - generic [ref=e292] [box=615,820,205,15]: Accede a los 7 días + 4 capacidades de IA
+        - generic [ref=e293] [box=462,869,512,15]:
+          - generic [ref=e294] [box=583,869,125,15]:
+            - img [ref=e295] [box=583,872,10,10]
+            - text: Acceso inicial de 7 días
+          - generic [ref=e297] [box=724,869,128,15]:
+            - img [ref=e298] [box=724,872,10,10]
+            - text: Cancela cuando quieras
+  - button "Open Next.js Dev Tools" [ref=e305] [cursor=pointer] [box=22,846,32,32]:
+    - img [ref=e306] [box=22,842,40,40]
+  - alert [ref=e309] [box=-1,1671,1,1]

@@ -2,7 +2,6 @@
 
 import type { UseFormSetValue, UseFormWatch } from "react-hook-form";
 import { Activity, Clock3, Cpu, Target } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { EliteOptionCard } from "@/components/EliteOptionCard";
 import type { WizardFormValues } from "./wizardSchema";
 
@@ -77,12 +76,8 @@ export function WizardObjectiveStep({ watch, setValue }: WizardObjectiveStepProp
                   key={lv.id}
                   type="button"
                   onClick={() => setValue("level", lv.id)}
-                  className={cn(
-                    "py-3 rounded-xl border text-[10px] font-mono uppercase tracking-[0.18em] transition-all duration-150",
-                    watch("level") === lv.id
-                      ? "bg-[var(--ngx-purple)] text-white border-[var(--ngx-purple)] shadow-[var(--ngx-glow-primary-soft)]"
-                      : "bg-white/[0.03] text-white/45 border-[color:var(--ngx-border-subtle)] hover:border-white/20 hover:text-white/70"
-                  )}
+                  data-selected={watch("level") === lv.id}
+                  className="ngx-choice-button py-3 text-[10px] font-mono uppercase tracking-[0.18em]"
                 >
                   {lv.l}
                 </button>
@@ -100,12 +95,8 @@ export function WizardObjectiveStep({ watch, setValue }: WizardObjectiveStepProp
                   key={d}
                   type="button"
                   onClick={() => setValue("trainingDaysPerWeek", d)}
-                  className={cn(
-                    "py-3 rounded-xl border text-xs font-mono uppercase tracking-[0.14em] transition-all duration-150",
-                    watch("trainingDaysPerWeek") === d
-                      ? "bg-[var(--ngx-purple)] text-white border-[var(--ngx-purple)] shadow-[var(--ngx-glow-primary-soft)]"
-                      : "bg-white/[0.03] text-white/45 border-[color:var(--ngx-border-subtle)] hover:border-white/20 hover:text-white/70"
-                  )}
+                  data-selected={watch("trainingDaysPerWeek") === d}
+                  className="ngx-choice-button py-3 text-xs font-mono uppercase tracking-[0.14em]"
                 >
                   {d}d
                 </button>
@@ -129,12 +120,8 @@ export function WizardObjectiveStep({ watch, setValue }: WizardObjectiveStepProp
                 key={minutes}
                 type="button"
                 onClick={() => setValue("sessionDurationMinutes", minutes)}
-                className={cn(
-                  "flex items-center justify-center gap-1.5 rounded-xl border px-3 py-3 text-xs font-mono uppercase tracking-[0.12em] transition-all duration-150",
-                  watch("sessionDurationMinutes") === minutes
-                    ? "bg-[var(--ngx-purple)] text-white border-[var(--ngx-purple)] shadow-[var(--ngx-glow-primary-soft)]"
-                    : "bg-white/[0.03] text-white/45 border-[color:var(--ngx-border-subtle)] hover:border-white/20 hover:text-white/70"
-                )}
+                data-selected={watch("sessionDurationMinutes") === minutes}
+                className="ngx-choice-button flex items-center justify-center gap-1.5 px-3 py-3 text-xs font-mono uppercase tracking-[0.12em]"
               >
                 <Clock3 className="h-3.5 w-3.5" />
                 {minutes}
@@ -161,12 +148,8 @@ export function WizardObjectiveStep({ watch, setValue }: WizardObjectiveStepProp
               key={z.id}
               type="button"
               onClick={() => setValue("focusZone", z.id)}
-              className={cn(
-                "p-4 rounded-xl border text-center cursor-pointer transition-all duration-150 active:scale-[0.97]",
-                watch("focusZone") === z.id
-                  ? "bg-[var(--ngx-purple)] border-[var(--ngx-purple)] text-white shadow-[var(--ngx-glow-primary-soft)]"
-                  : "bg-white/[0.02] border-[color:var(--ngx-border-subtle)] text-white/55 hover:text-white/85 hover:border-white/20"
-              )}
+              data-selected={watch("focusZone") === z.id}
+              className="ngx-choice-button p-4 text-center cursor-pointer active:scale-[0.97]"
             >
               <span className="text-xs font-mono uppercase tracking-[0.16em]">{z.l}</span>
             </button>

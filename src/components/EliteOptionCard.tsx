@@ -46,10 +46,10 @@ export function EliteOptionCard({
       aria-label={imageAlt || title}
       aria-pressed={selected}
       className={cn(
-        "relative group cursor-pointer overflow-hidden rounded-2xl border-l-2 border transition-all duration-200 active:scale-[0.98] animate-in fade-in zoom-in slide-in-from-bottom-4 fill-mode-backwards text-left w-full",
+        "relative group cursor-pointer overflow-hidden rounded-[var(--ngx-r-lg)] border-l-2 border transition-all duration-200 active:scale-[0.98] animate-in fade-in zoom-in slide-in-from-bottom-4 fill-mode-backwards text-left w-full",
         selected
-          ? "border-l-[var(--ngx-purple)] border-y-[var(--ngx-purple)]/30 border-r-[var(--ngx-purple)]/30 bg-[var(--ngx-purple)]/[0.06] shadow-[var(--ngx-glow-primary-soft)]"
-          : "border-l-transparent border-white/[0.08] bg-white/[0.025] hover:border-l-[var(--ngx-purple-light)] hover:border-white/[0.18] hover:bg-white/[0.04]",
+          ? "border-l-[var(--ngx-purple)] border-y-[var(--ngx-purple)]/45 border-r-[var(--ngx-purple)]/45 bg-[var(--ngx-purple)]/[0.16] shadow-[var(--ngx-glow-primary-soft)]"
+          : "border-l-transparent border-white/[0.10] bg-white/[0.045] hover:border-l-[var(--ngx-purple-light)] hover:border-[var(--ngx-purple-light)]/35 hover:bg-[var(--ngx-purple)]/[0.07]",
         className
       )}
       style={{ animationDelay: `${idx * 50}ms` }}
@@ -58,15 +58,15 @@ export function EliteOptionCard({
       {imageSrc && (
         <div className="absolute inset-0 pointer-events-none">
           <div
-            className="absolute inset-0 opacity-25 bg-cover bg-center transition-opacity duration-300 group-hover:opacity-35"
+            className="absolute inset-0 bg-cover bg-center opacity-[0.28] transition-opacity duration-300 group-hover:opacity-[0.40]"
             style={{ backgroundImage: `url(${imageSrc})` }}
           />
           <div
             className={cn(
               "absolute inset-0",
               overlayTone === "deep"
-                ? "bg-gradient-to-b from-[#050505]/30 via-[#050505]/80 to-[#050505]/95"
-                : "bg-gradient-to-b from-[var(--ngx-purple)]/[0.08] via-[#050505]/75 to-[#050505]/95"
+                ? "bg-gradient-to-b from-[#050505]/18 via-[#050505]/72 to-[#050505]/94"
+                : "bg-gradient-to-b from-[var(--ngx-purple)]/[0.08] via-[#050505]/70 to-[#050505]/95"
             )}
           />
         </div>
@@ -98,7 +98,7 @@ export function EliteOptionCard({
           ) : null}
           <h3
             className={cn(
-              "font-body font-bold uppercase text-lg leading-tight tracking-[-0.005em] transition-colors duration-200",
+              "font-body font-bold uppercase text-lg leading-tight tracking-normal transition-colors duration-200",
               selected ? "text-white" : "text-white/85 group-hover:text-white"
             )}
           >
@@ -112,7 +112,7 @@ export function EliteOptionCard({
         </div>
 
         {Icon ? (
-          <div className="inline-flex items-center gap-2 self-start rounded-full border border-white/[0.10] bg-black/35 px-3 py-1.5 text-[10px] tracking-[0.18em] uppercase font-mono text-white/75">
+          <div className="inline-flex items-center gap-2 self-start rounded-full border border-white/[0.10] bg-black/45 px-3 py-1.5 text-[10px] tracking-[0.16em] uppercase font-mono text-white/75">
             <Icon size={12} className="text-[var(--ngx-purple-light)]" />
             <span>{iconLabel ?? "Misión elite"}</span>
           </div>

@@ -1,0 +1,276 @@
+- generic [active] [ref=e1] [box=0,0,1440,8227]:
+  - main [ref=e2] [box=0,0,1440,8227]:
+    - generic [ref=e3] [box=0,0,1440,8227]:
+      - navigation [ref=e6] [box=160,24,1120,66]:
+        - link "N NGX Transform by Genesis" [ref=e7] [cursor=pointer] [box=177,40,175,34]:
+          - /url: /
+          - generic [ref=e9] [box=189,52,8,11]: "N"
+          - generic [ref=e10] [box=221,40,131,34]:
+            - generic [ref=e11] [box=221,42,131,17]: NGX Transform
+            - paragraph [ref=e12] [box=221,64,131,10]: by Genesis
+        - generic [ref=e13] [box=526,37,379,40]:
+          - link "Cómo Funciona" [ref=e14] [cursor=pointer] [box=530,41,121,32]:
+            - /url: "#como-funciona"
+          - link "Qué Recibes" [ref=e15] [cursor=pointer] [box=655,41,104,32]:
+            - /url: "#que-recibes"
+          - link "Ejemplo" [ref=e16] [cursor=pointer] [box=764,41,78,32]:
+            - /url: "#reporte-ejemplo"
+          - link "FAQ" [ref=e17] [cursor=pointer] [box=845,41,55,32]:
+            - /url: "#faq"
+        - link "Ver mi punto de partida" [ref=e19] [cursor=pointer] [box=1078,35,185,44]:
+          - /url: /wizard
+      - main [ref=e20] [box=0,0,1440,7985]:
+        - generic [ref=e21] [box=80,160,1280,990]:
+          - generic [ref=e22] [box=112,224,1216,757]:
+            - generic [ref=e23] [box=112,224,652,757]:
+              - generic [ref=e24] [box=112,224,276,35]:
+                - generic [ref=e28] [box=149,233,59,17]: GENESIS
+                - generic [ref=e30] [box=233,233,138,17]: Future Body Scan
+              - paragraph [ref=e31] [box=112,287,576,17]: Visualización aspiracional · lectura inicial · ruta de acción
+              - heading "Lo que no te conoce, no te puede transformar." [level=1] [ref=e32] [box=112,319,652,432]:
+                - text: Lo que no te conoce,
+                - text: no te puede transformar.
+              - paragraph [ref=e33] [box=112,771,590,92]: Sube una foto real. Recibe una visualización aspiracional, una lectura inicial de tu punto de partida y una ruta clara para empezar con más criterio.
+              - generic [ref=e34] [box=112,895,540,56]:
+                - link "Ver mi punto de partida" [ref=e35] [cursor=pointer] [box=112,895,264,56]:
+                  - /url: /wizard
+                - link "Ver ejemplo real" [ref=e39] [cursor=pointer] [box=388,895,264,56]:
+                  - /url: "#reporte-ejemplo"
+              - paragraph [ref=e44] [box=112,967,652,14]: Privado por diseño
+            - generic [ref=e47] [box=845,281,466,643]:
+              - generic [ref=e48] [box=846,282,464,61]:
+                - generic [ref=e49] [box=866,294,202,36]
+                - generic [ref=e60] [box=1176,300,114,25]
+              - slider "Comparativa antes y semana 12. Arrastra para ver la transformación." [ref=e64] [box=846,343,464,580]:
+                - img "12 SEMANAS" [ref=e65] [box=846,343,464,580]
+                - img "HOY" [ref=e67] [box=846,343,464,580]
+                - generic [box=862,359,66,25]: HOY
+                - generic [box=1166,359,128,25]
+                - generic [box=1054,609,48,48]
+                - generic [box=962,874,232,37]: Arrastra para ver tu progresión
+          - generic [ref=e69] [box=112,1037,1216,113]:
+            - generic [ref=e71] [box=133,1098,355,71]:
+              - generic [ref=e72] [box=133,1098,355,36]:
+                - img [ref=e74] [box=143,1108,16,16]
+                - generic [ref=e77] [box=181,1109,115,15]: Ves dónde estás
+              - paragraph [ref=e78] [box=133,1146,355,23]: Tu punto de partida visible.
+            - generic [ref=e80] [box=542,1098,355,71]:
+              - generic [ref=e81] [box=542,1098,355,36]:
+                - img [ref=e83] [box=552,1108,16,16]
+                - generic [ref=e91] [box=590,1109,164,15]: Entiendes qué te frena
+              - paragraph [ref=e92] [box=542,1146,355,23]: Lo que te frena, explicado.
+            - generic [ref=e94] [box=952,1098,355,71]:
+              - generic [ref=e95] [box=952,1098,355,36]:
+                - img [ref=e97] [box=962,1108,16,16]
+                - generic [ref=e99] [box=1000,1109,180,15]: Sales con un primer paso
+              - paragraph [ref=e100] [box=952,1146,355,23]: Una ruta clara para empezar.
+        - generic [ref=e101] [box=144,1310,1152,692]:
+          - generic [ref=e102] [box=176,1310,1088,239]:
+            - generic [ref=e103] [box=176,1350,486,239]:
+              - generic [ref=e104] [box=176,1352,153,25]: El problema real
+              - heading "El problema no es tu disciplina. Es que sigues usando planes que no te conocen." [level=2] [ref=e105] [box=176,1397,461,192]:
+                - text: El problema no es tu disciplina.
+                - text: Es que sigues usando planes que no te conocen.
+            - paragraph [ref=e106] [box=694,1511,570,78]: "Has probado rutinas, apps, dietas y consejos sueltos. Algunos funcionan unos días. Luego llega tu vida real: estrés, horarios, sueño, cansancio, lesiones o falta de estructura. Ahí se rompe el plan."
+          - generic [ref=e107] [box=176,1613,1088,245]:
+            - article [ref=e108] [box=176,1653,347,245]:
+              - generic [ref=e109] [box=205,1682,289,48]:
+                - img [ref=e111] [box=219,1696,20,20]
+                - generic [ref=e115] [box=478,1682,15,17]: "01"
+              - heading "Tu plan no conoce tu contexto" [level=3] [ref=e116] [box=205,1754,289,20]
+              - paragraph [ref=e117] [box=205,1782,289,87]: No sabe cómo duermes, cuánto tiempo tienes, qué equipo usas, qué lesiones arrastras ni qué tan constante has sido antes.
+            - article [ref=e118] [box=547,1653,347,245]:
+              - generic [ref=e119] [box=576,1682,289,48]:
+                - img [ref=e121] [box=590,1696,20,20]
+                - generic [ref=e126] [box=847,1682,18,17]: "02"
+              - heading "Empiezas fuerte, pero el sistema no se adapta" [level=3] [ref=e127] [box=576,1754,289,41]
+              - paragraph [ref=e128] [box=576,1802,289,65]: Cuando baja la motivación o se complica la semana, una rutina genérica no ajusta nada. Solo te deja con culpa.
+            - article [ref=e129] [box=917,1653,347,245]:
+              - generic [ref=e130] [box=946,1682,289,48]:
+                - img [ref=e132] [box=960,1696,20,20]
+                - generic [ref=e134] [box=1217,1682,18,17]: "03"
+              - heading "Después de los 30, improvisar sale caro" [level=3] [ref=e135] [box=946,1754,289,41]
+              - paragraph [ref=e136] [box=946,1802,289,65]: Músculo, energía, recuperación y metabolismo necesitan estrategia. No más planes hechos para alguien que no eres tú.
+        - generic [ref=e137] [box=144,2002,1152,824]:
+          - generic [ref=e138] [box=336,2042,768,211]:
+            - generic [ref=e139] [box=651,2043,138,25]: Cómo funciona
+            - heading "Así pasas de curiosidad a claridad" [level=2] [ref=e140] [box=510,2088,420,96]
+            - paragraph [ref=e141] [box=384,2200,672,52]: No vienes a jugar con una imagen. Vienes a entender qué punto de partida tienes y qué ruta tendría sentido para ti.
+          - list [ref=e142] [box=176,2276,1088,405]:
+            - listitem [ref=e143] [box=176,2316,536,206]:
+              - article [ref=e144] [box=176,2316,536,206]:
+                - generic [ref=e145] [box=201,2341,486,156]
+            - listitem [ref=e154] [box=728,2316,536,206]:
+              - article [ref=e155] [box=728,2316,536,206]:
+                - generic [ref=e156] [box=753,2341,486,134]
+            - listitem [ref=e170] [box=176,2538,536,184]:
+              - article [ref=e171] [box=176,2538,536,184]:
+                - generic [ref=e172] [box=201,2563,486,134]
+            - listitem [ref=e181] [box=728,2538,536,184]:
+              - article [ref=e182] [box=728,2538,536,184]:
+                - generic [ref=e183] [box=753,2563,486,134]
+        - generic [ref=e192] [box=144,2826,1152,667]:
+          - generic [ref=e193] [box=176,2826,1088,143]:
+            - generic [ref=e194] [box=176,2866,486,143]:
+              - generic [ref=e195] [box=176,2867,111,25]: Qué recibes
+              - heading "No recibes una imagen. Recibes dirección." [level=2] [ref=e196] [box=176,2912,461,96]:
+                - text: No recibes una imagen.
+                - text: Recibes dirección.
+            - paragraph [ref=e197] [box=694,2956,570,52]: La visualización llama tu atención. La lectura inicial te da claridad. La ruta te ayuda a saber qué hacer después.
+          - generic [ref=e198] [box=176,3032,1088,317]:
+            - article [ref=e199] [box=176,3072,532,146]:
+              - generic [ref=e200] [box=201,3097,482,96]:
+                - img [ref=e202] [box=215,3111,20,20]
+                - generic [ref=e205] [box=265,3097,418,96]
+            - article [ref=e209] [box=732,3072,532,146]:
+              - generic [ref=e210] [box=757,3097,482,96]:
+                - img [ref=e212] [box=771,3111,20,20]
+                - generic [ref=e220] [box=821,3097,418,96]
+            - article [ref=e224] [box=176,3243,532,146]:
+              - generic [ref=e225] [box=201,3268,482,96]:
+                - img [ref=e227] [box=215,3282,20,20]
+                - generic [ref=e230] [box=265,3268,418,96]
+            - article [ref=e234] [box=732,3243,532,146]:
+              - generic [ref=e235] [box=757,3268,482,96]:
+                - img [ref=e237] [box=771,3282,20,20]
+                - generic [ref=e242] [box=821,3268,418,96]
+        - generic [ref=e246] [box=144,3493,1152,1297]:
+          - generic [ref=e247] [box=176,3493,1088,143]:
+            - generic [ref=e248] [box=176,3533,486,143]:
+              - generic [ref=e249] [box=176,3534,186,25]: Ejemplo de resultado
+              - heading "Así debería sentirse tu resultado." [level=2] [ref=e250] [box=176,3579,461,96]
+            - paragraph [ref=e251] [box=694,3623,570,52]: "No como una imagen suelta. Como una primera lectura: dónde estás, qué puede frenarte y qué paso conviene tomar."
+          - generic [ref=e252] [box=176,3699,1088,947]:
+            - generic [ref=e253] [box=225,3748,990,42]:
+              - generic [ref=e254] [box=225,3753,231,17]: Panel de ejemplo · Perfil tipo
+              - generic [ref=e255] [box=1152,3748,63,25]: Demo
+            - generic [ref=e256] [box=225,3814,990,783]:
+              - generic [ref=e257] [box=729,3814,546,783]:
+                - generic [ref=e258] [box=729,3814,546,466]
+                - generic [ref=e296] [box=729,4296,546,301]
+              - generic [ref=e309] [box=165,3814,404,783]:
+                - generic [ref=e310] [box=165,3814,404,195]
+                - list [ref=e313] [box=165,4033,404,80]
+                - generic [ref=e323] [box=165,4519,404,78]
+        - generic [ref=e331] [box=205,4819,1030,129]:
+          - generic [ref=e333] [box=230,4884,190,79]:
+            - generic [ref=e334] [box=230,4884,190,38]: 0 sem
+            - generic [ref=e335] [box=230,4930,190,33]: para construir una temporada seria
+          - generic [ref=e337] [box=494,4884,190,79]:
+            - generic [ref=e338] [box=494,4884,190,38]: "0"
+            - generic [ref=e339] [box=494,4930,190,33]: sistema que conecta foto, contexto y ruta
+          - generic [ref=e341] [box=757,4884,190,79]:
+            - generic [ref=e342] [box=757,4884,190,38]: IA+coach
+            - generic [ref=e343] [box=757,4930,190,33]: solo cuando necesitas más soporte
+          - generic [ref=e345] [box=1021,4884,190,63]:
+            - generic [ref=e346] [box=1021,4884,190,38]: "0"
+            - generic [ref=e347] [box=1021,4930,190,16]: promesas vacías
+        - generic [ref=e350] [box=225,5210,990,471]:
+          - generic [ref=e351] [box=225,5210,447,471]:
+            - generic [ref=e352] [box=225,5210,447,315]:
+              - generic [ref=e353] [box=225,5211,254,25]: Cuando hacerlo solo no basta
+              - heading "GENESIS te da dirección. Un coach te ayuda a sostenerla." [level=2] [ref=e354] [box=225,5256,447,144]:
+                - text: GENESIS te da dirección.
+                - text: Un coach te ayuda a sostenerla.
+              - paragraph [ref=e355] [box=225,5420,447,104]: "La mayoría no falla porque no sepa qué hacer. Falla porque no logra sostenerlo cuando aparece la vida real. HYBRID existe para esos casos: más estructura, más seguimiento y una revisión humana cuando la necesitas."
+            - paragraph [ref=e356] [box=225,5548,433,31]: Sin presión · Sin compromiso · Con criterio humano
+            - generic [ref=e357] [box=225,5603,447,78]:
+              - link "Revisar si HYBRID es para mí" [ref=e358] [cursor=pointer] [box=225,5603,252,52]:
+                - /url: https://ngx.app
+              - paragraph [ref=e359] [box=225,5667,447,14]: Sin presión. Si no es para ti ahora, también está bien.
+          - list [ref=e360] [box=720,5210,495,435]:
+            - listitem [ref=e361] [box=720,5210,495,134]:
+              - article [ref=e362] [box=720,5210,495,134]:
+                - generic [ref=e363] [box=741,5231,453,92]
+            - listitem [ref=e377] [box=720,5360,495,134]:
+              - article [ref=e378] [box=720,5360,495,134]:
+                - generic [ref=e379] [box=741,5381,453,92]
+            - listitem [ref=e390] [box=720,5510,495,134]:
+              - article [ref=e391] [box=720,5510,495,134]:
+                - generic [ref=e392] [box=741,5531,453,92]
+        - generic [ref=e403] [box=225,5883,990,239]:
+          - generic [ref=e404] [box=225,5930,259,224]:
+            - generic [ref=e405] [box=225,5930,259,45]:
+              - img [ref=e407] [box=237,5943,20,20]
+              - generic [ref=e410] [box=281,5930,105,25]: Privacidad
+            - heading "Tu foto, tus datos, tu control." [level=2] [ref=e411] [box=225,5995,259,75]
+            - paragraph [ref=e412] [box=225,6086,259,68]: Esta experiencia usa información sensible. Por eso la explicamos claro antes de pedirte avanzar.
+          - list [ref=e413] [box=532,5883,683,239]:
+            - listitem [ref=e414] [box=532,5923,335,114]:
+              - article [ref=e415] [box=532,5923,335,114]:
+                - generic [ref=e416] [box=553,5944,293,72]
+            - listitem [ref=e419] [box=880,5923,335,114]:
+              - article [ref=e420] [box=880,5923,335,114]:
+                - generic [ref=e421] [box=901,5944,293,72]
+            - listitem [ref=e424] [box=532,6049,335,114]:
+              - article [ref=e425] [box=532,6049,335,114]:
+                - generic [ref=e426] [box=553,6070,293,72]
+            - listitem [ref=e429] [box=880,6049,335,114]:
+              - article [ref=e430] [box=880,6049,335,114]:
+                - generic [ref=e431] [box=901,6070,293,72]
+        - generic [ref=e434] [box=336,6315,768,1050]:
+          - generic [ref=e435] [box=368,6355,704,135]:
+            - generic [ref=e436] [box=624,6357,192,25]: Preguntas frecuentes
+            - heading "Lo que necesitas saber antes de empezar" [level=2] [ref=e437] [box=396,6402,647,88]
+          - generic [ref=e438] [box=368,6514,704,707]:
+            - generic [ref=e439] [box=368,6554,704,167]:
+              - button "¿Es real la imagen que genera?" [expanded] [ref=e440] [box=369,6555,702,76]:
+                - generic [ref=e441] [box=393,6581,237,24]: ¿Es real la imagen que genera?
+                - img [ref=e443] [box=1023,6583,20,20]
+              - paragraph [ref=e448] [box=369,6631,702,89]: Es una visualización aspiracional generada con IA. No es una predicción garantizada, no es una promesa médica y no confirma resultados futuros. Sirve para visualizar una posibilidad y abrir una conversación más honesta sobre tu punto de partida.
+            - generic [ref=e449] [box=368,6733,704,78]:
+              - button "¿Qué pasa con mi foto?" [ref=e450] [box=369,6734,702,76]:
+                - generic [ref=e451] [box=393,6760,179,24]: ¿Qué pasa con mi foto?
+                - img [ref=e453] [box=1026,6765,14,14]
+              - paragraph [ref=e454] [box=369,6810,702,89]: Se procesa con tu consentimiento explícito para generar tu sesión privada. No la vendemos, no la publicamos y no la usamos como testimonio sin permiso. Puedes solicitar eliminación cuando quieras desde tu sesión o por el canal de privacidad.
+            - generic [ref=e455] [box=368,6823,704,78]:
+              - button "¿Necesito crear cuenta para empezar?" [ref=e456] [box=369,6824,702,76]:
+                - generic [ref=e457] [box=393,6850,295,24]: ¿Necesito crear cuenta para empezar?
+                - img [ref=e459] [box=1026,6855,14,14]
+              - paragraph [ref=e460] [box=369,6900,702,89]: No necesitas una cuenta completa para iniciar el scan. El flujo puede crear una sesión privada para guardar tu resultado y permitirte volver a consultarlo. Si después quieres seguimiento, historial o HYBRID, se te pedirá completar el acceso.
+            - generic [ref=e461] [box=368,6913,704,78]:
+              - button "¿En qué se diferencia ASCEND de HYBRID?" [ref=e462] [box=369,6914,702,76]:
+                - generic [ref=e463] [box=393,6940,331,24]: ¿En qué se diferencia ASCEND de HYBRID?
+                - img [ref=e465] [box=1026,6945,14,14]
+              - paragraph [ref=e466] [box=369,6990,702,89]: ASCEND es autoguiado con GENESIS para personas con buena constancia y experiencia. HYBRID suma un coach humano que valida estrategia, adapta el proceso y te ayuda a sostenerlo cuando necesitas más soporte.
+            - generic [ref=e467] [box=368,7003,704,78]:
+              - button "¿El plan de 7 días sustituye a un médico o nutriólogo?" [ref=e468] [box=369,7004,702,76]:
+                - generic [ref=e469] [box=393,7030,408,24]: ¿El plan de 7 días sustituye a un médico o nutriólogo?
+                - img [ref=e471] [box=1026,7035,14,14]
+              - paragraph [ref=e472] [box=369,7080,702,89]: No. Es una guía educativa y orientativa. Si tienes dolor, lesiones, condiciones médicas o dudas clínicas, consulta a un profesional antes de iniciar cambios intensos de entrenamiento o alimentación.
+            - generic [ref=e473] [box=368,7093,704,78]:
+              - button "¿Qué necesito para empezar?" [ref=e474] [box=369,7094,702,76]:
+                - generic [ref=e475] [box=393,7120,227,24]: ¿Qué necesito para empezar?
+                - img [ref=e477] [box=1026,7125,14,14]
+              - paragraph [ref=e478] [box=369,7170,702,89]: Solo necesitas una foto real y responder unas preguntas de contexto. Con eso, GENESIS puede generar una visualización aspiracional, una lectura inicial y una ruta orientativa para tu siguiente paso.
+            - generic [ref=e479] [box=368,7183,704,78]:
+              - button "¿Por qué aparece HYBRID?" [ref=e480] [box=369,7184,702,76]:
+                - generic [ref=e481] [box=393,7210,207,24]: ¿Por qué aparece HYBRID?
+                - img [ref=e483] [box=1026,7215,14,14]
+              - paragraph [ref=e484] [box=369,7260,702,89]: "Porque muchas personas no fallan por falta de información. Fallan por falta de estructura, seguimiento y ajustes humanos. HYBRID aparece solo cuando tiene sentido: si tu contexto indica que necesitas más que una ruta autoguiada."
+        - generic [ref=e487] [box=354,7425,733,340]:
+          - img [ref=e489] [box=709,7435,22,22]
+          - heading "Empieza con una foto. Sal con más claridad." [level=2] [ref=e492] [box=453,7489,534,79]
+          - paragraph [ref=e493] [box=490,7587,461,70]: No necesitas prometerte otra transformación perfecta. Necesitas ver dónde estás, entender qué te frena y tomar el siguiente paso con más criterio.
+          - link "Iniciar mi scan" [ref=e495] [cursor=pointer] [box=626,7682,188,50]:
+            - /url: /wizard
+            - generic [ref=e496] [box=659,7696,101,22]: Iniciar mi scan
+            - img [ref=e497] [box=767,7700,14,14]
+          - paragraph [ref=e499] [box=354,7750,733,14]: Visualización aspiracional. No garantía de resultado.
+      - generic [ref=e502] [box=160,8130,1120,33]:
+        - generic [ref=e503] [box=160,8130,153,33]:
+          - generic [ref=e505] [box=171,8138,9,16]: "N"
+          - generic [ref=e506] [box=204,8130,109,33]:
+            - text: NGX Transform
+            - paragraph [ref=e507] [box=204,8150,109,13]: GENESIS operativo
+        - generic [ref=e508] [box=559,8138,212,16]:
+          - link "Privacidad" [ref=e509] [cursor=pointer] [box=559,8138,60,16]:
+            - /url: /privacy
+          - link "Términos" [ref=e510] [cursor=pointer] [box=643,8138,53,16]:
+            - /url: /terms
+          - link "Contacto" [ref=e511] [cursor=pointer] [box=720,8138,52,16]:
+            - /url: mailto:hola@ngxgenesis.com
+        - paragraph [ref=e512] [box=1018,8138,262,16]: © 2026 NGX. Todos los derechos reservados.
+  - button "Open Next.js Dev Tools" [ref=e518] [cursor=pointer] [box=22,846,32,32]:
+    - img [ref=e519] [box=22,842,40,40]
+  - alert [ref=e522] [box=-1,8226,1,1]

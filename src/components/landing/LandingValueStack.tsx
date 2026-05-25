@@ -5,17 +5,11 @@ import { useLandingConfig } from "./LandingProvider";
 const RECEIVE_LABELS = ["Visual", "Lectura", "Ruta", "Dirección"] as const;
 
 /**
- * LandingValueStack — "Qué Recibes". Rediseñado en feat/landing-visual-polish.
+ * LandingValueStack — "Qué Recibes".
  *
- * Decisiones:
- * - Cero cards (sin ngx-metal-card / sin border / sin glass bg). Solo
- *   divisores hairline entre celdas para crear estructura sin contenedores.
- * - Cada entregable trae un MICRO-MOCK del producto real en lugar de
- *   un ícono lucide genérico. El landing se siente como preview del
- *   producto, no como folleto.
- * - Mood blanco + purple-light suave. Diferente del ámbar de Problem
- *   (alarma) y del purple-glow del HybridOffer (acción). Esta sección
- *   es informativa/inventarial.
+ * Estructura tipo iOS: header editorial a la izquierda y un panel agrupado
+ * a la derecha con filas escaneables, divisores hairline y micro-mocks del
+ * producto real como trailing content.
  */
 export function LandingValueStack() {
   const { config } = useLandingConfig();
@@ -33,9 +27,8 @@ export function LandingValueStack() {
   return (
     <section id="que-recibes" className="relative w-full px-4 py-24 md:py-32 scroll-mt-24">
       <div className="relative mx-auto max-w-6xl">
-        {/* HEADER — split asimétrico */}
-        <div className="grid gap-6 md:gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:items-end mb-16 md:mb-20">
-          <div className="animate-on-scroll">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:items-start lg:gap-16">
+          <div className="animate-on-scroll lg:sticky lg:top-24">
             <div className="mb-7 flex items-center gap-3">
               <span
                 aria-hidden
@@ -50,85 +43,51 @@ export function LandingValueStack() {
               </span>
             </div>
 
-            <h2 className="ngx-h1 !text-left">
+            <h2 className="ngx-h1 !text-left max-w-[11ch]">
               {valueStack.title}
               <br />
               <span style={{ color: "rgba(255,255,255,0.45)" }}>
                 {valueStack.highlight}
               </span>
             </h2>
+
+            <p className="mt-5 max-w-md text-base leading-relaxed text-white/62">
+              {valueStack.subtitle}
+            </p>
           </div>
 
-          <p
-            className="animate-on-scroll delay-100 max-w-md text-base leading-relaxed text-white/62"
-            style={{
-              borderLeft: "1px solid rgba(255,255,255,0.10)",
-              paddingLeft: "1.25rem",
-            }}
-          >
-            {valueStack.subtitle}
-          </p>
-        </div>
-
-        {/* GRID 2x2 sin cards — divisores hairline forman la estructura */}
-        <div
-          className="relative grid grid-cols-1 sm:grid-cols-2"
-          style={{
-            // Líneas hairline interna entre celdas, no bordes externos.
-            // Las divs absolutas evitan que el grid gap genere padding visible.
-          }}
-        >
-          {/* Línea vertical central (oculta en mobile) */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-px sm:block"
-            style={{
-              background:
-                "linear-gradient(180deg, transparent, rgba(255,255,255,0.10) 14%, rgba(255,255,255,0.10) 86%, transparent)",
-            }}
-          />
-          {/* Línea horizontal central */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-x-0 top-1/2 h-px"
-            style={{
-              background:
-                "linear-gradient(90deg, transparent, rgba(255,255,255,0.10) 14%, rgba(255,255,255,0.10) 86%, transparent)",
-            }}
-          />
-
-          {valueStack.items.slice(0, 4).map((item, index) => {
-            const animationDelay =
-              ["", "delay-100", "delay-200", "delay-300"][index] ?? "";
-            const label = RECEIVE_LABELS[index] ?? `Recibes 0${index + 1}`;
-            return (
-              <div
-                key={item.title}
-                className={`animate-on-scroll ${animationDelay} relative px-2 py-10 sm:px-8 sm:py-12 md:px-10 md:py-14`}
-              >
-                {/* Micro-mock del producto — top */}
-                <div className="mb-6 flex h-[88px] items-center">
-                  {microMocks[index]}
-                </div>
-
-                {/* Marca semántica */}
-                <span
-                  className="mb-3 inline-block font-mono text-[10px] uppercase tracking-[0.32em]"
-                  style={{ color: "rgba(184,148,255,0.85)" }}
+          <div className="ngx-section-panel !p-0">
+            {valueStack.items.slice(0, 4).map((item, index) => {
+              const animationDelay =
+                ["", "delay-100", "delay-200", "delay-300"][index] ?? "";
+              const label = RECEIVE_LABELS[index] ?? `Recibes 0${index + 1}`;
+              return (
+                <article
+                  key={item.title}
+                  className={`animate-on-scroll ${animationDelay} grid gap-4 border-t border-white/[0.08] p-5 first:border-t-0 md:grid-cols-[minmax(0,1fr)_180px] md:items-center md:gap-8 md:p-7`}
                 >
-                  {label}
-                </span>
+                  <div className="min-w-0">
+                    <span
+                      className="mb-2 inline-block font-mono text-[10px] uppercase tracking-[0.30em]"
+                      style={{ color: "rgba(184,148,255,0.86)" }}
+                    >
+                      {label}
+                    </span>
+                    <h3 className="text-lg font-bold leading-tight text-white md:text-xl">
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/58 md:text-[0.97rem]">
+                      {item.description}
+                    </p>
+                  </div>
 
-                {/* Título grande */}
-                <h3 className="ngx-h3 !text-left">{item.title}</h3>
-
-                {/* Body */}
-                <p className="mt-3 max-w-md text-sm leading-relaxed text-white/60 md:text-[0.97rem]">
-                  {item.description}
-                </p>
-              </div>
-            );
-          })}
+                  <div className="flex h-[92px] items-center md:justify-end">
+                    {microMocks[index]}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>

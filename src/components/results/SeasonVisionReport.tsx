@@ -147,14 +147,14 @@ export function SeasonVisionReport({
         <div className="mx-auto max-w-6xl">
           <div className="ngx-section-panel">
             <div
-              className="absolute inset-0 opacity-25 pointer-events-none"
+              className="absolute inset-0 opacity-[0.16] pointer-events-none"
               style={{
                 backgroundImage: "url('/images/backgrounds/results-abstract.svg')",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}
             />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(109,0,255,0.12),transparent_32%),radial-gradient(circle_at_82%_22%,rgba(184,148,255,0.08),transparent_22%)] pointer-events-none" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(109,0,255,0.06),transparent_34%)] pointer-events-none" />
 
             <div className="relative z-10 grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center">
               <div>
@@ -189,18 +189,14 @@ export function SeasonVisionReport({
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                   <a
                     href="#season-visuals"
-                    className="inline-flex min-h-[54px] items-center justify-center gap-2.5 whitespace-nowrap rounded-full px-6 py-3 text-sm font-bold uppercase tracking-[0.08em] text-white transition-all duration-150 hover:-translate-y-0.5"
-                    style={{
-                      backgroundColor: "var(--ngx-purple)",
-                      boxShadow: "var(--ngx-glow-primary)",
-                    }}
+                    className="ngx-primary-cta inline-flex min-h-[54px] whitespace-nowrap px-6 py-3 text-sm"
                   >
                     Ver visualizaciones
                     <ArrowRight className="h-4 w-4" />
                   </a>
                   <a
                     href="#report-actions"
-                    className="ngx-glass-clear inline-flex min-h-[54px] items-center justify-center gap-2.5 whitespace-nowrap rounded-full px-6 py-3 text-sm font-bold uppercase tracking-[0.08em] text-white/85 transition-all duration-150 hover:bg-white/[0.10] hover:text-white"
+                    className="ngx-secondary-cta inline-flex min-h-[54px] whitespace-nowrap px-6 py-3 text-sm font-bold uppercase tracking-[0.08em]"
                   >
                     Ver siguiente paso
                   </a>
@@ -442,18 +438,14 @@ export function SeasonVisionReport({
                 <div className="grid gap-3 sm:grid-cols-2">
                   <a
                     href="#hybrid-offer"
-                    className="inline-flex min-h-[58px] items-center justify-center gap-2.5 whitespace-nowrap rounded-2xl px-5 py-4 text-sm font-bold uppercase tracking-[0.08em] text-white transition-all duration-150 hover:-translate-y-0.5"
-                    style={{
-                      backgroundColor: "var(--ngx-purple)",
-                      boxShadow: "var(--ngx-glow-primary)",
-                    }}
+                    className="ngx-primary-cta inline-flex min-h-[58px] whitespace-nowrap px-5 py-4 text-sm"
                   >
                     Ver opciones
                     <ArrowRight className="h-4 w-4" />
                   </a>
                   <a
                     href="#hybrid-offer"
-                    className="ngx-glass-clear inline-flex min-h-[58px] items-center justify-center gap-2.5 whitespace-nowrap rounded-2xl px-5 py-4 text-sm font-bold uppercase tracking-[0.08em] text-white/85 transition-all duration-150 hover:bg-white/[0.10] hover:text-white"
+                    className="ngx-secondary-cta inline-flex min-h-[58px] whitespace-nowrap px-5 py-4 text-sm font-bold uppercase tracking-[0.08em]"
                   >
                     <FileText className="h-4 w-4" />
                     Solicitar revisión

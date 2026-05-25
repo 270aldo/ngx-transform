@@ -170,11 +170,11 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
       {/* Atmospheric glows */}
       <div
         className="pointer-events-none absolute left-[-8%] top-[10%] h-[420px] w-[420px] rounded-full blur-[120px]"
-        style={{ backgroundColor: "rgba(109,0,255,0.18)" }}
+        style={{ backgroundColor: "rgba(109,0,255,0.10)" }}
       />
       <div
         className="pointer-events-none absolute right-[-6%] bottom-[12%] h-[360px] w-[360px] rounded-full blur-[120px]"
-        style={{ backgroundColor: "rgba(109,0,255,0.10)" }}
+        style={{ backgroundColor: "rgba(109,0,255,0.055)" }}
       />
 
       <div className="relative w-full max-w-lg">
@@ -426,11 +426,7 @@ export function AgentOrchestration({ shareId, onComplete }: AgentOrchestrationPr
                   setFeedMessages([]);
                   setPhaseTitle('Preparando análisis...');
                 }}
-                className="px-5 py-2 text-white text-xs font-bold uppercase tracking-[0.14em] rounded-full transition-all hover:-translate-y-0.5 active:scale-[0.97]"
-                style={{
-                  backgroundColor: "var(--ngx-purple)",
-                  boxShadow: "var(--ngx-glow-primary-soft)",
-                }}
+                className="ngx-primary-cta inline-flex !min-h-0 px-5 py-2 text-xs"
               >
                 Reintentar
               </button>

@@ -1,0 +1,194 @@
+- generic [active] [ref=e1] [box=0,0,1435,3651]:
+  - main [ref=e2] [box=0,0,1435,3651]:
+    - generic [ref=e3] [box=0,0,1435,3651]:
+      - generic [ref=e4] [box=0,0,1435,900]:
+        - button "Saltar" [ref=e5] [box=1347,16,72,38]
+        - generic [ref=e313] [box=676,386,83,128]: "4"
+      - generic [ref=e11] [box=255,89,926,823]:
+        - generic [ref=e12] [box=255,89,926,780]:
+          - generic [ref=e13] [box=255,89,425,636]:
+            - generic [ref=e14] [box=255,91,208,25]: Genesis · lectura inicial
+            - heading "Señales de salud muscular." [level=2] [ref=e15] [box=255,136,425,106]
+            - paragraph [ref=e16] [box=255,258,425,78]: "Esta lectura no sustituye una evaluación médica. Sirve para aterrizar el wow de la visualización en algo más útil: contexto, palancas y dirección."
+            - generic [ref=e18] [box=280,393,375,307]:
+              - generic [ref=e19] [box=280,393,375,109]:
+                - generic [ref=e20] [box=280,393,152,109]
+                - generic [ref=e22] [box=496,469,159,33]: Score orientativo
+              - generic [ref=e24] [box=280,554,375,146]:
+                - generic [ref=e26] [box=297,571,83,88]
+                - generic [ref=e29] [box=425,571,83,112]
+                - generic [ref=e32] [box=554,571,83,64]
+          - generic [ref=e34] [box=711,89,469,780]:
+            - generic [ref=e36] [box=736,114,419,349]:
+              - generic [ref=e37] [box=736,114,419,56]:
+                - generic [ref=e38] [box=736,114,269,56]
+                - generic [ref=e40] [box=1080,127,75,30]: Medio
+              - generic [ref=e42] [box=736,211,419,252]:
+                - text: Tus 3 palancas accionables
+                - generic [ref=e44] [box=753,252,385,46]
+                - generic [ref=e48] [box=753,344,385,28]
+                - generic [ref=e52] [box=753,418,385,28]
+            - generic [ref=e56] [box=736,529,419,78]:
+              - img [ref=e58] [box=746,539,16,16]
+              - generic [ref=e60] [box=784,529,371,78]:
+                - text: Error dominante
+                - paragraph [ref=e61] [box=784,561,371,46]: "Cardio excesivo sin contrarrestar pérdida muscular: el error que más acelera el envejecimiento metabólico."
+            - generic [ref=e63] [box=736,672,419,172]:
+              - text: Siguiente paso recomendado
+              - paragraph [ref=e64] [box=736,704,419,46]: Antes de pensar en HYBRID, conviene entender qué hábitos, estructura y nivel de compromiso te acercarían a esa versión.
+              - generic [ref=e65] [box=736,770,419,74]:
+                - link "Ver el roadmap" [ref=e66] [cursor=pointer] [box=736,770,204,74]:
+                  - /url: /s/auditdemo/plan
+                - link "Hablar con un coach" [ref=e71] [cursor=pointer] [box=952,770,204,74]:
+                  - /url: https://ngx.app
+        - paragraph [ref=e74] [box=255,893,926,20]: Estas señales son orientativas y motivacionales. No sustituyen evaluación médica ni medición clínica.
+      - generic [ref=e78] [box=255,1090,926,843]:
+        - generic [ref=e79] [box=255,1090,375,843]:
+          - generic [ref=e80] [box=255,1092,205,25]: Puente de visualización
+          - heading "Tu visualización a 12 meses." [level=2] [ref=e81] [box=255,1137,375,106]
+          - paragraph [ref=e82] [box=255,1259,375,104]: "La imagen abre la posibilidad. El valor real empieza cuando conviertes esa reacción en dirección: qué haría falta, qué hábito pesa más y qué sistema sí tendría sentido para ti."
+          - generic [ref=e84] [box=276,1408,333,151]:
+            - text: Esta pieza responde
+            - generic [ref=e85] [box=276,1444,333,115]:
+              - generic [ref=e86] [box=276,1444,333,23]:
+                - img [ref=e87] [box=276,1446,16,16]
+                - paragraph [ref=e90] [box=304,1444,295,23]: Qué versión de ti te está llamando de verdad
+              - generic [ref=e91] [box=276,1479,333,23]:
+                - img [ref=e92] [box=276,1481,16,16]
+                - paragraph [ref=e95] [box=304,1479,303,23]: Qué tan lejos se siente esa versión desde hoy
+              - generic [ref=e96] [box=276,1513,333,46]:
+                - img [ref=e97] [box=276,1515,16,16]
+                - paragraph [ref=e100] [box=304,1513,305,46]: Si vale la pena convertir ese deseo en un plan real
+          - generic [ref=e102] [box=280,1625,325,283]:
+            - generic [ref=e103] [box=280,1625,325,16]:
+              - img [ref=e104] [box=280,1625,16,16]
+              - generic [ref=e107] [box=304,1625,148,15]: Resumen orientativo
+            - generic [ref=e108] [box=280,1661,325,136]:
+              - generic [ref=e110] [box=297,1678,66,102]:
+                - generic [ref=e111] [box=297,1678,66,64]
+                - generic [ref=e116] [box=297,1750,66,30]: Peso orientativo
+              - generic [ref=e118] [box=409,1678,66,70]:
+                - generic [ref=e119] [box=409,1678,66,32]
+                - generic [ref=e124] [box=409,1718,66,30]: Grasa estimada
+              - generic [ref=e126] [box=521,1678,66,70]:
+                - generic [ref=e127] [box=521,1678,66,32]
+                - generic [ref=e132] [box=521,1718,66,30]: Músculo estimado
+            - paragraph [ref=e133] [box=280,1817,325,91]: No es una promesa exacta. Es una visión útil para decidir si ese resultado te mueve lo suficiente como para traducirlo a estructura, hábitos y seguimiento.
+        - generic [ref=e135] [box=687,1115,469,436]:
+          - generic [ref=e136] [box=687,1115,469,60]:
+            - generic [ref=e137] [box=687,1115,250,60]:
+              - text: Secuencia visual
+              - paragraph [ref=e138] [box=687,1147,250,28]: De hoy hacia una posibilidad
+            - generic [ref=e139] [box=1077,1131,78,29]: 4 hitos
+          - generic [ref=e140] [box=687,1199,469,171]:
+            - generic [ref=e142] [box=700,1212,82,130]:
+              - img "HOY" [ref=e144] [box=701,1213,80,101]
+              - generic [ref=e147] [box=700,1327,27,15]: HOY
+            - generic [ref=e149] [box=820,1212,82,130]:
+              - img "MES 4" [ref=e151] [box=821,1213,80,101]
+              - generic [ref=e154] [box=820,1327,40,15]: MES 4
+            - generic [ref=e156] [box=940,1212,82,130]:
+              - img "MES 8" [ref=e158] [box=941,1213,80,101]
+              - generic [ref=e161] [box=940,1327,39,15]: MES 8
+            - generic [ref=e163] [box=1060,1212,82,145]:
+              - img "MES 12" [ref=e165] [box=1061,1213,80,101]
+              - generic [ref=e167] [box=1060,1327,82,30]:
+                - generic [ref=e168] [box=1060,1327,27,30]: MES 12
+                - generic [ref=e169] [box=1095,1330,82,24]: Potencial
+          - paragraph [ref=e172] [box=704,1411,435,46]: La visualización es aproximada. El roadmap convierte el impacto visual en un siguiente paso más serio y accionable.
+          - button "Traducir esta visión a roadmap" [ref=e173] [box=687,1497,469,54]:
+            - img [ref=e174] [box=754,1516,16,16]
+            - generic [ref=e177] [box=782,1514,279,20]: Traducir esta visión a roadmap
+            - img [ref=e178] [box=1073,1516,16,16]
+      - generic [ref=e182] [box=271,2135,894,873]:
+        - generic [ref=e183] [box=271,2135,455,873]:
+          - generic [ref=e184] [box=271,2136,107,25]: NGX Hybrid
+          - heading "Cuando el roadmap te haga sentido, HYBRID entra aquí." [level=2] [ref=e185] [box=271,2181,455,160]
+          - paragraph [ref=e186] [box=271,2357,455,78]: La visualización abre la conversación. El roadmap pone orden. HYBRID sólo debería aparecer cuando ya quieres ejecutar esa visión dentro de un sistema guiado, no antes.
+          - generic [ref=e187] [box=271,2463,455,190]:
+            - generic [ref=e188] [box=271,2463,136,190]:
+              - img [ref=e190] [box=298,2490,16,16]
+              - paragraph [ref=e193] [box=288,2528,102,87]: Sistema GENESIS que adapta tu plan cada semana
+            - generic [ref=e194] [box=430,2463,136,190]:
+              - img [ref=e196] [box=457,2490,16,16]
+              - paragraph [ref=e199] [box=447,2528,102,65]: Coach humano que valida y acompaña
+            - generic [ref=e200] [box=590,2463,136,190]:
+              - img [ref=e202] [box=617,2490,16,16]
+              - paragraph [ref=e205] [box=607,2528,102,108]: 12 semanas con checkpoints y seguimiento real
+          - generic [ref=e206] [box=271,2677,455,141]:
+            - generic [ref=e207] [box=296,2702,405,15]: Cuándo sí tiene sentido
+            - paragraph [ref=e208] [box=296,2725,405,68]: Si ya viste tu visualización, entiendes lo que te está frenando y quieres acompañamiento real para ejecutarlo, aquí es donde HYBRID empieza a tener fit.
+          - generic [ref=e209] [box=271,2839,455,169]:
+            - generic [ref=e210] [box=296,2864,405,15]: Bonus incluido
+            - generic [ref=e211] [box=296,2887,405,96]:
+              - img [ref=e212] [box=296,2889,20,20]
+              - generic [ref=e215] [box=328,2887,373,96]:
+                - paragraph [ref=e216] [box=328,2887,373,24]: Ebook Conversacional GENESIS
+                - paragraph [ref=e217] [box=328,2915,373,68]: "Valor referencial: $197. Incluido en tu cohorte para ayudarte a aterrizar el sistema desde las primeras semanas."
+        - generic [ref=e218] [box=757,2135,407,873]:
+          - generic [ref=e219] [box=757,2135,407,184]:
+            - text: Cohorte actual
+            - generic [ref=e220] [box=782,2200,357,66]:
+              - generic [ref=e221] [box=782,2200,194,66]:
+                - paragraph [ref=e222] [box=782,2200,194,38]
+                - paragraph [ref=e224] [box=782,2246,194,20]: Plazas estimadas para Marzo
+              - generic [ref=e225] [box=998,2237,141,29]: Cohorte guiada
+          - generic [ref=e228] [box=757,2335,407,234]:
+            - text: Qué estás comprando aquí
+            - generic [ref=e229] [box=782,2400,357,144]:
+              - generic [ref=e230] [box=782,2400,357,40]:
+                - img [ref=e231] [box=782,2402,16,16]
+                - generic [ref=e234] [box=810,2400,329,40]: Dirección, ajustes y seguimiento para que el sistema no dependa sólo de motivación.
+              - generic [ref=e235] [box=782,2452,357,40]:
+                - img [ref=e236] [box=782,2454,16,16]
+                - generic [ref=e239] [box=810,2452,329,40]: Una capa humana encima de GENESIS para validar decisiones y sostener adherencia.
+              - generic [ref=e240] [box=782,2504,357,40]:
+                - img [ref=e241] [box=782,2506,16,16]
+                - generic [ref=e244] [box=810,2504,329,40]: Un marco más serio para convertir potencial en ejecución real.
+          - generic [ref=e245] [box=757,2585,407,278]:
+            - text: Siguiente acción
+            - generic [ref=e246] [box=782,2654,357,184]:
+              - button "Ver si HYBRID es fit" [ref=e247] [box=782,2654,357,52]:
+                - img [ref=e248] [box=855,2672,16,16]
+                - text: Ver si HYBRID es fit
+                - img [ref=e250] [box=1051,2672,16,16]
+              - button "Hablar por WhatsApp" [ref=e252] [box=782,2718,357,54]:
+                - img [ref=e253] [box=877,2737,16,16]
+                - text: Hablar por WhatsApp
+              - button "Resolver dudas con GENESIS" [ref=e255] [box=782,2784,357,54]:
+                - img [ref=e256] [box=851,2803,16,16]
+                - text: Resolver dudas con GENESIS
+      - generic [ref=e262] [box=335,3146,766,424]:
+        - generic [ref=e263] [box=335,3146,766,16]:
+          - img [ref=e264] [box=335,3146,16,16]
+          - generic [ref=e266] [box=359,3146,96,15]: Cierre rápido
+        - heading "¿El siguiente paso ya te quedó claro?" [level=3] [ref=e267] [box=335,3178,766,53]
+        - paragraph [ref=e268] [box=335,3247,672,52]: No estamos midiendo satisfacción vacía. Estamos validando si el flujo realmente te llevó de impacto visual a dirección concreta.
+        - generic [ref=e269] [box=335,3323,766,247]:
+          - generic [ref=e270] [box=360,3348,716,48]:
+            - button "1" [ref=e271] [box=360,3348,64,48]
+            - button "2" [ref=e272] [box=432,3348,64,48]
+            - button "3" [ref=e273] [box=504,3348,64,48]
+            - button "4" [ref=e274] [box=577,3348,64,48]
+            - button "5" [ref=e275] [box=649,3348,64,48]
+            - button "6" [ref=e276] [box=722,3348,64,48]
+            - button "7" [ref=e277] [box=794,3348,64,48]
+            - button "8" [ref=e278] [box=866,3348,64,48]
+            - button "9" [ref=e279] [box=939,3348,64,48]
+            - button "10" [ref=e280] [box=1011,3348,64,48]
+          - generic [ref=e281] [box=360,3408,716,15]:
+            - generic [ref=e282] [box=360,3408,83,15]: Nada claro
+            - generic [ref=e283] [box=999,3408,76,15]: Muy claro
+          - generic [ref=e285] [box=360,3443,716,102]:
+            - generic [ref=e287] [box=377,3460,197,68]:
+              - img [ref=e288] [box=377,3462,16,16]
+              - paragraph [ref=e291] [box=405,3460,169,68]: Si el paso siguiente se entiende con fricción cero.
+            - generic [ref=e293] [box=619,3460,197,68]:
+              - img [ref=e294] [box=619,3462,16,16]
+              - paragraph [ref=e297] [box=647,3460,169,68]: Si el salto entre visualización, roadmap e HYBRID se siente lógico.
+            - generic [ref=e299] [box=862,3460,197,68]:
+              - img [ref=e300] [box=862,3462,16,16]
+              - paragraph [ref=e303] [box=890,3460,169,68]: Si algo sigue viéndose bonito, pero no convincente.
+  - button "Open Next.js Dev Tools" [ref=e309] [cursor=pointer] [box=22,846,32,32]:
+    - img [ref=e310] [box=22,842,40,40]
+  - alert [ref=e315] [box=-1,3650,1,1]

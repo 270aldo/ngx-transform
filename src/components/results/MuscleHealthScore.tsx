@@ -193,7 +193,7 @@ export function MuscleHealthScore({
     >
       <div className="mx-auto max-w-5xl">
         <div className="ngx-section-panel">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(109,0,255,0.14),transparent_36%),radial-gradient(circle_at_bottom_right,rgba(184,148,255,0.08),transparent_28%)] pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(109,0,255,0.06),transparent_38%)] pointer-events-none" />
 
           <div className="relative z-10">
             <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-start">
@@ -437,11 +437,7 @@ export function MuscleHealthScore({
                       <a
                         href="#season-roadmap"
                         onClick={handleScrollToRoadmap}
-                        className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full px-5 py-4 text-sm font-bold uppercase tracking-[0.06em] text-white transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97]"
-                        style={{
-                          backgroundColor: "var(--ngx-purple)",
-                          boxShadow: "var(--ngx-glow-primary)",
-                        }}
+                        className="ngx-primary-cta inline-flex px-5 py-4 text-sm"
                       >
                         <Zap className="h-4 w-4" />
                         Ver el roadmap

@@ -13,6 +13,13 @@
 # testing
 /coverage
 
+# local QA/tooling artifacts
+/.claude/
+/.playwright-cli/
+/.playwright-mcp/
+/output/
+/qa-v12/
+
 # next.js
 /.next/
 /out/

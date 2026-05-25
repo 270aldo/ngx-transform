@@ -44,6 +44,8 @@ export interface HeroCopy {
     line2: string;
   };
   subtitle: string;
+  /** Short conviction line shown under the subtitle on the hero. */
+  punchline?: string;
   cta: string;
   /** Primary CTA detail used by LandingHero/LandingTopNav. */
   primaryCta: {

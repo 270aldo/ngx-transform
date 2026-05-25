@@ -25,9 +25,10 @@ export const mayoresCopy: VariantCopy = {
     },
     subtitle:
       "Suba una foto. GENESIS analiza su punto de partida y le muestra una proyección aspiracional de cómo podría mejorar fuerza, composición y vitalidad con una temporada seria.",
-    cta: "Ver mi punto de partida",
+    punchline: "La imagen puede incomodar. Bien. Ahí empieza una decisión honesta.",
+    cta: "Iniciar mi scan",
     primaryCta: {
-      label: "Ver mi punto de partida",
+      label: "Iniciar mi scan",
       intent: "scan_start",
     },
     secondaryCta: "Cómo funciona",
@@ -137,7 +138,7 @@ export const mayoresCopy: VariantCopy = {
     headline: "No es tarde. Pero sí conviene dejar de improvisar.",
     subtitle:
       "Vea su punto de partida y, si tiene sentido, revise su ruta con un coach humano dentro de HYBRID.",
-    buttonText: "Comenzar mi scan",
+    buttonText: "Iniciar mi scan",
     footnote: "Visualización aspiracional. No sustituye evaluación médica.",
   },
 
