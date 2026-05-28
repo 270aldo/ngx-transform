@@ -69,6 +69,19 @@ function computeScoreDeltas(ai: InsightsResult) {
   };
 }
 
+/**
+ * Strip query parameters / signatures from a URL to get the base path.
+ * This allows dedup to catch signed URLs that point to the same storage object.
+ */
+function getBaseUrl(url: string): string {
+  try {
+    const u = new URL(url);
+    return u.origin + u.pathname;
+  } catch {
+    return url;
+  }
+}
+
 export function TransformationSummary({
   ai,
   imageUrls,
@@ -91,11 +104,15 @@ export function TransformationSummary({
     { label: getSeasonMilestoneLabel('m8'), key: 'm8', url: imageUrls.images?.m8 },
     { label: getSeasonMilestoneLabel('m12'), key: 'm12', url: imageUrls.images?.m12 },
   ];
-  const seenUrls = new Set<string>();
+
+  // Dedup using base URL (strips signed URL query params) to catch
+  // cases where the same storage object gets different signed URLs.
+  const seenBases = new Set<string>();
   const timelineImages = rawTimelineImages.map((item) => {
     if (!item.url) return item;
-    if (seenUrls.has(item.url)) return { ...item, url: undefined };
-    seenUrls.add(item.url);
+    const base = getBaseUrl(item.url);
+    if (seenBases.has(base)) return { ...item, url: undefined };
+    seenBases.add(base);
     return item;
   });
 
@@ -133,197 +150,208 @@ export function TransformationSummary({
           />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(109,0,255,0.06),transparent_34%)] pointer-events-none" />
 
-          <div className="relative z-10 grid gap-8 lg:grid-cols-[minmax(0,0.84fr)_minmax(0,1.16fr)] lg:items-start">
+          <div className="relative z-10 space-y-8">
+            {/* ── ROW 1: Header + Visual Timeline (full-width) ── */}
             <div>
               <span className="ngx-eyebrow-pill mb-4">Puente de visualización</span>
               <h2 className="ngx-h1 !text-left">
                 Tu visión de temporada.
               </h2>
-              <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/60 md:text-base">
+              <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/60 md:text-base">
                 La imagen abre la posibilidad. El valor real empieza cuando conviertes esa reacción en dirección: qué haría falta, qué hábito pesa más y qué sistema sí tendría sentido para ti.
               </p>
-
-              <div className="mt-6 ngx-metal-card !p-5">
-                <div className="relative z-10">
-                  <span className="ngx-eyebrow !text-[10px]" style={{ color: 'var(--ngx-fg-3)' }}>Esta pieza responde</span>
-                  <div className="mt-3 space-y-3">
-                    {bridgeQuestions.map((item) => (
-                      <div key={item} className="flex items-start gap-3">
-                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" style={{ color: 'var(--ngx-purple-light)' }} />
-                        <p className="text-sm leading-relaxed text-white/75">{item}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-5 ngx-metal-card !p-5 md:!p-6">
-                <div className="relative z-10">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4" style={{ color: 'var(--ngx-purple-light)' }} />
-                    <span className="ngx-eyebrow !text-[10px]" style={{ color: 'var(--ngx-fg-3)' }}>Resumen orientativo</span>
-                  </div>
-
-                  <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                    <div className="ngx-metal-card !p-4">
-                      <div className="relative z-10">
-                        <div className="flex items-center gap-2" style={{ color: 'var(--ngx-success)' }}>
-                          <TrendingUp className="h-4 w-4" />
-                          <span className="font-mono text-2xl font-bold tabular-nums text-white">
-                            {strengthDelta >= 0 ? `+${strengthDelta}` : strengthDelta}
-                          </span>
-                        </div>
-                        <span className="ngx-eyebrow !text-[10px] mt-2 block" style={{ color: 'var(--ngx-fg-4)' }}>Fuerza visual</span>
-                      </div>
-                    </div>
-                    <div className="ngx-metal-card !p-4">
-                      <div className="relative z-10">
-                        <div className="flex items-center gap-2" style={{ color: 'var(--ngx-success)' }}>
-                          <TrendingUp className="h-4 w-4" />
-                          <span className="font-mono text-2xl font-bold tabular-nums text-white">
-                            {aestheticsDelta >= 0 ? `+${aestheticsDelta}` : aestheticsDelta}
-                          </span>
-                        </div>
-                        <span className="ngx-eyebrow !text-[10px] mt-2 block" style={{ color: 'var(--ngx-fg-4)' }}>Composición visual</span>
-                      </div>
-                    </div>
-                    <div className="ngx-metal-card !p-4">
-                      <div className="relative z-10">
-                        <div className="flex items-center gap-2" style={{ color: 'var(--ngx-success)' }}>
-                          <TrendingUp className="h-4 w-4" />
-                          <span className="font-mono text-2xl font-bold tabular-nums text-white">
-                            {enduranceDelta >= 0 ? `+${enduranceDelta}` : enduranceDelta}
-                          </span>
-                        </div>
-                        <span className="ngx-eyebrow !text-[10px] mt-2 block" style={{ color: 'var(--ngx-fg-4)' }}>Capacidad de trabajo</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <p className="mt-5 text-sm leading-relaxed text-white/55">
-                    No son kilos, grasa ni masa medidos. Son cambios orientativos en una escala visual 0-100 para decidir si esa dirección merece estructura, hábitos y seguimiento.
-                  </p>
-                </div>
-              </div>
-
-              {bottleneckLabel && bottleneckDescription && (
-                <div
-                  className="mt-5 ngx-metal-card !p-5 md:!p-6"
-                  style={{ borderColor: 'rgba(109,0,255,0.28)' }}
-                >
-                  <div className="relative z-10">
-                    <div className="flex items-center gap-2">
-                      <Target
-                        className="h-4 w-4"
-                        style={{ color: 'var(--ngx-purple-light)' }}
-                      />
-                      <span
-                        className="ngx-eyebrow !text-[10px]"
-                        style={{ color: 'var(--ngx-purple-light)' }}
-                      >
-                        Tu palanca principal parece ser
-                      </span>
-                    </div>
-                    <p className="mt-3 text-base font-bold text-white">
-                      {bottleneckLabel}
-                    </p>
-                    <p className="mt-2 text-sm leading-relaxed text-white/65">
-                      {bottleneckDescription}
-                    </p>
-                  </div>
-                </div>
-              )}
             </div>
 
+            {/* ── ROW 2: Timeline image strip (full-width, 4-across on desktop) ── */}
             <div className="ngx-metal-card !p-5 md:!p-6">
               <div className="relative z-10">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <span className="ngx-eyebrow !text-[10px]" style={{ color: 'var(--ngx-fg-3)' }}>Secuencia visual</span>
-                  <p className="mt-2 text-lg font-bold text-white">De hoy hacia una posibilidad</p>
+                <div className="flex items-center justify-between gap-3 mb-5">
+                  <div>
+                    <span className="ngx-eyebrow !text-[10px]" style={{ color: 'var(--ngx-fg-3)' }}>Secuencia visual</span>
+                    <p className="mt-1 text-base font-bold text-white md:text-lg">De hoy hacia una posibilidad</p>
+                  </div>
+                  <span className="rounded-full border border-[color:var(--ngx-border-subtle)] bg-white/[0.04] px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-white/55 whitespace-nowrap shrink-0">
+                    4 hitos
+                  </span>
                 </div>
-                <span className="rounded-full border border-[color:var(--ngx-border-subtle)] bg-white/[0.04] px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-white/55 whitespace-nowrap">
-                  4 hitos
-                </span>
-              </div>
 
-              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                {timelineImages.map((item, index) => (
-                  <div
-                    key={item.key}
-                    className="ngx-metal-card overflow-hidden !p-3"
-                  ><div className="relative z-10">
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  {timelineImages.map((item, index) => (
                     <div
-                      className="relative aspect-[4/5] overflow-hidden rounded-[18px] border"
-                      style={{
-                        borderColor: index === 3 ? 'rgba(109,0,255,0.45)' : 'rgba(255,255,255,0.08)',
-                        boxShadow: index === 3 ? 'var(--ngx-glow-primary-soft)' : undefined,
-                      }}
-                    >
-                      {item.url ? (
-                        <>
-                          <Image
-                            src={item.url}
-                            alt={item.label}
-                            fill
-                            sizes="(max-width: 768px) 40vw, 20vw"
-                            quality={88}
-                            className="object-cover"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
-                        </>
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-white/[0.02] text-[10px] uppercase tracking-[0.18em] text-white/35">
-                          Procesando
-                        </div>
-                      )}
-                    </div>
-                    <div className="mt-3 flex items-center justify-between gap-2">
-                      <span
-                        className="text-[10px] uppercase tracking-[0.18em]"
-                        style={{ color: index === 3 ? 'var(--ngx-purple-light)' : 'var(--ngx-fg-4)' }}
+                      key={item.key}
+                      className="ngx-metal-card overflow-hidden !p-3"
+                    ><div className="relative z-10">
+                      <div
+                        className="relative aspect-[4/5] overflow-hidden rounded-[18px] border"
+                        style={{
+                          borderColor: index === 3 ? 'rgba(109,0,255,0.45)' : 'rgba(255,255,255,0.08)',
+                          boxShadow: index === 3 ? 'var(--ngx-glow-primary-soft)' : undefined,
+                        }}
                       >
-                        {item.label}
-                      </span>
-                      {index === 3 ? (
+                        {item.url ? (
+                          <>
+                            <Image
+                              src={item.url}
+                              alt={item.label}
+                              fill
+                              sizes="(max-width: 768px) 40vw, 20vw"
+                              quality={88}
+                              className="object-cover"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
+                          </>
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center bg-white/[0.02] text-[10px] uppercase tracking-[0.18em] text-white/35">
+                            Procesando
+                          </div>
+                        )}
+                      </div>
+                      <div className="mt-3 flex items-center justify-between gap-2">
                         <span
-                          className="rounded-full px-2 py-1 text-[9px] uppercase tracking-[0.16em]"
-                          style={{
-                            background: 'rgba(109,0,255,0.10)',
-                            border: '1px solid rgba(109,0,255,0.25)',
-                            color: 'var(--ngx-purple-light)',
-                          }}
+                          className="text-[10px] uppercase tracking-[0.18em]"
+                          style={{ color: index === 3 ? 'var(--ngx-purple-light)' : 'var(--ngx-fg-4)' }}
                         >
-                          Potencial
+                          {item.label}
                         </span>
-                      ) : null}
+                        {index === 3 ? (
+                          <span
+                            className="rounded-full px-2 py-1 text-[9px] uppercase tracking-[0.16em]"
+                            style={{
+                              background: 'rgba(109,0,255,0.10)',
+                              border: '1px solid rgba(109,0,255,0.25)',
+                              color: 'var(--ngx-purple-light)',
+                            }}
+                          >
+                            Potencial
+                          </span>
+                        ) : null}
+                      </div>
+                      </div>
                     </div>
+                  ))}
+                </div>
+
+                <div className="mt-5 ngx-metal-card !p-4">
+                  <div className="relative z-10">
+                    <p className="text-xs leading-relaxed text-white/55 md:text-sm">
+                      La visualización es aproximada. El roadmap convierte el impacto visual en un siguiente paso más serio y accionable.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ── ROW 3: Two-column grid — Bridge questions + Bottleneck LEFT, Stats + CTA RIGHT ── */}
+            <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+              {/* LEFT: Bridge + Bottleneck */}
+              <div className="space-y-5">
+                <div className="ngx-metal-card !p-5">
+                  <div className="relative z-10">
+                    <span className="ngx-eyebrow !text-[10px]" style={{ color: 'var(--ngx-fg-3)' }}>Esta pieza responde</span>
+                    <div className="mt-3 space-y-3">
+                      {bridgeQuestions.map((item) => (
+                        <div key={item} className="flex items-start gap-3">
+                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" style={{ color: 'var(--ngx-purple-light)' }} />
+                          <p className="text-sm leading-relaxed text-white/75">{item}</p>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                ))}
-              </div>
-
-              <div className="mt-6 ngx-metal-card !p-4">
-                <div className="relative z-10">
-                  <p className="text-sm leading-relaxed text-white/65">
-                    La visualización es aproximada. El roadmap convierte el impacto visual en un siguiente paso más serio y accionable.
-                  </p>
                 </div>
+
+                {bottleneckLabel && bottleneckDescription && (
+                  <div
+                    className="ngx-metal-card !p-5 md:!p-6"
+                    style={{ borderColor: 'rgba(109,0,255,0.28)' }}
+                  >
+                    <div className="relative z-10">
+                      <div className="flex items-center gap-2">
+                        <Target
+                          className="h-4 w-4"
+                          style={{ color: 'var(--ngx-purple-light)' }}
+                        />
+                        <span
+                          className="ngx-eyebrow !text-[10px]"
+                          style={{ color: 'var(--ngx-purple-light)' }}
+                        >
+                          Tu palanca principal parece ser
+                        </span>
+                      </div>
+                      <p className="mt-3 text-base font-bold text-white">
+                        {bottleneckLabel}
+                      </p>
+                      <p className="mt-2 text-sm leading-relaxed text-white/65">
+                        {bottleneckDescription}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              <motion.button
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.55 }}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
-                onClick={handleCTAClick}
-                className="ngx-primary-cta mt-6 inline-flex w-full px-5 py-4 text-sm"
-              >
-                <Sparkles className="h-4 w-4" />
-                <span>Ver el roadmap de temporada</span>
-                <ArrowRight className="h-4 w-4" />
-              </motion.button>
+              {/* RIGHT: Stats + CTA */}
+              <div className="space-y-5">
+                <div className="ngx-metal-card !p-5 md:!p-6">
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-4 w-4" style={{ color: 'var(--ngx-purple-light)' }} />
+                      <span className="ngx-eyebrow !text-[10px]" style={{ color: 'var(--ngx-fg-3)' }}>Resumen orientativo</span>
+                    </div>
+
+                    <div className="mt-5 grid gap-3 grid-cols-3">
+                      <div className="ngx-metal-card !p-3">
+                        <div className="relative z-10">
+                          <div className="flex items-center gap-1.5" style={{ color: 'var(--ngx-success)' }}>
+                            <TrendingUp className="h-3.5 w-3.5" />
+                            <span className="font-mono text-xl font-bold tabular-nums text-white">
+                              {strengthDelta >= 0 ? `+${strengthDelta}` : strengthDelta}
+                            </span>
+                          </div>
+                          <span className="ngx-eyebrow !text-[9px] mt-1.5 block" style={{ color: 'var(--ngx-fg-4)' }}>Fuerza visual</span>
+                        </div>
+                      </div>
+                      <div className="ngx-metal-card !p-3">
+                        <div className="relative z-10">
+                          <div className="flex items-center gap-1.5" style={{ color: 'var(--ngx-success)' }}>
+                            <TrendingUp className="h-3.5 w-3.5" />
+                            <span className="font-mono text-xl font-bold tabular-nums text-white">
+                              {aestheticsDelta >= 0 ? `+${aestheticsDelta}` : aestheticsDelta}
+                            </span>
+                          </div>
+                          <span className="ngx-eyebrow !text-[9px] mt-1.5 block" style={{ color: 'var(--ngx-fg-4)' }}>Composición visual</span>
+                        </div>
+                      </div>
+                      <div className="ngx-metal-card !p-3">
+                        <div className="relative z-10">
+                          <div className="flex items-center gap-1.5" style={{ color: 'var(--ngx-success)' }}>
+                            <TrendingUp className="h-3.5 w-3.5" />
+                            <span className="font-mono text-xl font-bold tabular-nums text-white">
+                              {enduranceDelta >= 0 ? `+${enduranceDelta}` : enduranceDelta}
+                            </span>
+                          </div>
+                          <span className="ngx-eyebrow !text-[9px] mt-1.5 block" style={{ color: 'var(--ngx-fg-4)' }}>Capacidad de trabajo</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="mt-4 text-xs leading-relaxed text-white/55">
+                      No son kilos, grasa ni masa medidos. Son cambios orientativos en una escala visual 0-100 para decidir si esa dirección merece estructura, hábitos y seguimiento.
+                    </p>
+                  </div>
+                </div>
+
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.55 }}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  onClick={handleCTAClick}
+                  className="ngx-primary-cta inline-flex w-full px-5 py-4 text-sm"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  <span>Ver el roadmap de temporada</span>
+                  <ArrowRight className="h-4 w-4" />
+                </motion.button>
               </div>
             </div>
           </div>

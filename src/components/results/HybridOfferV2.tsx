@@ -338,7 +338,7 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
       >
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_18%_15%,rgba(109,0,255,0.07),transparent_40%)]" />
 
-        <div className="relative z-10 grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(360px,0.9fr)]">
+        <div className="relative z-10 grid gap-10 lg:grid-cols-2">
           {/* COLUMNA IZQUIERDA — Tesis */}
           <div>
             <span className="ngx-eyebrow-pill mb-4">
@@ -385,84 +385,6 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
                 ciegas. Es revisar fit, fricción y compromiso.
               </p>
             </div>
-
-            <div className="mt-5 ngx-card !p-5 md:!p-6">
-              <span
-                className="ngx-eyebrow !text-[10px]"
-                style={{ color: "var(--ngx-fg-3)" }}
-              >
-                Bonus incluido
-              </span>
-              <div className="mt-2 flex items-start gap-3">
-                <Sparkles
-                  className="mt-0.5 h-5 w-5 shrink-0"
-                  style={{ color: "var(--ngx-purple-light)" }}
-                />
-                <div>
-                  <p className="text-base font-bold text-white">
-                    Brief de diagnóstico + dirección de temporada
-                  </p>
-                  <p className="mt-1 text-sm leading-relaxed text-white/55">
-                    Te llevas el resumen por correo y, si hace sentido, una
-                    llamada corta para aterrizar el sistema HYBRID a tu caso.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Cohort signal */}
-            {showCohortSignal && (
-              <div className="mt-6 ngx-glass !p-5 md:!p-6">
-                <div className="flex items-end justify-between gap-3">
-                  <div>
-                    {hasCohortSpots ? (
-                      <p className="font-mono text-3xl font-bold tabular-nums tracking-[-0.02em] text-white md:text-4xl leading-none">
-                        {cohortSpotsLeft}
-                        <span className="ml-2 text-lg font-medium tracking-normal text-white/35">
-                          / {cohortSpotsTotal}
-                        </span>
-                      </p>
-                    ) : (
-                      <p className="font-mono text-xl font-bold tracking-[-0.02em] text-white md:text-2xl leading-tight">
-                        {cohortLabel ?? "Ruta por confirmar"}
-                      </p>
-                    )}
-                    <p className="mt-2 text-sm text-white/55">
-                      {hasCohortSpots
-                        ? `Plazas confirmadas para cohorte ${cohortLabel ?? "actual"}`
-                        : "Los cupos y la ruta se confirman después del diagnóstico"}
-                    </p>
-                  </div>
-                  <span
-                    className="rounded-full px-3 py-1.5 text-[10px] uppercase tracking-[0.18em]"
-                    style={{
-                      background: "rgba(109,0,255,0.10)",
-                      border: "1px solid rgba(109,0,255,0.25)",
-                      color: "var(--ngx-purple-light)",
-                    }}
-                  >
-                    Cohorte guiada
-                  </span>
-                </div>
-                <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/[0.06] border border-white/[0.04]">
-                  <div
-                    className="h-full rounded-full"
-                    style={{
-                      width: hasCohortSpots
-                        ? `${
-                            ((cohortSpotsTotal - cohortSpotsLeft) /
-                              cohortSpotsTotal) *
-                            100
-                          }%`
-                        : "0%",
-                      background:
-                        "linear-gradient(90deg, var(--ngx-purple), var(--ngx-purple-light))",
-                      boxShadow: "0 0 12px rgba(109,0,255,0.40)",
-                    }}
-                  />
-                </div>
-              </div>
-            )}
           </div>
 
           {/* COLUMNA DERECHA — Acción principal */}
@@ -596,6 +518,85 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
                 ) : null}
               </div>
             </div>
+
+            {/* Bonus incluido */}
+            <div className="ngx-card !p-5 md:!p-6">
+              <span
+                className="ngx-eyebrow !text-[10px]"
+                style={{ color: "var(--ngx-fg-3)" }}
+              >
+                Bonus incluido
+              </span>
+              <div className="mt-2 flex items-start gap-3">
+                <Sparkles
+                  className="mt-0.5 h-5 w-5 shrink-0"
+                  style={{ color: "var(--ngx-purple-light)" }}
+                />
+                <div>
+                  <p className="text-base font-bold text-white">
+                    Brief de diagnóstico + dirección de temporada
+                  </p>
+                  <p className="mt-1 text-sm leading-relaxed text-white/55">
+                    Te llevas el resumen por correo y, si hace sentido, una
+                    llamada corta para aterrizar el sistema HYBRID a tu caso.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Cohorte guiada spots/progress */}
+            {showCohortSignal && (
+              <div className="ngx-glass !p-5 md:!p-6">
+                <div className="flex items-end justify-between gap-3">
+                  <div>
+                    {hasCohortSpots ? (
+                      <p className="font-mono text-3xl font-bold tabular-nums tracking-[-0.02em] text-white md:text-4xl leading-none">
+                        {cohortSpotsLeft}
+                        <span className="ml-2 text-lg font-medium tracking-normal text-white/35">
+                          / {cohortSpotsTotal}
+                        </span>
+                      </p>
+                    ) : (
+                      <p className="font-mono text-xl font-bold tracking-[-0.02em] text-white md:text-2xl leading-tight">
+                        {cohortLabel ?? "Ruta por confirmar"}
+                      </p>
+                    )}
+                    <p className="mt-2 text-sm text-white/55">
+                      {hasCohortSpots
+                        ? `Plazas confirmadas para cohorte ${cohortLabel ?? "Marzo"}`
+                        : "Los cupos y la ruta se confirman después del diagnóstico"}
+                    </p>
+                  </div>
+                  <span
+                    className="rounded-full px-3 py-1.5 text-[10px] uppercase tracking-[0.18em]"
+                    style={{
+                      background: "rgba(109,0,255,0.10)",
+                      border: "1px solid rgba(109,0,255,0.25)",
+                      color: "var(--ngx-purple-light)",
+                    }}
+                  >
+                    Cohorte guiada
+                  </span>
+                </div>
+                <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/[0.06] border border-white/[0.04]">
+                  <div
+                    className="h-full rounded-full"
+                    style={{
+                      width: hasCohortSpots
+                        ? `${
+                            ((cohortSpotsTotal - cohortSpotsLeft) /
+                              cohortSpotsTotal) *
+                            100
+                          }%`
+                        : "0%",
+                      background:
+                        "linear-gradient(90deg, var(--ngx-purple), var(--ngx-purple-light))",
+                      boxShadow: "0 0 12px rgba(109,0,255,0.40)",
+                    }}
+                  />
+                </div>
+              </div>
+            )}
 
             {directCheckoutEnabled && (
               <div className="ngx-glass !p-5 md:!p-6 relative overflow-hidden">

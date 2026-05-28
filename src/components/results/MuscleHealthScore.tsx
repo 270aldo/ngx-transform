@@ -217,7 +217,7 @@ export function MuscleHealthScore({
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(109,0,255,0.06),transparent_38%)] pointer-events-none" />
 
           <div className="relative z-10">
-            <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-start">
+            <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
               <div>
                 <span className="ngx-eyebrow-pill mb-4">
                   Genesis · lectura inicial

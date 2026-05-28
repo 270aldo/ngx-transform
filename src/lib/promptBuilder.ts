@@ -288,6 +288,12 @@ function buildTransformation(context: PromptContext): string {
     ? `Recovery context: sleep ${context.sleepQuality ?? "N/A"}/10, stress ${context.stressLevel ?? "N/A"}/10.`
     : "";
 
+  const varianceRule = context.step === "m8"
+    ? "\n[VISUAL VARIANCE RULE]\n- You MUST completely change the subject's clothing style, clothing color, and posture compared to the original reference photo. The subject is active on an outdoor running track."
+    : context.step === "m12"
+      ? "\n[VISUAL VARIANCE RULE]\n- You MUST completely change the subject's clothing color, clothing style, posture, and framing compared to the Mes 8 reference image.\n- Do NOT copy the background, pose, or clothing from the Mes 8 reference image. Mes 12 is a complete visual styling reset: indoor dark premium cinematic studio with dramatic spotlighting, new dark athletic top, and a calm, focused standing posture."
+      : "";
+
   return `[TRANSFORMATION: ${context.step.toUpperCase()} - ${effectivePercent}% PROGRESS]
 
 Target Physique: ${goalDesc} ${focusEmphasis}
@@ -301,6 +307,7 @@ ${nutritionLine}
 ${recoveryNote}
 ${progressDescription}
 ${visualDelta}
+${varianceRule}
 
 Environment: ${env.description}
 Setting: ${env.setting}
@@ -331,19 +338,30 @@ function buildStyle(context: PromptContext): string {
     minimal: "simple, clean athletic wear with minimal branding",
   };
 
-  const lighting = context.step === "m8"
-    ? "dramatic natural golden hour sunlight, warm glowing key-light with organic lens flare and soft organic shadow fill"
-    : (context.styleProfile?.lighting || "dramatic studio lighting with sharp shadows");
+  let lighting = "";
+  let wardrobe = "";
+  let background = "";
+  let colorGrade = "";
 
-  const wardrobe = context.styleProfile?.wardrobe || fallbackWardrobe[aestheticPreference];
-
-  const background = context.step === "m8"
-    ? "modern outdoor running track at golden hour sunrise, open sky horizon, warm sun disk on horizon line, shallow depth of field"
-    : (context.styleProfile?.background || fallbackBackgrounds[aestheticPreference]);
-
-  const colorGrade = context.step === "m8"
-    ? "rich warm golden-hour cinematic grade, lifelike saturated skin tones, high-performance athletic commercial color style"
-    : (context.styleProfile?.color_grade || fallbackColorGrades[aestheticPreference]);
+  if (context.step === "m4") {
+    // Milestone 1 (m4): Gritty underground gym, cool tones
+    lighting = "cool overhead industrial fluorescent light key, dramatic steep angles creating high-contrast shadows on muscle contours";
+    wardrobe = "simple gray basic sleeveless workout tank top, no logos";
+    background = "gritty raw industrial warehouse gym with exposed dark concrete walls, heavy steel weight racks, blurred background with shallow depth of field";
+    colorGrade = "cool-toned, high-contrast, low-saturation gritty athletic commercial color grade";
+  } else if (context.step === "m8") {
+    // Milestone 2 (m8): Golden hour outdoor running track, warm golden lighting
+    lighting = "dramatic natural golden hour sunlight, warm glowing key-light with organic lens flare and soft organic shadow fill";
+    wardrobe = "fitted bright colored active performance t-shirt (such as active blue or electric orange), clean minimal design";
+    background = "modern outdoor running track at golden hour sunrise, open sky horizon, warm sun disk on horizon line, shallow depth of field with blurred running lanes";
+    colorGrade = "rich warm golden-hour cinematic grade, lifelike saturated skin tones, high-performance athletic commercial color style";
+  } else {
+    // Milestone 3 (m12): Dark premium wood-paneled elite studio, dramatic spotlight, black compression top
+    lighting = "cinematic high-fashion spotlighting, single dramatic high-contrast overhead white spotlight casting soft edge shadows, highlighting peak physical cuts and definition";
+    wardrobe = "sleek premium black long-sleeve compression top or fitted premium dark athletic tee, clean modern silhouette";
+    background = "ultra-sleek premium private fitness space with dark acoustic vertical wood paneling and matte black machines, highly aesthetic premium minimalist environment, blurred background";
+    colorGrade = "high-fashion moody cinematic grade, rich deep blacks, subtle dark violet undertones, premium editorial fitness commercial look";
+  }
 
   return `[PHOTOGRAPHY STYLE]
 Camera: 85mm portrait lens, f/2.8, shallow depth of field

@@ -42,7 +42,7 @@ interface SessionDoc {
   photo?: { originalStoragePath?: string };
   ai?: InsightsResult;
   assets?: { images?: Record<string, string> };
-  status: "processing" | "analyzed" | "generating" | "ready" | "failed";
+  status: "pending" | "processing" | "analyzed" | "generating" | "ready" | "failed" | "partial";
   // v2.0 fields
   letter_from_future?: string;
   shareOriginal?: boolean;
@@ -230,8 +230,8 @@ export default async function Page({
     );
   }
 
-  const stillGenerating = data.status !== "ready";
-  const isReady = data.status === "ready";
+  const stillGenerating = data.status === "processing" || data.status === "generating" || data.status === "analyzed";
+  const isReady = data.status === "ready" || data.status === "partial";
   const sharedUserInput = allowProfile
     ? {
         age: data.input?.age,
