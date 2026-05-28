@@ -53,7 +53,7 @@ export function HeroTransformation({ className, compact = false }: HeroTransform
     const onMove = (e: MouseEvent) => updatePosition(e.clientX);
     const onUp = () => {
       setIsDragging(false);
-      // Snap to 50% if very close (premium UX touch)
+      // Snap to 50% if very close (polished UX touch)
       setPosition((p) => (Math.abs(p - 50) <= 4 ? 50 : p));
     };
     window.addEventListener("mousemove", onMove);

@@ -2,9 +2,9 @@ import { LandingPage } from "@/components/landing";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "NGX Transform — Tu salud muscular revelada por IA",
+  title: "NGX Transform — Diagnóstico visual de salud muscular",
   description:
-    "Sube una foto. GENESIS analiza tu punto de partida y te entrega un Season Vision Report con entrenamiento, nutrición, recuperación y acompañamiento humano. Privado, sin login, en menos de 3 minutos.",
+    "Sube una foto. GENESIS genera una visualización aspiracional, lectura muscular inicial y dirección de 12 semanas hacia HYBRID. Privado y sin promesas de resultado.",
 };
 
 export default function Page() {

@@ -1,5 +1,7 @@
 # Release Checklist
 
+> Auditoria de produccion/legal/comercial vigente: `docs/PRODUCTION_LAUNCH_AUDIT_2026-05-25.md`.
+
 ## Estado local verificado
 - [x] `pnpm lint`
 - [x] `pnpm test` (25 archivos, 98 tests)
@@ -10,6 +12,7 @@
 > Los checks marcados abajo siguen pendientes de confirmación en producción/Vercel o requieren datos legales/comerciales externos.
 
 ## Seguridad y privacidad
+- [ ] Revisar matriz final de produccion/legal/comercial
 - [ ] `FF_DELETE_TOKEN_REQUIRED=true` en prod
 - [ ] Clientes usan `X-Delete-Token` (no query params) para borrado
 - [ ] `MAX_UPLOAD_BYTES` definido (tamaño máx de foto)
@@ -48,4 +51,5 @@
 - [ ] `pnpm test:auth` (si hay tokens)
 - [ ] `pnpm test:smoke`
 - [ ] Smoke manual de wizard y share
+- [ ] Smoke manual de checkout/booking/WhatsApp segun canales activos
 - [ ] Landing y CTAs alineados con auth-before-wizard (`/auth?next=/wizard`)

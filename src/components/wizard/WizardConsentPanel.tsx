@@ -65,8 +65,8 @@ export function WizardConsentPanel({
           onChange={onChangeEmail}
           ariaLabel="Recibir comunicaciones de NGX"
         >
-          Acepto recibir mi reporte y comunicaciones educativas de NGX por correo.{" "}
-          <span className="text-white/35">(opcional)</span>
+          Acepto recibir comunicaciones educativas y novedades de NGX por correo.{" "}
+          <span className="text-white/35">(opcional; no afecta tu resultado)</span>
         </ConsentRow>
       </div>
     </div>

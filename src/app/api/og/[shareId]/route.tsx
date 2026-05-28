@@ -394,7 +394,7 @@ export async function GET(_: Request, context: { params: Promise<{ shareId: stri
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
                 <div style={{ fontSize: 20, letterSpacing: "0.35em", color: "#9E7BFF", fontWeight: 700 }}>NGX TRANSFORM</div>
-                <div style={{ fontSize: 14, color: "#8C8C8C", marginTop: 6 }}>Visual fitness premium · Gemini + NanoBanana</div>
+                <div style={{ fontSize: 14, color: "#8C8C8C", marginTop: 6 }}>Diagnóstico visual de salud muscular · Dirección 12 semanas</div>
               </div>
               <div
                 style={{
@@ -420,9 +420,9 @@ export async function GET(_: Request, context: { params: Promise<{ shareId: stri
                   maxWidth: 720,
                 }}
               >
-                <div style={{ fontSize: 54, fontWeight: 800, lineHeight: 1.05 }}>Tu Season Vision Report</div>
+                <div style={{ fontSize: 54, fontWeight: 800, lineHeight: 1.05 }}>Tu diagnóstico visual</div>
                 <div style={{ fontSize: 20, color: "#B3B3B3", marginTop: 12 }}>
-                  Análisis biométrico, Seasons visuales y dirección inicial lista para compartir.
+                  Visualización aspiracional, lectura muscular inicial y dirección HYBRID.
                 </div>
               </div>
               <div style={{ textAlign: "right" }}>

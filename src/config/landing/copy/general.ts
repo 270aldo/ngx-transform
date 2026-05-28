@@ -20,7 +20,7 @@ export const generalCopy: VariantCopy = {
   hero: {
     badge: {
       aiLabel: "GENESIS",
-      version: "Future Body Scan",
+      version: "Diagnóstico visual",
     },
     headline: {
       line1: "Lo que no te conoce,",
@@ -28,20 +28,19 @@ export const generalCopy: VariantCopy = {
     },
     subtitle:
       "Sube una foto real. Recibe una visualización aspiracional, una lectura inicial de tu punto de partida y una ruta clara para empezar con más criterio.",
-    punchline: "La imagen puede incomodarte. Bien. Ese es el punto de partida honesto.",
-    cta: "Iniciar mi scan",
+    cta: "Iniciar diagnóstico",
     primaryCta: {
-      label: "Iniciar mi scan",
-      intent: "scan_start",
+      label: "Iniciar diagnóstico",
+      intent: "diagnostic_start",
     },
     secondaryCta: "Ver ejemplo real",
     supportingPoints: [
-      "Tu punto de partida visible.",
-      "Lo que te frena, explicado.",
-      "Una ruta clara para empezar.",
+      "Una referencia visual clara.",
+      "Una versión aspiracional, sin exagerar.",
+      "Una ruta inicial para decidir.",
     ],
     socialProof: {
-      count: "Privado por diseño",
+      count: "",
       label: "Visualización aspiracional · lectura inicial · ruta de acción",
     },
     transformationDemo: {
@@ -104,7 +103,7 @@ export const generalCopy: VariantCopy = {
       icon: Sparkles,
       title: "La imagen inspira. El sistema transforma.",
       description:
-        "El scan te muestra una dirección posible. HYBRID convierte esa dirección en ejecución: una temporada de 12 semanas, GENESIS ajustando y un coach humano validando la ruta.",
+        "El diagnóstico visual te muestra una dirección posible. HYBRID convierte esa dirección en ejecución: una temporada de 12 semanas, GENESIS ajustando y un coach humano validando la ruta.",
       size: "full",
     },
   ],
@@ -132,7 +131,7 @@ export const generalCopy: VariantCopy = {
         step: "03",
         title: "Recibe tu lectura inicial",
         description:
-          "Ves una visualización aspiracional y una interpretación clara de lo que puede estar frenando tu progreso.",
+          "Ves una visualización aspiracional y una lectura clara de qué podría hacer falta para avanzar con más criterio.",
         icon: Sparkles,
       },
       {
@@ -186,7 +185,7 @@ export const generalCopy: VariantCopy = {
         icon: Brain,
         title: "Una lectura de tu punto de partida",
         description:
-          "GENESIS interpreta tu contexto inicial para mostrar qué factores pueden estar frenando tu progreso.",
+          "GENESIS interpreta tu contexto inicial para mostrar qué factores podrían necesitar más estructura.",
       },
       {
         icon: FileText,
@@ -207,7 +206,7 @@ export const generalCopy: VariantCopy = {
     sectionLabel: "Ejemplo de resultado",
     headline: "Así debería sentirse tu resultado.",
     subtitle:
-      "No como una imagen suelta. Como una primera lectura: dónde estás, qué puede frenarte y qué paso conviene tomar.",
+    "No como una imagen suelta. Como una primera lectura: dónde estás, qué podría hacer falta y qué paso conviene tomar.",
     scoreLabel: "Score de preparación",
     scoreValue: 72,
     scoreMax: 100,
@@ -221,7 +220,7 @@ export const generalCopy: VariantCopy = {
     ],
     insights: [
       {
-        label: "Lo que puede frenarte",
+        label: "Qué podría hacer falta",
         text: "Tu avance depende demasiado de motivación y poco de estructura.",
       },
       {
@@ -230,14 +229,14 @@ export const generalCopy: VariantCopy = {
       },
       {
         label: "Ajuste clave",
-        text: "Mejorar proteína, sueño y progresión antes de subir intensidad.",
+        text: "Mejorar sueño, agenda y progresión antes de subir intensidad.",
       },
       {
         label: "Siguiente paso",
         text: "Empezar con una ruta inicial o revisar HYBRID si necesitas soporte.",
       },
     ],
-    ctaLabel: "Iniciar mi scan",
+    ctaLabel: "Iniciar diagnóstico",
     ctaHref: "/wizard",
     microcopy: "Ejemplo ilustrativo. Tu resultado se genera con tus datos.",
   },
@@ -324,7 +323,7 @@ export const generalCopy: VariantCopy = {
       {
         question: "¿Necesito crear cuenta para empezar?",
         answer:
-          "No necesitas una cuenta completa para iniciar el scan. El flujo puede crear una sesión privada para guardar tu resultado y permitirte volver a consultarlo. Si después quieres seguimiento, historial o HYBRID, se te pedirá completar el acceso.",
+          "No necesitas una cuenta completa para iniciar el diagnóstico. El flujo puede crear una sesión privada para guardar tu resultado y permitirte volver a consultarlo. Si después quieres seguimiento, historial o HYBRID, se te pedirá completar el acceso.",
       },
       {
         question: "¿Qué necesito para empezar?",
@@ -342,9 +341,9 @@ export const generalCopy: VariantCopy = {
   cta: {
     headline: "Empieza con una foto. Sal con más claridad.",
     subtitle:
-      "No necesitas prometerte otra transformación perfecta. Necesitas ver dónde estás, entender qué te frena y tomar el siguiente paso con más criterio.",
-    buttonText: "Iniciar mi scan",
-    intent: "final_cta_scan",
+      "No necesitas prometerte otra transformación perfecta. Necesitas ver una posibilidad, entender tu punto de partida y tomar el siguiente paso con más criterio.",
+    buttonText: "Iniciar diagnóstico",
+    intent: "final_cta_diagnostic",
     footnote: "Visualización aspiracional. No garantía de resultado.",
   },
 

@@ -29,13 +29,13 @@ export function WizardCommandBar({
   isDemoMode = false,
 }: WizardCommandBarProps) {
   return (
-    <div className="fixed inset-x-0 top-3 z-50 px-3 md:top-6 md:px-4">
-      <div className="mx-auto grid w-full max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-3 md:gap-5 rounded-[var(--ngx-r-xl)] border border-[color:var(--ngx-border-subtle)] bg-black/55 px-3 py-3 md:px-4 md:py-3.5 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+    <div className="fixed inset-x-0 top-3 z-50 px-3 md:top-5 md:px-4">
+      <div className="ngx-wizard-commandbar mx-auto grid w-full max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-3 px-3 py-3 md:gap-5 md:px-4">
         {/* Left: back button */}
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full border border-[color:var(--ngx-border-subtle)] bg-black/35 px-3 text-[10px] font-medium uppercase tracking-[0.22em] text-white/75 transition-colors hover:bg-black/55 hover:text-white"
+          className="ngx-wizard-glass-button inline-flex h-10 shrink-0 items-center gap-2 px-3"
         >
           <ChevronLeft size={14} />
           <span className="hidden sm:inline">Atrás</span>
@@ -48,15 +48,15 @@ export function WizardCommandBar({
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
+              <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-purple-300)" }}>
                 Wizard privado
               </span>
-              <span className="rounded-full border border-[color:var(--ngx-border-subtle)] bg-white/[0.04] px-2 py-0.5 text-[9px] uppercase tracking-[0.18em] text-white/55">
+              <span className="ngx-wizard-step-chip px-2 py-0.5">
                 Paso {current} / {totalSteps}
               </span>
             </div>
             <div className="mt-0.5 flex items-baseline gap-2 min-w-0">
-              <span className="truncate text-sm md:text-base font-body font-bold text-white tracking-[-0.005em]">
+              <span className="truncate font-display text-sm font-black uppercase leading-none text-white md:text-base">
                 {title}
               </span>
               {isDemoMode ? (

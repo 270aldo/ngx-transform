@@ -14,5 +14,24 @@ describe("HybridOfferV2 telemetry compatibility", () => {
     expect(source).toContain('whatsapp_v2_clicked: "hybrid_offer_whatsapp_click"');
     expect(source).toContain("event: webhookEvent");
   });
-});
 
+  it("prioritizes HYBRID diagnostic and brief CTAs", () => {
+    expect(source).toContain("Agendar diagnóstico HYBRID");
+    expect(source).toContain("Recibir mi brief por correo");
+    expect(source).toContain("Ver video del fundador");
+    expect(source).toContain("Ayudas antes de decidir");
+    expect(source).not.toContain("Cohorte abierta");
+  });
+
+  it("keeps direct checkout behind a public feature flag", () => {
+    expect(source).toContain("NEXT_PUBLIC_FF_HYBRID_DIRECT_CHECKOUT");
+    expect(source).toContain("directCheckoutEnabled &&");
+    expect(source).toContain("Compra directa opcional");
+  });
+
+  it("can route the founder video placeholder to the voice agent when enabled", () => {
+    expect(source).toContain("NEXT_PUBLIC_FF_HYBRID_VOICE_AGENT");
+    expect(source).toContain('document.getElementById("hybrid-voice-agent")');
+    expect(source).toContain("onVoiceAgentFallback");
+  });
+});

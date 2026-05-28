@@ -14,6 +14,23 @@ interface WizardObjectiveStepProps {
  * Stage 3: Objetivo y contexto — goal selection + level + days + focus zone.
  */
 export function WizardObjectiveStep({ watch, setValue }: WizardObjectiveStepProps) {
+  const goal = watch("goal");
+  const focusZone = watch("focusZone");
+  const goalIntent =
+    goal === "masa"
+      ? "Entendido. La visualización va a priorizar fuerza útil, densidad muscular y proporciones naturales."
+      : goal === "mixto"
+        ? "Entendido. La visualización va a equilibrar rendimiento, estética, recuperación y consistencia semanal."
+        : "Entendido. La visualización va a priorizar recomposición, postura y una versión atlética sin exagerar.";
+  const focusLabel =
+    focusZone === "upper"
+      ? "tren superior"
+      : focusZone === "lower"
+        ? "tren inferior"
+        : focusZone === "abs"
+          ? "core y zona media"
+          : "cuerpo completo";
+
   return (
     <div className="w-full max-w-5xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 space-y-8">
       <div className="text-center">
@@ -30,14 +47,14 @@ export function WizardObjectiveStep({ watch, setValue }: WizardObjectiveStepProp
         <EliteOptionCard
           className="h-64"
           title="RECOMPOSICIÓN ATLÉTICA"
-          description="Reducir grasa sin perder rendimiento, priorizando tono muscular y postura."
+          description="Buscar una versión más atlética, con mejor postura, proporción y cintura visual."
           selected={watch("goal") === "definicion"}
           onClick={() => setValue("goal", "definicion")}
           idx={1}
           imageSrc="/images/backgrounds/goal-definicion.svg"
           imageAlt="Recomposición atlética"
           icon={Target}
-          iconLabel="Precisión metabólica"
+          iconLabel="Composición visual"
           overlayTone="deep"
         />
         <EliteOptionCard
@@ -70,16 +87,37 @@ export function WizardObjectiveStep({ watch, setValue }: WizardObjectiveStepProp
         <div className="ngx-metal-card !p-6">
           <div className="relative z-10">
             <span className="ngx-eyebrow !text-[10px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>Nivel de experiencia</span>
-            <div className="grid grid-cols-3 gap-2">
-              {([{ id: "novato", l: "Novato" }, { id: "intermedio", l: "Pro" }, { id: "avanzado", l: "Elite" }] as const).map((lv) => (
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+              {([
+                {
+                  id: "novato",
+                  l: "Principiante",
+                  d: "Retomando o menos de 6 meses consistentes",
+                },
+                {
+                  id: "intermedio",
+                  l: "Intermedio",
+                  d: "6-24 meses con base y algo de progresión",
+                },
+                {
+                  id: "avanzado",
+                  l: "Avanzado",
+                  d: "2+ años con técnica y progresión trazable",
+                },
+              ] as const).map((lv) => (
                 <button
                   key={lv.id}
                   type="button"
                   onClick={() => setValue("level", lv.id)}
                   data-selected={watch("level") === lv.id}
-                  className="ngx-choice-button py-3 text-[10px] font-mono uppercase tracking-[0.18em]"
+                  className="ngx-choice-button flex min-h-[72px] flex-col items-start justify-center gap-1 px-4 py-3 text-left"
                 >
-                  {lv.l}
+                  <span className="font-mono text-[10px] uppercase tracking-[0.18em]">
+                    {lv.l}
+                  </span>
+                  <span className="text-[11px] leading-snug text-white/45">
+                    {lv.d}
+                  </span>
                 </button>
               ))}
             </div>
@@ -111,7 +149,7 @@ export function WizardObjectiveStep({ watch, setValue }: WizardObjectiveStepProp
           <div>
             <span className="ngx-eyebrow !text-[10px] block mb-2" style={{ color: "var(--ngx-fg-3)" }}>Duración real por sesión</span>
             <p className="text-sm leading-relaxed text-white/55">
-              GENESIS usa esto para calibrar una visualización realista, no una fantasía de volumen imposible.
+              GENESIS usa esto para calibrar una visualización aspiracional, no una promesa de volumen imposible.
             </p>
           </div>
           <div className="grid grid-cols-4 gap-2 md:min-w-[360px]">
@@ -131,9 +169,9 @@ export function WizardObjectiveStep({ watch, setValue }: WizardObjectiveStepProp
         </div>
       </div>
 
-      <div className="rounded-2xl border border-emerald-400/15 bg-emerald-400/[0.06] px-5 py-4">
-        <p className="text-sm leading-relaxed text-emerald-50/80">
-          Entendido. Voy a priorizar músculo, postura y proporciones; no una transformación exagerada.
+      <div className="rounded-[18px] border border-white/[0.09] bg-white/[0.045] px-5 py-4">
+        <p className="text-sm leading-relaxed text-white/68">
+          {goalIntent} El foco principal será {focusLabel}; sigue siendo una visualización aspiracional, no una garantía.
         </p>
       </div>
 

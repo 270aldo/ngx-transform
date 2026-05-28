@@ -1,6 +1,6 @@
-# NGX Transform — Visual fitness premium
+# NGX Transform — Diagnóstico visual de salud muscular
 
-Aplicación Next.js con Tailwind v4, shadcn/ui v4, Firebase y Gemini (texto + imagen), orientada a generar análisis visual realista 0/4/8/12 meses.
+Lead magnet Next.js con Tailwind v4, shadcn/ui v4, Firebase y Gemini (texto + imagen), orientado a entregar un diagnóstico visual de salud muscular y dirección de 12 semanas hacia NGX HYBRID.
 
 ## Resumen técnico
 - Framework: Next.js 16.2.4 (App Router), React 19, TypeScript 5
@@ -22,7 +22,9 @@ Aplicación Next.js con Tailwind v4, shadcn/ui v4, Firebase y Gemini (texto + im
 - Cliente Firebase (NEXT_PUBLIC_*): API_KEY, AUTH_DOMAIN, PROJECT_ID, STORAGE_BUCKET, MESSAGING_SENDER_ID, APP_ID
 - Admin Firebase: FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY
 - Gemini: GEMINI_API_KEY, GEMINI_IMAGE_MODEL (opcional)
+- OpenAI Realtime: OPENAI_API_KEY, OPENAI_REALTIME_MODEL=gpt-realtime (agente conversacional HYBRID)
 - App: NEXT_PUBLIC_APP_URL (canónica), NEXT_PUBLIC_BASE_URL (fallback legacy), NEXT_PUBLIC_BOOKING_URL (opcional), NEXT_PUBLIC_DEMO_MODE
+- Funnel HYBRID: NEXT_PUBLIC_CALENDLY_URL, NEXT_PUBLIC_WHATSAPP_NUMBER, NEXT_PUBLIC_FF_HYBRID_DIRECT_CHECKOUT=false, NEXT_PUBLIC_FF_HYBRID_VOICE_AGENT=false por defecto
 
 Consejos:
 - Demo: `NEXT_PUBLIC_DEMO_MODE=1` (sin llamadas reales; flujo simulado para demos)
@@ -32,7 +34,7 @@ Consejos:
 - App Router (`src/app`):
   - `/wizard`: flujo de generación (lead → upload → session → analyze → images)
   - `/loading/[shareId]`: progreso de análisis/generación con retry
-  - `/s/[shareId]`: Season Vision Report + oferta HYBRID
+  - `/s/[shareId]`: visualización + insight muscular + roadmap + diagnóstico HYBRID
   - `/s/[shareId]?demo=1`: preview de resultados con datos mock en desarrollo
 
 - Librerías clave (`src/lib`):
@@ -41,14 +43,15 @@ Consejos:
   - `gemini.ts`: prompt/parse estricto JSON para análisis
   - `nanobanana.ts`: imagen Gemini (image-to-image)
   - `validators.ts`: zod schemas de entrada
+  - `/api/realtime/session`: emite client secrets efímeros para OpenAI Realtime/WebRTC, sin exponer OPENAI_API_KEY al navegador
 
 - UI:
   - `src/components/shadcn/ui/*`: base shadcn (button/input/textarea/card/progress/separator/tabs/select/tooltip/dialog)
   - `src/components/landing/*`: landing por variantes (`/`, `/j`, `/m`)
-  - `src/components/results/*`: Season Vision Report, roadmap, oferta HYBRID, NPS
+  - `src/components/results/*`: visualización, Muscle Health Score, resumen, roadmap y oferta HYBRID
   - `src/components/wizard/*`: wizard privado por etapas
 
-## Estilo NGX (dark premium)
+## Estilo NGX (dark cinematic)
 - Tipografía: United Sans Cond (display), Inter (body/UI), JetBrains Mono (métricas/labels)
 - Colores tokens (globals.css):
   - `--primary: #6D00FF` (Electric Violet)
@@ -80,6 +83,11 @@ Consejos:
 3) Dev: `pnpm dev` → http://localhost:3000
 4) Demo results: `/s/demo?demo=1` (sin Firestore)
 5) Flujo real: `/wizard` → `/loading/[id]` → `/s/[id]`
+
+## Producción
+- Checklist: `docs/RELEASE_CHECKLIST.md`
+- Auditoría final legal/comercial/config: `docs/PRODUCTION_LAUNCH_AUDIT_2026-05-25.md`
+- Índices Firebase: `docs/FIRESTORE_INDEXES.md`
 
 ## Roadmap inmediato
 - Fase 2: sincronizar tabs Visor/Timeline + deep-link (#m4)

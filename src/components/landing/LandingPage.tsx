@@ -6,16 +6,8 @@ import { ScrollAnimator } from "./ScrollAnimator";
 import { LandingProvider } from "./LandingProvider";
 import { LandingTopNav } from "./LandingTopNav";
 import { LandingHero } from "./LandingHero";
-import { LandingProblem } from "./LandingProblem";
-import { LandingStats } from "./LandingStats";
-import { LandingHowItWorks } from "./LandingHowItWorks";
-import { LandingExplainerVideo } from "./LandingExplainerVideo";
-import { LandingValueStack } from "./LandingValueStack";
-import { LandingReportPreview } from "./LandingReportPreview";
-import { LandingBridge } from "./LandingBridge";
-import { LandingTrustStrip } from "./LandingTrustStrip";
+import { LandingJourney } from "./LandingJourney";
 import { LandingFAQ } from "./LandingFAQ";
-import { LandingCTA } from "./LandingCTA";
 import { LandingFooter } from "./LandingFooter";
 import { StickyCTA } from "./StickyCTA";
 
@@ -38,22 +30,14 @@ export function LandingPage({ variant = "general" }: LandingPageProps) {
   return (
     <LandingProvider variant={variant}>
       <ScrollAnimator>
-        <div className="relative min-h-screen overflow-x-hidden selection:bg-[#6D00FF] selection:text-white">
+        <div className="ngx-landing-shell relative min-h-screen overflow-x-hidden selection:bg-[#6D00FF] selection:text-white">
           <LandingTopNav />
 
           {/* Main Content */}
-          <main className="relative z-10 pt-28 pb-20 sm:pt-32 md:pt-40">
+          <main className="relative z-10 pt-28 sm:pt-32 md:pt-40">
             <LandingHero />
-            <LandingProblem />
-            <LandingHowItWorks />
-            <LandingExplainerVideo />
-            <LandingValueStack />
-            <LandingReportPreview />
-            <LandingStats />
-            <LandingBridge />
-            <LandingTrustStrip />
+            <LandingJourney />
             <LandingFAQ />
-            <LandingCTA />
           </main>
 
           <LandingFooter />

@@ -168,6 +168,11 @@ export const TelemetryEventSchema = z.object({
     "brief_email_requested",
     "brief_email_sent",
     "brief_email_failed",
+    // HYBRID voice classifier
+    "voice_agent_opened",
+    "voice_agent_connected",
+    "voice_agent_classified",
+    "voice_agent_cta_clicked",
   ]),
   stage: z.string().optional(),
   model_id: z.string().optional(),

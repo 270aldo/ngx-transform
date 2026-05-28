@@ -111,9 +111,6 @@ function computeAdherenceScore(context: PromptContext): number {
   if (typeof context.trainingDaysPerWeek === "number") {
     parts.push(normalize(context.trainingDaysPerWeek, 1, 7));
   }
-  if (typeof context.nutritionQuality === "number") {
-    parts.push(normalize(context.nutritionQuality, 1, 10));
-  }
   if (typeof context.disciplineRating === "number") {
     parts.push(normalize(context.disciplineRating, 1, 10));
   }

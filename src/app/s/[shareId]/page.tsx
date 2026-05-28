@@ -2,11 +2,12 @@ import { getDb } from "@/lib/firebaseAdmin";
 import { getAuthUserFromCookie } from "@/lib/authServer";
 import type { InsightsResult } from "@/types/ai";
 import { BiometricLoader } from "@/components/BiometricLoader";
-import { SeasonVisionReport } from "@/components/results/SeasonVisionReport";
-import { HybridOfferSection } from "@/components/results/HybridOfferSection";
+import { TransformationViewer2 } from "@/components/TransformationViewer2";
+import { MuscleHealthScore } from "@/components/results/MuscleHealthScore";
+import { TransformationSummary } from "@/components/results/TransformationSummary";
 import { HybridOfferV2 } from "@/components/results/HybridOfferV2";
+import { HybridVoiceAgent } from "@/components/results/HybridVoiceAgent";
 import { SeasonRoadmap } from "@/components/results/SeasonRoadmap";
-import { NPSQuick } from "@/components/results/NPSQuick";
 import RefreshClient from "./refresh-client";
 import ScrollToSection from "./scroll-to-section";
 import { Metadata } from "next";
@@ -15,8 +16,8 @@ import { getSignedUrl } from "@/lib/storage";
 import { DEMO_SESSION, DEMO_URLS } from "./demoStub";
 
 const FF_EXPOSE_ORIGINAL = process.env.FF_EXPOSE_ORIGINAL !== "false";
-// v12: salida comercial unificada (4 caminos en /results, sin /demo ni /plan)
-const FF_HYBRID_OFFER_V2 = process.env.NEXT_PUBLIC_FF_HYBRID_OFFER_V2 !== "false";
+const FF_HYBRID_VOICE_AGENT =
+  process.env.NEXT_PUBLIC_FF_HYBRID_VOICE_AGENT === "true";
 
 export const dynamic = "force-dynamic";
 
@@ -65,8 +66,9 @@ export async function generateMetadata({ params }: { params: Promise<{ shareId: 
   const ogUrl = `${absoluteBase}/api/og/${shareId}`;
 
   return {
-    title: "Mi Season Vision Report - NGX",
-    description: "He descubierto mi dirección física con NGX. Mira mi Season Vision Report.",
+    title: "Mi diagnóstico visual NGX Transform",
+    description:
+      "Diagnóstico visual de salud muscular y dirección de 12 semanas. Visualización aspiracional, no garantía.",
     openGraph: {
       images: [ogUrl],
     },
@@ -230,45 +232,66 @@ export default async function Page({
 
   const stillGenerating = data.status !== "ready";
   const isReady = data.status === "ready";
+  const sharedUserInput = allowProfile
+    ? {
+        age: data.input?.age,
+        sex: data.input?.sex,
+        heightCm: data.input?.heightCm,
+        weightKg: data.input?.weightKg,
+        level: data.input?.level,
+        goal: data.input?.goal,
+        weeklyTime: data.input?.weeklyTime,
+        focusZone: data.input?.focusZone,
+        stressLevel: data.input?.stressLevel,
+        sleepQuality: data.input?.sleepQuality,
+        disciplineRating: data.input?.disciplineRating,
+      }
+    : undefined;
+  const safeFocusZone = ["upper", "lower", "abs", "full"].includes(
+    data.input?.focusZone ?? ""
+  )
+    ? (data.input?.focusZone as "upper" | "lower" | "abs" | "full")
+    : undefined;
+  const viewerUserProfile = allowProfile
+    ? {
+        focusZone: safeFocusZone,
+        goal: data.input?.goal,
+        stressLevel: data.input?.stressLevel,
+      }
+    : undefined;
 
   return (
     <>
       <ScrollToSection />
-      <SeasonVisionReport
+      <TransformationViewer2
         ai={ai}
         imageUrls={urls}
         shareId={shareId}
         isReady={isReady}
-        userInput={
-          allowProfile
-            ? {
-                age: data.input?.age,
-                sex: data.input?.sex,
-                heightCm: data.input?.heightCm,
-                weightKg: data.input?.weightKg,
-                level: data.input?.level,
-                goal: data.input?.goal,
-                weeklyTime: data.input?.weeklyTime,
-                focusZone: data.input?.focusZone,
-                stressLevel: data.input?.stressLevel,
-                sleepQuality: data.input?.sleepQuality,
-                disciplineRating: data.input?.disciplineRating,
-              }
-            : undefined
-        }
+        surfaceMode="lead-magnet"
+        letterFromFuture={data.letter_from_future}
+        userProfile={viewerUserProfile}
+        sessionId={shareId}
+      />
+      <MuscleHealthScore
+        shareId={shareId}
+        diagnostic={ai.diagnostic}
+        userInput={sharedUserInput}
+      />
+      <TransformationSummary
+        ai={ai}
+        imageUrls={urls}
+        shareId={shareId}
+        userInput={sharedUserInput}
       />
       {isReady && (
         <SeasonRoadmap />
       )}
-      {isReady && (
-        FF_HYBRID_OFFER_V2 ? (
-          <HybridOfferV2 shareId={shareId} />
-        ) : (
-          <HybridOfferSection shareId={shareId} />
-        )
+      {isReady && FF_HYBRID_VOICE_AGENT && (
+        <HybridVoiceAgent shareId={shareId} />
       )}
       {isReady && (
-        <NPSQuick shareId={shareId} />
+        <HybridOfferV2 shareId={shareId} />
       )}
       <RefreshClient shareId={shareId} active={stillGenerating} />
     </>

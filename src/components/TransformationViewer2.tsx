@@ -58,6 +58,7 @@ interface TransformationViewer2Props {
   };
   shareId: string;
   isReady?: boolean;
+  surfaceMode?: "default" | "lead-magnet";
   letterFromFuture?: string;
   // v2.1 Viral props
   userName?: string;
@@ -85,6 +86,7 @@ export function TransformationViewer2({
   imageUrls,
   shareId,
   isReady = true,
+  surfaceMode = "default",
   letterFromFuture,
   // v2.1 Viral props
   userName,
@@ -94,6 +96,8 @@ export function TransformationViewer2({
   sessionId,
   featureFlags = {},
 }: TransformationViewer2Props) {
+  const isLeadMagnet = surfaceMode === "lead-magnet";
+
   // Feature flags with defaults
   const {
     FF_DRAMATIC_REVEAL = true,
@@ -103,12 +107,15 @@ export function TransformationViewer2({
     FF_SHARE_UNLOCK,
     FF_REFERRAL_TRACKING = true,
   } = featureFlags;
-  const shareUnlockEnabled = FF_SHARE_UNLOCK ?? FF_SHARE_TO_UNLOCK;
+  const allowDramaticReveal = !isLeadMagnet && FF_DRAMATIC_REVEAL;
+  const allowCinematicAutoplay = !isLeadMagnet && !FF_DRAMATIC_REVEAL;
+  const shareUnlockEnabled =
+    !isLeadMagnet && (FF_SHARE_UNLOCK ?? FF_SHARE_TO_UNLOCK);
 
   // State
   const [showDramaticReveal, setShowDramaticReveal] = useState(() => {
-    if (typeof window === "undefined") return FF_DRAMATIC_REVEAL;
-    return FF_DRAMATIC_REVEAL && !localStorage.getItem(`ngx-dramatic-seen-${shareId}`);
+    if (typeof window === "undefined") return allowDramaticReveal;
+    return allowDramaticReveal && !localStorage.getItem(`ngx-dramatic-seen-${shareId}`);
   });
   const [showShareModal, setShowShareModal] = useState(false);
   const [unlockedContent, setUnlockedContent] = useState<string[]>(() => {
@@ -123,8 +130,8 @@ export function TransformationViewer2({
     }
   });
   const [showCinematic, setShowCinematic] = useState(() => {
-    if (typeof window === "undefined") return !FF_DRAMATIC_REVEAL;
-    return !FF_DRAMATIC_REVEAL && !localStorage.getItem(`ngx-cinematic-seen-${shareId}`);
+    if (typeof window === "undefined") return allowCinematicAutoplay;
+    return allowCinematicAutoplay && !localStorage.getItem(`ngx-cinematic-seen-${shareId}`);
   }); // Only show if no dramatic reveal
   const [currentStep, setCurrentStep] = useState<TimelineStep>("m0");
   const [showLetter, setShowLetter] = useState(false);
@@ -209,8 +216,8 @@ export function TransformationViewer2({
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `Mi Transformación ${STEP_LABELS[milestone]} - NGX`,
-          text: `Mira mi transformación proyectada para ${STEP_LABELS[milestone]}`,
+          title: `Mi diagnóstico visual ${STEP_LABELS[milestone]} - NGX`,
+          text: `Mira mi diagnóstico visual de salud muscular en ${STEP_LABELS[milestone]}`,
           url: window.location.href,
         });
       } catch (err) {
@@ -231,7 +238,7 @@ export function TransformationViewer2({
   };
 
   // Show dramatic reveal first (v2.1)
-  if (showDramaticReveal && isReady && FF_DRAMATIC_REVEAL) {
+  if (showDramaticReveal && isReady && allowDramaticReveal) {
     return (
       <DramaticReveal
         images={{
@@ -248,7 +255,7 @@ export function TransformationViewer2({
   }
 
   // Show cinematic on first view (only if ready and no dramatic reveal)
-  if (showCinematic && isReady && !FF_DRAMATIC_REVEAL) {
+  if (showCinematic && isReady && allowCinematicAutoplay) {
     return (
       <CinematicAutoplay
         images={cinematicImages}
@@ -304,14 +311,14 @@ export function TransformationViewer2({
             <div className="flex items-center gap-2">
               {isReady ? (
                 <>
-                  <SocialShareButton shareId={shareId} imageUrl={currentImage} />
+              <SocialShareButton shareId={shareId} imageUrl={currentImage} />
                 </>
               ) : (
                 <div className="ngx-glass-clear flex items-center gap-2 px-3 py-2 rounded-full text-sm text-white/65">
                   <Loader2 className="w-4 h-4 animate-spin" />
                 </div>
               )}
-              <BookingHeaderButton />
+              {!isLeadMagnet && <BookingHeaderButton />}
             </div>
           </div>
         </header>
@@ -397,8 +404,13 @@ export function TransformationViewer2({
                 baselineStats={baselineStats}
                 currentImage={currentImage}
                 originalImage={originalImage}
-                onShare={handleShare}
-                onShowLetter={currentStep === "m12" ? () => setShowLetter(true) : undefined}
+                surfaceMode={surfaceMode}
+                onShare={isLeadMagnet ? undefined : handleShare}
+                onShowLetter={
+                  !isLeadMagnet && currentStep === "m12"
+                    ? () => setShowLetter(true)
+                    : undefined
+                }
               />
             </motion.div>
           </AnimatePresence>
@@ -433,36 +445,37 @@ export function TransformationViewer2({
         </div>
       </section>
 
-      {/* v2.1 Viral Section */}
-      <div className="px-6 py-8 space-y-8" style={{ background: "linear-gradient(to top, var(--ngx-bg-mid), var(--ngx-bg-end))" }}>
-        {/* Social Counter */}
-        {FF_SOCIAL_COUNTER && (
-          <div className="text-center">
-            <SocialCounter variant="results" sessionId={sessionId} />
-          </div>
-        )}
+      {!isLeadMagnet && (
+        <div className="px-6 py-8 space-y-8" style={{ background: "linear-gradient(to top, var(--ngx-bg-mid), var(--ngx-bg-end))" }}>
+          {/* Social Counter */}
+          {FF_SOCIAL_COUNTER && (
+            <div className="text-center">
+              <SocialCounter variant="results" sessionId={sessionId} />
+            </div>
+          )}
 
-        {/* Agent Bridge CTA (replaces BookingCTA when enabled) */}
-        {FF_AGENT_BRIDGE_CTA && userProfile ? (
-          <AgentBridgeCTA
-            userProfile={userProfile}
-            shareId={shareId}
-            sessionId={sessionId}
-          />
-        ) : (
-          <BookingCTA />
-        )}
+          {/* Agent Bridge CTA (replaces BookingCTA when enabled) */}
+          {FF_AGENT_BRIDGE_CTA && userProfile ? (
+            <AgentBridgeCTA
+              userProfile={userProfile}
+              shareId={shareId}
+              sessionId={sessionId}
+            />
+          ) : (
+            <BookingCTA />
+          )}
 
-        {/* Referral Card */}
-        {FF_REFERRAL_TRACKING && referralCode && (
-          <ReferralCard
-            referralCode={referralCode}
-            referralCount={referralCount}
-            shareId={shareId}
-            sessionId={sessionId}
-          />
-        )}
-      </div>
+          {/* Referral Card */}
+          {FF_REFERRAL_TRACKING && referralCode && (
+            <ReferralCard
+              referralCode={referralCode}
+              referralCount={referralCount}
+              shareId={shareId}
+              sessionId={sessionId}
+            />
+          )}
+        </div>
+      )}
 
       {/* Letter From Future Modal */}
       <LetterFromFuture

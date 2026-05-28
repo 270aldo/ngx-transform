@@ -147,7 +147,7 @@ export default function BriefDelivery({
                             {biologicalAge}
                           </Text>
                           <Text className="text-[10px] text-neutral-500 uppercase tracking-wider mt-1">
-                            Edad biológica est.
+                            Edad funcional est.
                           </Text>
                           <Text className="text-[10px] text-amber-400 mt-1">
                             {ageDelta > 0
@@ -162,7 +162,7 @@ export default function BriefDelivery({
                             {metabolicRisk}
                           </Text>
                           <Text className="text-[10px] text-neutral-500 uppercase tracking-wider mt-1">
-                            Riesgo metabólico
+                            Riesgo de fricción
                           </Text>
                         </td>
                       )}

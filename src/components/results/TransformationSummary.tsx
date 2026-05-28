@@ -8,14 +8,12 @@ import {
   CheckCircle2,
   Sparkles,
   Target,
-  TrendingDown,
   TrendingUp,
 } from 'lucide-react';
 import type { Bottleneck, InsightsResult } from '@/types/ai';
 import { getSeasonMilestoneLabel } from '@/lib/seasonMilestones';
 
 interface UserInputSnapshot {
-  weightKg?: number;
   age?: number;
   goal?: 'definicion' | 'masa' | 'mixto';
   level?: 'novato' | 'intermedio' | 'avanzado';
@@ -34,7 +32,7 @@ interface TransformationSummaryProps {
 
 const BOTTLENECK_LABELS: Record<Bottleneck, string> = {
   training_progression: 'Entrenamiento sin progresión trazable',
-  nutrition_consistency: 'Inconsistencia nutricional',
+  nutrition_consistency: 'Consistencia de ejecución',
   recovery: 'Recuperación insuficiente',
   structure: 'Falta de estructura semanal',
   expectations: 'Expectativas mal calibradas',
@@ -45,7 +43,7 @@ const BOTTLENECK_DESCRIPTIONS: Record<Bottleneck, string> = {
   training_progression:
     'Entrenas con consistencia, pero sin un sistema de progresión semanal. Los músculos dejan de adaptarse a las pocas semanas y entras en un plateau silencioso.',
   nutrition_consistency:
-    'La calidad del plan importa menos que su estabilidad. Tu nutrición varía demasiado entre días — la inconsistencia neutraliza ganancias antes que cualquier otra variable.',
+    'La calidad del plan importa menos que su estabilidad. Cuando cada día se decide desde cero, la inconsistencia neutraliza avance antes que cualquier optimización fina.',
   recovery:
     'Tu volumen de entrenamiento está por encima de lo que recuperas. Más sesiones no es más resultado: la fatiga acumulada está saboteando la adaptación.',
   structure:
@@ -56,63 +54,50 @@ const BOTTLENECK_DESCRIPTIONS: Record<Bottleneck, string> = {
     'Operas sin accountability externo. Sin alguien que pregunte de vuelta, la disciplina necesita ser identidad — y eso lleva años, no semanas.',
 };
 
-function computeDeltas(
-  ai: InsightsResult,
-  weightKg: number | undefined,
-  goal: UserInputSnapshot['goal']
-) {
+function computeScoreDeltas(ai: InsightsResult) {
   const m0 = ai.timeline?.m0?.stats;
   const m12 = ai.timeline?.m12?.stats;
 
   if (!m0 || !m12) {
-    return { weightDelta: 4, fatDelta: -5, muscleDelta: 6 };
+    return { strengthDelta: 0, aestheticsDelta: 0, enduranceDelta: 0 };
   }
 
-  const refWeight = weightKg && weightKg > 30 ? weightKg : 75;
-  const strengthGain = m12.strength - m0.strength; // 0–100 scale
-  const aestheticsGain = m12.aesthetics - m0.aesthetics;
-
-  // Multiplicadores derivan del peso del usuario (no constante arbitraria) y
-  // del objetivo: definición prioriza pérdida de grasa; masa prioriza ganancia.
-  const goalBias =
-    goal === 'masa' ? 1.15 : goal === 'definicion' ? 0.85 : 1.0;
-
-  const weightDelta = Math.round((strengthGain / 100) * refWeight * 0.085 * goalBias);
-  const fatDelta = -Math.max(
-    2,
-    Math.round((aestheticsGain / 100) * 14 * (goal === 'definicion' ? 1.25 : 0.95))
-  );
-  const muscleDelta = Math.max(
-    3,
-    Math.round((strengthGain / 100) * 14 * goalBias)
-  );
-
-  return { weightDelta, fatDelta, muscleDelta };
+  return {
+    strengthDelta: m12.strength - m0.strength,
+    aestheticsDelta: m12.aesthetics - m0.aesthetics,
+    enduranceDelta: m12.endurance - m0.endurance,
+  };
 }
 
 export function TransformationSummary({
   ai,
   imageUrls,
-  userInput,
 }: TransformationSummaryProps) {
-  const { weightDelta, fatDelta, muscleDelta } = computeDeltas(
-    ai,
-    userInput?.weightKg,
-    userInput?.goal
-  );
+  const { strengthDelta, aestheticsDelta, enduranceDelta } =
+    computeScoreDeltas(ai);
 
-  const bottleneck = ai.diagnostic?.bottleneck;
+  const bottleneck =
+    ai.diagnostic?.bottleneck === 'nutrition_consistency'
+      ? 'structure'
+      : ai.diagnostic?.bottleneck;
   const bottleneckLabel = bottleneck ? BOTTLENECK_LABELS[bottleneck] : null;
   const bottleneckDescription = bottleneck
     ? BOTTLENECK_DESCRIPTIONS[bottleneck]
     : null;
 
-  const timelineImages = [
+  const rawTimelineImages = [
     { label: getSeasonMilestoneLabel('m0'), key: 'm0', url: imageUrls.originalUrl },
     { label: getSeasonMilestoneLabel('m4'), key: 'm4', url: imageUrls.images?.m4 },
     { label: getSeasonMilestoneLabel('m8'), key: 'm8', url: imageUrls.images?.m8 },
     { label: getSeasonMilestoneLabel('m12'), key: 'm12', url: imageUrls.images?.m12 },
   ];
+  const seenUrls = new Set<string>();
+  const timelineImages = rawTimelineImages.map((item) => {
+    if (!item.url) return item;
+    if (seenUrls.has(item.url)) return { ...item, url: undefined };
+    seenUrls.add(item.url);
+    return item;
+  });
 
   const bridgeQuestions = [
     'Qué versión de ti te está llamando de verdad',
@@ -185,34 +170,38 @@ export function TransformationSummary({
                         <div className="flex items-center gap-2" style={{ color: 'var(--ngx-success)' }}>
                           <TrendingUp className="h-4 w-4" />
                           <span className="font-mono text-2xl font-bold tabular-nums text-white">
-                            {weightDelta >= 0 ? `+${weightDelta}` : weightDelta} kg
+                            {strengthDelta >= 0 ? `+${strengthDelta}` : strengthDelta}
                           </span>
                         </div>
-                        <span className="ngx-eyebrow !text-[10px] mt-2 block" style={{ color: 'var(--ngx-fg-4)' }}>Peso orientativo</span>
-                      </div>
-                    </div>
-                    <div className="ngx-metal-card !p-4">
-                      <div className="relative z-10">
-                        <div className="flex items-center gap-2" style={{ color: 'var(--ngx-success)' }}>
-                          <TrendingDown className="h-4 w-4" />
-                          <span className="font-mono text-2xl font-bold tabular-nums text-white">{fatDelta}%</span>
-                        </div>
-                        <span className="ngx-eyebrow !text-[10px] mt-2 block" style={{ color: 'var(--ngx-fg-4)' }}>Grasa estimada</span>
+                        <span className="ngx-eyebrow !text-[10px] mt-2 block" style={{ color: 'var(--ngx-fg-4)' }}>Fuerza visual</span>
                       </div>
                     </div>
                     <div className="ngx-metal-card !p-4">
                       <div className="relative z-10">
                         <div className="flex items-center gap-2" style={{ color: 'var(--ngx-success)' }}>
                           <TrendingUp className="h-4 w-4" />
-                          <span className="font-mono text-2xl font-bold tabular-nums text-white">+{muscleDelta}%</span>
+                          <span className="font-mono text-2xl font-bold tabular-nums text-white">
+                            {aestheticsDelta >= 0 ? `+${aestheticsDelta}` : aestheticsDelta}
+                          </span>
                         </div>
-                        <span className="ngx-eyebrow !text-[10px] mt-2 block" style={{ color: 'var(--ngx-fg-4)' }}>Músculo estimado</span>
+                        <span className="ngx-eyebrow !text-[10px] mt-2 block" style={{ color: 'var(--ngx-fg-4)' }}>Composición visual</span>
+                      </div>
+                    </div>
+                    <div className="ngx-metal-card !p-4">
+                      <div className="relative z-10">
+                        <div className="flex items-center gap-2" style={{ color: 'var(--ngx-success)' }}>
+                          <TrendingUp className="h-4 w-4" />
+                          <span className="font-mono text-2xl font-bold tabular-nums text-white">
+                            {enduranceDelta >= 0 ? `+${enduranceDelta}` : enduranceDelta}
+                          </span>
+                        </div>
+                        <span className="ngx-eyebrow !text-[10px] mt-2 block" style={{ color: 'var(--ngx-fg-4)' }}>Capacidad de trabajo</span>
                       </div>
                     </div>
                   </div>
 
                   <p className="mt-5 text-sm leading-relaxed text-white/55">
-                    No es una promesa exacta. Es una visión útil para decidir si ese resultado te mueve lo suficiente como para traducirlo a estructura, hábitos y seguimiento.
+                    No son kilos, grasa ni masa medidos. Son cambios orientativos en una escala visual 0-100 para decidir si esa dirección merece estructura, hábitos y seguimiento.
                   </p>
                 </div>
               </div>

@@ -40,18 +40,18 @@ export function CyberSlider({
     red: "linear-gradient(90deg, var(--ngx-error), #FF8B95)",
   };
   const trackGlow: Record<NonNullable<CyberSliderProps["trackColor"]>, string> = {
-    violet: "0 0 10px rgba(109, 0, 255, 0.24)",
-    emerald: "0 0 10px rgba(0, 245, 170, 0.22)",
-    amber: "0 0 10px rgba(255, 217, 61, 0.20)",
-    blue: "0 0 10px rgba(33, 150, 243, 0.20)",
-    red: "0 0 10px rgba(255, 107, 107, 0.20)",
+    violet: "0 0 8px rgba(109, 0, 255, 0.14)",
+    emerald: "0 0 8px rgba(0, 245, 170, 0.12)",
+    amber: "0 0 8px rgba(255, 217, 61, 0.12)",
+    blue: "0 0 8px rgba(33, 150, 243, 0.12)",
+    red: "0 0 8px rgba(255, 107, 107, 0.12)",
   };
   const valueColor: Record<NonNullable<CyberSliderProps["trackColor"]>, string> = {
-    violet: "var(--ngx-purple-light)",
-    emerald: "var(--ngx-success)",
-    amber: "var(--ngx-warning)",
-    blue: "var(--ngx-blue)",
-    red: "var(--ngx-error)",
+    violet: "var(--ngx-white)",
+    emerald: "var(--ngx-white)",
+    amber: "var(--ngx-white)",
+    blue: "var(--ngx-white)",
+    red: "var(--ngx-white)",
   };
   const accentClass: Record<NonNullable<CyberSliderProps["trackColor"]>, string> = {
     violet: "[--accent:#9D4EDD]",
@@ -64,7 +64,7 @@ export function CyberSlider({
   return (
     <div
       className={cn(
-        "rounded-[var(--ngx-r-card)] border border-white/[0.08] bg-white/[0.03] px-4 py-4 transition-colors hover:border-white/[0.13]",
+        "rounded-[14px] border border-[var(--lg-rim-regular)] bg-[var(--lg-glass-thin)] px-4 py-4 shadow-[var(--lg-shadow-inset)] transition-colors hover:border-[var(--lg-rim-strong)]",
         className
       )}
     >
@@ -79,14 +79,14 @@ export function CyberSlider({
         </div>
         <div className="flex items-baseline gap-1.5">
           <span
-            className="font-mono font-bold text-2xl md:text-[1.65rem] tabular-nums leading-none tracking-normal"
+            className="font-display text-2xl font-black tabular-nums leading-none tracking-[-0.02em] md:text-[1.65rem]"
             style={{ color: valueColor[trackColor] }}
           >
             {valueDisplay ?? props.value}
           </span>
           {suffix ? (
             <span
-              className="text-[10px] font-mono uppercase tracking-[0.18em]"
+              className="font-display text-[10px] font-bold uppercase tracking-[0.18em]"
               style={{ color: "var(--ngx-fg-4)" }}
             >
               {suffix}
@@ -119,7 +119,7 @@ export function CyberSlider({
             "[&::-webkit-slider-thumb]:rounded-full",
             "[&::-webkit-slider-thumb]:border [&::-webkit-slider-thumb]:border-white/40",
             "[&::-webkit-slider-thumb]:bg-white",
-            "[&::-webkit-slider-thumb]:shadow-[0_0_10px_rgba(255,255,255,0.5)]",
+            "[&::-webkit-slider-thumb]:shadow-[0_3px_12px_rgba(0,0,0,0.28)]",
             "[&::-webkit-slider-thumb]:transition-transform",
             "[&::-webkit-slider-thumb]:hover:scale-125",
             // Native accent color on the thumb (Firefox + WebKit fallback)

@@ -71,7 +71,7 @@ export const DEMO_AI: InsightsResult = {
         "Lo que se construye con estructura se puede sostener después. No buscaste un cambio puntual — construiste un sistema.",
       stats: { strength: 88, aesthetics: 85, endurance: 86, mental: 88 },
       expectations: [
-        "Composición corporal premium para tu punto de partida",
+        "Composición corporal orientativa para tu punto de partida",
         "Disciplina como identidad, no como esfuerzo",
         "Capacidad de mantener forma sin obsesión",
       ],
@@ -85,7 +85,7 @@ export const DEMO_AI: InsightsResult = {
     bottleneck: "structure",
     leverages: [
       "Subir entrenamiento a 4 sesiones/sem con progresión clara: tu reporte de 4h disponibles permite frecuencia, falta el plan que las ordene.",
-      "Proteína a 1.6g/kg distribuida en 4 ingestas — tu peso de 82kg pide ~130g/día y los mental logs sugieren que estás por debajo.",
+      "Bloquear horarios fijos antes del lunes: tu reporte de 4h disponibles pide estructura, no más intención.",
       "Bloquear 7-8h de sueño consistente: tu stressLevel 6/10 indica que la recuperación está siendo el cuello, no el volumen.",
     ],
     dominant_error:

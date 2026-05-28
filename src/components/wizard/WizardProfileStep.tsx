@@ -24,12 +24,12 @@ export function WizardProfileStep({ register, watch, setValue }: WizardProfileSt
           Le damos contexto a tu punto de partida.
         </h2>
         <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/55 md:text-base">
-          Estos datos no sustituyen una medición clínica. Sólo calibran el rango de la visualización para que no se sienta como un juguete genérico.
+          Estos datos no sustituyen una medición clínica. Sólo calibran el rango visual para que la lectura sea más coherente con tu punto de partida real.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] items-start">
-        <div className="ngx-section-panel !p-5 md:!p-6 space-y-5">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-stretch">
+        <div className="ngx-section-panel !p-5 md:!p-6 flex h-full flex-col gap-5">
           <CyberSlider
             label="Edad"
             {...register("age")}
@@ -56,30 +56,43 @@ export function WizardProfileStep({ register, watch, setValue }: WizardProfileSt
 
           <div className="ngx-metal-card !p-4">
             <div className="relative z-10">
-            <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Género biológico</span>
-            <div className="mt-3 grid grid-cols-2 gap-3">
-              {(["male", "female"] as const).map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => setValue("sex", s)}
-                  data-selected={watch("sex") === s}
-                  className="ngx-choice-button py-3 text-[10px] font-mono uppercase tracking-[0.18em]"
-                >
-                  {s === "male" ? "Masculino" : "Femenino"}
-                </button>
-              ))}
-            </div>
+              <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Referencia corporal</span>
+              <div className="mt-3 grid grid-cols-2 gap-3">
+                {(["male", "female"] as const).map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setValue("sex", s)}
+                    data-selected={watch("sex") === s}
+                    className="ngx-choice-button py-3 text-[10px] font-mono uppercase tracking-[0.18em]"
+                  >
+                    {s === "male" ? "Masculino" : "Femenino"}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-3 text-xs leading-relaxed text-white/45">
+                Se usa como parámetro de calibración visual. No define identidad, diagnóstico ni resultado.
+              </p>
             </div>
           </div>
 
-          <p className="text-xs leading-relaxed text-white/45 px-1">
-            Mientras más honestos sean estos datos, mejor se sentirá el puente entre la visualización y el roadmap.
+          <div className="ngx-metal-card !p-4">
+            <div className="relative z-10">
+              <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Cómo se usa</span>
+              <div className="mt-3 grid gap-2 text-xs leading-relaxed text-white/55">
+                <p>Edad, altura y peso ayudan a evitar una visualización exagerada.</p>
+                <p>La composición visual orienta el tipo de cambio: postura, proporción, cintura o músculo funcional.</p>
+              </div>
+            </div>
+          </div>
+
+          <p className="mt-auto text-xs leading-relaxed text-white/45 px-1">
+            Mientras más honestos sean estos datos, mejor se sentirá el puente entre imagen, insight y roadmap.
           </p>
         </div>
 
-        <div className="space-y-4">
-          <div className="ngx-glass !p-5 md:!p-6">
+        <div className="flex h-full flex-col gap-4">
+          <div className="ngx-glass !p-5 md:!p-6 flex-1">
             <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Composición visual inicial</span>
             <div className="mt-4 grid grid-cols-1 gap-3">
               <EliteOptionCard

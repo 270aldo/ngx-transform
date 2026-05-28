@@ -173,7 +173,7 @@ export function ShareToUnlockModal({
                   <Share2 className="h-5 w-5 text-violet-400" />
                 </div>
                 <h2 className="text-lg font-semibold text-white">
-                  Desbloquea contenido premium
+                  Desbloquea contenido adicional
                 </h2>
               </div>
               <button

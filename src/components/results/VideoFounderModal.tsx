@@ -32,6 +32,7 @@ interface VideoFounderModalProps {
   durationSeconds?: number;
   onCalendlyFallback?: () => void;
   onWhatsappFallback?: () => void;
+  onVoiceAgentFallback?: () => void;
 }
 
 type VideoKind = "youtube" | "vimeo" | "mp4" | "none";
@@ -98,6 +99,7 @@ export function VideoFounderModal({
   durationSeconds,
   onCalendlyFallback,
   onWhatsappFallback,
+  onVoiceAgentFallback,
 }: VideoFounderModalProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   // useRef para milestones — evitamos setState en useEffect de reset al reabrir.
@@ -220,7 +222,7 @@ export function VideoFounderModal({
               <div className="leading-tight">
                 <p className="text-sm font-bold text-white">Aldo Olivas · CEO NGX</p>
                 <p className="text-[11px] uppercase tracking-[0.16em] text-white/45">
-                  Cómo funciona NGX HYBRID · {durationLabel}
+                  Por qué HYBRID · Fit · Diagnóstico · {durationLabel}
                 </p>
               </div>
             </div>
@@ -240,6 +242,7 @@ export function VideoFounderModal({
                 posterUrl={posterUrl}
                 onCalendly={onCalendlyFallback}
                 onWhatsapp={onWhatsappFallback}
+                onVoiceAgent={onVoiceAgentFallback}
               />
             )}
 
@@ -286,7 +289,7 @@ export function VideoFounderModal({
           {/* Footer con CTAs siguientes */}
           <div className="border-t border-white/10 bg-[#0A0510]/95 px-5 py-4">
             <p className="mb-3 text-[11px] uppercase tracking-[0.18em] text-white/45">
-              ¿Listo para el siguiente paso?
+              ¿Qué sigue después del video?
             </p>
             <div className="grid gap-2 sm:grid-cols-2">
               {onCalendlyFallback && (
@@ -298,7 +301,7 @@ export function VideoFounderModal({
                   className="ngx-glass-clear inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-white/90 transition-all duration-150 hover:bg-white/[0.06] active:scale-[0.97]"
                 >
                   <Calendar className="h-4 w-4" />
-                  Agendar llamada 1:1
+                  Agendar diagnóstico HYBRID
                 </button>
               )}
               {onWhatsappFallback && (
@@ -329,10 +332,12 @@ function VideoPlaceholder({
   posterUrl,
   onCalendly,
   onWhatsapp,
+  onVoiceAgent,
 }: {
   posterUrl?: string;
   onCalendly?: () => void;
   onWhatsapp?: () => void;
+  onVoiceAgent?: () => void;
 }) {
   return (
     <div
@@ -353,21 +358,31 @@ function VideoPlaceholder({
           <Play className="h-6 w-6 fill-white" style={{ color: "white" }} />
         </span>
         <h3 className="ngx-h2 mb-3" style={{ fontSize: "1.5rem" }}>
-          Video en producción
+          Guía rápida HYBRID
         </h3>
         <p className="text-sm leading-relaxed text-white/65 mb-6">
-          El recorrido completo de NGX HYBRID con Aldo se está finalizando.
-          Mientras tanto, si quieres entender el sistema con contexto real, lo
-          mejor es una llamada rápida o WhatsApp.
+          Aquí debe quedar claro por qué HYBRID existe, para quién sí tiene
+          sentido, para quién no, y qué pasa dentro del diagnóstico. Mientras el
+          video oficial se carga, usa el diagnóstico o habla con GENESIS para
+          clasificar tu caso.
         </p>
         <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+          {onVoiceAgent && (
+            <button
+              onClick={onVoiceAgent}
+              className="ngx-primary-cta inline-flex !min-h-[44px] px-5 py-2.5 text-sm"
+            >
+              <Sparkles className="h-4 w-4" />
+              Hablar con GENESIS
+            </button>
+          )}
           {onCalendly && (
             <button
               onClick={onCalendly}
-              className="ngx-primary-cta inline-flex !min-h-[44px] px-5 py-2.5 text-sm"
+              className={onVoiceAgent ? "ngx-glass-clear inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-white/90 transition-all duration-150 hover:bg-white/[0.06] active:scale-[0.97]" : "ngx-primary-cta inline-flex !min-h-[44px] px-5 py-2.5 text-sm"}
             >
               <Calendar className="h-4 w-4" />
-              Agendar llamada
+              Agendar diagnóstico
             </button>
           )}
           {onWhatsapp && (

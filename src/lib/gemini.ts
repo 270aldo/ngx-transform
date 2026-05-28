@@ -118,7 +118,7 @@ DATOS DEL USUARIO:
 - Días/Semana: ${profile.trainingDaysPerWeek || "N/A"}
 - Duración/Sesión: ${profile.sessionDurationMinutes || "N/A"} minutos
 - Historia de Entrenamiento: ${profile.trainingHistoryYears ?? "N/A"} años
-- Nutrición: ${profile.nutritionQuality ?? "N/A"}/10
+- Nutrición: NO CAPTURADA en este flujo. No infieras proteína, calorías, macros ni consistencia nutricional personalizada.
 - Grasa Corporal: ${profile.bodyFatLevel || "medio"}
 - Estilo: ${profile.trainingStyle || "mixto"}
 - Deep Data: Estrés ${profile.stressLevel}/10, Sueño ${profile.sleepQuality}/10, Disciplina ${profile.disciplineRating}/10
@@ -189,9 +189,9 @@ FORMATO JSON REQUERIDO (estricto, sin envoltorio markdown, sin texto fuera del J
     "color_grade": "Color grade en INGLÉS (5-95 chars, ej: 'cinematic teal-orange grade')"
   },
   "diagnostic": {
-    "bottleneck": "training_progression | nutrition_consistency | recovery | structure | expectations | accountability — el cuello de botella DOMINANTE de este usuario, basado en sus mental logs y biometría.",
+    "bottleneck": "training_progression | recovery | structure | expectations | accountability — el cuello de botella DOMINANTE de este usuario, basado en sus mental logs y biometría. NO uses nutrition_consistency porque no capturamos datos nutricionales explícitos.",
     "leverages": [
-      "Palanca 1 ESPECÍFICA al usuario en ESPAÑOL (no genérica, 30-180 chars). Ej: 'Subir proteína a 1.6g/kg con 4 ingestas; tu reporte de cero sueño profundo necesita esto antes que volumen de entreno.'",
+      "Palanca 1 ESPECÍFICA al usuario en ESPAÑOL (no genérica, 30-180 chars). Debe basarse en entrenamiento, sueño, estrés, disciplina, agenda o estructura; NO proteína, calorías, macros ni dieta.",
       "Palanca 2 ESPECÍFICA en ESPAÑOL.",
       "Palanca 3 ESPECÍFICA en ESPAÑOL."
     ],

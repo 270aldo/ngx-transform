@@ -27,13 +27,26 @@ interface HybridOfferSectionProps {
 const WHATSAPP_TEXT =
   "Hola, acabo de ver mis resultados en NGX Transform y me interesa HYBRID.";
 
+function readText(envVar?: string): string | null {
+  const value = envVar?.trim();
+  return value ? value : null;
+}
+
+function readPositiveInt(envVar: string | undefined, fallback: number): number {
+  const n = Number(envVar);
+  return Number.isFinite(n) && n > 0 ? n : fallback;
+}
+
 export function HybridOfferSection({ shareId, cohorteInfo }: HybridOfferSectionProps) {
   const [chatOpen, setChatOpen] = useState(false);
 
-  const cohortLabel = cohorteInfo?.label ?? process.env.NEXT_PUBLIC_COHORT_LABEL ?? "Marzo";
-  const cohortSpotsTotal = cohorteInfo?.spotsTotal ?? Number(process.env.NEXT_PUBLIC_COHORT_SPOTS_TOTAL ?? "20");
-  const cohortSpotsLeft = cohorteInfo?.spotsLeft ?? Number(process.env.NEXT_PUBLIC_COHORT_SPOTS_LEFT ?? "18");
-  const calendlyUrl = process.env.NEXT_PUBLIC_CALENDLY_URL || "https://calendly.com/ngx-genesis";
+  const cohortLabel = cohorteInfo?.label ?? readText(process.env.NEXT_PUBLIC_COHORT_LABEL) ?? "la próxima";
+  const cohortSpotsTotal = cohorteInfo?.spotsTotal ?? readPositiveInt(process.env.NEXT_PUBLIC_COHORT_SPOTS_TOTAL, 20);
+  const cohortSpotsLeft = cohorteInfo?.spotsLeft ?? readPositiveInt(process.env.NEXT_PUBLIC_COHORT_SPOTS_LEFT, 18);
+  const calendlyUrl =
+    process.env.NEXT_PUBLIC_CALENDLY_URL ||
+    process.env.NEXT_PUBLIC_BOOKING_URL ||
+    "";
   const whatsappRaw = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";
   const whatsappNumber = whatsappRaw.replace(/[^\d]/g, "");
 
@@ -64,6 +77,7 @@ export function HybridOfferSection({ shareId, cohorteInfo }: HybridOfferSectionP
   }
 
   const onCalendly = async () => {
+    if (!calendlyUrl) return;
     await emit("hybrid_offer_calendly_click");
     window.open(calendlyUrl, "_blank", "noopener,noreferrer");
   };
@@ -193,21 +207,25 @@ export function HybridOfferSection({ shareId, cohorteInfo }: HybridOfferSectionP
             <div className="ngx-glass !p-5 md:!p-6">
               <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Siguiente acción</span>
               <div className="mt-5 grid gap-3">
-                <button
-                  onClick={onCalendly}
-                  className="ngx-primary-cta inline-flex px-5 py-4 text-sm"
-                >
-                  <CalendarDays className="h-4 w-4" />
-                  Ver si HYBRID es fit
-                  <ArrowRight className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={onWhatsapp}
-                  className="ngx-glass-clear inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full px-5 py-4 text-sm font-medium text-white/85 transition-all duration-150 hover:bg-white/[0.06] active:scale-[0.97]"
-                >
-                  <MessageCircle className="h-4 w-4" />
-                  Hablar por WhatsApp
-                </button>
+                {calendlyUrl && (
+                  <button
+                    onClick={onCalendly}
+                    className="ngx-primary-cta inline-flex px-5 py-4 text-sm"
+                  >
+                    <CalendarDays className="h-4 w-4" />
+                    Ver si HYBRID es fit
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                )}
+                {whatsappUrl && (
+                  <button
+                    onClick={onWhatsapp}
+                    className="ngx-glass-clear inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full px-5 py-4 text-sm font-medium text-white/85 transition-all duration-150 hover:bg-white/[0.06] active:scale-[0.97]"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    Hablar por WhatsApp
+                  </button>
+                )}
                 <button
                   onClick={onChat}
                   className="ngx-glass-clear inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full px-5 py-4 text-sm font-medium text-white/85 transition-all duration-150 hover:bg-white/[0.06] active:scale-[0.97]"

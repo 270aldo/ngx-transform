@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Brain, PlayCircle, ShieldCheck } from "lucide-react";
+import { ArrowRight, PlayCircle, ScanLine, Sparkles } from "lucide-react";
 import { useLandingConfig } from "./LandingProvider";
 import { HeroTransformation } from "./HeroTransformation";
 
@@ -12,13 +12,13 @@ export function LandingHero() {
 
   const textScaleClass = theme.textScale > 1 ? "scale-[1.1]" : "";
   const heroAssurances = [
-    { icon: ShieldCheck, label: "Ves dónde estás", text: hero.supportingPoints[0] },
-    { icon: Brain, label: "Entiendes qué te frena", text: hero.supportingPoints[1] },
-    { icon: ArrowRight, label: "Sales con un primer paso", text: hero.supportingPoints[2] },
+    { icon: ScanLine, label: "Ves tu punto de partida", text: hero.supportingPoints[0] },
+    { icon: Sparkles, label: "Visualizas una posibilidad", text: hero.supportingPoints[1] },
+    { icon: ArrowRight, label: "Sales con dirección", text: hero.supportingPoints[2] },
   ];
 
   return (
-    <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-0 md:pt-14 lg:pt-16 mb-24 md:mb-40">
+    <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-0 md:pt-14 lg:pt-16 mb-12 md:mb-20">
       {/* Atmospheric glows — cinematic brand energy without wrapping the hero in a card */}
       <div
         aria-hidden
@@ -89,9 +89,11 @@ export function LandingHero() {
               </a>
             </div>
 
-            <p className="mt-4 ngx-caption text-center lg:text-left">
-              {hero.socialProof.count}
-            </p>
+            {hero.socialProof.count ? (
+              <p className="mt-4 ngx-caption text-center lg:text-left">
+                {hero.socialProof.count}
+              </p>
+            ) : null}
           </div>
 
           <HeroTransformation className="hidden lg:block w-full" />

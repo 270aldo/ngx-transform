@@ -108,7 +108,7 @@ function getCtaTargets() {
   const whatsappNumber = whatsappRaw.replace(/[^\d]/g, "");
   const whatsappUrl = whatsappNumber
     ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-        "Hola, acabo de ver mi Season Vision Report en NGX Transform y quiero revisar el siguiente paso."
+        "Hola, acabo de ver mi diagnóstico visual en NGX Transform y quiero revisar el siguiente paso."
       )}`
     : "";
 
@@ -158,7 +158,7 @@ export function SeasonVisionReport({
 
             <div className="relative z-10 grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center">
               <div>
-                <span className="ngx-eyebrow-pill mb-4">Season Vision Report</span>
+                <span className="ngx-eyebrow-pill mb-4">Diagnóstico visual</span>
                 <h1 className="ngx-h1 !text-left">
                   Punto de partida, Season 1, Season 2 y Season 3.
                 </h1>
@@ -415,7 +415,7 @@ export function SeasonVisionReport({
             <div>
               <h2 className="text-lg font-bold text-white">Lectura aspiracional, no diagnóstico.</h2>
               <p className="mt-2 text-sm leading-relaxed text-white/66">
-                Este Season Vision Report usa IA para generar visualizaciones a partir de una foto y datos de perfil. No promete resultados, no sustituye evaluación médica y no debe interpretarse como diagnóstico corporal, metabólico o psicológico.
+                Este diagnóstico visual usa IA para generar visualizaciones a partir de una foto y datos de perfil. No promete resultados, no sustituye evaluación médica y no debe interpretarse como diagnóstico corporal, metabólico o psicológico.
               </p>
             </div>
           </div>

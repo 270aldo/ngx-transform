@@ -14,7 +14,7 @@ const FALLBACK: ReportPreviewCopy = {
   sectionLabel: "Ejemplo de resultado",
   headline: "Así debería sentirse tu resultado.",
   subtitle:
-    "No como una imagen suelta. Como una primera lectura: dónde estás, qué puede frenarte y qué paso conviene tomar.",
+    "No como una imagen suelta. Como una primera lectura: dónde estás, qué podría hacer falta y qué paso conviene tomar.",
   scoreLabel: "Score de preparación",
   scoreValue: 72,
   scoreMax: 100,
@@ -22,13 +22,13 @@ const FALLBACK: ReportPreviewCopy = {
     "Buen punto para empezar, pero con riesgo de abandono si no hay estructura semanal.",
   dimensions: [],
   insights: [],
-  ctaLabel: "Iniciar mi scan",
+  ctaLabel: "Iniciar diagnóstico",
   ctaHref: "/wizard",
   microcopy: "Ejemplo ilustrativo. Tu resultado se genera con tus datos.",
 };
 
 const LEFT_BULLETS = [
-  "Lo que puede estar frenándote.",
+  "Qué podría hacer falta.",
   "La palanca que conviene mover primero.",
   "Un paso concreto para empezar con criterio.",
 ] as const;
@@ -49,7 +49,7 @@ const PROFILE_MOCK = {
   },
   leverages: [
     "Plan semanal escrito antes del lunes — no improvisar día a día",
-    "Proteína 1.6 g/kg en 4 ingestas estables; estandarizar 80% de las comidas",
+    "Horario fijo para entrenar antes de negociar con la semana",
     "Sueño 7-9h con horario consistente; descarga cada 4-6 semanas",
   ],
   dominantError:
@@ -162,7 +162,7 @@ export function LandingReportPreview() {
               <Link
                 href={copy.ctaHref}
                 onClick={() =>
-                  trackCta("report_preview_cta", "scan_start", copy.ctaLabel)
+                  trackCta("report_preview_cta", "diagnostic_start", copy.ctaLabel)
                 }
                 className="ngx-primary-cta group inline-flex w-full px-6 text-sm sm:w-auto sm:min-w-[220px]"
               >

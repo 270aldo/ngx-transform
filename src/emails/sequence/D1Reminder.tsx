@@ -49,13 +49,13 @@ export default function D1Reminder({ name, shareId }: D1ReminderProps) {
 
               {/* Message */}
               <Text className="text-neutral-300 leading-relaxed">
-                Tu transformación sigue esperándote.
+                Tu diagnóstico visual sigue esperándote.
               </Text>
 
               <Text className="text-neutral-300 leading-relaxed mt-4">
-                Ayer generamos tu Season Vision Report basado en tu perfil
-                único. Si aún no la has explorado completamente, hay mucho más
-                que ver:
+                Ayer generamos una visualización aspiracional y una lectura
+                inicial basada en tu perfil. Si aún no la exploraste, esto es lo
+                más importante:
               </Text>
 
               {/* Features list */}
@@ -65,24 +65,23 @@ export default function D1Reminder({ name, shareId }: D1ReminderProps) {
                 </Text>
                 <ul className="text-sm text-neutral-400 pl-4 m-0">
                   <li className="mb-2">
-                    Análisis detallado de tu potencial físico
+                    Señales iniciales de salud muscular
                   </li>
                   <li className="mb-2">
-                    Evaluación de tu estado mental y recomendaciones
+                    Palancas de hábitos, sueño y estructura
                   </li>
                   <li className="mb-2">
-                    Timeline interactivo mes a mes
+                    Visualización de una dirección posible
                   </li>
                   <li>
-                    Vista previa de tu plan de entrenamiento
+                    Siguiente paso hacia diagnóstico HYBRID
                   </li>
                 </ul>
               </Section>
 
               {/* Quote */}
               <Text className="text-neutral-500 italic border-l-2 border-violet-500 pl-4 my-6">
-                &ldquo;El potencial sin acción es solo fantasía. La transformación
-                real comienza cuando decides dar el primer paso.&rdquo;
+                &ldquo;La imagen inspira. El sistema transforma. El humano sostiene.&rdquo;
               </Text>
 
               {/* CTA Button */}

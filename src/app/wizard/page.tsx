@@ -50,7 +50,7 @@ const STAGE_LABELS: Record<number, { title: string; subtitle: string }> = {
   },
   4: {
     title: "Cierre privado",
-    subtitle: "Confirma correo y genera tu visualización",
+    subtitle: "Confirma correo para enviar y recuperar tu resultado",
   },
 };
 
@@ -503,7 +503,7 @@ function WizardPageContent() {
       const submissionEmail = (values.email || authUser.email || "").trim();
       if (!submissionEmail) {
         setCurrentStage(4);
-        throw new Error("Confirma el correo donde quieres recibir tu acceso privado antes de ejecutar la visualización.");
+        throw new Error("Confirma el correo donde quieres recibir y recuperar tu resultado privado antes de ejecutar la visualización.");
       }
 
       // Staged processing states for the private visualization flow
@@ -609,7 +609,7 @@ function WizardPageContent() {
   // --- RENDER STAGES ---
 
   return (
-    <div className="relative min-h-screen bg-transparent text-white selection:bg-[#6D00FF]/30 font-[var(--font-body)]">
+    <div className="ngx-wizard-shell relative min-h-screen overflow-x-hidden text-white selection:bg-[#6D00FF]/30 font-[var(--font-body)]">
 
       {/* Unified command bar (back + center title + progress tabs) */}
       <WizardCommandBar
@@ -623,7 +623,7 @@ function WizardPageContent() {
       />
 
       {/* MAIN CONTENT AREA */}
-      <form onSubmit={handleSubmit(onSubmit, onFormError)} className="mx-auto flex min-h-screen max-w-6xl flex-col px-4 pb-24 pt-32 md:px-6 md:pb-28 md:pt-36">
+      <form onSubmit={handleSubmit(onSubmit, onFormError)} className="relative z-10 mx-auto flex min-h-screen max-w-6xl flex-col px-4 pb-24 pt-32 md:px-6 md:pb-28 md:pt-36">
         <input
           type="file"
           accept="image/jpeg,image/png,image/webp"
@@ -772,11 +772,11 @@ function WizardPageContent() {
             {/* NAVIGATION FOOTER */}
             {currentStage > 1 && (
               <div className="mt-8 w-full pb-2 z-10">
-                <div className="max-w-5xl mx-auto flex items-center justify-between gap-3 rounded-full border border-white/[0.08] bg-black/55 backdrop-blur-2xl px-3 py-3 pointer-events-auto shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+                <div className="ngx-wizard-footerbar max-w-5xl mx-auto flex items-center justify-between gap-3 px-3 py-3 pointer-events-auto">
                   <button
                     type="button"
                     onClick={prevStage}
-                    className="flex items-center gap-2 rounded-full px-4 py-2 text-[10px] font-mono uppercase tracking-[0.18em] text-white/45 transition-colors hover:bg-white/5 hover:text-white"
+                    className="ngx-wizard-footer-button flex items-center gap-2 px-4 py-2"
                   >
                     <ChevronLeft size={14} /> Anterior
                   </button>
@@ -786,14 +786,14 @@ function WizardPageContent() {
                       Paso {currentStage} / 4
                     </span>
                     <span className="h-3 w-px bg-white/15" />
-                    <span className="text-sm text-white/75">{stageMeta.title}</span>
+                    <span className="font-display text-sm font-black uppercase leading-none text-white/75">{stageMeta.title}</span>
                   </div>
 
                   {currentStage < 4 && (
                     <button
                       type="button"
                       onClick={nextStage}
-                      className="flex items-center gap-2 rounded-full bg-[var(--ngx-purple)] px-5 py-2.5 text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-white shadow-[var(--ngx-glow-primary-soft)] transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97]"
+                      className="ngx-wizard-footer-primary flex items-center gap-2 px-5 py-2.5"
                     >
                       Siguiente <ChevronRight size={14} />
                     </button>

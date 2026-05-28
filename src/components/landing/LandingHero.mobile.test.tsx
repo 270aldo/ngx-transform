@@ -13,10 +13,23 @@ describe("LandingHero mobile conversion layout", () => {
 
     const subtitleIndex = html.indexOf("Sube una foto real");
     const previewIndex = html.indexOf('data-testid="mobile-hero-preview"');
-    const ctaIndex = html.indexOf("Iniciar mi scan");
+    const ctaIndex = html.indexOf("Iniciar diagnóstico");
 
     expect(subtitleIndex).toBeGreaterThan(-1);
     expect(previewIndex).toBeGreaterThan(subtitleIndex);
     expect(previewIndex).toBeLessThan(ctaIndex);
+  });
+
+  it("frames the hero as aspirational possibility, not blocker diagnosis", () => {
+    const html = renderToStaticMarkup(
+      <LandingProvider variant="general">
+        <LandingHero />
+      </LandingProvider>
+    );
+
+    expect(html).toContain("Visualizas una posibilidad");
+    expect(html).toContain("Una versión aspiracional, sin exagerar.");
+    expect(html).not.toContain("Entiendes qué te frena");
+    expect(html).not.toContain("Lo que te frena");
   });
 });

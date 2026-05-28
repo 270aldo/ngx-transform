@@ -24,7 +24,7 @@ interface WizardPhotoStepProps {
 const TRUST_CARDS = [
   {
     icon: ShieldCheck,
-    title: "Privado por diseño",
+    title: "Sesión privada",
     text: "Tu foto solo se usa para operar esta sesión y generar tu resultado privado.",
   },
   {
@@ -104,7 +104,7 @@ export function WizardPhotoStep({
         </div>
 
         {/* Trust cards — full width row below the 2-col grid, breaks the asymmetry */}
-        <div className="mt-8 md:mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 items-stretch">
+        <div className="mt-6 md:mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 items-stretch">
           {TRUST_CARDS.map((item) => {
             const Icon = item.icon;
             return (
@@ -130,7 +130,7 @@ function LeftIntro() {
     <div className="flex flex-col">
       <span className="ngx-eyebrow-pill mb-4">Paso 1 · foto base</span>
 
-      <h1 className="ngx-h1 !text-left max-w-[15ch]">
+      <h1 className="ngx-h1 !text-left max-w-[12ch] sm:max-w-[18ch]">
         Sube una foto real.
         <br />
         <span className="text-white/85">GENESIS prepara tu lectura inicial.</span>

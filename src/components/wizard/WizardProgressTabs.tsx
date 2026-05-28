@@ -19,7 +19,7 @@ export function WizardProgressTabs({ tabs, current }: WizardProgressTabsProps) {
   return (
     <>
       {/* Desktop: full pills */}
-      <div className="hidden md:flex items-center gap-1.5 rounded-full border border-[color:var(--ngx-border-subtle)] bg-white/[0.04] p-1.5">
+      <div className="ngx-wizard-range-pills hidden xl:flex">
         {tabs.map((tab) => {
           const isActive = current === tab.id;
           const isDone = current > tab.id;
@@ -27,12 +27,12 @@ export function WizardProgressTabs({ tabs, current }: WizardProgressTabsProps) {
             <span
               key={tab.id}
               className={cn(
-                "rounded-full px-3.5 py-1.5 text-[10px] uppercase tracking-[0.18em] font-mono transition-all",
+                "ngx-wizard-range-pill",
                 isActive
-                  ? "bg-[var(--ngx-purple)] text-white shadow-[var(--ngx-glow-primary-soft)]"
+                  ? "is-active"
                   : isDone
-                    ? "bg-[var(--ngx-purple-dim)] text-[var(--ngx-purple-light)]"
-                    : "text-white/35"
+                    ? "is-done"
+                    : ""
               )}
             >
               {tab.short}
@@ -42,8 +42,8 @@ export function WizardProgressTabs({ tabs, current }: WizardProgressTabsProps) {
       </div>
 
       {/* Mobile: counter + thin progress bar */}
-      <div className="md:hidden flex flex-col items-end gap-1.5 min-w-[88px]">
-        <span className="text-[10px] uppercase tracking-[0.18em] font-mono text-white/55">
+      <div className="flex flex-col items-end gap-1.5 min-w-[88px] xl:hidden">
+        <span className="font-display text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">
           {current} / {totalSteps}
         </span>
         <div className="w-full h-1 rounded-full bg-white/[0.06] overflow-hidden">

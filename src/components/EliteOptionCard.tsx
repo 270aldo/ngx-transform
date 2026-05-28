@@ -46,10 +46,10 @@ export function EliteOptionCard({
       aria-label={imageAlt || title}
       aria-pressed={selected}
       className={cn(
-        "relative group cursor-pointer overflow-hidden rounded-[var(--ngx-r-lg)] border-l-2 border transition-all duration-200 active:scale-[0.98] animate-in fade-in zoom-in slide-in-from-bottom-4 fill-mode-backwards text-left w-full",
+        "relative group cursor-pointer overflow-hidden rounded-[18px] border border-l-2 transition-all duration-200 active:scale-[0.98] animate-in fade-in zoom-in slide-in-from-bottom-4 fill-mode-backwards text-left w-full",
         selected
-          ? "border-l-[var(--ngx-purple)] border-y-[var(--ngx-purple)]/45 border-r-[var(--ngx-purple)]/45 bg-[var(--ngx-purple)]/[0.16] shadow-[var(--ngx-glow-primary-soft)]"
-          : "border-l-transparent border-white/[0.10] bg-white/[0.045] hover:border-l-[var(--ngx-purple-light)] hover:border-[var(--ngx-purple-light)]/35 hover:bg-[var(--ngx-purple)]/[0.07]",
+          ? "border-l-[var(--ngx-purple)] border-y-[var(--lg-rim-purple)] border-r-[var(--lg-rim-purple)] bg-[var(--lg-glass-purple)] shadow-[var(--lg-shadow-glass),var(--lg-shadow-inset-purple),var(--lg-glow-purple-sm)]"
+          : "border-l-transparent border-[var(--lg-rim-regular)] bg-[var(--lg-glass-regular)] shadow-[var(--lg-shadow-glass),var(--lg-shadow-inset)] hover:border-l-[var(--ngx-purple)] hover:border-[var(--lg-rim-strong)] hover:bg-[var(--lg-glass-thick)]",
         className
       )}
       style={{ animationDelay: `${idx * 50}ms` }}
@@ -58,15 +58,15 @@ export function EliteOptionCard({
       {imageSrc && (
         <div className="absolute inset-0 pointer-events-none">
           <div
-            className="absolute inset-0 bg-cover bg-center opacity-[0.28] transition-opacity duration-300 group-hover:opacity-[0.40]"
+            className="absolute inset-0 bg-cover bg-center opacity-[0.16] transition-opacity duration-300 group-hover:opacity-[0.24]"
             style={{ backgroundImage: `url(${imageSrc})` }}
           />
           <div
             className={cn(
               "absolute inset-0",
               overlayTone === "deep"
-                ? "bg-gradient-to-b from-[#050505]/18 via-[#050505]/72 to-[#050505]/94"
-                : "bg-gradient-to-b from-[var(--ngx-purple)]/[0.08] via-[#050505]/70 to-[#050505]/95"
+                ? "bg-gradient-to-b from-[var(--ngx-navy-950)]/20 via-[var(--ngx-navy-950)]/72 to-[var(--ngx-navy-950)]/96"
+                : "bg-gradient-to-b from-[var(--ngx-purple)]/[0.06] via-[var(--ngx-navy-950)]/72 to-[var(--ngx-navy-950)]/96"
             )}
           />
         </div>
@@ -77,8 +77,8 @@ export function EliteOptionCard({
         className={cn(
           "absolute top-3 right-3 flex w-6 h-6 rounded-full items-center justify-center transition-all duration-200",
           selected
-            ? "bg-[var(--ngx-purple)] opacity-100 scale-100"
-            : "bg-white/[0.04] border border-white/[0.10] opacity-0 scale-75 group-hover:opacity-100"
+            ? "bg-[var(--ngx-purple)] opacity-100 scale-100 shadow-[var(--lg-glow-purple-sm)]"
+            : "bg-[var(--lg-glass-thin)] border border-[var(--lg-rim-thin)] opacity-0 scale-75 group-hover:opacity-100"
         )}
       >
         <Check size={12} className="text-white" />
@@ -98,22 +98,22 @@ export function EliteOptionCard({
           ) : null}
           <h3
             className={cn(
-              "font-body font-bold uppercase text-lg leading-tight tracking-normal transition-colors duration-200",
+              "font-display text-lg font-black uppercase leading-[1.04] tracking-normal transition-colors duration-200",
               selected ? "text-white" : "text-white/85 group-hover:text-white"
             )}
           >
             {title}
           </h3>
           {description ? (
-            <p className="mt-2 text-sm font-body leading-relaxed text-white/55 group-hover:text-white/70 transition-colors">
+            <p className="mt-2 text-sm font-body leading-relaxed text-white/58 group-hover:text-white/74 transition-colors">
               {description}
             </p>
           ) : null}
         </div>
 
         {Icon ? (
-          <div className="inline-flex items-center gap-2 self-start rounded-full border border-white/[0.10] bg-black/45 px-3 py-1.5 text-[10px] tracking-[0.16em] uppercase font-mono text-white/75">
-            <Icon size={12} className="text-[var(--ngx-purple-light)]" />
+          <div className="inline-flex items-center gap-2 self-start rounded-full border border-[var(--lg-rim-thin)] bg-[var(--lg-glass-thin)] px-3 py-1.5 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-white/75">
+            <Icon size={12} className="text-[var(--ngx-purple-300)]" />
             <span>{iconLabel ?? "Misión elite"}</span>
           </div>
         ) : null}

@@ -16,6 +16,7 @@ export { LandingValueStack } from "./LandingValueStack";
 export { LandingReportPreview } from "./LandingReportPreview";
 export { LandingBridge } from "./LandingBridge";
 export { LandingTrustStrip } from "./LandingTrustStrip";
+export { LandingJourney } from "./LandingJourney";
 export { LandingFAQ } from "./LandingFAQ";
 export { LandingExplainerVideo } from "./LandingExplainerVideo";
 export { LandingTestimonials } from "./LandingTestimonials";
