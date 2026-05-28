@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>NGX · Liquid Glass · Design System</title>
+<meta name="viewport" content="width=1320">
+<link rel="stylesheet" href="tokens-brand.css">
+<link rel="stylesheet" href="tokens-lg.css">
+<link rel="stylesheet" href="components.css">
+<style>
+  html, body { margin: 0; padding: 0; background: #04021A; }
+  body {
+    font-family: var(--font-text);
+    color: var(--ngx-white);
+    min-height: 100vh;
+    padding: 32px 32px 56px;
+    background:
+      radial-gradient(50% 40% at 12% 8%, rgba(109, 0, 255, 0.18) 0%, transparent 60%),
+      radial-gradient(40% 30% at 88% 92%, rgba(109, 0, 255, 0.14) 0%, transparent 60%),
+      #04021A;
+    position: relative;
+    isolation: isolate;
+  }
+  body::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: url("assets/textures/texture-pattern-navy.png");
+    background-size: 320px;
+    opacity: 0.06;
+    mix-blend-mode: screen;
+    pointer-events: none;
+    z-index: -1;
+  }
+  .wrap { max-width: 1240px; margin: 0 auto; }
+
+  /* HERO */
+  .hero {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 32px;
+    margin-bottom: 48px;
+    align-items: end;
+  }
+  .hero__eyebrow {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--ngx-purple-300);
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    background: var(--lg-glass-purple-soft);
+    border: 1px solid var(--lg-rim-purple);
+    box-shadow: var(--lg-glow-purple-sm);
+  }
+  .hero__eyebrow::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--ngx-purple); box-shadow: 0 0 8px var(--ngx-purple);
+  }
+  .hero__h {
+    font-family: var(--font-display); font-weight: 900;
+    font-size: 116px; line-height: 0.86; letter-spacing: -0.025em;
+    text-transform: uppercase;
+    color: var(--ngx-white);
+    margin: 22px 0 0;
+  }
+  .hero__h .charge {
+    background: linear-gradient(180deg, #FFFFFF 0%, var(--ngx-purple) 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    display: inline-block;
+  }
+  .hero__sub {
+    font-size: 16px; line-height: 1.55;
+    color: var(--ngx-gray-300);
+    max-width: 540px;
+    margin-top: 16px;
+  }
+  .hero__sub b { color: var(--ngx-white); font-weight: 600; }
+  .hero__meta {
+    display: flex; flex-direction: column;
+    gap: 14px;
+    padding: 22px 24px;
+    border-radius: 18px;
+    background: var(--lg-glass-regular);
+    border: 1px solid var(--lg-rim-regular);
+    -webkit-backdrop-filter: var(--lg-blur-regular); backdrop-filter: var(--lg-blur-regular);
+    box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset);
+  }
+  .hero__meta-row {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .hero__meta-row:last-child { border-bottom: 0; padding-bottom: 0; }
+  .hero__meta-l {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ngx-gray-400);
+  }
+  .hero__meta-v {
+    font-family: var(--font-display); font-weight: 900;
+    font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--ngx-white);
+  }
+  .hero__meta-v .accent { color: var(--ngx-purple-300); }
+
+  /* SECTION */
+  .section { margin: 0 0 56px; }
+  .section__h {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 22px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .section__title {
+    font-family: var(--font-display); font-weight: 900;
+    font-size: 24px; letter-spacing: -0.012em; text-transform: uppercase;
+    color: var(--ngx-white); line-height: 1;
+  }
+  .section__num {
+    font-family: var(--font-display); font-weight: 800;
+    font-size: 10.5px; letter-spacing: 0.20em; text-transform: uppercase;
+    color: var(--ngx-purple-300);
+  }
+  .section__desc {
+    font-size: 14px; color: var(--ngx-gray-300);
+    line-height: 1.6;
+    max-width: 720px;
+    margin-bottom: 22px;
+  }
+
+  /* STACK · 3 layers visualised */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .stack {
+    padding: 22px 22px 24px;
+    border-radius: 18px;
+    background: var(--lg-glass-regular);
+    border: 1px solid var(--lg-rim-regular);
+    -webkit-backdrop-filter: var(--lg-blur-regular); backdrop-filter: var(--lg-blur-regular);
+    box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset);
+    position: relative;
+    overflow: hidden;
+  }
+  .stack__n {
+    font-family: var(--font-display); font-weight: 900;
+    font-size: 11px; letter-spacing: 0.20em; text-transform: uppercase;
+    color: var(--ngx-purple-300);
+  }
+  .stack__h {
+    font-family: var(--font-display); font-weight: 900;
+    font-size: 20px; letter-spacing: -0.012em; text-transform: uppercase;
+    margin-top: 8px; line-height: 1;
+  }
+  .stack__file {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ngx-purple-300);
+    margin-top: 6px;
+  }
+  .stack__desc {
+    font-size: 13px; color: var(--ngx-gray-300);
+    line-height: 1.5;
+    margin-top: 12px;
+  }
+  .stack__list {
+    margin-top: 14px;
+    padding: 0;
+    list-style: none;
+    display: flex; flex-wrap: wrap;
+    gap: 5px;
+  }
+  .stack__list li {
+    font-family: var(--font-mono); font-size: 10.5px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--ngx-gray-300);
+  }
+  .stack__list li.accent {
+    background: var(--lg-glass-purple-soft);
+    border-color: var(--lg-rim-purple);
+    color: var(--ngx-purple-200);
+  }
+
+  /* DOSAGES */
+  .doses {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .dose {
+    padding: 18px 20px 20px;
+    border-radius: 16px;
+    background: var(--lg-glass-thin);
+    border: 1px solid var(--lg-rim-thin);
+    -webkit-backdrop-filter: var(--lg-blur-thin); backdrop-filter: var(--lg-blur-thin);
+  }
+  .dose--med {
+    background: var(--lg-glass-purple);
+    border-color: var(--lg-rim-purple);
+    box-shadow: var(--lg-glow-purple-sm), var(--lg-shadow-inset-purple);
+  }
+  .dose__pct {
+    font-family: var(--font-display); font-weight: 900;
+    font-size: 48px; letter-spacing: -0.025em;
+    line-height: 1;
+    color: var(--ngx-white);
+    font-variant-numeric: tabular-nums;
+  }
+  .dose__pct .u { font-size: 18px; color: var(--ngx-gray-400); margin-left: 4px; font-weight: 700; }
+  .dose--med .dose__pct .u { color: var(--ngx-purple-200); }
+  .dose__name {
+    font-family: var(--font-display); font-weight: 900;
+    font-size: 14px; letter-spacing: 0.04em; text-transform: uppercase;
+    margin-top: 12px;
+  }
+  .dose--med .dose__name::after {
+    content: "★";
+    margin-left: 8px;
+    color: var(--ngx-purple-200);
+  }
+  .dose__desc {
+    font-size: 12.5px;
+    color: var(--ngx-gray-300);
+    line-height: 1.5;
+    margin-top: 6px;
+  }
+
+  /* RULES */
+  .rules {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .rule {
+    display: grid;
+    grid-template-columns: 38px 1fr;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.06);
+    align-items: start;
+  }
+  .rule__n {
+    font-family: var(--font-display); font-weight: 900;
+    font-size: 18px; letter-spacing: -0.02em;
+    color: var(--ngx-purple-300);
+    font-variant-numeric: tabular-nums;
+  }
+  .rule__t {
+    font-family: var(--font-display); font-weight: 900;
+    font-size: 12.5px; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--ngx-white); line-height: 1.2;
+  }
+  .rule__d {
+    font-size: 12px; color: var(--ngx-gray-400);
+    line-height: 1.5; margin-top: 4px;
+  }
+
+  /* SHOWCASE · 4 surfaces */
+  .surfaces {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .surface {
+    padding: 22px 24px 26px;
+    border-radius: 18px;
+    background: var(--lg-glass-regular);
+    border: 1px solid var(--lg-rim-regular);
+    -webkit-backdrop-filter: var(--lg-blur-regular); backdrop-filter: var(--lg-blur-regular);
+    box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset);
+    display: flex; flex-direction: column;
+    gap: 14px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
+  }
+  .surface:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--lg-shadow-glass-lg), var(--lg-shadow-inset), var(--lg-glow-purple-sm);
+    border-color: var(--lg-rim-purple);
+  }
+  .surface__head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 18px;
+  }
+  .surface__n {
+    font-family: var(--font-display); font-weight: 800;
+    font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--ngx-purple-300);
+  }
+  .surface__url {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ngx-gray-400);
+  }
+  .surface__title {
+    font-family: var(--font-display); font-weight: 900;
+    font-size: 28px; letter-spacing: -0.015em; text-transform: uppercase;
+    color: var(--ngx-white); line-height: 0.95;
+  }
+  .surface__desc {
+    font-size: 13.5px;
+    color: var(--ngx-gray-300);
+    line-height: 1.5;
+  }
+  .surface__tags {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 4px;
+  }
+  .surface__tag {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase;
+    padding: 4px 9px; border-radius: 999px;
+    background: var(--lg-glass-thin);
+    border: 1px solid var(--lg-rim-thin);
+    color: var(--ngx-gray-300);
+  }
+  .surface__cta {
+    margin-top: auto;
+    padding-top: 12px;
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: var(--font-display); font-weight: 800;
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--ngx-purple-300);
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  /* QUICKSTART code */
+  .quickstart {
+    padding: 22px 24px;
+    border-radius: 16px;
+    background: rgba(0, 0, 0, 0.40);
+    border: 1px solid var(--lg-rim-thin);
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--ngx-gray-300);
+    overflow-x: auto;
+  }
+  .quickstart .c { color: rgba(255,255,255,0.30); font-style: italic; }
+  .quickstart .k { color: #C29BFF; }
+  .quickstart .s { color: #9DBBFF; }
+
+  /* FOOT */
+  .foot {
+    margin-top: 64px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ngx-gray-400);
+  }
+</style>
+</head>
+<body data-screen-label="00 NGX Liquid Glass · Design System home">
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div>
+      <span class="hero__eyebrow">Design System · v1 · 4 surfaces shipped</span>
+      <h1 class="hero__h">NGX<br>LIQUID<br><span class="charge">GLASS.</span></h1>
+      <p class="hero__sub">
+        The product design system for <b>NeoGen-X</b>. Translucent glass over navy/purple bloom, United Sans Heavy ALL CAPS data, tabular numerals everywhere, purple CTAs with glow. Codified across <b>mobile app, landing, web app, and B2B coach portal</b>. Built on top of the brand layer.
+      </p>
+    </div>
+    <div class="hero__meta">
+      <div class="hero__meta-row">
+        <span class="hero__meta-l">Brand</span>
+        <span class="hero__meta-v">NeoGen-X · Performance &amp; Longevity</span>
+      </div>
+      <div class="hero__meta-row">
+        <span class="hero__meta-l">Dosage</span>
+        <span class="hero__meta-v"><span class="accent">Medium</span> · 50–60% glass</span>
+      </div>
+      <div class="hero__meta-row">
+        <span class="hero__meta-l">Layers</span>
+        <span class="hero__meta-v">3 CSS files · 1 skill</span>
+      </div>
+      <div class="hero__meta-row">
+        <span class="hero__meta-l">Status</span>
+        <span class="hero__meta-v"><span class="accent">● Live</span> · ready to ship</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SECTION · THE STACK -->
+  <section class="section">
+    <div class="section__h">
+      <span class="section__title">The 3-layer stack</span>
+      <span class="section__num">01 / 05</span>
+    </div>
+    <p class="section__desc">
+      Every prototype imports the layers in this order — never out of sequence. Brand tokens at the bottom, Liquid Glass materials on top, dashboard components last (optional for non-density surfaces like landing or workout active).
+    </p>
+    <div class="stack-grid">
+      <div class="stack">
+        <div class="stack__n">Layer 01 · Brand</div>
+        <div class="stack__h">Brand tokens</div>
+        <div class="stack__file">tokens-brand.css</div>
+        <div class="stack__desc">Navy + purple + gray ramps, semantic tokens (<code>--bg</code>, <code>--fg</code>, <code>--accent</code>), United Sans Cond + Neue Haas Grotesk Text Pro, spacing scale, radii, shadows, easing.</div>
+        <ul class="stack__list">
+          <li class="accent">--ngx-navy</li>
+          <li class="accent">--ngx-purple</li>
+          <li>--font-display</li>
+          <li>--font-text</li>
+          <li>--space-1..32</li>
+          <li>--ease-out</li>
+        </ul>
+      </div>
+      <div class="stack">
+        <div class="stack__n">Layer 02 · Materials</div>
+        <div class="stack__h">Liquid Glass</div>
+        <div class="stack__file">tokens-lg.css</div>
+        <div class="stack__desc">Glass fills, rims, purple glows, blurs. Wallpapers (soft / regular / bloom) with diamond X-strand pattern. Primitives: <code>.lg-glass</code>, <code>.lg-cta</code>, <code>.lg-headline</code>, <code>.lg-phone</code>, <code>.lg-browser</code>, <code>.nudge</code>.</div>
+        <ul class="stack__list">
+          <li class="accent">--lg-glass-purple</li>
+          <li class="accent">--lg-glow-purple-md</li>
+          <li>--lg-blur-regular</li>
+          <li>.lg-wallpaper-*</li>
+          <li>.lg-cta</li>
+          <li>.nudge</li>
+        </ul>
+      </div>
+      <div class="stack">
+        <div class="stack__n">Layer 03 · Components</div>
+        <div class="stack__h">Dashboard density</div>
+        <div class="stack__file">components.css</div>
+        <div class="stack__desc">B2B + dashboard patterns: sidebar nav, KPI tiles, range pills, status pills, dense tables, bar charts, heat grids, message bubbles, program blocks.</div>
+        <ul class="stack__list">
+          <li class="accent">.ngx-kpi--feat</li>
+          <li class="accent">.ngx-stat-pill</li>
+          <li>.ngx-side</li>
+          <li>.ngx-table</li>
+          <li>.ngx-chart</li>
+          <li>.ngx-heat</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION · QUICKSTART -->
+  <section class="section">
+    <div class="section__h">
+      <span class="section__title">Quickstart</span>
+      <span class="section__num">02 / 05</span>
+    </div>
+    <p class="section__desc">
+      Drop the 3 stylesheets, wrap your canvas in a wallpaper class, and you're in. <code>tokens-brand.css</code> + <code>tokens-lg.css</code> are mandatory; <code>components.css</code> only for dashboard / B2B density surfaces.
+    </p>
+    <div class="quickstart">
+<span class="c">&lt;!-- 1. Import all 3 layers in order --&gt;</span>
+&lt;<span class="k">link</span> <span class="k">rel</span>=<span class="s">"stylesheet"</span> <span class="k">href</span>=<span class="s">"tokens-brand.css"</span>&gt;
+&lt;<span class="k">link</span> <span class="k">rel</span>=<span class="s">"stylesheet"</span> <span class="k">href</span>=<span class="s">"tokens-lg.css"</span>&gt;
+&lt;<span class="k">link</span> <span class="k">rel</span>=<span class="s">"stylesheet"</span> <span class="k">href</span>=<span class="s">"components.css"</span>&gt;
+
+<span class="c">&lt;!-- 2. Wrap your canvas with a wallpaper --&gt;</span>
+&lt;<span class="k">body</span> <span class="k">data-theme</span>=<span class="s">"dark"</span>&gt;
+  &lt;<span class="k">div</span> <span class="k">class</span>=<span class="s">"lg-wallpaper-soft"</span>&gt;<span class="c">/* dashboard */</span>&lt;/<span class="k">div</span>&gt;
+  &lt;<span class="k">div</span> <span class="k">class</span>=<span class="s">"lg-wallpaper-regular"</span>&gt;<span class="c">/* mobile · landing */</span>&lt;/<span class="k">div</span>&gt;
+  &lt;<span class="k">div</span> <span class="k">class</span>=<span class="s">"lg-wallpaper-bloom"</span>&gt;<span class="c">/* workout · focus */</span>&lt;/<span class="k">div</span>&gt;
+
+<span class="c">&lt;!-- 3. Compose with primitives --&gt;</span>
+&lt;<span class="k">h1</span> <span class="k">class</span>=<span class="s">"lg-headline"</span>&gt;PUSH HARD. &lt;<span class="k">span</span> <span class="k">class</span>=<span class="s">"charge"</span>&gt;LIVE LONG.&lt;/<span class="k">span</span>&gt;&lt;/<span class="k">h1</span>&gt;
+&lt;<span class="k">div</span> <span class="k">class</span>=<span class="s">"ngx-kpi ngx-kpi--feat"</span>&gt;...&lt;/<span class="k">div</span>&gt;
+&lt;<span class="k">button</span> <span class="k">class</span>=<span class="s">"lg-cta lg-cta--primary"</span>&gt;Start session&lt;/<span class="k">button</span>&gt;</div>
+  </section>
+
+  <!-- SECTION · DOSAGE -->
+  <section class="section">
+    <div class="section__h">
+      <span class="section__title">Glass dosage</span>
+      <span class="section__num">03 / 05</span>
+    </div>
+    <p class="section__desc">
+      Three intensities, one canonical default. Going higher reads as showroom; going lower loses the LG identity. Each surface declares its dose in the page root, optionally swappable via <code>[data-dose="light" | "full"]</code>.
+    </p>
+    <div class="doses">
+      <div class="dose">
+        <div class="dose__pct">30<span class="u">%</span></div>
+        <div class="dose__name">Light</div>
+        <div class="dose__desc">Headers + nav + CTAs only. Body remains flat navy. For high-density legacy migrations or accessibility-first views.</div>
+      </div>
+      <div class="dose dose--med">
+        <div class="dose__pct">60<span class="u">%</span></div>
+        <div class="dose__name">Medium</div>
+        <div class="dose__desc">Tab bar + KPI cards + nudges + sheets + sidebars. Numbers, headers and charts stay flat. The default across all 4 surfaces.</div>
+      </div>
+      <div class="dose">
+        <div class="dose__pct">80<span class="u">%</span></div>
+        <div class="dose__name">Full</div>
+        <div class="dose__desc">Everything glass. Hero / focus moments — workout active, onboarding intro, splash, marketing hero.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION · 10 RULES -->
+  <section class="section">
+    <div class="section__h">
+      <span class="section__title">The 10 rules</span>
+      <span class="section__num">04 / 05</span>
+    </div>
+    <p class="section__desc">
+      Visual non-negotiables. If a design breaks one of these, it stops being NGX Liquid Glass.
+    </p>
+    <div class="rules">
+      <div class="rule"><span class="rule__n">01</span><div><div class="rule__t">Tabular nums on every number</div><div class="rule__d">No exceptions. <code>font-variant-numeric: tabular-nums;</code></div></div></div>
+      <div class="rule"><span class="rule__n">02</span><div><div class="rule__t">One purple charge per composition</div><div class="rule__d">Purple is signal — pick the CTA, the active state, OR the featured tile to wear it.</div></div></div>
+      <div class="rule"><span class="rule__n">03</span><div><div class="rule__t">Glass = both filter properties</div><div class="rule__d"><code>-webkit-backdrop-filter</code> AND <code>backdrop-filter</code>. Safari still needs the prefix.</div></div></div>
+      <div class="rule"><span class="rule__n">04</span><div><div class="rule__t">Diamond pattern visible</div><div class="rule__d">If you can't see the X-strand under the wallpaper, opacity is wrong.</div></div></div>
+      <div class="rule"><span class="rule__n">05</span><div><div class="rule__t">Headlines: Heavy 900 · CAPS · lh ≤1</div><div class="rule__d">United Sans Cond, letter-spacing −0.015em to −0.025em. Logo-adjacent.</div></div></div>
+      <div class="rule"><span class="rule__n">06</span><div><div class="rule__t">Labels micro · CAPS · wide tracking</div><div class="rule__d">10–11px · letter-spacing 0.14–0.18em. Every section gets an eyebrow.</div></div></div>
+      <div class="rule"><span class="rule__n">07</span><div><div class="rule__t">Sharp corners</div><div class="rule__d"><code>--radius-2xl</code> forbidden except for the rounded PNG feature-tile icons.</div></div></div>
+      <div class="rule"><span class="rule__n">08</span><div><div class="rule__t">No flat gradient backgrounds</div><div class="rule__d">Mesh blooms behind glass YES. Purple-to-pink fades NO.</div></div></div>
+      <div class="rule"><span class="rule__n">09</span><div><div class="rule__t">Voice: data → interpretation → action</div><div class="rule__d">Three clauses max. Drop the small-talk. Spanish o English equally.</div></div></div>
+      <div class="rule"><span class="rule__n">10</span><div><div class="rule__t">Emoji never</div><div class="rule__d">Lucide SVG, PNG feature tiles, or unicode glyphs (<code>→ ↑ × ✓ • …</code>).</div></div></div>
+    </div>
+  </section>
+
+  <!-- SECTION · SURFACES -->
+  <section class="section">
+    <div class="section__h">
+      <span class="section__title">The 4 surfaces</span>
+      <span class="section__num">05 / 05</span>
+    </div>
+    <p class="section__desc">
+      Production reference implementations. Each is a working prototype using all 3 layers. Click into any one to study the patterns end-to-end.
+    </p>
+    <div class="surfaces">
+      <a class="surface" href="showcase/01-mobile-app.html">
+        <div class="surface__head">
+          <span class="surface__n">Surface 01 · Mobile</span>
+          <span class="surface__url">(native iOS)</span>
+        </div>
+        <div class="surface__title">Mobile App</div>
+        <div class="surface__desc">6 screens — Lock, Home rings, Workout active, Coach chat sheet, Profile, Onboarding. <code>.lg-wallpaper-regular</code> default · <code>.mtab</code> tab bar · <code>.lg-ring-card</code> KPIs.</div>
+        <div class="surface__tags">
+          <span class="surface__tag">iOS frame</span><span class="surface__tag">Coach sheet</span><span class="surface__tag">Workout HUD</span>
+        </div>
+        <div class="surface__cta"><span>Open showcase</span><span>→</span></div>
+      </a>
+      <a class="surface" href="showcase/02-landing.html">
+        <div class="surface__head">
+          <span class="surface__n">Surface 02 · Marketing</span>
+          <span class="surface__url">neogen-x.com</span>
+        </div>
+        <div class="surface__title">Landing page</div>
+        <div class="surface__desc">Hero with charge gradient, Method, Programs grid, Pricing tiers, Social proof, CTA. <code>.lg-headline</code> 96–144px · <code>.opt-card</code> pricing.</div>
+        <div class="surface__tags">
+          <span class="surface__tag">Hero charge</span><span class="surface__tag">Pricing</span><span class="surface__tag">Scroll fades</span>
+        </div>
+        <div class="surface__cta"><span>Open showcase</span><span>→</span></div>
+      </a>
+      <a class="surface" href="showcase/03-web-app.html">
+        <div class="surface__head">
+          <span class="surface__n">Surface 03 · Athlete</span>
+          <span class="surface__url">app.neogen-x.com</span>
+        </div>
+        <div class="surface__title">Web App</div>
+        <div class="surface__desc">4 views — Dashboard, Planner, Trends, Account. Sidebar nav + KPI row + HRV chart + biomarker rail + coach nudge.</div>
+        <div class="surface__tags">
+          <span class="surface__tag">Sidebar</span><span class="surface__tag">KPI feat</span><span class="surface__tag">HRV chart</span>
+        </div>
+        <div class="surface__cta"><span>Open showcase</span><span>→</span></div>
+      </a>
+      <a class="surface" href="showcase/04-coach-portal.html">
+        <div class="surface__head">
+          <span class="surface__n">Surface 04 · Coach B2B</span>
+          <span class="surface__url">app.neogen-x.com/coach</span>
+        </div>
+        <div class="surface__title">Coach Portal</div>
+        <div class="surface__desc">5 views — Athletes list, Athlete detail, Programs editor (drag-and-drop), Messages, Cohort analytics (heatmap). The densest surface.</div>
+        <div class="surface__tags">
+          <span class="surface__tag">Dense table</span><span class="surface__tag">Drag-drop blocks</span><span class="surface__tag">Heat grid</span>
+        </div>
+        <div class="surface__cta"><span>Open showcase</span><span>→</span></div>
+      </a>
+    </div>
+  </section>
+
+  <div class="foot">
+    <span>NGX · Liquid Glass · v1</span>
+    <span>Performance &amp; Longevity</span>
+  </div>
+
+</div>
+
+</body>
+</html>

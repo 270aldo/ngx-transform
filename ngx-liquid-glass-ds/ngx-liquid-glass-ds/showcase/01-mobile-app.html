@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NGX · Mobile App · Liquid Glass</title>
+
+<link rel="stylesheet" href="colors_and_type.css">
+<link rel="stylesheet" href="ngx-lg-tokens.css">
+<link rel="stylesheet" href="mobile-app.css">
+
+<style>
+  html, body { background: #18171c; }
+  body { color-scheme: dark; }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="screens.jsx"></script>
+
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "wallpaper": "regular",
+  "showPattern": true,
+  "dose": "medium",
+  "recoveryScore": 79,
+  "setsTotal": 5,
+  "coachStyle": "glass",
+  "coachMode": "text",
+  "lockVariant": "widgets",
+  "homeLayout": "triad",
+  "workoutMode": "timer"
+}/*EDITMODE-END*/;
+
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const tweaks = t;
+
+  return (
+    <>
+      <TweaksPanel title="Tweaks · NGX Mobile">
+        <TweakSection label="Wallpaper · Glass">
+          <TweakRadio
+            label="Wallpaper"
+            value={tweaks.wallpaper}
+            options={[
+              { value: 'soft',    label: 'Soft' },
+              { value: 'regular', label: 'Regular' },
+              { value: 'bloom',   label: 'Bloom' },
+            ]}
+            onChange={v => setTweak('wallpaper', v)}/>
+          <TweakRadio
+            label="Glass dose"
+            value={tweaks.dose}
+            options={[
+              { value: 'light',  label: 'Light' },
+              { value: 'medium', label: 'Medium' },
+              { value: 'full',   label: 'Full' },
+            ]}
+            onChange={v => setTweak('dose', v)}/>
+          <TweakToggle label="Diamond pattern"
+                       value={tweaks.showPattern}
+                       onChange={v => setTweak('showPattern', v)}/>
+        </TweakSection>
+
+        <TweakSection label="Datos del día">
+          <TweakSlider label="Recovery"
+                       value={tweaks.recoveryScore}
+                       min={30} max={100} step={1}
+                       onChange={v => setTweak('recoveryScore', v)}/>
+        </TweakSection>
+
+        <TweakSection label="Lock screen">
+          <TweakRadio
+            label="Variante"
+            value={tweaks.lockVariant}
+            options={[
+              { value: 'widgets',       label: 'Widgets' },
+              { value: 'live-activity', label: 'En curso' },
+            ]}
+            onChange={v => setTweak('lockVariant', v)}/>
+        </TweakSection>
+
+        <TweakSection label="Home">
+          <TweakRadio
+            label="Layout"
+            value={tweaks.homeLayout}
+            options={[
+              { value: 'triad',    label: 'Triad' },
+              { value: 'featured', label: 'Featured' },
+            ]}
+            onChange={v => setTweak('homeLayout', v)}/>
+        </TweakSection>
+
+        <TweakSection label="Workout">
+          <TweakRadio
+            label="Modo"
+            value={tweaks.workoutMode}
+            options={[
+              { value: 'timer', label: 'Timer disc' },
+              { value: 'video', label: 'Video trainer' },
+            ]}
+            onChange={v => setTweak('workoutMode', v)}/>
+          <TweakRadio
+            label="Sets totales"
+            value={tweaks.setsTotal}
+            options={[
+              { value: 3, label: '3' },
+              { value: 5, label: '5' },
+              { value: 8, label: '8' },
+            ]}
+            onChange={v => setTweak('setsTotal', v)}/>
+        </TweakSection>
+
+        <TweakSection label="AI Coach">
+          <TweakRadio
+            label="Modo"
+            value={tweaks.coachMode}
+            options={[
+              { value: 'text',  label: 'Texto' },
+              { value: 'voice', label: 'Voz' },
+            ]}
+            onChange={v => setTweak('coachMode', v)}/>
+          <TweakRadio
+            label="Sheet style"
+            value={tweaks.coachStyle}
+            options={[
+              { value: 'glass', label: 'Glass' },
+              { value: 'solid', label: 'Solid' },
+            ]}
+            onChange={v => setTweak('coachStyle', v)}/>
+        </TweakSection>
+      </TweaksPanel>
+
+      <DesignCanvas>
+        <DCSection
+          id="ngx-mobile"
+          title="NGX · iOS · Liquid Glass · Mobile App v2"
+          subtitle="5 surfaces principales · Intent 02 Medium · click cualquiera para fullscreen">
+          <DCArtboard id="lock"     label="01 · Lock + widgets" width={393} height={852} data-screen-label="01 Lock"><ScreenLock tweaks={tweaks}/></DCArtboard>
+          <DCArtboard id="home"     label="02 · Home"           width={393} height={852} data-screen-label="02 Home"><ScreenHome tweaks={tweaks}/></DCArtboard>
+          <DCArtboard id="workout"  label="03 · Workout active" width={393} height={852} data-screen-label="03 Workout"><ScreenWorkout tweaks={tweaks}/></DCArtboard>
+          <DCArtboard id="coach"    label="04 · AI Coach sheet" width={393} height={852} data-screen-label="04 Coach"><ScreenCoach tweaks={tweaks}/></DCArtboard>
+          <DCArtboard id="profile"  label="05 · Profile"        width={393} height={852} data-screen-label="05 Profile"><ScreenProfile tweaks={tweaks}/></DCArtboard>
+        </DCSection>
+
+        <DCSection
+          id="ngx-onboarding"
+          title="Onboarding flow · 5 pasos"
+          subtitle="Welcome → Identity → Goals → Devices → Plan ready">
+          <DCArtboard id="onb1" label="Step 1 · Welcome"  width={393} height={852} data-screen-label="06 Onb · Welcome"><OnbWelcome  tweaks={tweaks}/></DCArtboard>
+          <DCArtboard id="onb2" label="Step 2 · Identity" width={393} height={852} data-screen-label="07 Onb · Identity"><OnbIdentity tweaks={tweaks}/></DCArtboard>
+          <DCArtboard id="onb3" label="Step 3 · Goals"    width={393} height={852} data-screen-label="08 Onb · Goals"><OnbGoals    tweaks={tweaks}/></DCArtboard>
+          <DCArtboard id="onb4" label="Step 4 · Devices"  width={393} height={852} data-screen-label="09 Onb · Devices"><OnbDevices  tweaks={tweaks}/></DCArtboard>
+          <DCArtboard id="onb5" label="Step 5 · Plan listo" width={393} height={852} data-screen-label="10 Onb · Plan"><OnbReady tweaks={tweaks}/></DCArtboard>
+        </DCSection>
+      </DesignCanvas>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+
+</body>
+</html>

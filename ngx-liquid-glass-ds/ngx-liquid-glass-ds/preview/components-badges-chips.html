@@ -1,0 +1,73 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/>
+<title>Badges + chips</title>
+<link rel="stylesheet" href="../tokens-brand.css"/>
+<link rel="stylesheet" href="../tokens-lg.css"/>
+<link rel="stylesheet" href="../components.css"/>
+<style>
+  html, body { margin: 0; padding: 0; background: #04021A; }
+  body {
+    padding: 24px; color: var(--ngx-white); font-family: var(--font-text);
+    min-height: 280px;
+    background:
+      radial-gradient(40% 60% at 80% 10%, rgba(109,0,255,0.18) 0%, transparent 60%),
+      radial-gradient(30% 40% at 10% 95%, rgba(109,0,255,0.12) 0%, transparent 60%),
+      #04021A;
+    position: relative;
+  }
+  body::before {
+    content:""; position:absolute; inset:0;
+    background-image: url("../assets/textures/texture-pattern-navy.png");
+    background-size: 280px; opacity: 0.05; mix-blend-mode: screen; pointer-events:none;
+  }
+  body > * { position: relative; z-index: 1; }
+  .card-label {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 9.5px; letter-spacing: 0.20em; text-transform: uppercase;
+    color: var(--ngx-purple-300);
+    margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+  }
+  .card-label::before { content:""; width:5px; height:5px; border-radius:50%; background: var(--ngx-purple); box-shadow: 0 0 8px var(--ngx-purple); }
+  .demo-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .note { font-size: 11px; color: var(--ngx-gray-400); margin-top: 14px; line-height: 1.5; }
+  .swatch-note { font-family: var(--font-display); font-weight: 700; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ngx-gray-400); }
+  .sw { width: 64px; height: 64px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06); display: flex; align-items: flex-end; padding: 4px; box-sizing: border-box; font-family: var(--font-display); font-size: 8px; letter-spacing: .08em; color: var(--ngx-white); }
+  .col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+</style></head>
+<body>
+
+<style>
+  .badge-row { display:flex; flex-wrap:wrap; gap: 10px; align-items: center; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; font-family: var(--font-display); font-weight: 700; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; }
+  .badge::before { content:""; width: 6px; height: 6px; border-radius: 50%; }
+  .b-ok { background: rgba(40, 200, 120, 0.12); color: #6FE3A8; border: 1px solid rgba(40,200,120,0.35); }
+  .b-ok::before { background: #28C878; box-shadow: 0 0 6px #28C878; }
+  .b-warn { background: rgba(255, 180, 40, 0.12); color: #FFD37A; border: 1px solid rgba(255,180,40,0.35); }
+  .b-warn::before { background: #FFB428; box-shadow: 0 0 6px #FFB428; }
+  .b-danger { background: rgba(255, 70, 90, 0.12); color: #FF8A9C; border: 1px solid rgba(255,70,90,0.35); }
+  .b-danger::before { background: #FF465A; box-shadow: 0 0 6px #FF465A; }
+  .b-info { background: rgba(109, 0, 255, 0.16); color: #C29BFF; border: 1px solid rgba(109,0,255,0.4); }
+  .b-info::before { background: #6D00FF; box-shadow: 0 0 6px #6D00FF; }
+  .b-purple { background: var(--ngx-purple); color: #fff; box-shadow: 0 0 12px rgba(109,0,255,0.5); }
+  .b-purple::before { background: #fff; }
+  .chip { display: inline-flex; padding: 6px 12px; border-radius: 4px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); font-family: var(--font-display); font-weight: 700; font-size: 10px; letter-spacing: 0.10em; text-transform: uppercase; color: #fff; }
+  .chip.is-active { background: rgba(109,0,255,0.18); border-color: var(--ngx-purple); color: #fff; box-shadow: 0 0 12px rgba(109,0,255,0.35); }
+</style>
+<div class="card-label">STATUS PILLS</div>
+<div class="badge-row" style="margin-bottom:14px;">
+  <span class="badge b-ok">Ready</span>
+  <span class="badge b-warn">Strain</span>
+  <span class="badge b-danger">Flagged</span>
+  <span class="badge b-info">Rest day</span>
+  <span class="badge b-purple">PR</span>
+</div>
+<div class="card-label">RANGE PILLS</div>
+<div class="badge-row">
+  <span class="chip">7D</span>
+  <span class="chip is-active">30D</span>
+  <span class="chip">1Y</span>
+</div>
+<div class="note">Status pills carry a colored dot + colored text on tinted bg. Range pills are sharp 4px corners with the active pill carrying the purple glow.</div>
+
+</body></html>

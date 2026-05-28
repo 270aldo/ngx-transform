@@ -1,0 +1,60 @@
+<!-- @dsCard group="Brand" -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/>
+<title>Brand · feature tile icons</title>
+<link rel="stylesheet" href="../tokens-brand.css"/>
+<link rel="stylesheet" href="../tokens-lg.css"/>
+<link rel="stylesheet" href="../components.css"/>
+<style>
+  html, body { margin: 0; padding: 0; background: #04021A; }
+  body {
+    padding: 24px; color: var(--ngx-white); font-family: var(--font-text);
+    min-height: 280px;
+    background:
+      radial-gradient(40% 60% at 80% 10%, rgba(109,0,255,0.18) 0%, transparent 60%),
+      radial-gradient(30% 40% at 10% 95%, rgba(109,0,255,0.12) 0%, transparent 60%),
+      #04021A;
+    position: relative;
+  }
+  body::before {
+    content:""; position:absolute; inset:0;
+    background-image: url("../assets/textures/texture-pattern-navy.png");
+    background-size: 280px; opacity: 0.05; mix-blend-mode: screen; pointer-events:none;
+  }
+  body > * { position: relative; z-index: 1; }
+  .card-label {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 9.5px; letter-spacing: 0.20em; text-transform: uppercase;
+    color: var(--ngx-purple-300);
+    margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+  }
+  .card-label::before { content:""; width:5px; height:5px; border-radius:50%; background: var(--ngx-purple); box-shadow: 0 0 8px var(--ngx-purple); }
+  .demo-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .note { font-size: 11px; color: var(--ngx-gray-400); margin-top: 14px; line-height: 1.5; }
+  .swatch-note { font-family: var(--font-display); font-weight: 700; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ngx-gray-400); }
+  .sw { width: 64px; height: 64px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06); display: flex; align-items: flex-end; padding: 4px; box-sizing: border-box; font-family: var(--font-display); font-size: 8px; letter-spacing: .08em; color: var(--ngx-white); }
+  .col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+</style></head>
+<body>
+
+<style>
+  .icon-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .ic { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .ic img { width: 56px; height: 56px; object-fit: contain; }
+  .ic span { font-family: var(--font-display); font-weight: 700; font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ngx-gray-400); }
+</style>
+<div class="card-label">FEATURE TILES</div>
+<div class="icon-row">
+  <div class="ic"><img src="../assets/icons/barbell.png" alt=""/><span>Barbell</span></div>
+  <div class="ic"><img src="../assets/icons/dumbbell.png" alt=""/><span>Dumbbell</span></div>
+  <div class="ic"><img src="../assets/icons/weightlifting.png" alt=""/><span>Lifting</span></div>
+  <div class="ic"><img src="../assets/icons/muscle.png" alt=""/><span>Muscle</span></div>
+  <div class="ic"><img src="../assets/icons/trainers.png" alt=""/><span>Trainers</span></div>
+  <div class="ic"><img src="../assets/icons/kicking.png" alt=""/><span>Kicking</span></div>
+  <div class="ic"><img src="../assets/icons/sports-mode.png" alt=""/><span>Sports</span></div>
+  <div class="ic"><img src="../assets/icons/apple-fitness.png" alt=""/><span>Fitness</span></div>
+  <div class="ic"><img src="../assets/icons/apple-watch.png" alt=""/><span>Watch</span></div>
+</div>
+<div class="note">Purple-gradient PNG tiles. Use at 56–96px in featured / app-tile contexts. For chrome icons (chevrons, close, settings) use Lucide stroke 1.75 with currentColor.</div>
+
+</body></html>

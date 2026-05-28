@@ -1,0 +1,159 @@
+{
+  "dsCards": [
+    {
+      "path": "preview/colors-glass-fills.html",
+      "group": "Colors",
+      "title": "Glass materials · thin / regular / thick / purple"
+    },
+    {
+      "path": "preview/colors-gray-ramp.html",
+      "group": "Colors",
+      "title": "Gray ramp · 50→800"
+    },
+    {
+      "path": "preview/colors-navy-ramp.html",
+      "group": "Colors",
+      "title": "Navy ramp · 500→950"
+    },
+    {
+      "path": "preview/colors-palette-core.html",
+      "group": "Colors",
+      "title": "Core palette · navy + purple charge"
+    },
+    {
+      "path": "preview/colors-purple-ramp.html",
+      "group": "Colors",
+      "title": "Purple ramp · 100 → 700"
+    },
+    {
+      "path": "preview/colors-semantic.html",
+      "group": "Colors",
+      "title": "Semantic colors · ok/warn/danger"
+    },
+    {
+      "path": "preview/type-body-numerals.html",
+      "group": "Type",
+      "title": "Body + tabular numerals"
+    },
+    {
+      "path": "preview/type-display-headline.html",
+      "group": "Type",
+      "title": "Display headline · United Sans Heavy"
+    },
+    {
+      "path": "preview/type-labels-eyebrows.html",
+      "group": "Type",
+      "title": "Eyebrows + labels · CAPS micro"
+    },
+    {
+      "path": "preview/type-scale.html",
+      "group": "Type",
+      "title": "Type scale · display + body"
+    },
+    {
+      "path": "preview/type-voice-formula.html",
+      "group": "Type",
+      "title": "Voice · data → interpretation → action"
+    },
+    {
+      "path": "preview/spacing-glows.html",
+      "group": "Spacing",
+      "title": "Purple glows · sm / md / lg"
+    },
+    {
+      "path": "preview/spacing-radii.html",
+      "group": "Spacing",
+      "title": "Corner radii · mostly sharp"
+    },
+    {
+      "path": "preview/spacing-scale.html",
+      "group": "Spacing",
+      "title": "Spacing scale · 4pt grid"
+    },
+    {
+      "path": "preview/spacing-wallpapers.html",
+      "group": "Spacing",
+      "title": "Wallpapers · soft / regular / bloom"
+    },
+    {
+      "path": "preview/motion-easing.html",
+      "group": "Motion",
+      "title": "Motion · easing + durations"
+    },
+    {
+      "path": "preview/components-badges-chips.html",
+      "group": "Components",
+      "title": "Badges + chips"
+    },
+    {
+      "path": "preview/components-bubble-chat.html",
+      "group": "Components",
+      "title": "Chat bubble · them + me"
+    },
+    {
+      "path": "preview/components-buttons.html",
+      "group": "Components",
+      "title": "Buttons · primary / secondary / ghost"
+    },
+    {
+      "path": "preview/components-chart-bar.html",
+      "group": "Components",
+      "title": "Bar chart · HRV pattern with optimal band"
+    },
+    {
+      "path": "preview/components-ctas.html",
+      "group": "Components",
+      "title": "CTAs · primary + secondary"
+    },
+    {
+      "path": "preview/components-inputs.html",
+      "group": "Components",
+      "title": "Inputs · text / search / select"
+    },
+    {
+      "path": "preview/components-kpi-card.html",
+      "group": "Components",
+      "title": "KPI card · featured + regular"
+    },
+    {
+      "path": "preview/components-nudge.html",
+      "group": "Components",
+      "title": "Coach nudge · AI insight"
+    },
+    {
+      "path": "preview/components-program-block.html",
+      "group": "Components",
+      "title": "Program block · exercise tile"
+    },
+    {
+      "path": "preview/components-range-pills.html",
+      "group": "Components",
+      "title": "Range pills · 7D / 30D / 1Y"
+    },
+    {
+      "path": "preview/components-stat-pills.html",
+      "group": "Components",
+      "title": "Status pills · semantic dot + label"
+    },
+    {
+      "path": "preview/components-table-row.html",
+      "group": "Components",
+      "title": "Table row · entity cell + progress + status"
+    },
+    {
+      "path": "preview/brand-icon-tiles.html",
+      "group": "Brand",
+      "title": "Brand · feature tile icons"
+    },
+    {
+      "path": "preview/brand-logos.html",
+      "group": "Brand",
+      "title": "Brand · logo variants"
+    },
+    {
+      "path": "preview/theme-light-vs-dark.html",
+      "group": "Brand",
+      "title": "Theme · light vs dark surfaces"
+    }
+  ]
+}

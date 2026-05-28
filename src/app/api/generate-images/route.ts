@@ -358,6 +358,7 @@ export async function POST(req: Request) {
         // Get previous step URL for Identity Chain (if available)
         const prevStep = PREVIOUS_STEP[step];
         let previousStepUrl: string | undefined;
+        let styleRefUrl: string | undefined;
 
         if (flags.FF_IDENTITY_CHAIN && prevStep && !images[prevStep]) {
           const reason = `missing_identity_chain_reference:${prevStep}`;
@@ -381,6 +382,16 @@ export async function POST(req: Request) {
           }
         }
 
+        if (flags.FF_IDENTITY_CHAIN) {
+          try {
+            const styleRefPath = process.env.STYLE_REF_PATH || "brand/style-ref.jpg";
+            styleRefUrl = await getSignedUrl(styleRefPath, { expiresInSeconds: 3600 });
+            console.log(`[GenerateImages] Using style reference: ${styleRefPath}`);
+          } catch (err) {
+            console.warn("[GenerateImages] Could not get URL for style reference (non-blocking):", err);
+          }
+        }
+
         // Generate image with retry
         const result: GenerationResult = await withRetry(
           async () => {
@@ -392,6 +403,7 @@ export async function POST(req: Request) {
               userVisualAnchor,
               styleProfile,
               previousStepUrl,
+              styleRefUrl,
             });
           },
           {

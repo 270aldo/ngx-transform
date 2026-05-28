@@ -1,0 +1,60 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/>
+<title>Status pills · semantic dot + label</title>
+<link rel="stylesheet" href="../tokens-brand.css"/>
+<link rel="stylesheet" href="../tokens-lg.css"/>
+<link rel="stylesheet" href="../components.css"/>
+<style>
+  html, body { margin: 0; padding: 0; background: #04021A; }
+  body {
+    padding: 24px;
+    color: var(--ngx-white);
+    font-family: var(--font-text);
+    min-height: 280px;
+    background:
+      radial-gradient(40% 60% at 80% 10%, rgba(109,0,255,0.18) 0%, transparent 60%),
+      radial-gradient(30% 40% at 10% 95%, rgba(109,0,255,0.12) 0%, transparent 60%),
+      #04021A;
+    position: relative;
+  }
+  body::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: url("../assets/textures/texture-pattern-navy.png");
+    background-size: 280px; opacity: 0.05;
+    mix-blend-mode: screen; pointer-events: none;
+  }
+  body > * { position: relative; z-index: 1; }
+  .card-label {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 9.5px; letter-spacing: 0.20em; text-transform: uppercase;
+    color: var(--ngx-purple-300);
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-label::before {
+    content: ""; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--ngx-purple); box-shadow: 0 0 8px var(--ngx-purple);
+  }
+  .demo-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .demo-col { display: flex; flex-direction: column; gap: 12px; }
+  .note { font-size: 11px; color: var(--ngx-gray-400); margin-top: 12px; line-height: 1.5; }
+  .swatch-note {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ngx-gray-400);
+  }
+</style></head>
+<body>
+
+<div class="card-label">STATUS PILLS</div>
+<div class="demo-row">
+  <span class="ngx-stat-pill ngx-stat-pill--ok">Ready</span>
+  <span class="ngx-stat-pill ngx-stat-pill--warn">Strain</span>
+  <span class="ngx-stat-pill ngx-stat-pill--danger">Flagged</span>
+  <span class="ngx-stat-pill ngx-stat-pill--info">Rest day</span>
+  <span class="ngx-stat-pill ngx-stat-pill--purple">Active</span>
+</div>
+<div class="note">Use for athlete state, programme phase, alert level. Dot color carries the semantic — label backs it up. 9.5px micro caps.</div>
+
+</body></html>

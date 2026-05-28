@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1480">
+<title>NGX · Web App · Athlete · Liquid Glass</title>
+<link rel="stylesheet" href="colors_and_type.css">
+<link rel="stylesheet" href="ngx-lg-tokens.css">
+<link rel="stylesheet" href="webapp.css">
+</head>
+<body data-theme="dark">
+
+<div class="page-bg"></div>
+
+<div class="page-shell">
+
+  <!-- ============================== BROWSER FRAME ============================== -->
+  <div class="lg-browser">
+    <div class="lg-browser__chrome">
+      <div class="lg-browser__dots">
+        <div class="lg-browser__dot"></div>
+        <div class="lg-browser__dot"></div>
+        <div class="lg-browser__dot"></div>
+      </div>
+      <div class="browser-actions">
+        <span class="ba-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </span>
+        <span class="ba-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </span>
+        <span class="ba-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+        </span>
+      </div>
+      <div class="lg-browser__url">
+        <span class="lg-browser__url-lock">●</span>
+        <span id="url-host">app.neogen-x.com</span><span id="url-path" style="color:rgba(255,255,255,0.45);">/dashboard</span>
+      </div>
+      <div class="browser-actions">
+        <span class="ba-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        </span>
+      </div>
+    </div>
+
+    <!-- ============================== APP ============================== -->
+    <div class="app" id="app" data-view="dashboard" data-screen-label="03 Web App · NGX Athlete">
+
+      <!-- ============================== SIDEBAR ============================== -->
+      <aside class="side">
+        <div class="side-brand">
+          <div class="side-brand__mk">X</div>
+          <div class="side-brand__name">NEOGEN&#8209;X</div>
+        </div>
+
+        <div class="side-profile">
+          <div class="side-profile__avatar">AR</div>
+          <div class="side-profile__body">
+            <div class="side-profile__name">Alex Rivera</div>
+            <div class="side-profile__meta">Sync · 6 min ago</div>
+          </div>
+        </div>
+
+        <div class="side-h">Workspace</div>
+        <nav class="side-nav">
+          <div class="nav-item is-active" data-go="dashboard">
+            <span class="nav-item__ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+            </span>
+            <span class="nav-item__lbl">Dashboard</span>
+          </div>
+          <div class="nav-item" data-go="planner">
+            <span class="nav-item__ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.4 14.4 9.6 9.6"></path><path d="M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l-1.768 1.767a2 2 0 1 1 2.828 2.829z"></path><path d="m21.5 21.5-1.4-1.4"></path><path d="M3.9 3.9 2.5 2.5"></path><path d="M6.404 12.768a2 2 0 1 1-2.829-2.829l1.768-1.767a2 2 0 1 1-2.828-2.829l2.828-2.828a2 2 0 1 1 2.829 2.828l1.767-1.768a2 2 0 1 1 2.829 2.829z"></path></svg>
+            </span>
+            <span class="nav-item__lbl">Today's session</span>
+            <span class="nav-item__chip">17:00</span>
+          </div>
+          <div class="nav-item" data-go="trends">
+            <span class="nav-item__ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+            </span>
+            <span class="nav-item__lbl">Trends</span>
+          </div>
+          <div class="nav-item" data-go="account">
+            <span class="nav-item__ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </span>
+            <span class="nav-item__lbl">Account</span>
+          </div>
+        </nav>
+
+        <div class="side-divider"></div>
+
+        <div class="side-h">Library</div>
+        <nav class="side-nav">
+          <div class="nav-item">
+            <span class="nav-item__ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+            </span>
+            <span class="nav-item__lbl">Programs</span>
+          </div>
+          <div class="nav-item">
+            <span class="nav-item__ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+            </span>
+            <span class="nav-item__lbl">Recovery</span>
+          </div>
+          <div class="nav-item">
+            <span class="nav-item__ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            </span>
+            <span class="nav-item__lbl">AI Coach</span>
+            <span class="nav-item__chip">3</span>
+          </div>
+          <div class="nav-item">
+            <span class="nav-item__ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            </span>
+            <span class="nav-item__lbl">History</span>
+          </div>
+        </nav>
+
+        <div class="side-foot">
+          <div class="side-foot__title">Coach review</div>
+          <div class="side-foot__body">Tu coach revisó tu semana hace 2h. Hay 1 ajuste pendiente en Press &amp; Pull.</div>
+          <div class="side-foot__cta">Open review →</div>
+        </div>
+      </aside>
+
+      <!-- ============================== MAIN ============================== -->
+      <main class="main">
+
+        <!-- ============================== TOPBAR ============================== -->
+        <header class="topbar">
+          <div class="topbar__title">
+            <span class="topbar__eyebrow" id="topbar-eyebrow">Day 042 · Mon · Dec 09</span>
+            <h1 class="topbar__h" id="topbar-h">RECOVER<span class="sep">·</span>LIFT</h1>
+          </div>
+          <div class="topbar__right">
+            <div class="range-pills" id="range-pills">
+              <span class="range-pill">Today</span>
+              <span class="range-pill is-active">7D</span>
+              <span class="range-pill">30D</span>
+              <span class="range-pill">1Y</span>
+            </div>
+            <button class="icon-pill" title="Notifications">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+              <span class="badge"></span>
+            </button>
+            <button class="coach-btn"><span class="dot"></span>Ask Coach</button>
+          </div>
+        </header>
+
+        <!-- ============================== VIEW · DASHBOARD ============================== -->
+        <div class="view view--dashboard">
+
+          <!-- KPI ROW -->
+          <div class="kpi-row">
+            <div class="kpi-card kpi-card--feat">
+              <div class="kpi-card__head">
+                <span class="kpi-card__label">Recovery</span>
+                <span class="kpi-card__pill">Optimal</span>
+              </div>
+              <div class="kpi-card__value">79<span class="kpi-card__unit">%</span></div>
+              <div class="kpi-card__sub">
+                <span class="kpi-card__delta kpi-card__delta--up">+12 vs 7d</span>
+                <span class="kpi-card__base">baseline · 67%</span>
+              </div>
+              <div class="kpi-card__spark" aria-hidden="true">
+                <span class="sb" style="height:42%"></span><span class="sb" style="height:55%"></span><span class="sb" style="height:48%"></span><span class="sb" style="height:62%"></span><span class="sb" style="height:58%"></span><span class="sb" style="height:71%"></span><span class="sb" style="height:79%"></span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-card__head">
+                <span class="kpi-card__label">HRV</span>
+                <span class="kpi-card__pill">Trend ↑</span>
+              </div>
+              <div class="kpi-card__value">52<span class="kpi-card__unit">ms</span></div>
+              <div class="kpi-card__sub">
+                <span class="kpi-card__delta kpi-card__delta--up">+8 ms vs 7d</span>
+                <span class="kpi-card__base">avg · 47 ms</span>
+              </div>
+              <div class="kpi-card__spark" aria-hidden="true">
+                <span class="sb" style="height:30%"></span><span class="sb" style="height:48%"></span><span class="sb" style="height:36%"></span><span class="sb" style="height:55%"></span><span class="sb" style="height:42%"></span><span class="sb" style="height:60%"></span><span class="sb" style="height:74%"></span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-card__head">
+                <span class="kpi-card__label">RHR</span>
+                <span class="kpi-card__pill">Low · Good</span>
+              </div>
+              <div class="kpi-card__value">44<span class="kpi-card__unit">bpm</span></div>
+              <div class="kpi-card__sub">
+                <span class="kpi-card__delta kpi-card__delta--down">−2 bpm vs 7d</span>
+                <span class="kpi-card__base">avg · 46 bpm</span>
+              </div>
+              <div class="kpi-card__spark" aria-hidden="true">
+                <span class="sb" style="height:62%"></span><span class="sb" style="height:55%"></span><span class="sb" style="height:48%"></span><span class="sb" style="height:52%"></span><span class="sb" style="height:46%"></span><span class="sb" style="height:42%"></span><span class="sb" style="height:38%"></span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-card__head">
+                <span class="kpi-card__label">Sleep</span>
+                <span class="kpi-card__pill">7h 42m</span>
+              </div>
+              <div class="kpi-card__value">88<span class="kpi-card__unit">/100</span></div>
+              <div class="kpi-card__sub">
+                <span class="kpi-card__delta kpi-card__delta--up">+4 vs 7d</span>
+                <span class="kpi-card__base">deep · 1h 38m</span>
+              </div>
+              <div class="kpi-card__spark" aria-hidden="true">
+                <span class="sb" style="height:52%"></span><span class="sb" style="height:68%"></span><span class="sb" style="height:74%"></span><span class="sb" style="height:60%"></span><span class="sb" style="height:78%"></span><span class="sb" style="height:82%"></span><span class="sb" style="height:88%"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CHART + BIOMARKERS -->
+          <div class="cols">
+            <div class="gpanel">
+              <div class="gp-head">
+                <div class="gp-head__l">
+                  <span class="gp-title">HRV · 30-day trend</span>
+                  <span class="gp-sub">Daily morning capture · <span class="em">band = your optimal range (46–58 ms)</span></span>
+                </div>
+                <div class="gp-stats">
+                  <div>
+                    <div class="gp-stat__l">Avg</div>
+                    <div class="gp-stat__v">49<span class="gp-stat__u">ms</span></div>
+                    <div class="gp-stat__d" style="color:#6BE9A6;">▲ +4 vs prior 30d</div>
+                  </div>
+                  <div>
+                    <div class="gp-stat__l">Peak</div>
+                    <div class="gp-stat__v">62<span class="gp-stat__u">ms</span></div>
+                    <div class="gp-stat__d" style="color:var(--ngx-gray-400);">Dec 04 · post-rest</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="chart" id="hrv-chart">
+                <div class="chart__y">
+                  <span>70</span>
+                  <span>58</span>
+                  <span>46</span>
+                  <span>34</span>
+                  <span>22</span>
+                </div>
+                <div class="chart__plot">
+                  <div class="chart__grid"><div></div><div></div><div></div></div>
+                  <!-- optimal band 46–58 → mapping 70..22, band top = 17%, band bottom = 50% -->
+                  <div class="chart__band" style="top:17%; height:33%;">
+                    <span class="chart__band-lbl">Optimal 46–58</span>
+                  </div>
+                  <!-- 30 bars · ms values plotted against 22–70 range -->
+                  <div class="bar-col"><div class="bar is-low" style="height:35%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:42%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:48%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:55%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:38%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:62%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:50%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:58%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:32%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:54%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:60%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:66%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:58%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:50%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:36%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:64%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:58%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:52%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:60%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:55%"></div></div>
+                  <div class="bar-col"><div class="bar is-peak" style="height:74%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:66%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:62%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:54%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:42%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:58%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:64%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:70%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:68%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:72%"></div></div>
+                </div>
+              </div>
+              <div class="chart__x">
+                <span></span>
+                <div class="chart__x-labels">
+                  <span>Nov 10</span><span>Nov 17</span><span>Nov 24</span><span>Dec 01</span><span>Dec 08</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Biomarker rail -->
+            <div class="gpanel bio-rail">
+              <div class="gp-head">
+                <div class="gp-head__l">
+                  <span class="gp-title">Biomarkers · Today</span>
+                  <span class="gp-sub">8 captures since 6:14 AM</span>
+                </div>
+              </div>
+
+              <div class="bio-list">
+                <div class="bio-list__row">
+                  <span class="bio-list__ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                  </span>
+                  <div class="bio-list__name">VO₂ max <small>cardio fitness · estimated</small></div>
+                  <div class="bio-list__val">51<span class="u">ml/kg</span></div>
+                  <div class="bio-list__d up">+0.4</div>
+                </div>
+
+                <div class="bio-list__row">
+                  <span class="bio-list__ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                  </span>
+                  <div class="bio-list__name">Resp. rate <small>night avg · breaths/min</small></div>
+                  <div class="bio-list__val">13.4<span class="u">bpm</span></div>
+                  <div class="bio-list__d flat">±0</div>
+                </div>
+
+                <div class="bio-list__row">
+                  <span class="bio-list__ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                  </span>
+                  <div class="bio-list__name">SpO₂ <small>blood oxygen · sleep avg</small></div>
+                  <div class="bio-list__val">97<span class="u">%</span></div>
+                  <div class="bio-list__d up">+1</div>
+                </div>
+
+                <div class="bio-list__row">
+                  <span class="bio-list__ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"></path></svg>
+                  </span>
+                  <div class="bio-list__name">Skin temp <small>delta vs 30-day baseline</small></div>
+                  <div class="bio-list__val">−0.3<span class="u">°C</span></div>
+                  <div class="bio-list__d down">−0.2</div>
+                </div>
+
+                <div class="bio-list__row">
+                  <span class="bio-list__ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 0 4-4m-4 4-4-4m4 4v14"></path></svg>
+                  </span>
+                  <div class="bio-list__name">Glucose <small>CGM · fasting</small></div>
+                  <div class="bio-list__val">89<span class="u">mg/dL</span></div>
+                  <div class="bio-list__d up">+3</div>
+                </div>
+
+                <div class="bio-list__row">
+                  <span class="bio-list__ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"></path></svg>
+                  </span>
+                  <div class="bio-list__name">Hydration <small>UEC index · morning</small></div>
+                  <div class="bio-list__val">1.018<span class="u">SG</span></div>
+                  <div class="bio-list__d flat">opt</div>
+                </div>
+
+                <div class="bio-list__row">
+                  <span class="bio-list__ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M2 12h6m8 0h6"></path></svg>
+                  </span>
+                  <div class="bio-list__name">Readiness <small>composite · 0-100</small></div>
+                  <div class="bio-list__val">82<span class="u">/100</span></div>
+                  <div class="bio-list__d up">+6</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LOWER ROW: TODAY'S SESSION + COACH NUDGE -->
+          <div class="lower-row">
+            <div class="today-card" role="button">
+              <div class="today-card__ico">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11v11h-11z"></path><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+              </div>
+              <div>
+                <div class="today-card__eyebrow">Today · 17:00 · Strength Block · Wk 6 / 12</div>
+                <div class="today-card__title">Press &amp; Pull · 5×5</div>
+                <div class="today-card__meta">
+                  <span>62 min</span><span class="sep">·</span><span>6 exercises</span><span class="sep">·</span><span>Estim. 8.4 TRIMP</span><span class="sep">·</span><span>RPE target 7.5</span>
+                </div>
+              </div>
+              <button class="lg-cta lg-cta--primary" onclick="window.__nav('planner')">Start session</button>
+            </div>
+
+            <div class="nudge nudge--wide">
+              <div class="nudge__lbl">AI Coach insight · 6:14 AM</div>
+              <div class="nudge__text">
+                HRV <b>+8 ms</b> sobre baseline · RHR <b>−2 bpm</b> · sleep score <b>88</b>. Cuerpo listo para empujar. Hoy puedes <b>subir 2.5 kg en bench</b> y mantener el tempo del press. No reduzcas el rest entre series.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ============================== VIEW · WORKOUT PLANNER ============================== -->
+        <div class="view view--planner">
+
+          <!-- HERO -->
+          <div class="plan-hero">
+            <div>
+              <div class="plan-hero__eyebrow">Today · 17:00 · Strength Block · Week 6 / 12</div>
+              <h2 class="plan-hero__title">Press <span class="em">&amp;</span> Pull <span class="dim" style="opacity:0.5;font-weight:700;">·</span> 5×5</h2>
+              <p class="plan-hero__sub">
+                Heavy compound day. Calibrado a tu recovery actual: <b>+2.5 kg en bench</b> autorizado, accesorios al <b>RPE 7.5</b>. Si el primer set de press se siente sobre RPE 8, baja 5 kg y mantiene el volumen.
+              </p>
+              <div class="plan-hero__stats">
+                <div class="ph-stat">
+                  <div class="ph-stat__l">Duration</div>
+                  <div class="ph-stat__v">62<span class="ph-stat__u">min</span></div>
+                </div>
+                <div class="ph-stat">
+                  <div class="ph-stat__l">Tonnage</div>
+                  <div class="ph-stat__v">6.8<span class="ph-stat__u">k kg</span></div>
+                </div>
+                <div class="ph-stat">
+                  <div class="ph-stat__l">TRIMP</div>
+                  <div class="ph-stat__v">8.4</div>
+                </div>
+                <div class="ph-stat">
+                  <div class="ph-stat__l">Target RPE</div>
+                  <div class="ph-stat__v">7.5</div>
+                </div>
+              </div>
+            </div>
+            <div class="plan-hero__cta">
+              <button class="lg-cta lg-cta--primary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                Start session
+              </button>
+              <button class="lg-cta lg-cta--secondary">Reschedule</button>
+              <span class="alt">Or skip today →</span>
+            </div>
+          </div>
+
+          <!-- PLAN GRID -->
+          <div class="plan-grid">
+
+            <!-- Exercise list -->
+            <div>
+              <div class="gpanel" style="padding:18px 22px; margin-bottom:12px;">
+                <div class="gp-head" style="margin-bottom:0;">
+                  <div class="gp-head__l">
+                    <span class="gp-title">Block A · Compound · 5×5</span>
+                    <span class="gp-sub">Rest 2:30 between sets · 3 min between exercises</span>
+                  </div>
+                  <span class="kpi-card__pill">Heavy</span>
+                </div>
+              </div>
+
+              <div class="exo-list">
+
+                <div class="exo">
+                  <span class="exo__num">01</span>
+                  <div class="exo__body">
+                    <div class="exo__title">Barbell Bench Press</div>
+                    <div class="exo__meta">
+                      <span>5 × 5 reps</span><span class="sep">·</span><span>87.5 kg</span><span class="sep">·</span><span>+2.5 kg vs last</span>
+                    </div>
+                  </div>
+                  <div class="exo__sets">
+                    <span class="exo__set is-target">5</span>
+                    <span class="exo__set is-target">5</span>
+                    <span class="exo__set is-target">5</span>
+                    <span class="exo__set is-target">5</span>
+                    <span class="exo__set is-target">5</span>
+                    <span class="exo__tag is-pr">PR push</span>
+                  </div>
+                </div>
+
+                <div class="exo">
+                  <span class="exo__num">02</span>
+                  <div class="exo__body">
+                    <div class="exo__title">Weighted Pull-up</div>
+                    <div class="exo__meta">
+                      <span>5 × 5 reps</span><span class="sep">·</span><span>+15 kg</span><span class="sep">·</span><span>same as last</span>
+                    </div>
+                  </div>
+                  <div class="exo__sets">
+                    <span class="exo__set is-target">5</span>
+                    <span class="exo__set is-target">5</span>
+                    <span class="exo__set is-target">5</span>
+                    <span class="exo__set is-target">5</span>
+                    <span class="exo__set is-target">5</span>
+                    <span class="exo__tag">Tempo 31X1</span>
+                  </div>
+                </div>
+
+                <div class="exo">
+                  <span class="exo__num">03</span>
+                  <div class="exo__body">
+                    <div class="exo__title">Overhead Press</div>
+                    <div class="exo__meta">
+                      <span>4 × 6 reps</span><span class="sep">·</span><span>55 kg</span><span class="sep">·</span><span>RPE 7</span>
+                    </div>
+                  </div>
+                  <div class="exo__sets">
+                    <span class="exo__set is-target">6</span>
+                    <span class="exo__set is-target">6</span>
+                    <span class="exo__set is-target">6</span>
+                    <span class="exo__set is-target">6</span>
+                    <span class="exo__tag">Strict</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="gpanel" style="padding:18px 22px; margin: 18px 0 12px;">
+                <div class="gp-head" style="margin-bottom:0;">
+                  <div class="gp-head__l">
+                    <span class="gp-title">Block B · Accessories · Superset</span>
+                    <span class="gp-sub">3 rounds · 90s rest between rounds</span>
+                  </div>
+                  <span class="kpi-card__pill">RPE 7.5</span>
+                </div>
+              </div>
+
+              <div class="exo-list">
+                <div class="exo exo--super">
+                  <span class="exo__num">04</span>
+                  <div class="exo__body">
+                    <div class="exo__title">Single-arm DB Row</div>
+                    <div class="exo__meta">
+                      <span>3 × 10 / side</span><span class="sep">·</span><span>32 kg</span><span class="sep">·</span><span>controlled</span>
+                    </div>
+                  </div>
+                  <div class="exo__sets">
+                    <span class="exo__set is-target">10</span>
+                    <span class="exo__set is-target">10</span>
+                    <span class="exo__set is-target">10</span>
+                    <span class="exo__tag">Superset →</span>
+                  </div>
+                </div>
+
+                <div class="exo exo--super">
+                  <span class="exo__num">05</span>
+                  <div class="exo__body">
+                    <div class="exo__title">Cable Chest Fly</div>
+                    <div class="exo__meta">
+                      <span>3 × 12</span><span class="sep">·</span><span>22.5 kg / side</span><span class="sep">·</span><span>full stretch</span>
+                    </div>
+                  </div>
+                  <div class="exo__sets">
+                    <span class="exo__set is-target">12</span>
+                    <span class="exo__set is-target">12</span>
+                    <span class="exo__set is-target">12</span>
+                    <span class="exo__tag">↺ paired</span>
+                  </div>
+                </div>
+
+                <div class="exo">
+                  <span class="exo__num">06</span>
+                  <div class="exo__body">
+                    <div class="exo__title">Plank · weighted</div>
+                    <div class="exo__meta">
+                      <span>3 × 45 s</span><span class="sep">·</span><span>+10 kg plate</span><span class="sep">·</span><span>core finisher</span>
+                    </div>
+                  </div>
+                  <div class="exo__sets">
+                    <span class="exo__set is-target">45</span>
+                    <span class="exo__set is-target">45</span>
+                    <span class="exo__set is-target">45</span>
+                    <span class="exo__tag">Hold</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Side context -->
+            <div class="plan-side">
+              <div class="warmup">
+                <span style="color:var(--ngx-purple-300);">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                </span>
+                <div>
+                  <div class="warmup__title">Warm-up · 8 min</div>
+                  <div class="warmup__sub">Banded shoulder · CARs · empty bar 2×8 · ramp-up sets</div>
+                </div>
+              </div>
+
+              <div class="context-card">
+                <div class="context-card__head">Why this session</div>
+                <div style="font-size:13px; color:rgba(255,255,255,0.82); line-height:1.5; margin-bottom:14px;">
+                  Tu recovery está en <b style="color:var(--ngx-white);">79%</b> y HRV cerró <b style="color:var(--ngx-white);">+8 ms</b>. La ventana para empujar es hoy — mañana cae tu sueño esperado por viaje.
+                </div>
+                <div class="ctx-row">
+                  <span class="ctx-row__l">Recovery this AM</span>
+                  <span class="ctx-row__v">79<span class="delta">+12</span></span>
+                </div>
+                <div class="ctx-row">
+                  <span class="ctx-row__l">HRV vs baseline</span>
+                  <span class="ctx-row__v">+8<span class="delta">ms</span></span>
+                </div>
+                <div class="ctx-row">
+                  <span class="ctx-row__l">Sleep last night</span>
+                  <span class="ctx-row__v">7h 42m</span>
+                </div>
+                <div class="ctx-row">
+                  <span class="ctx-row__l">Last bench (7d)</span>
+                  <span class="ctx-row__v">85 kg · 5×5</span>
+                </div>
+                <div class="ctx-row">
+                  <span class="ctx-row__l">Suggested load Δ</span>
+                  <span class="ctx-row__v" style="color:var(--ngx-purple-200);">+2.5 kg</span>
+                </div>
+              </div>
+
+              <div class="context-card">
+                <div class="context-card__head">Tomorrow · preview</div>
+                <div style="display:flex; align-items:center; gap:12px; padding: 6px 0 2px;">
+                  <div style="width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10); display:flex;align-items:center;justify-content:center; color:var(--ngx-white);">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                  </div>
+                  <div>
+                    <div style="font-family:var(--font-display); font-weight:900; font-size:14px; text-transform:uppercase; letter-spacing:0.02em; color:var(--ngx-white); line-height:1.1;">Zone-2 cardio</div>
+                    <div style="font-size:11.5px; color:var(--ngx-gray-400); margin-top:4px;">42 min · 138–148 bpm · low TRIMP</div>
+                  </div>
+                </div>
+                <div style="font-size:11.5px; color:var(--ngx-gray-400); margin-top:14px; padding-top:14px; border-top:1px solid rgba(255,255,255,0.06);">
+                  Sesiones esta semana · <b style="color:var(--ngx-white);">3 / 5</b> completadas · próximo deload en Wk 8.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============================== VIEW · TRENDS ============================== -->
+        <div class="view view--trends">
+
+          <div class="trends-strip">
+            <div class="tstat">
+              <div class="tstat__l">HRV · 30d avg</div>
+              <div class="tstat__v">49<span class="tstat__u">ms</span></div>
+              <div class="tstat__d up">▲ +4 vs prior 30d</div>
+            </div>
+            <div class="tstat">
+              <div class="tstat__l">Training load</div>
+              <div class="tstat__v">412<span class="tstat__u">TRIMP</span></div>
+              <div class="tstat__d up">▲ +18 vs prior</div>
+            </div>
+            <div class="tstat">
+              <div class="tstat__l">Sleep · 30d avg</div>
+              <div class="tstat__v">7h 28m</div>
+              <div class="tstat__d up">▲ +14 min</div>
+            </div>
+            <div class="tstat">
+              <div class="tstat__l">Recovery · avg</div>
+              <div class="tstat__v">71<span class="tstat__u">%</span></div>
+              <div class="tstat__d up">▲ +7 pts</div>
+            </div>
+            <div class="tstat">
+              <div class="tstat__l">Sessions logged</div>
+              <div class="tstat__v">22<span class="tstat__u">/24</span></div>
+              <div class="tstat__d flat">2 missed · travel</div>
+            </div>
+          </div>
+
+          <div class="charts-grid">
+
+            <!-- HRV vs baseline -->
+            <div class="gpanel chart-card">
+              <div class="gp-head">
+                <div class="gp-head__l">
+                  <span class="gp-title">HRV vs Baseline · 30d</span>
+                  <span class="gp-sub">Daily morning capture · <span class="em">band = optimal 46–58 ms</span></span>
+                </div>
+                <div class="gp-stats">
+                  <div>
+                    <div class="gp-stat__l">Above</div>
+                    <div class="gp-stat__v">19<span class="gp-stat__u">days</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="chart">
+                <div class="chart__y"><span>70</span><span>58</span><span>46</span><span>34</span><span>22</span></div>
+                <div class="chart__plot">
+                  <div class="chart__band" style="top:17%; height:33%;"></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:35%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:42%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:48%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:55%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:38%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:62%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:50%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:58%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:32%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:54%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:60%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:66%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:58%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:50%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:36%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:64%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:58%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:52%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:60%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:55%"></div></div>
+                  <div class="bar-col"><div class="bar is-peak" style="height:74%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:66%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:62%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:54%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:42%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:58%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:64%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:70%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:68%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:72%"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Training load -->
+            <div class="gpanel chart-card">
+              <div class="gp-head">
+                <div class="gp-head__l">
+                  <span class="gp-title">Training Load · 30d</span>
+                  <span class="gp-sub">Daily TRIMP · <span class="em">band = 12–22 = build zone</span></span>
+                </div>
+                <div class="gp-stats">
+                  <div>
+                    <div class="gp-stat__l">ACWR</div>
+                    <div class="gp-stat__v">1.18</div>
+                    <div class="gp-stat__d" style="color:#6BE9A6;">In sweet spot</div>
+                  </div>
+                </div>
+              </div>
+              <div class="chart">
+                <div class="chart__y"><span>30</span><span>22</span><span>14</span><span>7</span><span>0</span></div>
+                <div class="chart__plot">
+                  <div class="chart__band" style="top:25%; height:30%;"></div>
+                  <div class="bar-col"><div class="bar" style="height:55%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:25%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:0%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:62%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:48%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:18%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:70%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:0%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:65%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:55%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:30%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:72%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:0%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:60%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:22%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:78%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:50%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:0%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:66%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:30%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:80%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:55%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:0%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:75%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:22%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:82%"></div></div>
+                  <div class="bar-col"><div class="bar is-low" style="height:0%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:65%"></div></div>
+                  <div class="bar-col"><div class="bar" style="height:58%"></div></div>
+                  <div class="bar-col is-peak"><div class="bar is-peak" style="height:84%"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sleep · area-ish bars -->
+            <div class="gpanel chart-card">
+              <div class="gp-head">
+                <div class="gp-head__l">
+                  <span class="gp-title">Sleep Score · 30d</span>
+                  <span class="gp-sub">Composite · efficiency · stages · timing</span>
+                </div>
+                <div class="gp-stats">
+                  <div>
+                    <div class="gp-stat__l">Avg</div>
+                    <div class="gp-stat__v">81<span class="gp-stat__u">/100</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="linechart">
+                <svg viewBox="0 0 600 200" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="sleepFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#C29BFF" stop-opacity="0.55"/>
+                      <stop offset="100%" stop-color="#6D00FF" stop-opacity="0.05"/>
+                    </linearGradient>
+                    <linearGradient id="sleepStroke" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#E5D2FF"/>
+                      <stop offset="100%" stop-color="#6D00FF"/>
+                    </linearGradient>
+                  </defs>
+                  <!-- baseline grid -->
+                  <line x1="0" y1="50" x2="600" y2="50" stroke="rgba(255,255,255,0.06)" stroke-dasharray="3 4"/>
+                  <line x1="0" y1="100" x2="600" y2="100" stroke="rgba(255,255,255,0.06)" stroke-dasharray="3 4"/>
+                  <line x1="0" y1="150" x2="600" y2="150" stroke="rgba(255,255,255,0.06)" stroke-dasharray="3 4"/>
+                  <!-- sleep area path -->
+                  <path d="M0,80 L20,72 L40,90 L60,68 L80,75 L100,55 L120,82 L140,60 L160,78 L180,50 L200,72 L220,42 L240,58 L260,38 L280,55 L300,62 L320,40 L340,50 L360,65 L380,35 L400,48 L420,30 L440,42 L460,28 L480,38 L500,25 L520,32 L540,20 L560,28 L580,18 L600,22 L600,200 L0,200 Z"
+                        fill="url(#sleepFill)"/>
+                  <path d="M0,80 L20,72 L40,90 L60,68 L80,75 L100,55 L120,82 L140,60 L160,78 L180,50 L200,72 L220,42 L240,58 L260,38 L280,55 L300,62 L320,40 L340,50 L360,65 L380,35 L400,48 L420,30 L440,42 L460,28 L480,38 L500,25 L520,32 L540,20 L560,28 L580,18 L600,22"
+                        fill="none"
+                        stroke="url(#sleepStroke)"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        style="filter: drop-shadow(0 0 6px rgba(195,155,255,0.45));"/>
+                  <!-- last point -->
+                  <circle cx="600" cy="22" r="4" fill="#FFFFFF" stroke="#6D00FF" stroke-width="2"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Recovery curve -->
+            <div class="gpanel chart-card">
+              <div class="gp-head">
+                <div class="gp-head__l">
+                  <span class="gp-title">Recovery Curve · 30d</span>
+                  <span class="gp-sub">Daily readiness · <span class="em">solid = morning · ghost = projected</span></span>
+                </div>
+                <div class="gp-stats">
+                  <div>
+                    <div class="gp-stat__l">Today</div>
+                    <div class="gp-stat__v">79<span class="gp-stat__u">%</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="linechart">
+                <svg viewBox="0 0 600 200" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="recFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#C29BFF" stop-opacity="0.40"/>
+                      <stop offset="100%" stop-color="#6D00FF" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <line x1="0" y1="50" x2="600" y2="50" stroke="rgba(255,255,255,0.06)" stroke-dasharray="3 4"/>
+                  <line x1="0" y1="100" x2="600" y2="100" stroke="rgba(255,255,255,0.06)" stroke-dasharray="3 4"/>
+                  <line x1="0" y1="150" x2="600" y2="150" stroke="rgba(255,255,255,0.06)" stroke-dasharray="3 4"/>
+                  <path d="M0,120 C30,100 50,140 80,110 C110,80 130,130 160,95 C190,70 210,120 240,85 C270,55 290,105 320,72 C350,50 370,95 400,60 C430,42 450,80 480,52 C510,40 530,65 560,45 L560,200 L0,200 Z"
+                        fill="url(#recFill)"/>
+                  <path d="M0,120 C30,100 50,140 80,110 C110,80 130,130 160,95 C190,70 210,120 240,85 C270,55 290,105 320,72 C350,50 370,95 400,60 C430,42 450,80 480,52 C510,40 530,65 560,45"
+                        fill="none" stroke="#C29BFF" stroke-width="2" stroke-linecap="round"
+                        style="filter: drop-shadow(0 0 6px rgba(195,155,255,0.5));"/>
+                  <!-- projected dashed -->
+                  <path d="M560,45 C580,40 590,55 600,52"
+                        fill="none" stroke="rgba(195,155,255,0.55)" stroke-width="2" stroke-dasharray="5 5" stroke-linecap="round"/>
+                  <circle cx="560" cy="45" r="5" fill="#6D00FF" stroke="#FFFFFF" stroke-width="2"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Correlations -->
+            <div class="gpanel chart-card corr-card">
+              <div class="gp-head">
+                <div class="gp-head__l">
+                  <span class="gp-title">Correlations · 30d</span>
+                  <span class="gp-sub">Pearson · daily values · <span class="em">positive = same direction, negative = inverse</span></span>
+                </div>
+              </div>
+
+              <div>
+                <div class="corr-row">
+                  <div class="corr-row__name">HRV ↔ Sleep score <small>better sleep, higher HRV next morning</small></div>
+                  <div class="corr-bar">
+                    <div class="corr-bar__center"></div>
+                    <div class="corr-bar__fill" style="left:50%; width:34%;"></div>
+                  </div>
+                  <div class="corr-row__val">+0.68</div>
+                </div>
+
+                <div class="corr-row">
+                  <div class="corr-row__name">HRV ↔ Training load (prev day) <small>heavier yesterday, lower HRV today</small></div>
+                  <div class="corr-bar">
+                    <div class="corr-bar__center"></div>
+                    <div class="corr-bar__fill neg" style="right:50%; width:21%;"></div>
+                  </div>
+                  <div class="corr-row__val neg">−0.42</div>
+                </div>
+
+                <div class="corr-row">
+                  <div class="corr-row__name">Recovery ↔ Sleep efficiency <small>strongest driver in your data</small></div>
+                  <div class="corr-bar">
+                    <div class="corr-bar__center"></div>
+                    <div class="corr-bar__fill" style="left:50%; width:38%;"></div>
+                  </div>
+                  <div class="corr-row__val">+0.76</div>
+                </div>
+
+                <div class="corr-row">
+                  <div class="corr-row__name">RHR ↔ Alcohol (logged) <small>any drink raises resting HR ~4 bpm</small></div>
+                  <div class="corr-bar">
+                    <div class="corr-bar__center"></div>
+                    <div class="corr-bar__fill" style="left:50%; width:27%;"></div>
+                  </div>
+                  <div class="corr-row__val">+0.54</div>
+                </div>
+
+                <div class="corr-row">
+                  <div class="corr-row__name">HRV ↔ Late-meal window <small>eating &lt; 3h before bed</small></div>
+                  <div class="corr-bar">
+                    <div class="corr-bar__center"></div>
+                    <div class="corr-bar__fill neg" style="right:50%; width:16%;"></div>
+                  </div>
+                  <div class="corr-row__val neg">−0.31</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ============================== VIEW · ACCOUNT ============================== -->
+        <div class="view view--account">
+
+          <div class="account-grid">
+
+            <!-- ID card -->
+            <div class="id-card">
+              <div class="id-card__head">
+                <div class="id-card__avatar">AR</div>
+                <div>
+                  <div class="id-card__name">Alex Rivera</div>
+                  <div class="id-card__meta">alex.r@neogen-x.com · 42 yo · she/her</div>
+                  <span class="id-card__tier">NGX · Coach Tier</span>
+                </div>
+              </div>
+              <div class="id-card__stats">
+                <div>
+                  <div class="id-card__stat-l">Member since</div>
+                  <div class="id-card__stat-v">Jun<span class="id-card__stat-u">2024</span></div>
+                </div>
+                <div>
+                  <div class="id-card__stat-l">Sessions logged</div>
+                  <div class="id-card__stat-v">214</div>
+                </div>
+                <div>
+                  <div class="id-card__stat-l">Streak</div>
+                  <div class="id-card__stat-v">28<span class="id-card__stat-u">days</span></div>
+                </div>
+                <div>
+                  <div class="id-card__stat-l">Coach</div>
+                  <div class="id-card__stat-v" style="font-size:14px; letter-spacing:0.02em;">M. Chen</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stacked sections -->
+            <div class="acc-stack">
+
+              <div class="gpanel">
+                <div class="gp-head">
+                  <div class="gp-head__l">
+                    <span class="gp-title">Connected devices</span>
+                    <span class="gp-sub">4 sources active · last sync 6 min ago</span>
+                  </div>
+                  <span class="kpi-card__pill">Sync · auto</span>
+                </div>
+
+                <div>
+                  <div class="device-row">
+                    <div class="device-row__ico is-on">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="3" ry="3"></rect><circle cx="12" cy="12" r="3"></circle></svg>
+                    </div>
+                    <div>
+                      <div class="device-row__name">Apple Watch Ultra 2</div>
+                      <div class="device-row__sub">Last sync 6 min · firmware 11.2 · 22 metrics</div>
+                    </div>
+                    <span class="device-row__status">Active</span>
+                    <button class="exo__tag" style="cursor:pointer;">Manage</button>
+                  </div>
+
+                  <div class="device-row">
+                    <div class="device-row__ico is-on">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="4"></circle></svg>
+                    </div>
+                    <div>
+                      <div class="device-row__name">Oura Ring · Gen 4</div>
+                      <div class="device-row__sub">Sleep · HRV · skin temp · readiness</div>
+                    </div>
+                    <span class="device-row__status">Active</span>
+                    <button class="exo__tag" style="cursor:pointer;">Manage</button>
+                  </div>
+
+                  <div class="device-row">
+                    <div class="device-row__ico is-on">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                    </div>
+                    <div>
+                      <div class="device-row__name">Garmin · Fenix 8</div>
+                      <div class="device-row__sub">Workout sessions · VO₂ · GPS · power</div>
+                    </div>
+                    <span class="device-row__status">Active</span>
+                    <button class="exo__tag" style="cursor:pointer;">Manage</button>
+                  </div>
+
+                  <div class="device-row">
+                    <div class="device-row__ico is-on">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2v6m0 0 4-4m-4 4-4-4m4 4v14"></path></svg>
+                    </div>
+                    <div>
+                      <div class="device-row__name">Dexcom G7 · CGM</div>
+                      <div class="device-row__sub">Continuous glucose · 24/7 stream</div>
+                    </div>
+                    <span class="device-row__status">Active</span>
+                    <button class="exo__tag" style="cursor:pointer;">Manage</button>
+                  </div>
+
+                  <div class="device-row">
+                    <div class="device-row__ico">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path></svg>
+                    </div>
+                    <div>
+                      <div class="device-row__name">Whoop · 4.0</div>
+                      <div class="device-row__sub">Disconnected · last seen Oct 14</div>
+                    </div>
+                    <span class="device-row__status is-off">Off</span>
+                    <button class="exo__tag" style="cursor:pointer;">Reconnect</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="gpanel">
+                <div class="gp-head">
+                  <div class="gp-head__l">
+                    <span class="gp-title">Training preferences</span>
+                    <span class="gp-sub">Affects every program your coach builds</span>
+                  </div>
+                </div>
+
+                <div class="settings-row">
+                  <div class="settings-row__l">Goal block <small>current focus</small></div>
+                  <div class="settings-row__v"><span class="em">Strength + longevity</span> · 12-week cycle · week 6 of 12</div>
+                  <button class="exo__tag" style="cursor:pointer;">Edit</button>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row__l">Sessions / week</div>
+                  <div class="settings-row__v"><span class="em">5</span> · 3 strength · 2 zone-2 · 1 mobility</div>
+                  <button class="exo__tag" style="cursor:pointer;">Edit</button>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row__l">Preferred window <small>when you usually train</small></div>
+                  <div class="settings-row__v">Weekdays <span class="em">17:00 – 19:00</span> · weekends 09:00 – 11:00</div>
+                  <button class="exo__tag" style="cursor:pointer;">Edit</button>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row__l">Auto-adjust to recovery <small>NGX scales loads to your HRV daily</small></div>
+                  <div class="settings-row__v">±2.5 kg compound · ±1 RPE accessories</div>
+                  <div class="toggle is-on" data-toggle></div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row__l">Units</div>
+                  <div class="settings-row__v">Metric · <span class="em">kg · km · °C</span></div>
+                  <button class="exo__tag" style="cursor:pointer;">Switch</button>
+                </div>
+              </div>
+
+              <div class="gpanel">
+                <div class="gp-head">
+                  <div class="gp-head__l">
+                    <span class="gp-title">Notifications</span>
+                    <span class="gp-sub">When and how NGX reaches you</span>
+                  </div>
+                </div>
+
+                <div class="settings-row">
+                  <div class="settings-row__l">Morning recovery brief <small>delivered 30 min after wake</small></div>
+                  <div class="settings-row__v">Push + email · daily</div>
+                  <div class="toggle is-on" data-toggle></div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row__l">Coach messages</div>
+                  <div class="settings-row__v">Push only · 3 unread</div>
+                  <div class="toggle is-on" data-toggle></div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row__l">Weekly review (Sundays 19:00)</div>
+                  <div class="settings-row__v">Email summary · 14 KPIs</div>
+                  <div class="toggle is-on" data-toggle></div>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row__l">Marketing &amp; partner offers</div>
+                  <div class="settings-row__v">Off</div>
+                  <div class="toggle" data-toggle></div>
+                </div>
+              </div>
+
+              <div class="gpanel">
+                <div class="gp-head">
+                  <div class="gp-head__l">
+                    <span class="gp-title">Subscription</span>
+                    <span class="gp-sub">Coach tier · renews Jun 14, 2026</span>
+                  </div>
+                  <span class="kpi-card__pill">Active</span>
+                </div>
+
+                <div class="settings-row">
+                  <div class="settings-row__l">Plan</div>
+                  <div class="settings-row__v"><span class="em">Coach</span> · 1-on-1 program + AI nudges + biomarker lab</div>
+                  <button class="exo__tag" style="cursor:pointer;">Compare plans</button>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row__l">Billing</div>
+                  <div class="settings-row__v">€189 / mo · card ·••• 4242</div>
+                  <button class="exo__tag" style="cursor:pointer;">Update</button>
+                </div>
+                <div class="settings-row">
+                  <div class="settings-row__l">Coach assignment</div>
+                  <div class="settings-row__v"><span class="em">Maya Chen</span> · S&amp;C PhD · since Jun 2024</div>
+                  <button class="exo__tag" style="cursor:pointer;">Switch</button>
+                </div>
+              </div>
+
+              <div class="danger">
+                <div class="danger__l">Sign out of this device <small>You will need to log in again to access your data</small></div>
+                <button class="danger__btn">Sign out</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Footer meta -->
+  <div style="display:flex; justify-content:space-between; align-items:center; padding: 24px 8px 0; font-family: var(--font-display); font-weight: 700; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.30);">
+    <span>NGX · Surface 03 · Web App · Athlete</span>
+    <span>Liquid Glass · Intent 02 Medium · 1440 × responsive</span>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  const app = document.getElementById('app');
+  const navItems = document.querySelectorAll('.nav-item[data-go]');
+  const eyebrow = document.getElementById('topbar-eyebrow');
+  const topbarH = document.getElementById('topbar-h');
+  const urlPath = document.getElementById('url-path');
+  const rangePills = document.getElementById('range-pills');
+
+  const META = {
+    dashboard: {
+      eyebrow: "Day 042 · Mon · Dec 09",
+      h: 'RECOVER<span class="sep">·</span>LIFT',
+      url: "/dashboard"
+    },
+    planner: {
+      eyebrow: "Today's session · 17:00 · Strength block",
+      h: 'WORKOUT<span class="sep">·</span>PLANNER',
+      url: "/training/today"
+    },
+    trends: {
+      eyebrow: "Last 30 days · auto-refresh 6 min",
+      h: 'TRENDS<span class="sep">·</span>30D',
+      url: "/trends"
+    },
+    account: {
+      eyebrow: "Profile · devices · subscription",
+      h: 'ACCOUNT',
+      url: "/account"
+    }
+  };
+
+  function go(view) {
+    if (!META[view]) return;
+    app.setAttribute('data-view', view);
+    navItems.forEach(el => el.classList.toggle('is-active', el.dataset.go === view));
+    eyebrow.textContent = META[view].eyebrow;
+    topbarH.innerHTML = META[view].h;
+    urlPath.textContent = META[view].url;
+    // ensure scroll top within browser
+    document.querySelector('.main').scrollTop = 0;
+  }
+  window.__nav = go;
+
+  navItems.forEach(el => {
+    el.addEventListener('click', () => go(el.dataset.go));
+  });
+
+  // Range pills (visual toggle only)
+  rangePills.addEventListener('click', e => {
+    const t = e.target.closest('.range-pill');
+    if (!t) return;
+    rangePills.querySelectorAll('.range-pill').forEach(p => p.classList.toggle('is-active', p === t));
+  });
+
+  // Toggle controls
+  document.querySelectorAll('[data-toggle]').forEach(t => {
+    t.addEventListener('click', () => t.classList.toggle('is-on'));
+  });
+})();
+</script>
+
+</body>
+</html>

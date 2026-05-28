@@ -86,9 +86,9 @@ export function ChapterView({
 
   if (isLeadMagnet) {
     return (
-      <div className={cn("relative min-h-screen bg-black px-4 py-20 md:px-6 lg:py-24", className)}>
+      <div className={cn("relative min-h-screen bg-transparent px-4 py-20 md:px-6 lg:py-24", className)}>
         <div className="mx-auto grid min-h-[calc(100vh-8rem)] max-w-7xl gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(420px,0.85fr)] lg:items-center">
-          <div className="relative overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.025]">
+          <div className="relative overflow-hidden rounded-[18px] border border-white/[0.08] bg-white/[0.025]">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(109,0,255,0.16),transparent_42%)]" />
             <div className="relative aspect-[4/5] max-h-[78vh] min-h-[460px] lg:aspect-[5/6]">
               <AnimatePresence mode="wait">
@@ -258,7 +258,7 @@ export function ChapterView({
   }
 
   return (
-    <div className={cn("relative min-h-screen bg-black", className)}>
+    <div className={cn("relative min-h-screen bg-transparent", className)}>
       {/* Hero Image Section */}
       <div className="relative h-[60vh] min-h-[400px]">
         {/* Background Image or Compare Slider */}
@@ -350,8 +350,7 @@ export function ChapterView({
 
       {/* Content Section — constrained on desktop for better legibility */}
       <div
-        className="relative z-10 px-6 py-10 md:py-12 -mt-6 rounded-t-3xl"
-        style={{ background: "linear-gradient(to bottom, var(--ngx-bg-end), var(--ngx-bg-mid))" }}
+        className="relative z-10 px-6 py-10 md:py-12 -mt-6 rounded-t-[18px] border-t border-white/[0.08] backdrop-blur-xl bg-[var(--ngx-surface-glass)]"
       >
         <div className="max-w-5xl mx-auto">
         {/* Stats */}

@@ -50,6 +50,13 @@ const STEP_LABELS: Record<TimelineStep, string> = {
   m12: getSeasonMilestoneLabel("m12"),
 };
 
+const STEP_SHORT_LABELS: Record<TimelineStep, string> = {
+  m0: "HOY",
+  m4: "MES 4",
+  m8: "MES 8",
+  m12: "MES 12",
+};
+
 interface TransformationViewer2Props {
   ai: InsightsResult;
   imageUrls: {
@@ -291,20 +298,26 @@ export function TransformationViewer2({
               )}
             </button>
 
-            {/* Center: Current milestone */}
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-bold tabular-nums text-white/55">
-                {currentIndex + 1}/{STEPS.length}
-              </span>
-              <span
-                className="px-3 py-1 rounded-full text-white text-sm font-bold tracking-[0.04em] uppercase"
-                style={{
-                  backgroundColor: "var(--ngx-purple)",
-                  boxShadow: "var(--ngx-glow-primary-soft)",
-                }}
-              >
-                {STEP_LABELS[currentStep]}
-              </span>
+            {/* Center: Segmented Timeline Navigation */}
+            <div className="flex items-center">
+              <div className="ngx-range-pills shadow-[var(--lg-glow-primary-soft)] border-[rgba(255,255,255,0.06)] bg-black/40">
+                {STEPS.map((step) => {
+                  const isActive = step === currentStep;
+                  return (
+                    <button
+                      key={step}
+                      type="button"
+                      onClick={() => handleStepChange(step)}
+                      className={cn(
+                        "ngx-range-pill !px-3 sm:!px-5 !py-1.5 text-[9px] sm:text-[10.5px] !font-black tracking-[0.16em] uppercase cursor-pointer",
+                        isActive && "is-active"
+                      )}
+                    >
+                      {STEP_SHORT_LABELS[step]}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Right: Actions */}
@@ -446,7 +459,7 @@ export function TransformationViewer2({
       </section>
 
       {!isLeadMagnet && (
-        <div className="px-6 py-8 space-y-8" style={{ background: "linear-gradient(to top, var(--ngx-bg-mid), var(--ngx-bg-end))" }}>
+        <div className="px-6 py-8 space-y-8 border-t border-white/[0.08] backdrop-blur-xl bg-[var(--ngx-surface-glass)]">
           {/* Social Counter */}
           {FF_SOCIAL_COUNTER && (
             <div className="text-center">

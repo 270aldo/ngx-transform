@@ -106,9 +106,9 @@ export const ENVIRONMENT_BY_STEP: Record<NanoStep, {
     setting: "industrial gym with exposed brick, heavy weights, chalk dust in air",
   },
   m8: {
-    description: "lifestyle setting",
-    mood: "earned confidence, visible progress",
-    setting: "premium fitness studio, natural light, modern equipment",
+    description: "dynamic outdoor athletic setting during golden hour",
+    mood: "high athletic energy, absolute confidence, dynamic movement, premium athletic commercial vibe",
+    setting: "modern outdoor running track at sunrise, dramatic warm sunlight, soft natural sky background, training lanes blurred in shallow depth of field, natural environment",
   },
   m12: {
     description: "premium editorial training space",

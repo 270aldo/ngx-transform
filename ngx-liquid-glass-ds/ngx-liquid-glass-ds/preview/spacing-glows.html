@@ -1,0 +1,63 @@
+<!-- @dsCard group="Spacing" -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/>
+<title>Purple glows · sm / md / lg</title>
+<link rel="stylesheet" href="../tokens-brand.css"/>
+<link rel="stylesheet" href="../tokens-lg.css"/>
+<link rel="stylesheet" href="../components.css"/>
+<style>
+  html, body { margin: 0; padding: 0; background: #04021A; }
+  body {
+    padding: 24px;
+    color: var(--ngx-white);
+    font-family: var(--font-text);
+    min-height: 280px;
+    background:
+      radial-gradient(40% 60% at 80% 10%, rgba(109,0,255,0.18) 0%, transparent 60%),
+      radial-gradient(30% 40% at 10% 95%, rgba(109,0,255,0.12) 0%, transparent 60%),
+      #04021A;
+    position: relative;
+  }
+  body::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: url("../assets/textures/texture-pattern-navy.png");
+    background-size: 280px; opacity: 0.05;
+    mix-blend-mode: screen; pointer-events: none;
+  }
+  body > * { position: relative; z-index: 1; }
+  .card-label {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 9.5px; letter-spacing: 0.20em; text-transform: uppercase;
+    color: var(--ngx-purple-300);
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-label::before {
+    content: ""; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--ngx-purple); box-shadow: 0 0 8px var(--ngx-purple);
+  }
+  .demo-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .demo-col { display: flex; flex-direction: column; gap: 12px; }
+  .note { font-size: 11px; color: var(--ngx-gray-400); margin-top: 12px; line-height: 1.5; }
+  .swatch-note {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ngx-gray-400);
+  }
+</style></head>
+<body>
+
+<div class="card-label">GLOWS</div>
+<div class="demo-row">
+  <div style="width: 96px; height: 96px; border-radius: 999px; background: linear-gradient(180deg, #8530FF, var(--ngx-purple)); box-shadow: var(--lg-glow-purple-sm);"></div>
+  <div style="width: 96px; height: 96px; border-radius: 999px; background: linear-gradient(180deg, #8530FF, var(--ngx-purple)); box-shadow: var(--lg-glow-purple-md);"></div>
+  <div style="width: 96px; height: 96px; border-radius: 999px; background: linear-gradient(180deg, #8530FF, var(--ngx-purple)); box-shadow: var(--lg-glow-purple-lg);"></div>
+</div>
+<div class="demo-row" style="margin-top: 6px;">
+  <span class="swatch-note" style="width: 96px; text-align: center;">SM · default</span>
+  <span class="swatch-note" style="width: 96px; text-align: center;">MD · CTA primary</span>
+  <span class="swatch-note" style="width: 96px; text-align: center;">LG · hover</span>
+</div>
+<div class="note">Purple glow is reserved for CTAs and active states. Restraint: 1 element with LG max per viewport.</div>
+
+</body></html>

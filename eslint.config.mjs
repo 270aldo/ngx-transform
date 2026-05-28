@@ -9,6 +9,7 @@ const eslintConfig = [
       "**/.next/**",
       ".claude/**",
       ".playwright-mcp/**",
+      "ngx-liquid-glass-ds/**",
       "out/**",
       "build/**",
       "coverage/**",

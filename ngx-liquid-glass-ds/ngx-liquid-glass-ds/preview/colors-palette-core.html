@@ -1,0 +1,79 @@
+<!-- @dsCard group="Colors" -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/>
+<title>Core palette · navy + purple charge</title>
+<link rel="stylesheet" href="../tokens-brand.css"/>
+<link rel="stylesheet" href="../tokens-lg.css"/>
+<link rel="stylesheet" href="../components.css"/>
+<style>
+  html, body { margin: 0; padding: 0; background: #04021A; }
+  body {
+    padding: 24px;
+    color: var(--ngx-white);
+    font-family: var(--font-text);
+    min-height: 280px;
+    background:
+      radial-gradient(40% 60% at 80% 10%, rgba(109,0,255,0.18) 0%, transparent 60%),
+      radial-gradient(30% 40% at 10% 95%, rgba(109,0,255,0.12) 0%, transparent 60%),
+      #04021A;
+    position: relative;
+  }
+  body::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: url("../assets/textures/texture-pattern-navy.png");
+    background-size: 280px; opacity: 0.05;
+    mix-blend-mode: screen; pointer-events: none;
+  }
+  body > * { position: relative; z-index: 1; }
+  .card-label {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 9.5px; letter-spacing: 0.20em; text-transform: uppercase;
+    color: var(--ngx-purple-300);
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-label::before {
+    content: ""; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--ngx-purple); box-shadow: 0 0 8px var(--ngx-purple);
+  }
+  .demo-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .demo-col { display: flex; flex-direction: column; gap: 12px; }
+  .note { font-size: 11px; color: var(--ngx-gray-400); margin-top: 12px; line-height: 1.5; }
+  .swatch-note {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ngx-gray-400);
+  }
+</style></head>
+<body>
+
+<div class="card-label">CORE PALETTE</div>
+<div class="demo-row">
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+    <div style="width: 72px; height: 72px; background: var(--ngx-navy); border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);"></div>
+    <span class="swatch-note">Navy<br>#0A0628</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+    <div style="width: 72px; height: 72px; background: var(--ngx-navy-950); border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);"></div>
+    <span class="swatch-note">Navy 950<br>BG canvas</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+    <div style="width: 72px; height: 72px; background: var(--ngx-purple); border-radius: 12px; box-shadow: 0 0 16px rgba(109,0,255,0.55);"></div>
+    <span class="swatch-note">Purple<br>#6D00FF</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+    <div style="width: 72px; height: 72px; background: linear-gradient(135deg, #C29BFF, #6D00FF); border-radius: 12px; box-shadow: 0 0 12px rgba(109,0,255,0.5);"></div>
+    <span class="swatch-note">Charge<br>Gradient</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+    <div style="width: 72px; height: 72px; background: var(--ngx-white); border-radius: 12px;"></div>
+    <span class="swatch-note">White<br>FG</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+    <div style="width: 72px; height: 72px; background: var(--ngx-gray); border-radius: 12px;"></div>
+    <span class="swatch-note">Gray<br>Neutral</span>
+  </div>
+</div>
+<div class="note">Two-tone first. Navy is environment, purple is signal. One purple charge per composition — CTA, active state, OR featured tile.</div>
+
+</body></html>

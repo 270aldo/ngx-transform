@@ -1,0 +1,68 @@
+<!-- @dsCard group="Brand" -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/>
+<title>Theme · light vs dark surfaces</title>
+<link rel="stylesheet" href="../tokens-brand.css"/>
+<link rel="stylesheet" href="../tokens-lg.css"/>
+<link rel="stylesheet" href="../components.css"/>
+<style>
+  html, body { margin: 0; padding: 0; background: #04021A; }
+  body {
+    padding: 24px; color: var(--ngx-white); font-family: var(--font-text);
+    min-height: 280px;
+    background:
+      radial-gradient(40% 60% at 80% 10%, rgba(109,0,255,0.18) 0%, transparent 60%),
+      radial-gradient(30% 40% at 10% 95%, rgba(109,0,255,0.12) 0%, transparent 60%),
+      #04021A;
+    position: relative;
+  }
+  body::before {
+    content:""; position:absolute; inset:0;
+    background-image: url("../assets/textures/texture-pattern-navy.png");
+    background-size: 280px; opacity: 0.05; mix-blend-mode: screen; pointer-events:none;
+  }
+  body > * { position: relative; z-index: 1; }
+  .card-label {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 9.5px; letter-spacing: 0.20em; text-transform: uppercase;
+    color: var(--ngx-purple-300);
+    margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+  }
+  .card-label::before { content:""; width:5px; height:5px; border-radius:50%; background: var(--ngx-purple); box-shadow: 0 0 8px var(--ngx-purple); }
+  .demo-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .note { font-size: 11px; color: var(--ngx-gray-400); margin-top: 14px; line-height: 1.5; }
+  .swatch-note { font-family: var(--font-display); font-weight: 700; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ngx-gray-400); }
+  .sw { width: 64px; height: 64px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06); display: flex; align-items: flex-end; padding: 4px; box-sizing: border-box; font-family: var(--font-display); font-size: 8px; letter-spacing: .08em; color: var(--ngx-white); }
+  .col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+</style></head>
+<body>
+
+<style>
+  .tw { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .pane { border-radius: 12px; padding: 18px; min-height: 140px; }
+  .pane.dark { background: var(--ngx-navy-950); border: 1px solid rgba(255,255,255,0.08); }
+  .pane.light { background: #FFFFFF; color: #0A0628; }
+  .ph { font-family: var(--font-display); font-weight: 900; font-size: 22px; line-height: 1; letter-spacing: -0.015em; text-transform: uppercase; margin-bottom: 10px; }
+  .pb { font-family: var(--font-text); font-size: 13px; line-height: 1.5; }
+  .pcap { font-family: var(--font-display); font-weight: 700; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ngx-gray-400); margin-bottom: 8px; }
+  .light .pcap { color: #6F6B85; }
+  .cta { display: inline-block; margin-top: 10px; padding: 8px 14px; background: var(--ngx-purple); color: #fff; font-family: var(--font-display); font-weight: 700; font-size: 11px; letter-spacing: 0.10em; text-transform: uppercase; border-radius: 4px; box-shadow: 0 0 16px rgba(109,0,255,0.45); }
+</style>
+<div class="card-label">THEME</div>
+<div class="tw">
+  <div class="pane dark">
+    <div class="pcap">Dark · default app</div>
+    <div class="ph">PUSH TODAY</div>
+    <div class="pb" style="color:#CFCAE3">HRV +8 ms. Ready to push.</div>
+    <a class="cta">Start session →</a>
+  </div>
+  <div class="pane light">
+    <div class="pcap">Light · marketing</div>
+    <div class="ph">PUSH TODAY</div>
+    <div class="pb" style="color:#3C3854">HRV +8 ms. Ready to push.</div>
+    <a class="cta">Start session →</a>
+  </div>
+</div>
+<div class="note">Dark = canonical app environment (navy ground, purple charge). Light = marketing / print. Purple hex stays the same in both — never re-ramp for "contrast".</div>
+
+</body></html>

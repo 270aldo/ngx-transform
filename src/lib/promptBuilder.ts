@@ -202,22 +202,22 @@ function buildVisualDelta(context: PromptContext, intensityWord: string): string
       ? "visible fat loss with a tighter waistline and softer-to-lean transition."
       : "tighter waistline with early ab outline and shoulder separation.";
     byStep.m4 = `${intensityWord} ${earlyFat}`;
-    byStep.m8 = `clear fat reduction, visible ab outline, sharper jawline, defined deltoids and arms.`;
-    byStep.m12 = `realistic week 12 result: leaner waist, visible muscle tone, improved posture, healthier body composition, natural proportions; no contest-style conditioning.`;
+    byStep.m8 = `clear fat reduction with a lean athletic look, visible abdominal definition starting to show under direct sunlight, sharper jawline, defined deltoids and athletic vascularity in arms.`;
+    byStep.m12 = `realistic peak week 12 transformation: maximum healthy fat loss for this individual, full abdominal grid visible, highly defined oblique muscles, improved posture and shoulder alignment, peak natural proportions. The physical conditioning must be visibly more advanced and shredded compared to the Mes 8 stage.`;
   } else if (goal === "masa") {
     const cleanBulk = bodyFat === "alto"
       ? "cleaner bulk with tighter waistline control to avoid excessive fat gain."
       : "lean muscle gain with minimal fat increase.";
     byStep.m4 = `${intensityWord} increase in muscle fullness, thicker chest and shoulders, early arm growth; ${cleanBulk}`;
-    byStep.m8 = `obvious mass gain in chest, shoulders, back; arms visibly thicker; stronger V-taper.`;
-    byStep.m12 = `realistic week 12 result: functional muscle gain, fuller shoulders and chest, stronger frame, natural proportions; no exaggerated stage physique.`;
+    byStep.m8 = `pronounced muscle fullness in the chest, back, and shoulders, arms are visibly thicker and athletic, showing active functional power.`;
+    byStep.m12 = `realistic peak week 12 transformation: maximum high-performance lean muscle gain, broad dominant V-taper, thick fully developed shoulders and chest, peak athletic frame and muscle fullness. This represents the ultimate step of progress, showing a much more complete and massive muscular development than in the Mes 8 stage.`;
   } else {
     const recomposition = bodyFat === "alto"
       ? "recomposition with visible waist reduction and improved posture."
       : "recomposition: tighter waist, slightly broader shoulders, improved posture.";
     byStep.m4 = `${intensityWord} ${recomposition}`;
-    byStep.m8 = `athletic silhouette with visible abs, broader shoulders, tighter waist, improved symmetry.`;
-    byStep.m12 = `realistic week 12 result: balanced athletic build, tighter waist, improved posture, visible tone, stronger silhouette; recognizable as the same person.`;
+    byStep.m8 = `strong athletic recomposition silhouette, flat tight waistline with early visible abs, improved upper-to-lower body symmetry and active posture.`;
+    byStep.m12 = `realistic peak week 12 transformation: ultimate high-performance balanced build, shredded tight midsection, broader powerful shoulders, peak posture and elite athletic symmetry. The overall physical conditioning, leanness, and muscle tone must be visibly superior and more mature than in the Mes 8 stage.`;
   }
 
   return `[VISUAL DELTA - MUST BE VISIBLE]
@@ -331,20 +331,29 @@ function buildStyle(context: PromptContext): string {
     minimal: "simple, clean athletic wear with minimal branding",
   };
 
-  const lighting = context.styleProfile?.lighting || "dramatic studio lighting with sharp shadows";
+  const lighting = context.step === "m8"
+    ? "dramatic natural golden hour sunlight, warm glowing key-light with organic lens flare and soft organic shadow fill"
+    : (context.styleProfile?.lighting || "dramatic studio lighting with sharp shadows");
+
   const wardrobe = context.styleProfile?.wardrobe || fallbackWardrobe[aestheticPreference];
-  const background = context.styleProfile?.background || fallbackBackgrounds[aestheticPreference];
-  const colorGrade = context.styleProfile?.color_grade || fallbackColorGrades[aestheticPreference];
+
+  const background = context.step === "m8"
+    ? "modern outdoor running track at golden hour sunrise, open sky horizon, warm sun disk on horizon line, shallow depth of field"
+    : (context.styleProfile?.background || fallbackBackgrounds[aestheticPreference]);
+
+  const colorGrade = context.step === "m8"
+    ? "rich warm golden-hour cinematic grade, lifelike saturated skin tones, high-performance athletic commercial color style"
+    : (context.styleProfile?.color_grade || fallbackColorGrades[aestheticPreference]);
 
   return `[PHOTOGRAPHY STYLE]
 Camera: 85mm portrait lens, f/2.8, shallow depth of field
 Lighting: ${lighting}
 Subject: Perfectly sharp and in focus, hero framing
-
+ 
 Wardrobe: ${wardrobe}
 Background: ${background}
 Color Grade: ${colorGrade}
-
+ 
 Aesthetic Reference: premium athletic editorial campaign, performance and longevity positioning
 Preferred Aesthetic: ${aestheticPreference}
 Quality: ultra-high definition, photorealistic, cinematic editorial fitness photography, controlled highlights, natural skin texture`;

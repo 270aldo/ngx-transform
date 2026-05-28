@@ -1,0 +1,72 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/>
+<title>Table row · entity cell + progress + status</title>
+<link rel="stylesheet" href="../tokens-brand.css"/>
+<link rel="stylesheet" href="../tokens-lg.css"/>
+<link rel="stylesheet" href="../components.css"/>
+<style>
+  html, body { margin: 0; padding: 0; background: #04021A; }
+  body {
+    padding: 24px;
+    color: var(--ngx-white);
+    font-family: var(--font-text);
+    min-height: 280px;
+    background:
+      radial-gradient(40% 60% at 80% 10%, rgba(109,0,255,0.18) 0%, transparent 60%),
+      radial-gradient(30% 40% at 10% 95%, rgba(109,0,255,0.12) 0%, transparent 60%),
+      #04021A;
+    position: relative;
+  }
+  body::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: url("../assets/textures/texture-pattern-navy.png");
+    background-size: 280px; opacity: 0.05;
+    mix-blend-mode: screen; pointer-events: none;
+  }
+  body > * { position: relative; z-index: 1; }
+  .card-label {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 9.5px; letter-spacing: 0.20em; text-transform: uppercase;
+    color: var(--ngx-purple-300);
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-label::before {
+    content: ""; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--ngx-purple); box-shadow: 0 0 8px var(--ngx-purple);
+  }
+  .demo-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .demo-col { display: flex; flex-direction: column; gap: 12px; }
+  .note { font-size: 11px; color: var(--ngx-gray-400); margin-top: 12px; line-height: 1.5; }
+  .swatch-note {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ngx-gray-400);
+  }
+</style></head>
+<body>
+
+<div class="card-label">TABLE ROW</div>
+<div class="ngx-card" style="overflow: hidden;">
+  <table class="ngx-table">
+    <thead><tr><th style="width:34%">Athlete</th><th style="width:22%">Recovery</th><th style="width:18%">HRV</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><div class="ngx-entity-cell"><div class="ngx-entity-cell__av">AR</div><div><div class="ngx-entity-cell__name">Alex Rivera</div><div class="ngx-entity-cell__meta">42 · Wk 6 / 12</div></div></div></td>
+        <td><div class="ngx-progress" style="--p: 79%;"><div class="ngx-progress__bar"></div><div class="ngx-progress__v">79<span class="u">%</span></div></div></td>
+        <td><div class="ngx-num-cell">52<span class="u">ms</span><span class="d up">▲ +8</span></div></td>
+        <td><span class="ngx-stat-pill ngx-stat-pill--ok">Ready</span></td>
+      </tr>
+      <tr class="is-flag">
+        <td><div class="ngx-entity-cell"><div class="ngx-entity-cell__av ngx-entity-cell__av--teal">CM</div><div><div class="ngx-entity-cell__name">Camila Mendoza</div><div class="ngx-entity-cell__meta">38 · Wk 4 / 8</div></div></div></td>
+        <td><div class="ngx-progress ngx-progress--low" style="--p: 42%;"><div class="ngx-progress__bar"></div><div class="ngx-progress__v">42<span class="u">%</span></div></div></td>
+        <td><div class="ngx-num-cell">31<span class="u">ms</span><span class="d down">▼ −9</span></div></td>
+        <td><span class="ngx-stat-pill ngx-stat-pill--danger">Flagged</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="note">Dense table = small caps headers + 12.5px body. Entity cell carries avatar+name+meta. Flagged rows get rose tint. Hover rows go purple-tinted.</div>
+
+</body></html>

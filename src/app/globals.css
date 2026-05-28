@@ -1841,3 +1841,157 @@ section[id] {
     radial-gradient(circle at 100% 100%, rgba(109, 0, 255, 0.14), transparent 42%),
     linear-gradient(145deg, rgba(16, 16, 22, 0.94), rgba(6, 6, 8, 0.98));
 }
+
+/* ============================================================================
+   NGX LIQUID GLASS CORE CLASS PORT (Mirrors Official DS)
+   ========================================================================= */
+
+.lg-glass {
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-regular);
+  backdrop-filter: var(--lg-blur-regular);
+  box-shadow: var(--ngx-shadow-glass, 0 8px 24px rgba(0, 0, 0, 0.35)), var(--lg-shadow-inset);
+}
+
+.lg-glass--thin {
+  background: var(--lg-glass-thin);
+  border-color: var(--lg-rim-thin);
+  -webkit-backdrop-filter: var(--lg-blur-thin);
+  backdrop-filter: var(--lg-blur-thin);
+}
+
+.lg-glass--thick {
+  background: var(--lg-glass-thick);
+  border-color: var(--lg-rim-strong);
+  -webkit-backdrop-filter: var(--lg-blur-thick);
+  backdrop-filter: var(--lg-blur-thick);
+}
+
+.lg-glass--purple {
+  background: var(--lg-glass-purple);
+  border-color: var(--lg-rim-purple);
+  -webkit-backdrop-filter: var(--lg-blur-regular);
+  backdrop-filter: var(--lg-blur-regular);
+  box-shadow:
+    var(--ngx-shadow-glass, 0 8px 24px rgba(0, 0, 0, 0.35)),
+    var(--lg-shadow-inset-purple),
+    var(--lg-glow-purple-sm);
+}
+
+.lg-glass--sheet {
+  background: rgba(20, 16, 50, 0.65);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-sheet, blur(40px) saturate(180%));
+  backdrop-filter: var(--lg-blur-sheet, blur(40px) saturate(180%));
+  box-shadow: var(--lg-shadow-glass-lg);
+}
+
+.lg-capsule {
+  border-radius: 999px;
+  padding: 10px 16px;
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-regular);
+  backdrop-filter: var(--lg-blur-regular);
+  font-family: var(--ngx-font-display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ngx-white);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lg-capsule--active {
+  background: var(--lg-glass-purple);
+  border-color: var(--lg-rim-purple);
+  box-shadow: var(--lg-glow-purple-sm);
+}
+
+.lg-capsule .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ngx-purple);
+  box-shadow: 0 0 8px var(--ngx-purple);
+}
+
+.lg-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 28px;
+  border-radius: 999px;
+  font-family: var(--ngx-font-display);
+  font-weight: 900;
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: none;
+  transition: transform var(--ngx-dur-micro) var(--ngx-ease-out),
+              box-shadow var(--ngx-dur-micro) var(--ngx-ease-out);
+}
+
+.lg-cta--primary {
+  background: linear-gradient(180deg, #8530FF 0%, var(--ngx-purple) 100%);
+  color: var(--ngx-white);
+  box-shadow:
+    var(--lg-glow-purple-md),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.lg-cta--primary:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    var(--lg-glow-purple-lg),
+    inset 0 1px 0 rgba(255, 255, 255, 0.30);
+}
+
+.lg-cta--secondary {
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-regular);
+  backdrop-filter: var(--lg-blur-regular);
+  color: var(--ngx-white);
+}
+
+.lg-cta--secondary:hover {
+  background: var(--lg-glass-thick);
+  border-color: var(--lg-rim-strong);
+}
+
+.ngx-range-pills {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  border-radius: 999px;
+  background: var(--lg-glass-thin);
+  border: 1px solid var(--lg-rim-thin);
+  -webkit-backdrop-filter: var(--lg-blur-thin);
+  backdrop-filter: var(--lg-blur-thin);
+}
+
+.ngx-range-pill {
+  padding: 7px 13px;
+  border-radius: 999px;
+  font-family: var(--ngx-font-display);
+  font-weight: 800;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+  transition: background var(--ngx-dur-micro) var(--ngx-ease-out), color var(--ngx-dur-micro) var(--ngx-ease-out);
+}
+
+.ngx-range-pill.is-active {
+  background: linear-gradient(135deg, rgba(195, 155, 255, 0.55), rgba(109, 0, 255, 0.60));
+  color: var(--ngx-white);
+  box-shadow: var(--lg-glow-purple-sm), inset 0 1px 0 rgba(255, 255, 255, 0.20);
+}

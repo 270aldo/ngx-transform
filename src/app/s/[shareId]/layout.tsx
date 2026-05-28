@@ -8,7 +8,7 @@ export default function ResultsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-transparent">
+    <div className="ngx-landing-shell relative min-h-screen overflow-x-hidden selection:bg-[#6D00FF] selection:text-white">
       {children}
     </div>
   );
