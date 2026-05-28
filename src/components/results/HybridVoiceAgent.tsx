@@ -10,6 +10,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { RiveOrb } from "@/components/RiveOrb";
 
 type ConnectionState = "idle" | "connecting" | "connected" | "error";
 type FitClassification =
@@ -273,6 +274,23 @@ export function HybridVoiceAgent({ shareId, className }: HybridVoiceAgentProps) 
                   <MicOff className="h-5 w-5 text-white/55" />
                 )}
               </span>
+            </div>
+
+            {/* GENESIS Visual RiveOrb */}
+            <div className="my-8 flex justify-center items-center">
+              <RiveOrb
+                size={230}
+                minSize={160}
+                fluid="32vw"
+                className={cn(
+                  "transition-all duration-700 ease-out transform",
+                  state === "connected"
+                    ? "scale-105 opacity-100 filter drop-shadow-[0_0_35px_rgba(109,0,255,0.45)]"
+                    : state === "connecting"
+                      ? "animate-pulse scale-100 opacity-90"
+                      : "scale-95 opacity-60 hover:opacity-85"
+                )}
+              />
             </div>
 
             <label className="mt-5 flex items-start gap-3 border-t border-white/[0.08] pt-4">
