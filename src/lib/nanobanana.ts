@@ -154,7 +154,6 @@ function buildRequestBody(params: {
       imageConfig: {
         aspectRatio: params.aspectRatio || "4:5",
         imageSize: params.imageSize || "2K",
-        seed: Math.floor(Math.random() * 2147483647),
       },
     },
     safetySettings: [
