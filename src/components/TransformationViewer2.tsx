@@ -114,7 +114,17 @@ export function TransformationViewer2({
     FF_SHARE_UNLOCK,
     FF_REFERRAL_TRACKING = true,
   } = featureFlags;
-  const allowDramaticReveal = !isLeadMagnet && FF_DRAMATIC_REVEAL;
+  // The dramatic reveal is the signature "wow" moment. It needs the full
+  // generated chain (m4/m8/m12) to morph through; only enable it once those
+  // images exist so we never reveal blank frames. In lead-magnet mode it is
+  // the core payoff, so it runs there too — not only on the dashboard surface.
+  const hasFullRevealChain = !!(
+    imageUrls.images?.m4 &&
+    imageUrls.images?.m8 &&
+    imageUrls.images?.m12
+  );
+  const allowDramaticReveal =
+    FF_DRAMATIC_REVEAL && hasFullRevealChain && (!isLeadMagnet || isReady);
   const allowCinematicAutoplay = !isLeadMagnet && !FF_DRAMATIC_REVEAL;
   const shareUnlockEnabled =
     !isLeadMagnet && (FF_SHARE_UNLOCK ?? FF_SHARE_TO_UNLOCK);
