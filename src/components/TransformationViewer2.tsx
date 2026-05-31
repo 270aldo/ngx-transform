@@ -19,7 +19,7 @@
  * Controlled by feature flags
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
 import type { InsightsResult, TimelineEntry } from "@/types/ai";
@@ -208,6 +208,34 @@ export function TransformationViewer2({
   const handleStepChange = (step: TimelineStep) => {
     setCurrentStep(step);
     setShowNav(false);
+  };
+
+  // Touch swipe between milestones (mobile). Clamped to [m0..m12] — unlike the
+  // bottom "next" arrow, a swipe never navigates away to the dashboard.
+  const touchStartXRef = useRef<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
+  const stepBy = (dir: 1 | -1) => {
+    const i = STEPS.indexOf(currentStep);
+    const next = i + dir;
+    if (next >= 0 && next < STEPS.length) setCurrentStep(STEPS[next]);
+  };
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    touchStartXRef.current = t.clientX;
+    touchStartYRef.current = t.clientY;
+  };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const startX = touchStartXRef.current;
+    const startY = touchStartYRef.current;
+    touchStartXRef.current = null;
+    touchStartYRef.current = null;
+    if (startX === null || startY === null) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - startX;
+    const dy = t.clientY - startY;
+    // Horizontal intent only: ignore mostly-vertical scrolls and tiny moves.
+    if (Math.abs(dx) < 56 || Math.abs(dx) <= Math.abs(dy)) return;
+    stepBy(dx < 0 ? 1 : -1); // swipe left → next, swipe right → prev
   };
 
   const handlePrevStep = () => {
@@ -407,7 +435,11 @@ export function TransformationViewer2({
         </AnimatePresence>
 
         {/* Main Content */}
-        <main className="pt-16">
+        <main
+          className="pt-16 touch-pan-y"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           <AnimatePresence mode="wait">
             <motion.div
               key={currentStep}
