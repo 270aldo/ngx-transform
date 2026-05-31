@@ -5,6 +5,7 @@ import { GlobalHeader } from "@/components/GlobalHeader";
 import { DM_Sans, Inter, JetBrains_Mono } from "next/font/google";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { BackgroundEffects } from "@/components/ui/BackgroundEffects";
+import { MotionPreferences } from "@/components/MotionPreferences";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -74,6 +75,7 @@ export default function RootLayout({
     <html lang="es" className={`${inter.variable} ${dmSans.variable} ${jetbrainsMono.variable}`}>
       <body className="antialiased bg-background text-foreground">
         <BackgroundEffects />
+        <MotionPreferences>
         <AuthProvider>
           <ToastProvider>
             <div className="relative z-50">
@@ -84,6 +86,7 @@ export default function RootLayout({
             </main>
           </ToastProvider>
         </AuthProvider>
+        </MotionPreferences>
       </body>
     </html>
   );
