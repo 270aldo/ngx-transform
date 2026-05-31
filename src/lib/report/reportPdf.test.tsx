@@ -10,6 +10,8 @@ const analysisFixture: SeasonReportAnalysisInput = {
       title: "Baseline",
       description: "El punto de partida prioriza estructura y recuperacion antes de volumen adicional.",
       mental: "Ordenar el sistema es el primer avance.",
+      expectations: [],
+      risks: [],
       stats: { strength: 40, aesthetics: 38, endurance: 39, mental: 44 },
     },
     m4: {
@@ -17,6 +19,8 @@ const analysisFixture: SeasonReportAnalysisInput = {
       title: "Season 1",
       description: "La primera visualizacion muestra mas tono, postura y energia disponible.",
       mental: "La rutina empieza a sentirse sostenible.",
+      expectations: [],
+      risks: [],
       stats: { strength: 57, aesthetics: 55, endurance: 54, mental: 61 },
     },
     m8: {
@@ -24,6 +28,8 @@ const analysisFixture: SeasonReportAnalysisInput = {
       title: "Season 2",
       description: "El progreso se consolida con mejor composicion y capacidad de entrenamiento.",
       mental: "La consistencia supera a los picos de motivacion.",
+      expectations: [],
+      risks: [],
       stats: { strength: 72, aesthetics: 69, endurance: 68, mental: 74 },
     },
     m12: {
@@ -31,6 +37,8 @@ const analysisFixture: SeasonReportAnalysisInput = {
       title: "Season 3",
       description: "La vision completa proyecta una version atletica, fuerte y sostenible.",
       mental: "El sistema ya sostiene el resultado.",
+      expectations: [],
+      risks: [],
       stats: { strength: 86, aesthetics: 82, endurance: 80, mental: 88 },
     },
   },
