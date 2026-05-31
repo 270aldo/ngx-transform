@@ -20,6 +20,8 @@ const analysisFixture: SeasonReportAnalysisInput = {
       description: "La silueta empieza a ordenar postura, tono muscular y capacidad de trabajo.",
       mental: "La constancia gana mas que la intensidad aislada.",
       stats: { strength: 58, aesthetics: 55, endurance: 53, mental: 61 },
+      expectations: [],
+      risks: [],
     },
     m8: {
       month: 8,
@@ -27,6 +29,8 @@ const analysisFixture: SeasonReportAnalysisInput = {
       description: "La composicion corporal se vuelve mas estable y el entrenamiento deja marcas visibles.",
       mental: "La identidad se construye con ejecucion repetida.",
       stats: { strength: 73, aesthetics: 69, endurance: 67, mental: 74 },
+      expectations: [],
+      risks: [],
     },
     m12: {
       month: 12,
@@ -34,6 +38,8 @@ const analysisFixture: SeasonReportAnalysisInput = {
       description: "El fisico proyecta una version mas fuerte, atletica y sostenible.",
       mental: "El resultado se mantiene porque el sistema ya no depende de motivacion.",
       stats: { strength: 86, aesthetics: 83, endurance: 81, mental: 88 },
+      expectations: [],
+      risks: [],
     },
   },
   diagnostic: {

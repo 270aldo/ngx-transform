@@ -63,8 +63,9 @@ describe("realtime session API", () => {
         }),
       })
     );
-    const [, init] = fetchMock.mock.calls[0];
-    const payload = JSON.parse(init.body as string);
+    const call = fetchMock.mock.calls[0] as unknown as [string, RequestInit?];
+    const init = call?.[1];
+    const payload = JSON.parse((init?.body as string) ?? "{}");
     expect(payload.session.type).toBe("realtime");
     expect(payload.session.model).toBe("gpt-realtime");
     expect(payload.session.instructions).toContain("listo_para_diagnostico");
