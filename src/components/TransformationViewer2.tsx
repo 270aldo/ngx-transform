@@ -300,7 +300,8 @@ export function TransformationViewer2({
 
             {/* Center: Segmented Timeline Navigation */}
             <div className="flex items-center">
-              <div className="ngx-range-pills shadow-[var(--lg-glow-primary-soft)] border-[rgba(255,255,255,0.06)] bg-black/40">
+              {/* On mobile we allow horizontal scroll so the 4 pills remain comfortable to tap */}
+              <div className="ngx-range-pills shadow-[var(--lg-glow-primary-soft)] border-[rgba(255,255,255,0.06)] bg-black/40 overflow-x-auto max-w-[68vw] sm:max-w-none snap-x snap-mandatory [-webkit-overflow-scrolling:touch]">
                 {STEPS.map((step) => {
                   const isActive = step === currentStep;
                   return (
@@ -309,7 +310,7 @@ export function TransformationViewer2({
                       type="button"
                       onClick={() => handleStepChange(step)}
                       className={cn(
-                        "ngx-range-pill !px-3 sm:!px-5 !py-1.5 text-[9px] sm:text-[10.5px] !font-black tracking-[0.16em] uppercase cursor-pointer",
+                        "ngx-range-pill snap-center shrink-0 !px-3.5 sm:!px-5 !py-1.5 text-[10px] sm:text-[10.5px] !font-black tracking-[0.16em] uppercase cursor-pointer min-w-[58px] sm:min-w-0",
                         isActive && "is-active"
                       )}
                     >

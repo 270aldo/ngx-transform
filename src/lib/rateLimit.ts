@@ -90,18 +90,6 @@ function getRateLimiters(): Map<string, Ratelimit> | null {
     prefix: "rl:images",
   }));
 
-  rateLimiters.set("api:genesis-demo", new Ratelimit({
-    redis: redisClient,
-    limiter: Ratelimit.slidingWindow(10, "1 m"), // 10 demo requests per minute
-    prefix: "rl:genesis-demo",
-  }));
-
-  rateLimiters.set("api:genesis-chat", new Ratelimit({
-    redis: redisClient,
-    limiter: Ratelimit.slidingWindow(20, "1 m"), // 20 chat requests per minute
-    prefix: "rl:genesis-chat",
-  }));
-
   rateLimiters.set("api:referral", new Ratelimit({
     redis: redisClient,
     limiter: Ratelimit.slidingWindow(30, "1 m"), // 30 referral actions per minute
@@ -150,8 +138,6 @@ const IN_MEMORY_LIMITS: Record<string, { max: number; windowMs: number }> = {
   "api:generate-plan": { max: 5, windowMs: 3600000 },  // 5/hour
   "api:report": { max: 5, windowMs: 3600000 },          // 5/hour
   "api:plan": { max: 5, windowMs: 3600000 },           // 5/hour
-  "api:genesis-demo": { max: 10, windowMs: 60000 },    // 10/min
-  "api:genesis-chat": { max: 20, windowMs: 60000 },    // 20/min
   "api:referral": { max: 30, windowMs: 60000 },        // 30/min
   "api:unlock": { max: 30, windowMs: 60000 },          // 30/min
   "api:checkout": { max: 10, windowMs: 60000 },        // 10/min

@@ -54,6 +54,7 @@
     "baseline-browser-mapping": "^2.9.19",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
+    "playwright": "^1.60.0",
     "prettier": "3.7.4",
     "tailwindcss": "^4",
     "typescript": "^5",

@@ -2,6 +2,14 @@
 
 This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
 
+## ⚠️ HARD RULES — read before touching anything (learned the hard way, 2026-05)
+
+1. **NEVER delete a file based on a grep/terminal "no references" result alone.** Terminal output in this environment can arrive buffered/delayed/out of order. Before deleting ANY component or module: (a) run `pnpm exec tsc --noEmit` and confirm zero "Cannot find module" errors AFTER the delete, in a fresh isolated step; (b) verify referencing files individually with `Read`, not just a count. A past session wrongly deleted in-use components (ComparisonSlider, CyberSlider, EliteCard, EliteOptionCard, LoadingStepper) by trusting stale grep output, then committed it. Do not repeat this.
+2. **Do not run `git commit`, `git reset`, `git checkout`, `git rm`, or any non-read-only git command unless the user explicitly asks in that turn.** Make changes in the working tree and let the user commit.
+3. **Verify before claiming "done".** Run the actual build/typecheck/tests and read the real exit code from a file before saying anything works. Never assert success from memory or partial output.
+4. **Scope discipline:** do exactly the one thing asked, in its own change. Do not bundle "cleanup" or "dead-code removal" into unrelated tasks.
+
+
 ## Project Overview
 
 **Versión:** 11.0 (Genesis Doctrine)

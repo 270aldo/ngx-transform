@@ -7,6 +7,7 @@ import { MuscleHealthScore } from "@/components/results/MuscleHealthScore";
 import { TransformationSummary } from "@/components/results/TransformationSummary";
 import { HybridOfferV2 } from "@/components/results/HybridOfferV2";
 import { HybridVoiceAgent } from "@/components/results/HybridVoiceAgent";
+import { MobileVoiceAgentTeaser } from "@/components/results/MobileVoiceAgentTeaser";
 import { SeasonRoadmap } from "@/components/results/SeasonRoadmap";
 import RefreshClient from "./refresh-client";
 import ScrollToSection from "./scroll-to-section";
@@ -273,6 +274,13 @@ export default async function Page({
         userProfile={viewerUserProfile}
         sessionId={shareId}
       />
+
+      {/* Mobile-first teaser: brings the Voice Agent much earlier in the flow.
+          Only renders when the feature flag is enabled. Hidden on lg+ screens. */}
+      {isReady && FF_HYBRID_VOICE_AGENT && (
+        <MobileVoiceAgentTeaser shareId={shareId} />
+      )}
+
       <MuscleHealthScore
         shareId={shareId}
         diagnostic={ai.diagnostic}
