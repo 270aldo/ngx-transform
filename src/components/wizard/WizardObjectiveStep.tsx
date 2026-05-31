@@ -1,8 +1,7 @@
 "use client";
 
 import type { UseFormSetValue, UseFormWatch } from "react-hook-form";
-import { Activity, Cpu, Target } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Activity, Clock3, Cpu, Target } from "lucide-react";
 import { EliteOptionCard } from "@/components/EliteOptionCard";
 import type { WizardFormValues } from "./wizardSchema";
 
@@ -15,6 +14,23 @@ interface WizardObjectiveStepProps {
  * Stage 3: Objetivo y contexto — goal selection + level + days + focus zone.
  */
 export function WizardObjectiveStep({ watch, setValue }: WizardObjectiveStepProps) {
+  const goal = watch("goal");
+  const focusZone = watch("focusZone");
+  const goalIntent =
+    goal === "masa"
+      ? "Entendido. La visualización va a priorizar fuerza útil, densidad muscular y proporciones naturales."
+      : goal === "mixto"
+        ? "Entendido. La visualización va a equilibrar rendimiento, estética, recuperación y consistencia semanal."
+        : "Entendido. La visualización va a priorizar recomposición, postura y una versión atlética sin exagerar.";
+  const focusLabel =
+    focusZone === "upper"
+      ? "tren superior"
+      : focusZone === "lower"
+        ? "tren inferior"
+        : focusZone === "abs"
+          ? "core y zona media"
+          : "cuerpo completo";
+
   return (
     <div className="w-full max-w-5xl mx-auto animate-in slide-in-from-right-8 fade-in duration-500 space-y-8">
       <div className="text-center">
@@ -30,33 +46,33 @@ export function WizardObjectiveStep({ watch, setValue }: WizardObjectiveStepProp
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <EliteOptionCard
           className="h-64"
-          title="DEFINICIÓN EXTREMA"
-          description="Maximiza la definición muscular y reduce grasa corporal a un dígito."
+          title="RECOMPOSICIÓN ATLÉTICA"
+          description="Buscar una versión más atlética, con mejor postura, proporción y cintura visual."
           selected={watch("goal") === "definicion"}
           onClick={() => setValue("goal", "definicion")}
           idx={1}
           imageSrc="/images/backgrounds/goal-definicion.svg"
-          imageAlt="Definición extrema"
+          imageAlt="Recomposición atlética"
           icon={Target}
-          iconLabel="Precisión metabólica"
+          iconLabel="Composición visual"
           overlayTone="deep"
         />
         <EliteOptionCard
           className="h-64"
-          title="HIPERTROFIA MASIVA"
-          description="Prioriza volumen muscular, densidad y ganancia de tamaño total."
+          title="CONSTRUIR MÚSCULO FUNCIONAL"
+          description="Ganar fuerza y músculo útil con proporciones naturales."
           selected={watch("goal") === "masa"}
           onClick={() => setValue("goal", "masa")}
           idx={2}
           imageSrc="/images/backgrounds/goal-hipertrofia.svg"
-          imageAlt="Hipertrofia masiva"
+          imageAlt="Músculo funcional"
           icon={Activity}
           iconLabel="Densidad y volumen"
         />
         <EliteOptionCard
           className="h-64"
-          title="HÍBRIDO ATLÉTICO"
-          description="Equilibrio entre rendimiento, estética y funcionalidad en todo el cuerpo."
+          title="HÍBRIDO DE RENDIMIENTO"
+          description="Equilibrar rendimiento, estética, recuperación y consistencia."
           selected={watch("goal") === "mixto"}
           onClick={() => setValue("goal", "mixto")}
           idx={3}
@@ -71,20 +87,37 @@ export function WizardObjectiveStep({ watch, setValue }: WizardObjectiveStepProp
         <div className="ngx-metal-card !p-6">
           <div className="relative z-10">
             <span className="ngx-eyebrow !text-[10px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>Nivel de experiencia</span>
-            <div className="grid grid-cols-3 gap-2">
-              {([{ id: "novato", l: "Novato" }, { id: "intermedio", l: "Pro" }, { id: "avanzado", l: "Elite" }] as const).map((lv) => (
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+              {([
+                {
+                  id: "novato",
+                  l: "Principiante",
+                  d: "Retomando o menos de 6 meses consistentes",
+                },
+                {
+                  id: "intermedio",
+                  l: "Intermedio",
+                  d: "6-24 meses con base y algo de progresión",
+                },
+                {
+                  id: "avanzado",
+                  l: "Avanzado",
+                  d: "2+ años con técnica y progresión trazable",
+                },
+              ] as const).map((lv) => (
                 <button
                   key={lv.id}
                   type="button"
                   onClick={() => setValue("level", lv.id)}
-                  className={cn(
-                    "py-3 rounded-xl border text-[10px] font-mono uppercase tracking-[0.18em] transition-all duration-150",
-                    watch("level") === lv.id
-                      ? "bg-[var(--ngx-purple)] text-white border-[var(--ngx-purple)] shadow-[var(--ngx-glow-primary-soft)]"
-                      : "bg-white/[0.03] text-white/45 border-[color:var(--ngx-border-subtle)] hover:border-white/20 hover:text-white/70"
-                  )}
+                  data-selected={watch("level") === lv.id}
+                  className="ngx-choice-button flex min-h-[72px] flex-col items-start justify-center gap-1 px-4 py-3 text-left"
                 >
-                  {lv.l}
+                  <span className="font-mono text-[10px] uppercase tracking-[0.18em]">
+                    {lv.l}
+                  </span>
+                  <span className="text-[11px] leading-snug text-white/45">
+                    {lv.d}
+                  </span>
                 </button>
               ))}
             </div>
@@ -95,17 +128,13 @@ export function WizardObjectiveStep({ watch, setValue }: WizardObjectiveStepProp
           <div className="relative z-10">
             <span className="ngx-eyebrow !text-[10px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>Días disponibles por semana</span>
             <div className="grid grid-cols-5 gap-2">
-              {[1, 2, 3, 4, 5].map((d) => (
+              {[2, 3, 4, 5, 6].map((d) => (
                 <button
                   key={d}
                   type="button"
-                  onClick={() => setValue("weeklyTime", d)}
-                  className={cn(
-                    "py-3 rounded-xl border text-xs font-mono uppercase tracking-[0.14em] transition-all duration-150",
-                    watch("weeklyTime") === d
-                      ? "bg-[var(--ngx-purple)] text-white border-[var(--ngx-purple)] shadow-[var(--ngx-glow-primary-soft)]"
-                      : "bg-white/[0.03] text-white/45 border-[color:var(--ngx-border-subtle)] hover:border-white/20 hover:text-white/70"
-                  )}
+                  onClick={() => setValue("trainingDaysPerWeek", d)}
+                  data-selected={watch("trainingDaysPerWeek") === d}
+                  className="ngx-choice-button py-3 text-xs font-mono uppercase tracking-[0.14em]"
                 >
                   {d}d
                 </button>
@@ -113,6 +142,37 @@ export function WizardObjectiveStep({ watch, setValue }: WizardObjectiveStepProp
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="ngx-section-panel !p-6">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <span className="ngx-eyebrow !text-[10px] block mb-2" style={{ color: "var(--ngx-fg-3)" }}>Duración real por sesión</span>
+            <p className="text-sm leading-relaxed text-white/55">
+              GENESIS usa esto para calibrar una visualización aspiracional, no una promesa de volumen imposible.
+            </p>
+          </div>
+          <div className="grid grid-cols-4 gap-2 md:min-w-[360px]">
+            {[30, 45, 60, 75].map((minutes) => (
+              <button
+                key={minutes}
+                type="button"
+                onClick={() => setValue("sessionDurationMinutes", minutes)}
+                data-selected={watch("sessionDurationMinutes") === minutes}
+                className="ngx-choice-button flex items-center justify-center gap-1.5 px-3 py-3 text-xs font-mono uppercase tracking-[0.12em]"
+              >
+                <Clock3 className="h-3.5 w-3.5" />
+                {minutes}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-[18px] border border-white/[0.09] bg-white/[0.045] px-5 py-4">
+        <p className="text-sm leading-relaxed text-white/68">
+          {goalIntent} El foco principal será {focusLabel}; sigue siendo una visualización aspiracional, no una garantía.
+        </p>
       </div>
 
       <div className="ngx-section-panel !p-6 md:!p-8">
@@ -126,12 +186,8 @@ export function WizardObjectiveStep({ watch, setValue }: WizardObjectiveStepProp
               key={z.id}
               type="button"
               onClick={() => setValue("focusZone", z.id)}
-              className={cn(
-                "p-4 rounded-xl border text-center cursor-pointer transition-all duration-150 active:scale-[0.97]",
-                watch("focusZone") === z.id
-                  ? "bg-[var(--ngx-purple)] border-[var(--ngx-purple)] text-white shadow-[var(--ngx-glow-primary-soft)]"
-                  : "bg-white/[0.02] border-[color:var(--ngx-border-subtle)] text-white/55 hover:text-white/85 hover:border-white/20"
-              )}
+              data-selected={watch("focusZone") === z.id}
+              className="ngx-choice-button p-4 text-center cursor-pointer active:scale-[0.97]"
             >
               <span className="text-xs font-mono uppercase tracking-[0.16em]">{z.l}</span>
             </button>

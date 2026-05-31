@@ -7,51 +7,59 @@ export function LandingHowItWorks() {
   const { howItWorks } = config.copy;
 
   return (
-    <section id="como-funciona" className="ngx-section">
-      <div className="text-center mb-12 md:mb-16 animate-on-scroll max-w-3xl mx-auto">
-        <span className="ngx-eyebrow-pill">Cómo funciona</span>
-        <h2 className="ngx-section-heading mx-auto" style={{ maxWidth: "20ch" }}>
-          {howItWorks.title}
-        </h2>
-        {howItWorks.subtitle ? (
-          <p className="mt-4 text-ngx-fg-2 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
-            {howItWorks.subtitle}
-          </p>
-        ) : null}
-      </div>
+    <section id="como-funciona" className="relative w-full px-4 py-24 md:py-32 scroll-mt-24">
+      <div className="relative mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:items-start lg:gap-16">
+        <div className="animate-on-scroll lg:sticky lg:top-24">
+          <span className="ngx-eyebrow-pill">Cómo funciona</span>
+          <h2 className="ngx-h1 !text-left max-w-[11ch]">
+            {howItWorks.title}
+          </h2>
+          {howItWorks.subtitle ? (
+            <p className="mt-5 max-w-md text-sm leading-relaxed text-white/62 md:text-base">
+              {howItWorks.subtitle}
+            </p>
+          ) : null}
+        </div>
 
-      <ol className="grid gap-4 md:grid-cols-2">
-        {howItWorks.steps.map((item, i) => {
-          const Icon = item.icon;
-          return (
-            <li key={item.step} className={`animate-on-scroll ${i > 0 ? `delay-${i}00` : ""}`}>
-              <article className="ngx-process-card h-full">
-                <div className="relative z-10">
-                  <div className="mb-5 flex items-center justify-between gap-3">
-                    <span className="ngx-process-number">PASO {item.step}</span>
-                    <span
-                      className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border"
-                      style={{
-                        backgroundColor: "rgba(109,0,255,0.15)",
-                        borderColor: "rgba(109,0,255,0.25)",
-                      }}
-                    >
-                      <Icon
-                        className="h-5 w-5"
-                        style={{ color: "var(--ngx-purple-light)" }}
-                      />
-                    </span>
+        <ol className="ngx-section-panel !p-0">
+          {howItWorks.steps.map((item, i) => {
+            const Icon = item.icon;
+            return (
+              <li
+                key={item.step}
+                className={`animate-on-scroll ${i > 0 ? `delay-${i}00` : ""}`}
+              >
+                <article className="group grid gap-4 border-t border-white/[0.08] p-5 first:border-t-0 md:grid-cols-[auto_minmax(0,1fr)_auto] md:items-center md:gap-6 md:p-7">
+                  <span className="ngx-icon-box h-12 w-12">
+                    <Icon className="h-5 w-5" />
+                  </span>
+
+                  <div className="min-w-0">
+                    <h3 className="text-lg font-bold leading-tight text-white md:text-xl">
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/58 md:text-[0.97rem]">
+                      {item.description}
+                    </p>
                   </div>
-                  <h3 className="font-body font-bold text-lg text-ngx-fg-1 leading-tight tracking-[-0.015em] mb-2">
-                    {item.title}
-                  </h3>
-                  <p className="ngx-card-desc">{item.description}</p>
-                </div>
-              </article>
-            </li>
-          );
-        })}
-      </ol>
+
+                  <span
+                    className="font-mono text-[2.85rem] font-bold leading-none tabular-nums text-transparent md:text-[4.4rem]"
+                    style={{
+                      WebkitTextStroke:
+                        i === 0
+                          ? "1px rgba(184,148,255,0.78)"
+                          : "1px rgba(255,255,255,0.22)",
+                    }}
+                  >
+                    {item.step}
+                  </span>
+                </article>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
     </section>
   );
 }

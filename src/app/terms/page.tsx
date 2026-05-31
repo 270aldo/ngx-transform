@@ -2,7 +2,8 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 const UPDATED_AT = "2 de febrero de 2026";
-const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "hola@ngxgenesis.com";
+const OWNER_DATA_PLACEHOLDER = "NECESITA_DATO_DEL_OWNER";
+const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "";
 
 export const metadata: Metadata = {
   title: "Términos de Servicio | NGX Transform",
@@ -135,7 +136,7 @@ export default function TermsPage() {
                 {SUPPORT_EMAIL}
               </a>
             ) : (
-              <span className="ml-1 text-neutral-400">usa el canal de contacto publicado en el sitio</span>
+              <span className="ml-1 text-neutral-400">{OWNER_DATA_PLACEHOLDER}</span>
             )}
             .
           </p>

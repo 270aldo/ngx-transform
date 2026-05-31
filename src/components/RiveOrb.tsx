@@ -35,9 +35,10 @@ export function RiveOrb({
 }: RiveOrbProps) {
   const [hasError, setHasError] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const riveWrapperRef = useRef<HTMLDivElement>(null);
   const [renderedSize, setRenderedSize] = useState(size);
 
-  const { rive, RiveComponent, canvas } = useRive({
+  const { rive, RiveComponent } = useRive({
     src: "/orb.riv",
     autoplay: true,
     layout: new Layout({
@@ -63,11 +64,12 @@ export function RiveOrb({
   // size it to match the container, then resize the drawing surface so the
   // animation actually renders at the expected pixel dimensions (with DPR).
   useEffect(() => {
+    const canvas = riveWrapperRef.current?.querySelector("canvas");
     if (!canvas) return;
     canvas.style.width = `${renderedSize}px`;
     canvas.style.height = `${renderedSize}px`;
     if (rive) rive.resizeDrawingSurfaceToCanvas();
-  }, [canvas, rive, renderedSize]);
+  }, [rive, renderedSize]);
 
   return (
     <div
@@ -92,6 +94,7 @@ export function RiveOrb({
           <canvas> inline style. */}
       {!hasError ? (
         <div
+          ref={riveWrapperRef}
           className="relative z-10 h-full w-full"
           style={{
             mixBlendMode: "plus-lighter",

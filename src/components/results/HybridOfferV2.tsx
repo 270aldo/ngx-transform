@@ -3,17 +3,10 @@
 /**
  * HybridOfferV2 — Salida comercial post-resultados (v12)
  *
- * Reemplaza a HybridOfferSection con 4 caminos claros:
- *  1. Comprar NGX HYBRID directo (Mercado Pago Checkout Pro) — primary
- *  2. Ver video del fundador (3-5 min) — secondary
- *  3. Agendar llamada 1:1 (Calendly) — secondary
- *  4. WhatsApp directo al equipo — tertiary
+ * Lead magnet exit: Transform entrega insight y dirige al diagnóstico HYBRID.
+ * La compra directa queda detrás de feature flag; el CTA primario es agenda.
  *
- * Mantiene el copy maduro de "cuándo sí tiene sentido" y la cohorte
- * scarcity. Si no hay pricing configurado, el camino de checkout se
- * deshabilita gracefully y reconduce a la llamada/WhatsApp.
- *
- * Telemetría granular por camino (ver lib/telemetry.ts).
+ * Telemetría granular por camino.
  */
 
 import { useEffect, useMemo, useState } from "react";
@@ -56,12 +49,22 @@ interface SkuCardData {
 }
 
 const WHATSAPP_TEXT =
-  "Hola, acabo de ver mis resultados en NGX Transform y quiero entrar a HYBRID.";
+  "Hola, acabo de ver mi diagnóstico visual en NGX Transform y tengo una duda sobre HYBRID.";
+
+const HYBRID_OFFER_WEBHOOK_EVENTS: Partial<Record<string, string>> = {
+  calendly_v2_clicked: "hybrid_offer_calendly_click",
+  whatsapp_v2_clicked: "hybrid_offer_whatsapp_click",
+};
 
 function readNum(envVar?: string): number | null {
   if (!envVar) return null;
   const n = Number(envVar);
   return Number.isFinite(n) && n > 0 ? n : null;
+}
+
+function readText(envVar?: string): string | null {
+  const value = envVar?.trim();
+  return value ? value : null;
 }
 
 function formatMxn(amount: number): string {
@@ -82,6 +85,8 @@ async function emitTelemetry(
   event: string,
   metadata?: Record<string, unknown>
 ) {
+  const webhookEvent = HYBRID_OFFER_WEBHOOK_EVENTS[event];
+
   await Promise.allSettled([
     fetch("/api/telemetry", {
       method: "POST",
@@ -93,11 +98,13 @@ async function emitTelemetry(
         metadata: { ...metadata, location: "hybrid_offer_v2" },
       }),
     }),
-    fetch("/api/events/hybrid-offer", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ event, shareId }),
-    }).catch(() => {}),
+    webhookEvent
+      ? fetch("/api/events/hybrid-offer", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ event: webhookEvent, shareId }),
+        }).catch(() => {})
+      : Promise.resolve(),
   ]);
 }
 
@@ -112,9 +119,11 @@ function pickDefaultSku(): Sku | null {
 }
 
 export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
+  const directCheckoutEnabled =
+    process.env.NEXT_PUBLIC_FF_HYBRID_DIRECT_CHECKOUT === "true";
   const [videoOpen, setVideoOpen] = useState(false);
   const [selectedSku, setSelectedSku] = useState<Sku | null>(() =>
-    pickDefaultSku()
+    directCheckoutEnabled ? pickDefaultSku() : null
   );
   const [checkoutLoading, setCheckoutLoading] = useState<Sku | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
@@ -124,17 +133,28 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
   const [briefMessage, setBriefMessage] = useState<string | null>(null);
 
   const cohortLabel =
-    cohorteInfo?.label ?? process.env.NEXT_PUBLIC_COHORT_LABEL ?? "Marzo";
-  const cohortSpotsTotal =
+    cohorteInfo?.label ??
+    readText(process.env.NEXT_PUBLIC_COHORT_LABEL);
+  const configuredSpotsTotal =
     cohorteInfo?.spotsTotal ??
-    Number(process.env.NEXT_PUBLIC_COHORT_SPOTS_TOTAL ?? "20");
-  const cohortSpotsLeft =
+    readNum(process.env.NEXT_PUBLIC_COHORT_SPOTS_TOTAL);
+  const configuredSpotsLeft =
     cohorteInfo?.spotsLeft ??
-    Number(process.env.NEXT_PUBLIC_COHORT_SPOTS_LEFT ?? "18");
+    readNum(process.env.NEXT_PUBLIC_COHORT_SPOTS_LEFT);
+  const hasCohortSpots =
+    typeof configuredSpotsTotal === "number" &&
+    typeof configuredSpotsLeft === "number" &&
+    configuredSpotsTotal > 0 &&
+    configuredSpotsLeft >= 0 &&
+    configuredSpotsLeft <= configuredSpotsTotal;
+  const showCohortSignal = hasCohortSpots || Boolean(cohortLabel);
+  const cohortSpotsTotal = configuredSpotsTotal ?? 0;
+  const cohortSpotsLeft = configuredSpotsLeft ?? 0;
 
   const calendlyUrl =
     process.env.NEXT_PUBLIC_CALENDLY_URL ||
-    "https://calendly.com/ngx-genesis";
+    process.env.NEXT_PUBLIC_BOOKING_URL ||
+    "";
   const whatsappRaw = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";
   const whatsappNumber = whatsappRaw.replace(/[^\d]/g, "");
   const whatsappUrl = whatsappNumber
@@ -147,6 +167,8 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
   const videoPoster = process.env.NEXT_PUBLIC_HYBRID_VIDEO_POSTER || undefined;
   const videoDuration =
     Number(process.env.NEXT_PUBLIC_HYBRID_VIDEO_DURATION_SEC || "240") || 240;
+  const voiceAgentEnabled =
+    process.env.NEXT_PUBLIC_FF_HYBRID_VOICE_AGENT === "true";
 
   // Construir SKUs disponibles desde env vars
   const skus = useMemo<SkuCardData[]>(() => {
@@ -238,7 +260,15 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
     // El modal emite "video_founder_opened" cuando monta
   };
 
+  const onVoiceAgent = async () => {
+    const target = document.getElementById("hybrid-voice-agent");
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   const onCalendly = async () => {
+    if (!calendlyUrl) return;
     await emitTelemetry(shareId, "calendly_v2_clicked");
     window.open(calendlyUrl, "_blank", "noopener,noreferrer");
   };
@@ -297,7 +327,7 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
   return (
     <section
       id="hybrid-offer"
-      className="relative mx-auto max-w-6xl px-4 py-12 scroll-mt-24"
+      className="relative mx-auto max-w-6xl px-4 py-14 md:py-20 scroll-mt-24"
     >
       <motion.div
         initial={{ opacity: 0, y: 24 }}
@@ -306,28 +336,29 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
         transition={{ duration: 0.55, ease: "easeOut" }}
         className="ngx-section-panel relative overflow-hidden"
       >
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_18%_15%,rgba(109,0,255,0.15),transparent_38%),radial-gradient(circle_at_88%_25%,rgba(184,148,255,0.08),transparent_28%)]" />
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_18%_15%,rgba(109,0,255,0.07),transparent_40%)]" />
 
-        <div className="relative z-10 grid gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(380px,1fr)]">
+        <div className="relative z-10 grid gap-10 lg:grid-cols-2">
           {/* COLUMNA IZQUIERDA — Tesis */}
           <div>
-            <span className="ngx-eyebrow-pill mb-4">NGX Hybrid · Cohorte {cohortLabel}</span>
+            <span className="ngx-eyebrow-pill mb-4">
+              NGX HYBRID · Diagnóstico
+            </span>
             <h2 className="ngx-h1 !text-left">
-              Ya viste hacia dónde puede ir tu cuerpo. Decide cómo quieres
-              ejecutarlo.
+              La imagen inspira. El sistema transforma. El humano sostiene.
             </h2>
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/62 md:text-base">
-              La visualización abre la conversación. NGX HYBRID es el sistema
-              que la convierte en ejecución real: GENESIS adapta tu plan cada
-              semana, un coach humano valida tus decisiones, y 12 semanas de
-              checkpoints sostienen la adherencia.
+              Tu visualización no promete un resultado. Sirve para abrir una
+              conversación seria: qué señales aparecen, qué sistema tendría
+              sentido durante 12 semanas y qué necesita revisar un humano antes
+              de recomendar HYBRID.
             </p>
 
             <div className="mt-7 ngx-card-grid ngx-card-grid-3 items-stretch">
               {[
-                "Sistema GENESIS que adapta tu plan cada semana",
-                "Coach humano que valida y acompaña",
-                "12 semanas con checkpoints reales",
+                "GENESIS ordena dirección, entrenamiento y hábitos",
+                "Un coach humano revisa el contexto real",
+                "12 semanas con checkpoints, no promesas",
               ].map((item) => (
                 <div key={item} className="ngx-card !p-4 h-full">
                   <span
@@ -349,82 +380,15 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
                 Cuándo sí tiene sentido
               </span>
               <p className="mt-2 text-sm leading-relaxed text-white/72">
-                Si entendiste lo que te está frenando y quieres acompañamiento
-                real para ejecutarlo —no otra app de fitness, no otro plan
-                genérico— este es el sistema.
+                Si la lectura te dio claridad y quieres saber si vale la pena
+                ejecutarla con acompañamiento, el siguiente paso no es comprar a
+                ciegas. Es revisar fit, fricción y compromiso.
               </p>
-            </div>
-
-            <div className="mt-5 ngx-card !p-5 md:!p-6">
-              <span
-                className="ngx-eyebrow !text-[10px]"
-                style={{ color: "var(--ngx-fg-3)" }}
-              >
-                Bonus incluido
-              </span>
-              <div className="mt-2 flex items-start gap-3">
-                <Sparkles
-                  className="mt-0.5 h-5 w-5 shrink-0"
-                  style={{ color: "var(--ngx-purple-light)" }}
-                />
-                <div>
-                  <p className="text-base font-bold text-white">
-                    Ebook Conversacional GENESIS + Plan personalizado de 7 días
-                  </p>
-                  <p className="mt-1 text-sm leading-relaxed text-white/55">
-                    Se entrega en cuanto activamos tu acceso. Para aterrizar
-                    el sistema desde la primera semana.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Cohort scarcity */}
-            <div className="mt-6 ngx-glass !p-5 md:!p-6">
-              <div className="flex items-end justify-between gap-3">
-                <div>
-                  <p className="font-mono text-3xl font-bold tabular-nums tracking-[-0.02em] text-white md:text-4xl leading-none">
-                    {cohortSpotsLeft}
-                    <span className="ml-2 text-lg font-medium tracking-normal text-white/35">
-                      / {cohortSpotsTotal}
-                    </span>
-                  </p>
-                  <p className="mt-2 text-sm text-white/55">
-                    Plazas estimadas para cohorte {cohortLabel}
-                  </p>
-                </div>
-                <span
-                  className="rounded-full px-3 py-1.5 text-[10px] uppercase tracking-[0.18em]"
-                  style={{
-                    background: "rgba(109,0,255,0.10)",
-                    border: "1px solid rgba(109,0,255,0.25)",
-                    color: "var(--ngx-purple-light)",
-                  }}
-                >
-                  Cohorte guiada
-                </span>
-              </div>
-              <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/[0.06] border border-white/[0.04]">
-                <div
-                  className="h-full rounded-full"
-                  style={{
-                    width: `${
-                      ((cohortSpotsTotal - cohortSpotsLeft) /
-                        cohortSpotsTotal) *
-                      100
-                    }%`,
-                    background:
-                      "linear-gradient(90deg, var(--ngx-purple), var(--ngx-purple-light))",
-                    boxShadow: "0 0 12px rgba(109,0,255,0.40)",
-                  }}
-                />
-              </div>
             </div>
           </div>
 
-          {/* COLUMNA DERECHA — Los 4 caminos */}
-          <div className="space-y-5">
-            {/* CAMINO 1 — Checkout MP (PRIMARY) */}
+          {/* COLUMNA DERECHA — Acción principal */}
+          <div className="space-y-4">
             <div className="ngx-glass !p-5 md:!p-6 relative overflow-hidden">
               <div
                 className="absolute inset-x-0 top-0 h-[3px]"
@@ -438,7 +402,7 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
                   className="ngx-eyebrow !text-[10px]"
                   style={{ color: "var(--ngx-fg-3)" }}
                 >
-                  Empezar ahora
+                  Siguiente paso recomendado
                 </span>
                 <span
                   className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[9px] uppercase tracking-[0.18em]"
@@ -448,266 +412,71 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
                     color: "var(--ngx-purple-light)",
                   }}
                 >
-                  <Crown className="h-3 w-3" />
-                  Recomendado
+                  <CalendarDays className="h-3 w-3" />
+                  Diagnóstico
                 </span>
               </div>
 
               <h3 className="text-lg font-bold leading-tight text-white">
-                Compra NGX HYBRID directo
+                Revisa si HYBRID tiene fit contigo
               </h3>
               <p className="mt-1.5 text-xs leading-relaxed text-white/55">
-                Si ya entendiste el sistema y quieres entrar hoy mismo.
+                Una llamada breve para convertir tu lectura en una decisión:
+                avanzar solo, ajustar primero o entrar a una temporada HYBRID.
               </p>
 
-              {/* SKU selector */}
-              <div className="mt-4 grid gap-2">
-                {skus.map((s) => {
-                  const isSelected = selectedSku === s.sku;
-                  return (
-                    <button
-                      key={s.sku}
-                      onClick={() => s.available && onSelectSku(s.sku)}
-                      disabled={!s.available}
-                      className={`group relative flex items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left transition-all duration-150 ${
-                        s.available
-                          ? "cursor-pointer hover:bg-white/[0.04]"
-                          : "cursor-not-allowed opacity-50"
-                      }`}
-                      style={{
-                        borderColor: isSelected
-                          ? "rgba(109,0,255,0.55)"
-                          : "rgba(255,255,255,0.08)",
-                        background: isSelected
-                          ? "linear-gradient(180deg, rgba(109,0,255,0.10), rgba(109,0,255,0.04))"
-                          : "rgba(255,255,255,0.02)",
-                        boxShadow: isSelected
-                          ? "0 0 0 1px rgba(109,0,255,0.45), 0 0 24px rgba(109,0,255,0.18)"
-                          : "none",
-                      }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <span
-                          className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full border"
-                          style={{
-                            borderColor: isSelected
-                              ? "var(--ngx-purple-light)"
-                              : "rgba(255,255,255,0.18)",
-                            background: isSelected
-                              ? "var(--ngx-purple)"
-                              : "transparent",
-                          }}
-                        >
-                          {isSelected && (
-                            <span className="block h-1.5 w-1.5 rounded-full bg-white" />
-                          )}
-                        </span>
-                        <div className="leading-tight">
-                          <div className="flex items-center gap-2">
-                            <p className="text-sm font-bold text-white">
-                              {s.label}
-                            </p>
-                            {s.badge && (
-                              <span className="rounded-full px-1.5 py-0.5 text-[8px] uppercase tracking-[0.18em] text-white"
-                                style={{
-                                  background:
-                                    "linear-gradient(90deg, var(--ngx-purple), var(--ngx-purple-light))",
-                                }}
-                              >
-                                {s.badge}
-                              </span>
-                            )}
-                          </div>
-                          {s.perMonthLabel && (
-                            <p className="mt-0.5 text-[11px] text-white/45">
-                              {s.perMonthLabel}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <p className="text-sm font-bold text-white whitespace-nowrap">
-                          {s.priceLabel}
-                        </p>
-                      </div>
-                    </button>
-                  );
-                })}
+              <div className="mt-5 grid gap-3">
+                <button
+                  onClick={onCalendly}
+                  disabled={!calendlyUrl}
+                  className="ngx-primary-cta inline-flex w-full px-5 py-4 text-sm disabled:cursor-not-allowed"
+                >
+                  <CalendarDays className="h-4 w-4" />
+                  Agendar diagnóstico HYBRID
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+
+                <button
+                  onClick={onEmailBrief}
+                  disabled={briefState === "loading" || briefState === "sent"}
+                  className="ngx-secondary-cta inline-flex min-h-[54px] w-full px-5 py-4 text-sm font-bold uppercase tracking-[0.08em] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {briefState === "loading" ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Enviando brief
+                    </>
+                  ) : briefState === "sent" ? (
+                    <>
+                      <CheckCircle2 className="h-4 w-4" />
+                      Brief enviado
+                    </>
+                  ) : (
+                    <>
+                      <Mail className="h-4 w-4" />
+                      Recibir mi brief por correo
+                    </>
+                  )}
+                </button>
               </div>
 
-              {checkoutError && (
+              {!calendlyUrl && (
                 <p
                   className="mt-3 rounded-lg border px-3 py-2 text-xs leading-relaxed"
                   style={{
-                    borderColor: "rgba(239,68,68,0.32)",
-                    background: "rgba(239,68,68,0.08)",
-                    color: "#fca5a5",
+                    borderColor: "rgba(245,158,11,0.30)",
+                    background: "rgba(245,158,11,0.08)",
+                    color: "#fde68a",
                   }}
                 >
-                  {checkoutError}
+                  La agenda todavía no está configurada. Usa WhatsApp si
+                  necesitas ayuda rápida.
                 </p>
               )}
 
-              <button
-                onClick={onCheckout}
-                disabled={!selectedSku || !anySkuAvailable || !!checkoutLoading}
-                className="mt-4 inline-flex w-full min-h-[52px] items-center justify-center gap-2 rounded-full px-5 py-4 text-sm font-bold uppercase tracking-[0.06em] text-white transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
-                style={{
-                  backgroundColor: "var(--ngx-purple)",
-                  boxShadow: "var(--ngx-glow-primary)",
-                }}
-              >
-                {checkoutLoading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Redirigiendo a Mercado Pago…
-                  </>
-                ) : (
-                  <>
-                    {anySkuAvailable
-                      ? "Comprar y empezar hoy"
-                      : "Pricing próximamente"}
-                    <ArrowRight className="h-4 w-4" />
-                  </>
-                )}
-              </button>
-
-              <p className="mt-2 text-center text-[10px] uppercase tracking-[0.16em] text-white/40">
-                Pago seguro vía Mercado Pago · Acceso inmediato
-              </p>
-            </div>
-
-            {/* CAMINO 2 — Video del fundador (SECONDARY) */}
-            <button
-              onClick={onVideo}
-              className="ngx-glass !p-5 md:!p-6 group block w-full text-left transition-all duration-150 hover:-translate-y-0.5"
-            >
-              <div className="flex items-center gap-4">
-                <span
-                  className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
-                  style={{
-                    background: "rgba(109,0,255,0.18)",
-                    border: "1px solid rgba(109,0,255,0.38)",
-                  }}
-                >
-                  <PlayCircle
-                    className="h-5 w-5"
-                    style={{ color: "var(--ngx-purple-light)" }}
-                  />
-                </span>
-                <div className="flex-1 leading-tight">
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-white/45">
-                    Antes de decidir
-                  </p>
-                  <p className="mt-0.5 text-base font-bold text-white">
-                    Ver video del fundador
-                  </p>
-                  <p className="mt-1 text-xs text-white/55">
-                    {Math.round(videoDuration / 60)} min · Cómo funciona
-                    HYBRID por dentro
-                  </p>
-                </div>
-                <ArrowRight className="h-4 w-4 text-white/45 transition-transform duration-150 group-hover:translate-x-0.5" />
-              </div>
-            </button>
-
-            {/* CAMINO 3 — Calendly (SECONDARY) */}
-            <button
-              onClick={onCalendly}
-              className="ngx-glass !p-5 md:!p-6 group block w-full text-left transition-all duration-150 hover:-translate-y-0.5"
-            >
-              <div className="flex items-center gap-4">
-                <span
-                  className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
-                  style={{
-                    background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(255,255,255,0.12)",
-                  }}
-                >
-                  <CalendarDays className="h-5 w-5 text-white/85" />
-                </span>
-                <div className="flex-1 leading-tight">
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-white/45">
-                    Hablar con el equipo
-                  </p>
-                  <p className="mt-0.5 text-base font-bold text-white">
-                    Agendar llamada 1:1
-                  </p>
-                  <p className="mt-1 text-xs text-white/55">
-                    30 min · Para evaluar fit con tu contexto
-                  </p>
-                </div>
-                <ArrowRight className="h-4 w-4 text-white/45 transition-transform duration-150 group-hover:translate-x-0.5" />
-              </div>
-            </button>
-
-            {/* CAMINO 4 — WhatsApp (TERTIARY) */}
-            {whatsappUrl && (
-              <button
-                onClick={onWhatsapp}
-                className="group inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-medium text-white/72 transition-all duration-150 hover:bg-white/[0.04] hover:text-white"
-              >
-                <MessageCircle className="h-4 w-4" />
-                ¿Tienes una duda rápida? Escríbenos por WhatsApp
-              </button>
-            )}
-
-            {/* CAMINO 5 — Email brief (TERTIARY · captura, no conversión) */}
-            <div className="ngx-glass !p-4 md:!p-5">
-              <div className="flex items-start gap-3">
-                <span
-                  className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
-                  style={{
-                    background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(255,255,255,0.10)",
-                  }}
-                >
-                  <Mail className="h-4 w-4 text-white/72" />
-                </span>
-                <div className="flex-1 leading-tight">
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-white/45">
-                    No estás listo hoy
-                  </p>
-                  <p className="mt-0.5 text-sm font-bold text-white">
-                    Recibe tu brief por correo
-                  </p>
-                  <p className="mt-1 text-xs text-white/55">
-                    Tu visualización + diagnóstico + roadmap. Decides cuándo
-                    quieras.
-                  </p>
-                </div>
-              </div>
-
-              <button
-                onClick={onEmailBrief}
-                disabled={briefState === "loading" || briefState === "sent"}
-                className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full px-4 py-2.5 text-xs font-bold uppercase tracking-[0.14em] text-white/85 transition-all duration-150 hover:bg-white/[0.04] disabled:cursor-not-allowed disabled:opacity-60"
-                style={{
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid rgba(255,255,255,0.10)",
-                }}
-              >
-                {briefState === "loading" ? (
-                  <>
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    Enviando…
-                  </>
-                ) : briefState === "sent" ? (
-                  <>
-                    <CheckCircle2 className="h-3.5 w-3.5" />
-                    Brief enviado
-                  </>
-                ) : (
-                  <>
-                    Enviarme mi brief
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </>
-                )}
-              </button>
-
               {briefMessage && (
                 <p
-                  className="mt-2 text-[11px] leading-relaxed"
+                  className="mt-3 text-[11px] leading-relaxed"
                   style={{
                     color:
                       briefState === "error"
@@ -720,19 +489,232 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
               )}
             </div>
 
+            <div className="rounded-[18px] border border-white/[0.08] bg-white/[0.025] px-4 py-3">
+              <div className="mb-2 text-[10px] uppercase tracking-[0.16em] text-white/35">
+                Ayudas antes de decidir
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={onVideo}
+                  className="group inline-flex min-h-[42px] items-center justify-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.035] px-3 py-2 text-xs font-medium text-white/68 transition-all duration-150 hover:bg-white/[0.07] hover:text-white"
+                >
+                  <PlayCircle
+                    className="h-4 w-4"
+                    style={{ color: "var(--ngx-purple-light)" }}
+                  />
+                  <span className="leading-tight">
+                    Ver video del fundador
+                  </span>
+                </button>
+
+                {whatsappUrl ? (
+                  <button
+                    onClick={onWhatsapp}
+                    className="group inline-flex min-h-[42px] items-center justify-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.035] px-3 py-2 text-xs font-medium text-white/68 transition-all duration-150 hover:bg-white/[0.07] hover:text-white"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    <span className="leading-tight">Ayuda rápida WhatsApp</span>
+                  </button>
+                ) : null}
+              </div>
+            </div>
+
+            {/* Bonus incluido */}
+            <div className="ngx-card !p-5 md:!p-6">
+              <span
+                className="ngx-eyebrow !text-[10px]"
+                style={{ color: "var(--ngx-fg-3)" }}
+              >
+                Bonus incluido
+              </span>
+              <div className="mt-2 flex items-start gap-3">
+                <Sparkles
+                  className="mt-0.5 h-5 w-5 shrink-0"
+                  style={{ color: "var(--ngx-purple-light)" }}
+                />
+                <div>
+                  <p className="text-base font-bold text-white">
+                    Brief de diagnóstico + dirección de temporada
+                  </p>
+                  <p className="mt-1 text-sm leading-relaxed text-white/55">
+                    Te llevas el resumen por correo y, si hace sentido, una
+                    llamada corta para aterrizar el sistema HYBRID a tu caso.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Cohorte guiada spots/progress */}
+            {showCohortSignal && (
+              <div className="ngx-glass !p-5 md:!p-6">
+                <div className="flex items-end justify-between gap-3">
+                  <div>
+                    {hasCohortSpots ? (
+                      <p className="font-mono text-3xl font-bold tabular-nums tracking-[-0.02em] text-white md:text-4xl leading-none">
+                        {cohortSpotsLeft}
+                        <span className="ml-2 text-lg font-medium tracking-normal text-white/35">
+                          / {cohortSpotsTotal}
+                        </span>
+                      </p>
+                    ) : (
+                      <p className="font-mono text-xl font-bold tracking-[-0.02em] text-white md:text-2xl leading-tight">
+                        {cohortLabel ?? "Ruta por confirmar"}
+                      </p>
+                    )}
+                    <p className="mt-2 text-sm text-white/55">
+                      {hasCohortSpots
+                        ? `Plazas confirmadas para cohorte ${cohortLabel ?? "Marzo"}`
+                        : "Los cupos y la ruta se confirman después del diagnóstico"}
+                    </p>
+                  </div>
+                  <span
+                    className="rounded-full px-3 py-1.5 text-[10px] uppercase tracking-[0.18em]"
+                    style={{
+                      background: "rgba(109,0,255,0.10)",
+                      border: "1px solid rgba(109,0,255,0.25)",
+                      color: "var(--ngx-purple-light)",
+                    }}
+                  >
+                    Cohorte guiada
+                  </span>
+                </div>
+                <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/[0.06] border border-white/[0.04]">
+                  <div
+                    className="h-full rounded-full"
+                    style={{
+                      width: hasCohortSpots
+                        ? `${
+                            ((cohortSpotsTotal - cohortSpotsLeft) /
+                              cohortSpotsTotal) *
+                            100
+                          }%`
+                        : "0%",
+                      background:
+                        "linear-gradient(90deg, var(--ngx-purple), var(--ngx-purple-light))",
+                      boxShadow: "0 0 12px rgba(109,0,255,0.40)",
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {directCheckoutEnabled && (
+              <div className="ngx-glass !p-5 md:!p-6 relative overflow-hidden">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <span
+                    className="ngx-eyebrow !text-[10px]"
+                    style={{ color: "var(--ngx-fg-3)" }}
+                  >
+                    Compra directa opcional
+                  </span>
+                  <span
+                    className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[9px] uppercase tracking-[0.18em]"
+                    style={{
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.10)",
+                      color: "rgba(255,255,255,0.62)",
+                    }}
+                  >
+                    <Crown className="h-3 w-3" />
+                    Flag activo
+                  </span>
+                </div>
+
+                <h3 className="text-base font-bold leading-tight text-white">
+                  Inscripción directa a HYBRID
+                </h3>
+                <p className="mt-1.5 text-xs leading-relaxed text-white/55">
+                  Visible solo cuando el equipo habilita checkout directo.
+                </p>
+
+                <div className="mt-4 grid gap-2">
+                  {skus.map((s) => {
+                    const isSelected = selectedSku === s.sku;
+                    return (
+                      <button
+                        key={s.sku}
+                        onClick={() => s.available && onSelectSku(s.sku)}
+                        disabled={!s.available}
+                        className={`group relative flex items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left transition-all duration-150 ${
+                          s.available
+                            ? "cursor-pointer hover:bg-white/[0.04]"
+                            : "cursor-not-allowed opacity-50"
+                        }`}
+                        style={{
+                          borderColor: isSelected
+                            ? "rgba(109,0,255,0.55)"
+                            : "rgba(255,255,255,0.08)",
+                          background: isSelected
+                            ? "linear-gradient(180deg, rgba(109,0,255,0.10), rgba(109,0,255,0.04))"
+                            : "rgba(255,255,255,0.02)",
+                        }}
+                      >
+                        <div className="min-w-0 leading-tight">
+                          <p className="truncate text-sm font-bold text-white">
+                            {s.label}
+                          </p>
+                          {s.perMonthLabel && (
+                            <p className="mt-0.5 text-[11px] text-white/45">
+                              {s.perMonthLabel}
+                            </p>
+                          )}
+                        </div>
+                        <p className="shrink-0 text-sm font-bold text-white">
+                          {s.priceLabel}
+                        </p>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {checkoutError && (
+                  <p
+                    className="mt-3 rounded-lg border px-3 py-2 text-xs leading-relaxed"
+                    style={{
+                      borderColor: "rgba(239,68,68,0.32)",
+                      background: "rgba(239,68,68,0.08)",
+                      color: "#fca5a5",
+                    }}
+                  >
+                    {checkoutError}
+                  </p>
+                )}
+
+                <button
+                  onClick={onCheckout}
+                  disabled={!selectedSku || !anySkuAvailable || !!checkoutLoading}
+                  className="ngx-secondary-cta mt-4 inline-flex min-h-[52px] w-full px-5 py-3 text-xs font-bold uppercase tracking-[0.08em] disabled:cursor-not-allowed"
+                >
+                  {checkoutLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Redirigiendo a Mercado Pago
+                    </>
+                  ) : (
+                    <>
+                      {anySkuAvailable
+                        ? "Continuar a checkout"
+                        : "Pricing próximamente"}
+                      <ArrowRight className="h-4 w-4" />
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+
             {/* Trust micro-row */}
             <div className="grid grid-cols-3 gap-2 pt-2">
               {[
-                { icon: ShieldCheck, label: "Pago protegido" },
-                { icon: ShieldCheck, label: "Acceso inmediato" },
-                { icon: ShieldCheck, label: "Coach humano" },
+                { icon: ShieldCheck, label: "Aspiración" },
+                { icon: ShieldCheck, label: "No médico" },
+                { icon: ShieldCheck, label: "Humano" },
               ].map(({ icon: Icon, label }) => (
                 <div
                   key={label}
-                  className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.14em] text-white/40"
+                  className="flex min-w-0 items-center justify-center gap-1 text-[9px] uppercase tracking-[0.10em] text-white/40 sm:justify-start sm:text-[10px] sm:tracking-[0.14em]"
                 >
                   <Icon className="h-3 w-3" />
-                  <span className="truncate">{label}</span>
+                  <span>{label}</span>
                 </div>
               ))}
             </div>
@@ -748,8 +730,9 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
         videoUrl={videoUrl}
         posterUrl={videoPoster}
         durationSeconds={videoDuration}
-        onCalendlyFallback={onCalendly}
+        onCalendlyFallback={calendlyUrl ? onCalendly : undefined}
         onWhatsappFallback={whatsappUrl ? onWhatsapp : undefined}
+        onVoiceAgentFallback={voiceAgentEnabled ? onVoiceAgent : undefined}
       />
     </section>
   );

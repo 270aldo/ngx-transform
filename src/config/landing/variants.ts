@@ -23,9 +23,9 @@ export const variants: Record<VariantId, VariantConfig> = {
     theme: themes.general,
     copy: generalCopy,
     meta: {
-      title: "NGX Transform - Visualiza tu Transformación con IA",
+      title: "NGX Transform - Diagnóstico visual de salud muscular",
       description:
-        "IA que proyecta tu evolución física en 12 meses. Crea tu acceso, sube tu foto y recibe una proyección personalizada con procesamiento seguro.",
+        "Sube una foto y recibe una visualización aspiracional, lectura muscular inicial y dirección de 12 semanas hacia HYBRID.",
     },
   },
 
@@ -36,9 +36,9 @@ export const variants: Record<VariantId, VariantConfig> = {
     theme: themes.jovenes,
     copy: jovenesCopy,
     meta: {
-      title: "NGX Transform - Desbloquea tu Mejor Versión",
+      title: "NGX Transform - Diagnóstico visual de salud muscular",
       description:
-        "IA de última generación que proyecta tu transformación física. Visualiza tu potencial y empieza a entrenar.",
+        "Visualiza una dirección posible, entiende tu punto de partida y decide si HYBRID tiene sentido para tus próximas 12 semanas.",
     },
   },
 
@@ -49,9 +49,9 @@ export const variants: Record<VariantId, VariantConfig> = {
     theme: themes.mayores,
     copy: mayoresCopy,
     meta: {
-      title: "NGX Transform - Recupera tu Vitalidad",
+      title: "NGX Transform - Dirección de 12 semanas",
       description:
-        "Proyección personalizada de tu evolución física. Visualiza cómo puedes mejorar tu salud y bienestar.",
+        "Diagnóstico visual de salud muscular con visualización aspiracional, lectura inicial y ruta de 12 semanas hacia HYBRID.",
     },
   },
 };

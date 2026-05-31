@@ -48,19 +48,19 @@ const RISK_CONFIG: Record<
 
 const BOTTLENECK_TO_LEVERAGES: Record<Bottleneck, string[]> = {
   training_progression: [
-    "Progresar carga 2.5–5% por semana en básicos (sentadilla, banca, peso muerto, remo)",
-    "Registrar series y reps cada sesión — sin trazabilidad no hay progresión real",
-    "Auto-regular intensidad por RPE, no por motivación del día",
+    "Revisar si tus cargas, series y reps están subiendo de forma trazable",
+    "Ordenar básicos y accesorios para que cada sesión tenga intención clara",
+    "Ajustar intensidad semanal según recuperación real, no motivación del día",
   ],
   nutrition_consistency: [
-    "Subir proteína a 1.6–2g por kg de peso, en 4 ingestas estables",
-    "Estandarizar 80% de las comidas; el caos viene de improvisar",
-    "Tracking de calorías 5 días/semana, no 7 — sostenibilidad sobre perfección",
+    "Definir horarios y decisiones mínimas para reducir improvisación diaria",
+    "Estandarizar una rutina semanal simple antes de optimizar detalles",
+    "Revisar con un coach qué hábitos sí son medibles en tu contexto real",
   ],
   recovery: [
-    "Bloquear 7–9 horas de sueño con horario consistente (mismo dormir/levantarse)",
-    "Una semana de descarga cada 4–6 semanas, no opcional",
-    "Reducir cardio si el estrés ya está alto — la recuperación es finita",
+    "Revisar si el sueño reciente sostiene el volumen que quieres entrenar",
+    "Planear semanas de menor carga antes de acumular fatiga innecesaria",
+    "Alinear cardio, fuerza y estrés para que la recuperación no sea el cuello",
   ],
   structure: [
     "Plan semanal escrito antes del lunes — no improvisar día a día",
@@ -68,9 +68,9 @@ const BOTTLENECK_TO_LEVERAGES: Record<Bottleneck, string[]> = {
     "Bloquear 3–4 sesiones inamovibles antes que aspirar a 6 que no ocurren",
   ],
   expectations: [
-    "Objetivos de proceso (3 sesiones/sem) antes que de resultado (perder X kg)",
+    "Objetivos de proceso antes que objetivos de resultado visibles",
     "Métrica primaria mensual, no diaria — el espejo y la báscula mienten en ventana corta",
-    "Definir éxito como adherencia >85%, no como transformación visible en 4 semanas",
+    "Definir éxito como adherencia >85%, no como transformación visible en una ventana corta",
   ],
   accountability: [
     "Reportar progreso semanal a alguien que pregunte de vuelta",
@@ -83,25 +83,38 @@ const BOTTLENECK_TO_ERROR: Record<Bottleneck, string> = {
   training_progression:
     "Entrenas con consistencia pero sin progresión trazable: el sistema deja de adaptarse a las pocas semanas y entras en plateau silencioso.",
   nutrition_consistency:
-    "Tu nutrición varía demasiado entre días: la inconsistencia es el factor #1 que neutraliza ganancias de fuerza, antes que la calidad del plan.",
+    "Tu principal fricción parece ser la consistencia de ejecución: cuando las decisiones cambian cada día, el sistema pierde trazabilidad.",
   recovery:
     "Estás acumulando deuda de recuperación: sueño y descarga insuficientes hacen que el volumen extra de entrenamiento te quite resultado, no te dé más.",
   structure:
     "Entrenas sin estructura semanal clara: lo que parece flexibilidad termina siendo improvisación, y la improvisación cuesta meses.",
   expectations:
-    "Estás midiendo el progreso con la ventana equivocada: 4 semanas no muestran transformación, y la frustración prematura sabotea los siguientes 8.",
+    "Estás midiendo el progreso con la ventana equivocada: una ventana corta no muestra transformación, y la frustración prematura sabotea la siguiente etapa.",
   accountability:
     "Estás operando sin accountability externo: sin alguien que pregunte de vuelta, la disciplina necesita ser identidad — y eso lleva años, no semanas.",
 };
 
 const FALLBACK_LEVERAGES = [
   "Entrenamiento de fuerza 3x/semana con progresión clara y trazable",
-  "Proteína >1.6g/kg/día distribuida en 4 ingestas",
-  "Sueño de 7–9h con horario consistente para sostener adaptación",
+  "Horario semanal simple para reducir decisiones improvisadas",
+  "Sueño consistente para sostener adaptación y adherencia",
 ];
 
 const FALLBACK_ERROR =
   "Sin estructura semanal trazable, lo que parece flexibilidad se traduce en meses perdidos: el bottleneck no es esfuerzo, es sistema.";
+
+const NUTRITION_CLAIM_PATTERN =
+  /prote[ií]na|calor[ií]a|déficit|super[aá]vit|ingesta|comida|nutrici[oó]n|macros?/i;
+
+function removeUnderspecifiedNutritionClaims(items?: string[]): string[] {
+  return (items ?? []).filter((item) => !NUTRITION_CLAIM_PATTERN.test(item));
+}
+
+function sanitizeDominantError(error?: string): string | undefined {
+  if (!error) return undefined;
+  if (!NUTRITION_CLAIM_PATTERN.test(error)) return error;
+  return BOTTLENECK_TO_ERROR.structure;
+}
 
 interface ResolvedSignals {
   score: number;
@@ -143,13 +156,19 @@ function resolveSignals(
     heuristicRisk = "MEDIO";
   }
 
-  const bottleneck = diagnostic?.bottleneck;
+  const bottleneck =
+    diagnostic?.bottleneck === "nutrition_consistency"
+      ? "structure"
+      : diagnostic?.bottleneck;
   const fromBottleneck = bottleneck
     ? BOTTLENECK_TO_LEVERAGES[bottleneck]
     : undefined;
   const errorFromBottleneck = bottleneck
     ? BOTTLENECK_TO_ERROR[bottleneck]
     : undefined;
+  const specificLeverages = removeUnderspecifiedNutritionClaims(
+    diagnostic?.leverages
+  );
 
   return {
     score: diagnostic?.muscle_health_score ?? heuristicScore,
@@ -157,11 +176,13 @@ function resolveSignals(
     biologicalAge: diagnostic?.biological_age_estimate ?? heuristicBio,
     metabolicRisk: diagnostic?.metabolic_risk ?? heuristicRisk,
     leverages:
-      diagnostic?.leverages?.length && diagnostic.leverages.length >= 2
-        ? diagnostic.leverages.slice(0, 3)
+      specificLeverages.length >= 2
+        ? specificLeverages.slice(0, 3)
         : fromBottleneck ?? FALLBACK_LEVERAGES,
     dominantError:
-      diagnostic?.dominant_error ?? errorFromBottleneck ?? FALLBACK_ERROR,
+      sanitizeDominantError(diagnostic?.dominant_error) ??
+      errorFromBottleneck ??
+      FALLBACK_ERROR,
   };
 }
 
@@ -189,14 +210,14 @@ export function MuscleHealthScore({
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className={cn("w-full px-4 py-10", className)}
+      className={cn("w-full px-4 py-14 md:py-20", className)}
     >
       <div className="mx-auto max-w-5xl">
         <div className="ngx-section-panel">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(109,0,255,0.14),transparent_36%),radial-gradient(circle_at_bottom_right,rgba(184,148,255,0.08),transparent_28%)] pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(109,0,255,0.06),transparent_38%)] pointer-events-none" />
 
           <div className="relative z-10">
-            <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-start">
+            <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
               <div>
                 <span className="ngx-eyebrow-pill mb-4">
                   Genesis · lectura inicial
@@ -207,7 +228,7 @@ export function MuscleHealthScore({
                 <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/60 md:text-base">
                   Esta lectura no sustituye una evaluación médica. Sirve para
                   aterrizar el wow de la visualización en algo más útil:
-                  contexto, palancas y dirección.
+                  contexto, hipótesis de palanca y siguiente paso.
                 </p>
 
                 <div className="mt-8 ngx-metal-card !p-5 md:!p-6">
@@ -246,6 +267,14 @@ export function MuscleHealthScore({
                       />
                     </div>
 
+                    <div className="mt-4 rounded-2xl border border-white/[0.08] bg-white/[0.035] px-4 py-3">
+                      <p className="text-xs leading-relaxed text-white/52">
+                        Se estima desde foto, biometría, objetivo y autopercepción
+                        de sueño, estrés y consistencia. No usa laboratorio,
+                        medición clínica ni datos nutricionales.
+                      </p>
+                    </div>
+
                     <div className="mt-5 grid gap-3 sm:grid-cols-3">
                       <div className="ngx-metal-card !p-4">
                         <div className="relative z-10">
@@ -266,7 +295,7 @@ export function MuscleHealthScore({
                             className="ngx-eyebrow !text-[10px]"
                             style={{ color: "var(--ngx-fg-3)" }}
                           >
-                            Edad biológica est.
+                            Edad funcional est.
                           </span>
                           <p className="mt-2 font-mono text-2xl font-bold tabular-nums text-white">
                             {signals.biologicalAge}
@@ -308,7 +337,7 @@ export function MuscleHealthScore({
                           className="ngx-eyebrow !text-[10px]"
                           style={{ color: "var(--ngx-fg-3)" }}
                         >
-                          Riesgo metabólico
+                          Riesgo de fricción
                         </span>
                         <p className="mt-2 text-base font-bold text-white">
                           Lectura inicial del punto de partida
@@ -333,7 +362,7 @@ export function MuscleHealthScore({
                         className="ngx-eyebrow !text-[10px]"
                         style={{ color: "var(--ngx-fg-3)" }}
                       >
-                        Tus 3 palancas accionables
+                        3 hipótesis accionables
                       </span>
                       {signals.leverages.slice(0, 3).map((lever, index) => {
                         const isPrimary = index === 0;
@@ -437,11 +466,7 @@ export function MuscleHealthScore({
                       <a
                         href="#season-roadmap"
                         onClick={handleScrollToRoadmap}
-                        className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full px-5 py-4 text-sm font-bold uppercase tracking-[0.06em] text-white transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97]"
-                        style={{
-                          backgroundColor: "var(--ngx-purple)",
-                          boxShadow: "var(--ngx-glow-primary)",
-                        }}
+                        className="ngx-primary-cta inline-flex px-5 py-4 text-sm"
                       >
                         <Zap className="h-4 w-4" />
                         Ver el roadmap

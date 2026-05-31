@@ -14,7 +14,7 @@ export const DISCLAIMERS = {
 } as const;
 
 export const HYBRID_COPY = {
-  thesis: "La IA diseña el sistema. El coach humano ayuda a sostenerlo.",
+  thesis: "La imagen inspira. El sistema transforma. El humano sostiene.",
   map: "GENESIS te muestra la ruta. HYBRID te ayuda a ejecutarla cuando la vida se atraviesa.",
   cta: "Agendar diagnóstico HYBRID",
   ascendCta: "Ver opción autoguiada",

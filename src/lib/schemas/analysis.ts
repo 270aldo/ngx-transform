@@ -114,6 +114,11 @@ export type Diagnostic = z.infer<typeof DiagnosticSchema>;
  */
 export const AnalysisOutputSchema = z.object({
   /**
+   * Version marker persisted with premium analysis output.
+   */
+  schemaVersion: z.literal("v2").default("v2"),
+
+  /**
    * Descripción inmutable de los rasgos visuales del usuario
    * Usado para mantener consistencia en Identity Chain
    */
@@ -393,6 +398,7 @@ export function migrateV1toV2(
     focusZone: (profile.focusZone === "upper" || profile.focusZone === "lower" || profile.focusZone === "abs" ? profile.focusZone : "full") as "upper" | "lower" | "abs" | "full",
   };
   return {
+    schemaVersion: "v2",
     user_visual_anchor: v1.insightsText.slice(0, 500), // Usar insights como anchor temporal
     insightsText: v1.insightsText, // Mantener para backward compatibility
     profile_summary: {

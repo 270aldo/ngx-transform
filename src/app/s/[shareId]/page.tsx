@@ -1,15 +1,14 @@
 import { getDb } from "@/lib/firebaseAdmin";
 import { getAuthUserFromCookie } from "@/lib/authServer";
 import type { InsightsResult } from "@/types/ai";
-import { TransformationViewer } from "@/components/TransformationViewer";
-import { TransformationViewer2 } from "@/components/TransformationViewer2";
 import { BiometricLoader } from "@/components/BiometricLoader";
-import { TransformationSummary } from "@/components/results/TransformationSummary";
+import { TransformationViewer2 } from "@/components/TransformationViewer2";
 import { MuscleHealthScore } from "@/components/results/MuscleHealthScore";
-import { HybridOfferSection } from "@/components/results/HybridOfferSection";
+import { TransformationSummary } from "@/components/results/TransformationSummary";
 import { HybridOfferV2 } from "@/components/results/HybridOfferV2";
+import { HybridVoiceAgent } from "@/components/results/HybridVoiceAgent";
+import { MobileVoiceAgentTeaser } from "@/components/results/MobileVoiceAgentTeaser";
 import { SeasonRoadmap } from "@/components/results/SeasonRoadmap";
-import { NPSQuick } from "@/components/results/NPSQuick";
 import RefreshClient from "./refresh-client";
 import ScrollToSection from "./scroll-to-section";
 import { Metadata } from "next";
@@ -17,15 +16,9 @@ import Link from "next/link";
 import { getSignedUrl } from "@/lib/storage";
 import { DEMO_SESSION, DEMO_URLS } from "./demoStub";
 
-// Feature flag for Results 2.0 experience
-const FF_RESULTS_2 = process.env.NEXT_PUBLIC_FF_RESULTS_2 === "true";
 const FF_EXPOSE_ORIGINAL = process.env.FF_EXPOSE_ORIGINAL !== "false";
-const FF_DRAMATIC_REVEAL = process.env.FF_DRAMATIC_REVEAL !== "false";
-const FF_SOCIAL_COUNTER = process.env.FF_SOCIAL_COUNTER !== "false";
-const FF_SHARE_UNLOCK =
-  process.env.FF_SHARE_UNLOCK === "true" || process.env.FF_SHARE_TO_UNLOCK !== "false";
-// v12: salida comercial unificada (4 caminos en /results, sin /demo ni /plan)
-const FF_HYBRID_OFFER_V2 = process.env.NEXT_PUBLIC_FF_HYBRID_OFFER_V2 !== "false";
+const FF_HYBRID_VOICE_AGENT =
+  process.env.NEXT_PUBLIC_FF_HYBRID_VOICE_AGENT === "true";
 
 export const dynamic = "force-dynamic";
 
@@ -50,7 +43,7 @@ interface SessionDoc {
   photo?: { originalStoragePath?: string };
   ai?: InsightsResult;
   assets?: { images?: Record<string, string> };
-  status: "processing" | "analyzed" | "generating" | "ready" | "failed";
+  status: "pending" | "processing" | "analyzed" | "generating" | "ready" | "failed" | "partial";
   // v2.0 fields
   letter_from_future?: string;
   shareOriginal?: boolean;
@@ -58,6 +51,7 @@ interface SessionDoc {
     shareOriginal?: boolean;
     shareInsights?: boolean;
     shareProfile?: boolean;
+    shareImages?: boolean;
   };
 }
 
@@ -73,15 +67,16 @@ export async function generateMetadata({ params }: { params: Promise<{ shareId: 
   const ogUrl = `${absoluteBase}/api/og/${shareId}`;
 
   return {
-    title: "Mi Transformación de 12 Meses - NGX",
-    description: "He descubierto mi máximo potencial con NGX. Mira mi proyección física y mental.",
+    title: "Mi diagnóstico visual NGX Transform",
+    description:
+      "Diagnóstico visual de salud muscular y dirección de 12 semanas. Visualización aspiracional, no garantía.",
     openGraph: {
       images: [ogUrl],
     },
   };
 }
 
-async function getUrlsLocally(data: SessionDoc, allowOriginal: boolean) {
+async function getUrlsLocally(data: SessionDoc, allowOriginal: boolean, allowImages: boolean) {
   const result: { originalUrl?: string; images?: Record<string, string> } = {};
 
   // 1. Original Photo (Always sign for the visualization page if allowed)
@@ -95,7 +90,7 @@ async function getUrlsLocally(data: SessionDoc, allowOriginal: boolean) {
   }
 
   // 2. Generated Images
-  if (data.assets?.images) {
+  if (allowImages && data.assets?.images) {
     result.images = {};
     await Promise.all(
       Object.entries(data.assets.images).map(async ([key, path]) => {
@@ -157,15 +152,17 @@ export default async function Page({
     shareOriginal: data.shareScope?.shareOriginal ?? !!data.shareOriginal,
     shareInsights: data.shareScope?.shareInsights ?? false,
     shareProfile: data.shareScope?.shareProfile ?? false,
+    shareImages: data.shareScope?.shareImages ?? false,
   };
 
   // Owner always gets full access regardless of shareScope
   const allowOriginal = isOwner || (FF_EXPOSE_ORIGINAL && shareScope.shareOriginal);
+  const allowImages = isOwner || shareScope.shareImages;
   const allowInsights = isOwner || shareScope.shareInsights;
   const allowProfile = isOwner || shareScope.shareProfile;
 
   const ai = allowInsights ? data.ai : undefined;
-  const urls = isDemo ? DEMO_URLS : await getUrlsLocally(data, allowOriginal);
+  const urls = isDemo ? DEMO_URLS : await getUrlsLocally(data, allowOriginal, allowImages);
 
   if (!allowInsights) {
     const heroImage = urls.images?.m12 || urls.images?.m8 || urls.images?.m4 || urls.originalUrl;
@@ -178,8 +175,10 @@ export default async function Page({
             <h1 className="ngx-h1 !text-left" style={{ maxWidth: "20ch" }}>Transformación privada</h1>
             <p className="text-sm leading-relaxed text-white/55 max-w-2xl">
               {explicitShareDecision
-                ? "El creador decidió compartir solo las imágenes. El análisis permanece privado."
+                ? "El creador decidió qué partes compartir. El análisis y las imágenes permanecen privadas salvo autorización explícita."
                 : "Esta visualización es privada por defecto. Solo el creador puede ver el análisis completo."}
+              {" "}
+              Tus imágenes no son públicas. Puedes compartirlas cuando tú decidas.
             </p>
           </div>
 
@@ -232,146 +231,75 @@ export default async function Page({
     );
   }
 
-  // Inject signed URLs into the data object for the viewer
-  const viewerData = {
-    ...data,
-    assets: {
-      ...data.assets,
-      images: urls.images || data.assets?.images // Prefer signed URLs if available
-    },
-  };
+  const stillGenerating = data.status === "processing" || data.status === "generating" || data.status === "analyzed";
+  const isReady = data.status === "ready" || data.status === "partial";
+  const sharedUserInput = allowProfile
+    ? {
+        age: data.input?.age,
+        sex: data.input?.sex,
+        heightCm: data.input?.heightCm,
+        weightKg: data.input?.weightKg,
+        level: data.input?.level,
+        goal: data.input?.goal,
+        weeklyTime: data.input?.weeklyTime,
+        focusZone: data.input?.focusZone,
+        stressLevel: data.input?.stressLevel,
+        sleepQuality: data.input?.sleepQuality,
+        disciplineRating: data.input?.disciplineRating,
+      }
+    : undefined;
+  const safeFocusZone = ["upper", "lower", "abs", "full"].includes(
+    data.input?.focusZone ?? ""
+  )
+    ? (data.input?.focusZone as "upper" | "lower" | "abs" | "full")
+    : undefined;
+  const viewerUserProfile = allowProfile
+    ? {
+        focusZone: safeFocusZone,
+        goal: data.input?.goal,
+        stressLevel: data.input?.stressLevel,
+      }
+    : undefined;
 
-  // Sanitize for Client Component (remove Firestore Timestamps)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  delete (viewerData as any).updatedAt;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  delete (viewerData as any).createdAt;
-
-  const stillGenerating = data.status !== "ready";
-  const isReady = data.status === "ready";
-
-  // Use Results 2.0 experience if feature flag is enabled
-  if (FF_RESULTS_2) {
-    return (
-      <>
-        <ScrollToSection />
-        <TransformationViewer2
-          ai={ai}
-          imageUrls={urls}
-          shareId={shareId}
-          isReady={isReady}
-          letterFromFuture={data.letter_from_future}
-          userProfile={
-            allowProfile
-              ? {
-                  focusZone: data.input?.focusZone as "upper" | "lower" | "abs" | "full" | undefined,
-                  goal: data.input?.goal as "definicion" | "masa" | "mixto" | undefined,
-                  stressLevel: data.input?.stressLevel,
-                }
-              : undefined
-          }
-          featureFlags={{
-            FF_DRAMATIC_REVEAL,
-            FF_SOCIAL_COUNTER,
-            FF_SHARE_TO_UNLOCK: FF_SHARE_UNLOCK,
-            FF_AGENT_BRIDGE_CTA: false,
-          }}
-        />
-        {/* Genesis Demo CTA - appears after transformation viewer */}
-        {isReady && (
-          <>
-            <MuscleHealthScore
-              shareId={shareId}
-              diagnostic={ai.diagnostic}
-              userInput={
-                allowProfile
-                  ? {
-                      age: data.input?.age,
-                      sleepQuality: data.input?.sleepQuality,
-                      disciplineRating: data.input?.disciplineRating,
-                      stressLevel: data.input?.stressLevel,
-                      weeklyTime: data.input?.weeklyTime,
-                      goal: data.input?.goal,
-                    }
-                  : undefined
-              }
-            />
-            <TransformationSummary
-              ai={ai}
-              imageUrls={urls}
-              shareId={shareId}
-              userInput={
-                allowProfile
-                  ? {
-                      weightKg: data.input?.weightKg,
-                      age: data.input?.age,
-                      goal: data.input?.goal,
-                      level: data.input?.level,
-                    }
-                  : undefined
-              }
-            />
-            <SeasonRoadmap />
-            {FF_HYBRID_OFFER_V2 ? (
-              <HybridOfferV2 shareId={shareId} />
-            ) : (
-              <HybridOfferSection shareId={shareId} />
-            )}
-            <NPSQuick shareId={shareId} />
-          </>
-        )}
-        <RefreshClient shareId={shareId} active={stillGenerating} />
-      </>
-    );
-  }
-
-  // Legacy experience
   return (
     <>
       <ScrollToSection />
-      <TransformationViewer ai={ai} imageUrls={urls} shareId={shareId} isReady={isReady} />
-      {/* Genesis Demo CTA - appears after transformation viewer */}
+      <TransformationViewer2
+        ai={ai}
+        imageUrls={urls}
+        shareId={shareId}
+        isReady={isReady}
+        surfaceMode="lead-magnet"
+        letterFromFuture={data.letter_from_future}
+        userProfile={viewerUserProfile}
+        sessionId={shareId}
+      />
+
+      {/* Mobile-first teaser: brings the Voice Agent much earlier in the flow.
+          Only renders when the feature flag is enabled. Hidden on lg+ screens. */}
+      {isReady && FF_HYBRID_VOICE_AGENT && (
+        <MobileVoiceAgentTeaser shareId={shareId} />
+      )}
+
+      <MuscleHealthScore
+        shareId={shareId}
+        diagnostic={ai.diagnostic}
+        userInput={sharedUserInput}
+      />
+      <TransformationSummary
+        ai={ai}
+        imageUrls={urls}
+        shareId={shareId}
+        userInput={sharedUserInput}
+      />
       {isReady && (
-        <>
-          <MuscleHealthScore
-            shareId={shareId}
-            diagnostic={ai.diagnostic}
-            userInput={
-              allowProfile
-                ? {
-                    age: data.input?.age,
-                    sleepQuality: data.input?.sleepQuality,
-                    disciplineRating: data.input?.disciplineRating,
-                    stressLevel: data.input?.stressLevel,
-                    weeklyTime: data.input?.weeklyTime,
-                    goal: data.input?.goal,
-                  }
-                : undefined
-            }
-          />
-          <TransformationSummary
-            ai={ai}
-            imageUrls={urls}
-            shareId={shareId}
-            userInput={
-              allowProfile
-                ? {
-                    weightKg: data.input?.weightKg,
-                    age: data.input?.age,
-                    goal: data.input?.goal,
-                    level: data.input?.level,
-                  }
-                : undefined
-            }
-          />
-          <SeasonRoadmap />
-          {FF_HYBRID_OFFER_V2 ? (
-            <HybridOfferV2 shareId={shareId} />
-          ) : (
-            <HybridOfferSection shareId={shareId} />
-          )}
-          <NPSQuick shareId={shareId} />
-        </>
+        <SeasonRoadmap />
+      )}
+      {isReady && FF_HYBRID_VOICE_AGENT && (
+        <HybridVoiceAgent shareId={shareId} />
+      )}
+      {isReady && (
+        <HybridOfferV2 shareId={shareId} />
       )}
       <RefreshClient shareId={shareId} active={stillGenerating} />
     </>

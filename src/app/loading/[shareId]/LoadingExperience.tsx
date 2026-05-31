@@ -7,6 +7,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { Logo } from "@/components/ui/Logo";
 import { RiveOrb } from "@/components/RiveOrb";
 import { LoadingStepper } from "@/components/LoadingStepper";
+import { getSeasonMilestoneLabel } from "@/lib/seasonMilestones";
 
 const TIPS = [
   "La salud muscular es uno de los predictores clave de longevidad.",
@@ -16,6 +17,22 @@ const TIPS = [
 ];
 
 const PROGRESS_BY_COUNT = [12, 45, 75, 100];
+
+const CONSOLE_LOGS = [
+  { time: "00:01", text: "Iniciando escaneo biométrico GÉNESIS...", triggeredBy: "start" },
+  { time: "00:03", text: "Calibrando densidad de masa magra...", triggeredBy: "start" },
+  { time: "00:05", text: "Proyectando estructura ósea...", triggeredBy: "start" },
+  { time: "00:08", text: "Procesando modelo neural de rostro...", triggeredBy: "start" },
+  { time: "00:11", text: "Cargando análisis GÉNESIS · Entrenamiento...", triggeredBy: "ai" },
+  { time: "00:14", text: "Cargando análisis GÉNESIS · Nutrición...", triggeredBy: "ai" },
+  { time: "00:17", text: "Cargando análisis GÉNESIS · Recuperación...", triggeredBy: "ai" },
+  { time: "00:20", text: "Generando visualización hito Mes 4...", triggeredBy: "m4" },
+  { time: "00:23", text: "Generando visualización hito Mes 8...", triggeredBy: "m8" },
+  { time: "00:26", text: "Generando visualización hito Mes 12...", triggeredBy: "m12" },
+  { time: "00:28", text: "Compilando carta desde el futuro...", triggeredBy: "ready" },
+  { time: "00:30", text: "Firmando credenciales de acceso...", triggeredBy: "ready" },
+  { time: "00:32", text: "Proyección completada con éxito. Listo para revelar.", triggeredBy: "ready" }
+];
 
 export function LoadingExperience({ shareId }: { shareId: string }) {
   const router = useRouter();
@@ -29,6 +46,39 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
   const [retrying, setRetrying] = useState(false);
   const startedGenerationRef = useRef(false);
 
+  const [notificationPermission, setNotificationPermission] = useState<string>(() => {
+    if (typeof window !== "undefined" && "Notification" in window) {
+      return Notification.permission;
+    }
+    return "default";
+  });
+  const [activeLogCount, setActiveLogCount] = useState(2);
+  const consoleRef = useRef<HTMLDivElement>(null);
+
+  const requestNotificationPermission = async () => {
+    if (typeof window !== "undefined" && "Notification" in window) {
+      try {
+        const permission = await Notification.requestPermission();
+        setNotificationPermission(permission);
+        if (permission === "granted") {
+          new Notification("¡Notificaciones activadas! ⚡", {
+            body: "GÉNESIS te avisará en cuanto tu proyección esté lista.",
+            icon: "/images/brand/ngx-mark-purple.png"
+          });
+        }
+      } catch (err) {
+        console.error("Failed to request notification permission:", err);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const logInterval = setInterval(() => {
+      setActiveLogCount((prev) => prev + 1);
+    }, 2500);
+    return () => clearInterval(logInterval);
+  }, []);
+
   const imageCount = imageKeys.length;
   const has = (key: string) => imageKeys.includes(key);
   const isReady = status === "ready";
@@ -37,13 +87,35 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
   const stepStates = useMemo(() => {
     return [
       { label: "Analizando tu foto", done: hasAi || imageCount >= 1, active: !hasAi && imageCount === 0 },
-      { label: "Visualizando mes 4", done: has("m4"), active: hasAi && !has("m4") },
-      { label: "Visualizando mes 8", done: has("m8"), active: has("m4") && !has("m8") },
-      { label: "Visualizando mes 12", done: has("m12"), active: has("m8") && !has("m12") },
+      { label: `Visualizando ${getSeasonMilestoneLabel("m4")}`, done: has("m4"), active: hasAi && !has("m4") },
+      { label: `Visualizando ${getSeasonMilestoneLabel("m8")}`, done: has("m8"), active: has("m4") && !has("m8") },
+      { label: `Visualizando ${getSeasonMilestoneLabel("m12")}`, done: has("m12"), active: has("m8") && !has("m12") },
       { label: "Preparando tu lectura inicial", done: isReady, active: imageCount >= 3 && !isReady },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageKeys, hasAi, isReady]);
+
+  const visibleLogs = useMemo(() => {
+    return CONSOLE_LOGS.filter((log, idx) => {
+      const stateTriggered =
+        (log.triggeredBy === "start") ||
+        (log.triggeredBy === "ai" && hasAi) ||
+        (log.triggeredBy === "m4" && imageKeys.includes("m4")) ||
+        (log.triggeredBy === "m8" && imageKeys.includes("m8")) ||
+        (log.triggeredBy === "m12" && imageKeys.includes("m12")) ||
+        (log.triggeredBy === "ready" && isReady);
+
+      const timeTriggered = idx < activeLogCount;
+
+      return stateTriggered || timeTriggered;
+    });
+  }, [hasAi, imageKeys, isReady, activeLogCount]);
+
+  useEffect(() => {
+    if (consoleRef.current) {
+      consoleRef.current.scrollTop = consoleRef.current.scrollHeight;
+    }
+  }, [visibleLogs]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -69,7 +141,7 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
         { hasAi: true, keys: ["m4", "m8", "m12"] },
       ];
       let i = 0;
-      setHasAi(true);
+      const bootstrapId = window.setTimeout(() => setHasAi(true), 0);
       const id = setInterval(() => {
         if (i >= ticks.length) {
           clearInterval(id);
@@ -81,7 +153,10 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
         setProgress(PROGRESS_BY_COUNT[Math.min(t.keys.length, 3)]);
         i++;
       }, 3000);
-      return () => clearInterval(id);
+      return () => {
+        window.clearTimeout(bootstrapId);
+        clearInterval(id);
+      };
     }
 
     let mounted = true;
@@ -93,10 +168,10 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
         if (!mounted) return;
 
         const nextStatus = json?.status || "processing";
-        const images = (json?.assets?.images || {}) as Record<string, string>;
-        const keys = Object.keys(images);
+        const signedImages = (json?.assets?.images || {}) as Record<string, string>;
+        const keys = Array.isArray(json?.assetKeys) ? json.assetKeys : Object.keys(signedImages);
         const count = keys.length;
-        const aiPresent = json?.ai != null && json?.ai !== undefined;
+        const aiPresent = Boolean(json?.hasAi);
 
         setStatus(nextStatus);
         setImageKeys(keys);
@@ -105,7 +180,8 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
 
         if (
           !startedGenerationRef.current &&
-          (nextStatus === "analyzed" || nextStatus === "processing") &&
+          nextStatus === "analyzed" &&
+          aiPresent &&
           count === 0 &&
           !authLoading
         ) {
@@ -149,6 +225,16 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
         }
 
         if (nextStatus === "ready" || count >= 3) {
+          if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+            try {
+              new Notification("¡Tu transformación está lista! ⚡", {
+                body: "GÉNESIS completó tu diagnóstico visual y plan de 12 semanas. Entra a ver los resultados.",
+                icon: "/images/brand/ngx-mark-purple.png"
+              });
+            } catch (err) {
+              console.error("Failed to send native notification:", err);
+            }
+          }
           setTimeout(() => router.replace(`/s/${shareId}`), 800);
         }
       } catch {
@@ -204,6 +290,64 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
         <LoadingStepper steps={stepStates} failed={isFailed} />
       </div>
 
+      {/* Diagnostic Console Feed ticker */}
+      <div className="z-10 w-full max-w-lg px-6 mt-6">
+        <div className="w-full rounded-2xl border border-white/[0.06] bg-black/40 p-4 font-mono text-[11px] text-white/70 shadow-inner">
+          <div className="flex items-center justify-between border-b border-white/[0.06] pb-2 mb-3">
+            <div className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-red-500/80" />
+              <span className="h-2 w-2 rounded-full bg-yellow-500/80" />
+              <span className="h-2 w-2 rounded-full bg-[var(--ngx-success)]/80 animate-pulse" />
+            </div>
+            <span className="text-[9px] uppercase tracking-wider text-white/30">GÉNESIS CONSOLE FEED</span>
+          </div>
+          <div ref={consoleRef} className="h-24 overflow-y-auto space-y-1.5 scrollbar-none scroll-smooth">
+            {visibleLogs.map((log, index) => (
+              <div key={index} className="flex items-start gap-2">
+                <span className="text-[var(--ngx-purple-light)] shrink-0 font-bold">[{log.time}]</span>
+                <span className="text-white/80">{log.text}</span>
+                {index === visibleLogs.length - 1 && (
+                  <span className="inline-block w-1.5 h-3 bg-[var(--ngx-purple-light)] animate-pulse" />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Web Notification Permission request banner */}
+      {notificationPermission === "default" && (
+        <div className="z-10 mt-6 w-full max-w-lg px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="w-full rounded-2xl border border-[var(--ngx-border-card)] bg-[var(--ngx-surface-glass)] p-4 shadow-lg backdrop-blur-xl"
+          >
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="space-y-1 text-center sm:text-left">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-white">¿Activar notificaciones?</h4>
+                <p className="text-[11px] leading-relaxed text-white/55">
+                  GÉNESIS tarda unos 30-40 segundos en generar tus imágenes. Te notificaremos al instante cuando esté listo.
+                </p>
+              </div>
+              <button
+                onClick={requestNotificationPermission}
+                className="shrink-0 rounded-full bg-[var(--ngx-purple)] px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-white shadow-[var(--ngx-glow-primary-soft)] hover:bg-[var(--ngx-primary-hover)] active:scale-95 transition-all cursor-pointer"
+              >
+                Notificarme
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {notificationPermission === "granted" && (
+        <div className="z-10 mt-4 flex items-center justify-center gap-1.5 text-[10px] text-[var(--ngx-success)] uppercase tracking-widest font-semibold">
+          <span className="h-1.5 w-1.5 rounded-full bg-[var(--ngx-success)] animate-pulse" />
+          Notificaciones activadas. Puedes cambiar de pestaña con seguridad.
+        </div>
+      )}
+
       {/* Error + retry */}
       {error && (
         <div className="z-10 mt-6 flex flex-col items-center gap-3 px-6 text-center">
@@ -229,14 +373,8 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
                   },
                   body: JSON.stringify({ sessionId: shareId }),
                 });
-                await fetch("/api/generate-images", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                  },
-                  body: JSON.stringify({ sessionId: shareId }),
-                });
+                // Polling will trigger image generation after the analysis is
+                // persisted and hasAi=true. This avoids racing with /api/analyze.
               } catch (e) {
                 setError("No pudimos reintentar. Intenta de nuevo en unos segundos.");
                 console.error("[Loading] Retry failed:", e);
@@ -275,6 +413,11 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
           </motion.div>
         </AnimatePresence>
       </div>
+
+      {/* Email Safety banner */}
+      <p className="z-10 mt-4 text-center text-[11px] leading-relaxed text-white/40 max-w-sm px-6">
+        Puedes cerrar esta pestaña con seguridad. Tu transformación se guarda de forma privada y tu enlace de acceso se ha enviado a tu correo.
+      </p>
 
       {/* "Ver resultados" — only when actually ready, otherwise hidden */}
       {isReady ? (

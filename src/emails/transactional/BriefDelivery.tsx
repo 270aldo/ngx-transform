@@ -99,21 +99,21 @@ export default function BriefDelivery({
                       <td className="w-1/2 pr-2">
                         <Img
                           src={m0ImageUrl}
-                          alt="HOY"
+                          alt="Punto de partida"
                           className="rounded-lg w-full"
                         />
                         <Text className="text-center text-xs text-neutral-500 mt-2">
-                          HOY
+                          Punto de partida
                         </Text>
                       </td>
                       <td className="w-1/2 pl-2">
                         <Img
                           src={m12ImageUrl}
-                          alt="MES 12"
+                          alt="Season 3"
                           className="rounded-lg w-full"
                         />
                         <Text className="text-center text-xs text-neutral-500 mt-2">
-                          MES 12 — POTENCIAL
+                          Season 3 — Potencial
                         </Text>
                       </td>
                     </tr>
@@ -147,7 +147,7 @@ export default function BriefDelivery({
                             {biologicalAge}
                           </Text>
                           <Text className="text-[10px] text-neutral-500 uppercase tracking-wider mt-1">
-                            Edad biológica est.
+                            Edad funcional est.
                           </Text>
                           <Text className="text-[10px] text-amber-400 mt-1">
                             {ageDelta > 0
@@ -162,7 +162,7 @@ export default function BriefDelivery({
                             {metabolicRisk}
                           </Text>
                           <Text className="text-[10px] text-neutral-500 uppercase tracking-wider mt-1">
-                            Riesgo metabólico
+                            Riesgo de fricción
                           </Text>
                         </td>
                       )}

@@ -112,9 +112,9 @@ export function AgentBridgeCTA({
       </h3>
       <p className="text-white/60 mb-2">{capability.description}</p>
       <p className="text-white/60 mb-6">
-        Este es tu potencial. Pero el potencial sin acción es solo fantasía.
+        La imagen inspira, pero el sistema es lo que transforma.
         <br />
-        El sistema NGX te ayuda a convertirlo en realidad.
+        HYBRID suma estructura y revisión humana para sostenerlo.
       </p>
 
       {/* CTA */}

@@ -1,0 +1,52 @@
+<!-- @dsCard group="Spacing" -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/>
+<title>Spacing scale · 4pt grid</title>
+<link rel="stylesheet" href="../tokens-brand.css"/>
+<link rel="stylesheet" href="../tokens-lg.css"/>
+<link rel="stylesheet" href="../components.css"/>
+<style>
+  html, body { margin: 0; padding: 0; background: #04021A; }
+  body {
+    padding: 24px; color: var(--ngx-white); font-family: var(--font-text);
+    min-height: 280px;
+    background:
+      radial-gradient(40% 60% at 80% 10%, rgba(109,0,255,0.18) 0%, transparent 60%),
+      radial-gradient(30% 40% at 10% 95%, rgba(109,0,255,0.12) 0%, transparent 60%),
+      #04021A;
+    position: relative;
+  }
+  body::before {
+    content:""; position:absolute; inset:0;
+    background-image: url("../assets/textures/texture-pattern-navy.png");
+    background-size: 280px; opacity: 0.05; mix-blend-mode: screen; pointer-events:none;
+  }
+  body > * { position: relative; z-index: 1; }
+  .card-label {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 9.5px; letter-spacing: 0.20em; text-transform: uppercase;
+    color: var(--ngx-purple-300);
+    margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+  }
+  .card-label::before { content:""; width:5px; height:5px; border-radius:50%; background: var(--ngx-purple); box-shadow: 0 0 8px var(--ngx-purple); }
+  .demo-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .note { font-size: 11px; color: var(--ngx-gray-400); margin-top: 14px; line-height: 1.5; }
+  .swatch-note { font-family: var(--font-display); font-weight: 700; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ngx-gray-400); }
+  .sw { width: 64px; height: 64px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06); display: flex; align-items: flex-end; padding: 4px; box-sizing: border-box; font-family: var(--font-display); font-size: 8px; letter-spacing: .08em; color: var(--ngx-white); }
+  .col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+</style></head>
+<body>
+
+<style>
+  .ss-row { display:flex; gap:14px; align-items: flex-end; flex-wrap: wrap; }
+  .ss-cell { display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .ss-bar { background: var(--ngx-purple); box-shadow: 0 0 12px rgba(109,0,255,0.45); border-radius: 3px; width: 18px; }
+  .ss-cap { font-family: var(--font-display); font-weight: 700; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ngx-gray-400); }
+</style>
+<div class="card-label">SPACING · 4pt</div>
+<div class="ss-row">
+  <div class="ss-cell"><div class="ss-bar" style="height:4px"></div><span class="ss-cap">1<br>4</span></div><div class="ss-cell"><div class="ss-bar" style="height:8px"></div><span class="ss-cap">2<br>8</span></div><div class="ss-cell"><div class="ss-bar" style="height:12px"></div><span class="ss-cap">3<br>12</span></div><div class="ss-cell"><div class="ss-bar" style="height:16px"></div><span class="ss-cap">4<br>16</span></div><div class="ss-cell"><div class="ss-bar" style="height:20px"></div><span class="ss-cap">5<br>20</span></div><div class="ss-cell"><div class="ss-bar" style="height:24px"></div><span class="ss-cap">6<br>24</span></div><div class="ss-cell"><div class="ss-bar" style="height:32px"></div><span class="ss-cap">8<br>32</span></div><div class="ss-cell"><div class="ss-bar" style="height:40px"></div><span class="ss-cap">10<br>40</span></div><div class="ss-cell"><div class="ss-bar" style="height:48px"></div><span class="ss-cap">12<br>48</span></div><div class="ss-cell"><div class="ss-bar" style="height:64px"></div><span class="ss-cap">16<br>64</span></div><div class="ss-cell"><div class="ss-bar" style="height:80px"></div><span class="ss-cap">20<br>80</span></div><div class="ss-cell"><div class="ss-bar" style="height:96px"></div><span class="ss-cap">24<br>96</span></div>
+</div>
+<div class="note">4-point grid. Token names go <code>--space-1</code> (4px) → <code>--space-32</code> (128px). Use <code>--space-8</code> as default gap between siblings; <code>--space-16</code> for vertical air around display type.</div>
+
+</body></html>

@@ -17,6 +17,7 @@ import {
   Shield
 } from "lucide-react";
 import type { TimelineEntry } from "@/types/ai";
+import { getSeasonMilestoneLabel } from "@/lib/seasonMilestones";
 import type { TimelineStep } from "./TransformationViewer";
 
 interface StatsPanelProps {
@@ -26,10 +27,10 @@ interface StatsPanelProps {
 }
 
 const stepLabels: Record<TimelineStep, string> = {
-  m0: "PUNTO DE PARTIDA",
-  m4: "MES 4",
-  m8: "MES 8",
-  m12: "META FINAL",
+  m0: getSeasonMilestoneLabel("m0"),
+  m4: getSeasonMilestoneLabel("m4"),
+  m8: getSeasonMilestoneLabel("m8"),
+  m12: getSeasonMilestoneLabel("m12"),
   summary: "RESUMEN",
 };
 
@@ -37,7 +38,7 @@ const stepDescriptions: Record<TimelineStep, string> = {
   m0: "Tu línea base actual",
   m4: "Primera fase de adaptación",
   m8: "Consolidación de resultados",
-  m12: "Transformación completa",
+  m12: "Visión completa",
   summary: "Vista general de tu progreso",
 };
 
@@ -60,7 +61,7 @@ const phaseContent: Record<TimelineStep, {
   },
   m4: {
     focusTitle: "Fase de Adaptación",
-    focusDescription: "Durante los primeros 4 meses tu cuerpo se adapta al nuevo estímulo. Es la fase donde construyes los cimientos: técnica correcta, hábitos sólidos y las primeras adaptaciones neuromusculares que preparan el terreno para cambios más visibles.",
+    focusDescription: "En Season 1 tu cuerpo empieza a adaptarse al nuevo estímulo. Es la fase donde construyes los cimientos: técnica correcta, hábitos sólidos y las primeras adaptaciones neuromusculares que preparan el terreno para cambios más visibles.",
     focusIcon: Flame,
     focusColor: "text-orange-400",
     milestones: [
@@ -77,7 +78,7 @@ const phaseContent: Record<TimelineStep, {
   },
   m8: {
     focusTitle: "Fase de Consolidación",
-    focusDescription: "Los meses 4 al 8 son donde los cambios se vuelven evidentes. Tu cuerpo ya está adaptado y ahora responde con mayor eficiencia. Es el momento de incrementar intensidad y volumen para acelerar la transformación.",
+    focusDescription: "En Season 2 los cambios se vuelven más evidentes. Tu cuerpo ya está adaptado y ahora responde con mayor eficiencia. Es el momento de incrementar intensidad y volumen para acelerar la transformación.",
     focusIcon: TrendingUp,
     focusColor: "text-violet-400",
     milestones: [
@@ -93,8 +94,8 @@ const phaseContent: Record<TimelineStep, {
     ],
   },
   m12: {
-    focusTitle: "Transformación Completa",
-    focusDescription: "Al mes 12 habrás completado una transformación integral. No solo tu físico será diferente, sino tu relación con el ejercicio y la nutrición. Este no es el final, es el nuevo estándar de tu vida.",
+    focusTitle: "Visión Completa",
+    focusDescription: "En Season 3 aparece la visión completa de una primera temporada integral. No solo tu físico sería diferente, sino tu relación con el ejercicio y la nutrición. Este no es el final, es el nuevo estándar de tu vida.",
     focusIcon: Award,
     focusColor: "text-emerald-400",
     milestones: [
@@ -387,7 +388,7 @@ function ProgressSummary({ step }: { step: TimelineStep }) {
     m4: {
       title: "Progreso Esperado",
       items: [
-        { icon: Clock, label: "Tiempo", value: "16 semanas" },
+        { icon: Clock, label: "Etapa", value: "Season 1" },
         { icon: Flame, label: "Intensidad", value: "Moderada-Alta" },
         { icon: TrendingUp, label: "Progreso", value: "25-35%" },
       ]
@@ -395,15 +396,15 @@ function ProgressSummary({ step }: { step: TimelineStep }) {
     m8: {
       title: "Progreso Esperado",
       items: [
-        { icon: Clock, label: "Tiempo", value: "32 semanas" },
+        { icon: Clock, label: "Etapa", value: "Season 2" },
         { icon: Flame, label: "Intensidad", value: "Alta" },
         { icon: TrendingUp, label: "Progreso", value: "60-70%" },
       ]
     },
     m12: {
-      title: "Transformación Final",
+      title: "Visión Completa",
       items: [
-        { icon: Clock, label: "Tiempo", value: "52 semanas" },
+        { icon: Clock, label: "Etapa", value: "Season 3" },
         { icon: Flame, label: "Intensidad", value: "Óptima" },
         { icon: TrendingUp, label: "Progreso", value: "100%" },
       ]

@@ -93,7 +93,7 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="ngx-section-panel"
       >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(109,0,255,0.12),transparent_32%),radial-gradient(circle_at_82%_80%,rgba(184,148,255,0.08),transparent_24%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(109,0,255,0.06),transparent_34%)]" />
 
         <div className="relative z-10">
           <div className="mb-4 flex items-center gap-2">
@@ -165,11 +165,7 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
                       </button>
                       <a
                         href={`/s/${shareId}/plan`}
-                        className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full px-5 py-4 text-sm font-bold uppercase tracking-[0.06em] text-white transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97]"
-                        style={{
-                          backgroundColor: "var(--ngx-purple)",
-                          boxShadow: "var(--ngx-glow-primary)",
-                        }}
+                        className="ngx-primary-cta inline-flex px-5 py-4 text-sm"
                       >
                         Ver roadmap
                         <ArrowRight className="h-4 w-4" />
@@ -212,11 +208,7 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
                     <button
                       onClick={submitFeedback}
                       disabled={loading}
-                      className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full px-5 py-4 text-sm font-bold uppercase tracking-[0.06em] text-white transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97] disabled:opacity-70 disabled:translate-y-0"
-                      style={{
-                        backgroundColor: "var(--ngx-purple)",
-                        boxShadow: "var(--ngx-glow-primary)",
-                      }}
+                      className="ngx-primary-cta inline-flex px-5 py-4 text-sm disabled:opacity-70"
                     >
                       <Send className="h-4 w-4" />
                       Guardar feedback
@@ -255,11 +247,7 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
                   <button
                     onClick={submitFeedback}
                     disabled={loading}
-                    className="mt-4 inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full px-5 py-4 text-sm font-bold uppercase tracking-[0.06em] text-white transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97] disabled:opacity-70 disabled:translate-y-0"
-                    style={{
-                      backgroundColor: "var(--ngx-purple)",
-                      boxShadow: "var(--ngx-glow-primary)",
-                    }}
+                    className="ngx-primary-cta mt-4 inline-flex w-full px-5 py-4 text-sm disabled:opacity-70"
                   >
                     <Send className="h-4 w-4" />
                     Enviar feedback

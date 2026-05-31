@@ -27,6 +27,7 @@ import {
   getClientIP,
   getRateLimitHeaders,
 } from "@/lib/rateLimit";
+import { getConfiguredFromEmail } from "@/lib/emailConfig";
 import BriefDelivery from "@/emails/transactional/BriefDelivery";
 import type { Bottleneck, Diagnostic, InsightsResult } from "@/types/ai";
 
@@ -36,9 +37,13 @@ const Body = z.object({
   shareId: z.string().min(1).max(120),
 });
 
+function getFromEmail(): string | null {
+  return getConfiguredFromEmail("BRIEF_SEND");
+}
+
 const BOTTLENECK_LABELS: Record<Bottleneck, string> = {
   training_progression: "Entrenamiento sin progresión trazable",
-  nutrition_consistency: "Inconsistencia nutricional",
+  nutrition_consistency: "Consistencia de ejecución",
   recovery: "Recuperación insuficiente",
   structure: "Falta de estructura semanal",
   expectations: "Expectativas mal calibradas",
@@ -51,6 +56,19 @@ interface UserInputSnapshot {
   disciplineRating?: number;
   stressLevel?: number;
   weightKg?: number;
+}
+
+const NUTRITION_CLAIM_PATTERN =
+  /prote[ií]na|calor[ií]a|déficit|super[aá]vit|ingesta|comida|nutrici[oó]n|macros?|dieta/i;
+
+function removeUnderspecifiedNutritionClaims(items?: string[]): string[] {
+  return (items ?? []).filter((item) => !NUTRITION_CLAIM_PATTERN.test(item));
+}
+
+function sanitizeDominantError(error?: string): string | undefined {
+  if (!error) return undefined;
+  if (!NUTRITION_CLAIM_PATTERN.test(error)) return error;
+  return "Sin estructura semanal trazable, lo que parece flexibilidad se vuelve improvisación y reduce adherencia.";
 }
 
 function deriveSignals(
@@ -93,14 +111,14 @@ function deriveSignals(
       diagnostic?.biological_age_estimate ?? heuristicBio,
     chronologicalAge: age,
     metabolic_risk: diagnostic?.metabolic_risk ?? heuristicRisk,
-    leverages: diagnostic?.leverages?.length
-      ? diagnostic.leverages.slice(0, 3)
+    leverages: removeUnderspecifiedNutritionClaims(diagnostic?.leverages).length
+      ? removeUnderspecifiedNutritionClaims(diagnostic?.leverages).slice(0, 3)
       : [
           "Entrenamiento de fuerza 3x/semana con progresión clara",
-          "Proteína >1.6g/kg/día distribuida en 4 ingestas",
+          "Agenda semanal simple para reducir decisiones improvisadas",
           "Sueño de 7-9h con horario consistente",
         ],
-    dominant_error: diagnostic?.dominant_error,
+    dominant_error: sanitizeDominantError(diagnostic?.dominant_error),
   };
 }
 
@@ -229,24 +247,33 @@ export async function POST(req: NextRequest) {
     const ai = data.ai;
     const diagnostic = ai?.diagnostic;
     const signals = deriveSignals(diagnostic, data.input ?? {});
-    const bottleneckLabel = diagnostic?.bottleneck
-      ? BOTTLENECK_LABELS[diagnostic.bottleneck]
+    const bottleneck =
+      diagnostic?.bottleneck === "nutrition_consistency"
+        ? "structure"
+        : diagnostic?.bottleneck;
+    const bottleneckLabel = bottleneck
+      ? BOTTLENECK_LABELS[bottleneck]
       : undefined;
 
     const subject = "Tu brief NGX Transform — diagnóstico + roadmap";
+    const from = getFromEmail();
+    if (!from) {
+      console.error("[BRIEF_SEND] RESEND_FROM_EMAIL not configured in production");
+      return NextResponse.json(
+        { ok: false, error: "El envío de correo no está configurado." },
+        { status: 503 }
+      );
+    }
 
     const { data: sendData, error: sendError } = await resend.emails.send({
-      from:
-        process.env.RESEND_FROM_EMAIL ||
-        process.env.EMAIL_FROM ||
-        "NGX Transform <transform@ngxgenesis.com>",
+      from,
       to: email,
       subject,
       react: BriefDelivery({
         shareId: parsed.shareId,
         m0ImageUrl,
         m12ImageUrl,
-        bottleneck: diagnostic?.bottleneck,
+        bottleneck,
         bottleneckLabel,
         dominantError: signals.dominant_error,
         leverages: signals.leverages,

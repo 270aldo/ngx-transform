@@ -1,0 +1,50 @@
+- generic [active] [ref=e1] [box=0,0,1440,900]:
+  - main [ref=e2] [box=0,0,1440,900]:
+    - main [ref=e4] [box=0,0,1440,900]:
+      - generic [ref=e6] [box=464,138,512,625]:
+        - generic [ref=e7] [box=464,138,512,56]:
+          - generic [ref=e8] [box=464,138,512,28]:
+            - img [ref=e9] [box=537,142,20,20]
+            - heading "GENESIS está analizando tu perfil" [level=1] [ref=e17] [box=565,138,339,28]
+          - paragraph [ref=e18] [box=464,174,512,20]: Diseñando tu transformación
+        - generic [ref=e21] [box=464,218,512,16]:
+          - generic [ref=e22] [box=464,218,55,15]: Progreso
+          - generic [ref=e23] [box=962,218,14,16]: 0%
+        - generic [ref=e25] [box=464,274,512,292]:
+          - img [ref=e28] [box=704,306,32,32]
+          - generic [ref=e37] [box=560,394,320,172]:
+            - generic [ref=e38] [box=560,394,152,78]:
+              - img [ref=e79] [box=622,407,28,28]
+              - generic [ref=e42] [box=594,439,84,16]: Entrenamiento
+            - generic [ref=e43] [box=728,394,152,78]:
+              - img [ref=e45] [box=794,411,20,20]
+              - generic [ref=e48] [box=777,439,53,16]: Nutrición
+            - generic [ref=e49] [box=560,488,152,78]:
+              - img [ref=e51] [box=626,505,20,20]
+              - generic [ref=e54] [box=596,533,80,16]: Recuperación
+            - generic [ref=e55] [box=728,488,152,78]:
+              - img [ref=e82] [box=794,505,20,20]
+              - generic [ref=e60] [box=782,533,44,16]: Hábitos
+        - generic [ref=e62] [box=481,607,478,139]:
+          - generic [ref=e63] [box=481,607,478,15]:
+            - img [ref=e64] [box=481,608,12,12]
+            - generic [ref=e66] [box=501,607,168,15]: GENESIS en tiempo real
+          - generic [ref=e67] [box=481,634,478,112]:
+            - generic [ref=e85] [box=481,634,478,16]:
+              - generic [ref=e86] [box=481,634,153,15]: "GENESIS • Entrenamiento:"
+              - text: Calibrando protocolo de fuerza...
+            - generic [ref=e87] [box=481,658,478,16]:
+              - generic [ref=e88] [box=481,658,112,15]: "GENESIS • Hábitos:"
+              - text: Nivel intermedio confirmado, 2 años de experiencia
+            - generic [ref=e89] [box=481,682,478,16]:
+              - generic [ref=e90] [box=481,682,112,15]: "GENESIS • Hábitos:"
+              - text: Evaluando historial de entrenamiento...
+            - generic [ref=e91] [box=481,706,478,16]:
+              - generic [ref=e92] [box=481,706,112,15]: "GENESIS • Hábitos:"
+              - text: "Biometría analizada: 75kg detectado"
+            - generic [ref=e93] [box=481,730,478,16]:
+              - generic [ref=e94] [box=481,730,112,15]: "GENESIS • Hábitos:"
+              - text: Procesando datos biométricos...
+  - button "Open Next.js Dev Tools" [ref=e74] [cursor=pointer] [box=22,846,32,32]:
+    - img [ref=e75] [box=22,842,40,40]
+  - alert [ref=e95] [box=-1,899,1,1]

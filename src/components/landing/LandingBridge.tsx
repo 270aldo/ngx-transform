@@ -83,6 +83,9 @@ export function LandingBridge() {
             )}
 
             <div className="pt-2">
+              <span className="mb-3 inline-flex rounded-full border border-white/[0.08] bg-white/[0.045] px-3 py-1 font-mono text-[10px] uppercase tracking-[0.22em] text-white/50">
+                15 min · gratis · sin compromiso
+              </span>
               <a
                 href={buttonHref}
                 target={isExternal ? "_blank" : undefined}
@@ -94,19 +97,8 @@ export function LandingBridge() {
                     bridge.buttonText
                   )
                 }
-                className="group inline-flex items-center justify-center gap-2 rounded-full px-7 text-sm font-bold uppercase tracking-[0.06em] text-white transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97]"
-                style={{
-                  height: "54px",
-                  backgroundColor: "var(--ngx-purple)",
-                  boxShadow: "var(--ngx-glow-primary)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow =
-                    "var(--ngx-glow-primary-strong)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = "var(--ngx-glow-primary)";
-                }}
+                className="ngx-primary-cta group inline-flex w-full max-w-[360px] px-7 text-sm"
+                style={{ minHeight: "60px" }}
               >
                 {bridge.buttonText}
               </a>

@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { useForm, type FieldErrors, type Resolver } from "react-hook-form";
+import { useForm, useWatch, type FieldErrors, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ensureAnonymousSession, getClientStorage } from "@/lib/firebaseClient";
 import { ref, uploadBytes } from "firebase/storage";
@@ -27,6 +27,14 @@ import {
 type FormValues = WizardFormValues;
 const FormSchema = WizardFormSchema;
 
+function createSessionSeed(): string {
+  const randomPart =
+    typeof crypto !== "undefined" && crypto.randomUUID
+      ? crypto.randomUUID()
+      : Math.random().toString(36).slice(2);
+  return randomPart.replace(/-/g, "").slice(0, 12);
+}
+
 const STAGE_LABELS: Record<number, { title: string; subtitle: string }> = {
   1: {
     title: "Foto base",
@@ -42,7 +50,7 @@ const STAGE_LABELS: Record<number, { title: string; subtitle: string }> = {
   },
   4: {
     title: "Cierre privado",
-    subtitle: "Confirma correo y genera tu visualización",
+    subtitle: "Confirma correo para enviar y recuperar tu resultado",
   },
 };
 
@@ -176,14 +184,16 @@ function WizardPageContent() {
   const requiredConsentsAccepted = consentTerms && consentAI;
   const stageMeta = STAGE_LABELS[currentStage] ?? STAGE_LABELS[1];
 
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormValues>({
+  const { register, handleSubmit, control, watch, setValue, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(FormSchema) as Resolver<FormValues>,
     defaultValues: {
       email: "",
       sex: "male",
       level: "novato",
       goal: "definicion",
-      weeklyTime: 5,
+      trainingDaysPerWeek: 3,
+      sessionDurationMinutes: 60,
+      weeklyTime: 3,
       bodyType: "mesomorph",
       bodyFatLevel: "medio",
       aestheticPreference: "cinematic",
@@ -196,25 +206,29 @@ function WizardPageContent() {
     },
   });
 
-  const photoFile = watch("photo");
-  const watchedEmail = watch("email");
+  const photoFile = useWatch({ control, name: "photo" });
+  const watchedEmail = useWatch({ control, name: "email" });
+  const watchedGoal = useWatch({ control, name: "goal" });
+  const watchedFocusZone = useWatch({ control, name: "focusZone" });
+  const watchedTrainingDays = useWatch({ control, name: "trainingDaysPerWeek" });
+  const watchedSessionMinutes = useWatch({ control, name: "sessionDurationMinutes" });
   const selectedPhoto = photoFile?.[0] ?? null;
   const resolvedEmail = (watchedEmail || user?.email || "").trim();
   const usingAnonymousAccess = Boolean(user?.isAnonymous);
   const canAdvancePastIdentity = Boolean(previewUrl && requiredConsentsAccepted && accessReady);
   const canSubmitWizard = Boolean(previewUrl && requiredConsentsAccepted && resolvedEmail && accessReady);
   const selectedGoalLabel =
-    watch("goal") === "definicion"
-      ? "Definición extrema"
-      : watch("goal") === "masa"
-        ? "Hipertrofia masiva"
-        : "Híbrido atlético";
+    watchedGoal === "definicion"
+      ? "Recomposición atlética"
+      : watchedGoal === "masa"
+        ? "Construir músculo funcional"
+        : "Híbrido de rendimiento";
   const selectedFocusLabel =
-    watch("focusZone") === "upper"
+    watchedFocusZone === "upper"
       ? "Tren superior"
-      : watch("focusZone") === "lower"
+      : watchedFocusZone === "lower"
         ? "Tren inferior"
-        : watch("focusZone") === "abs"
+        : watchedFocusZone === "abs"
           ? "Core & abs"
           : "Full body";
 
@@ -225,31 +239,54 @@ function WizardPageContent() {
     const param = searchParams.get("stage");
     const n = Number(param);
     if (Number.isInteger(n) && n >= 1 && n <= 4) {
-      setCurrentStage(n);
+      const id = window.setTimeout(() => setCurrentStage(n), 0);
+      return () => window.clearTimeout(id);
     }
   }, [searchParams]);
 
   useEffect(() => {
-    if (DEMO) {
-      setAccessReady(true);
-      setAccessError(null);
-      return;
-    }
-
-    if (authLoading) return;
-
     let cancelled = false;
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    const defer = (fn: () => void) => {
+      const id = setTimeout(() => {
+        if (!cancelled) fn();
+      }, 0);
+      timers.push(id);
+    };
 
-    if (user) {
-      setAccessReady(true);
-      setAccessError(null);
+    if (DEMO) {
+      defer(() => {
+        setAccessReady(true);
+        setAccessError(null);
+      });
       return () => {
         cancelled = true;
+        timers.forEach(clearTimeout);
       };
     }
 
-    setAccessReady(false);
-    setAccessError(null);
+    if (authLoading) {
+      return () => {
+        cancelled = true;
+        timers.forEach(clearTimeout);
+      };
+    }
+
+    if (user) {
+      defer(() => {
+        setAccessReady(true);
+        setAccessError(null);
+      });
+      return () => {
+        cancelled = true;
+        timers.forEach(clearTimeout);
+      };
+    }
+
+    defer(() => {
+      setAccessReady(false);
+      setAccessError(null);
+    });
 
     void ensureAnonymousSession()
       .then(() => {
@@ -268,6 +305,7 @@ function WizardPageContent() {
 
     return () => {
       cancelled = true;
+      timers.forEach(clearTimeout);
     };
   }, [DEMO, authLoading, user]);
 
@@ -277,19 +315,30 @@ function WizardPageContent() {
     }
   }, [user?.email, watchedEmail, setValue]);
 
+  const trainingDays = watchedTrainingDays || 3;
+  const sessionMinutes = watchedSessionMinutes || 60;
   useEffect(() => {
-    setFormError(null);
+    const weeklyHours = Math.max(1, Math.min(14, (trainingDays * sessionMinutes) / 60));
+    setValue("weeklyTime", weeklyHours, { shouldValidate: true, shouldDirty: true });
+  }, [trainingDays, sessionMinutes, setValue]);
+
+  useEffect(() => {
+    const id = window.setTimeout(() => setFormError(null), 0);
+    return () => window.clearTimeout(id);
   }, [currentStage]);
 
   useEffect(() => {
     if (!selectedPhoto) {
-      setPreviewUrl(null);
-      return;
+      const id = window.setTimeout(() => setPreviewUrl(null), 0);
+      return () => window.clearTimeout(id);
     }
 
     const objectUrl = URL.createObjectURL(selectedPhoto);
-    setPreviewUrl(objectUrl);
-    return () => URL.revokeObjectURL(objectUrl);
+    const id = window.setTimeout(() => setPreviewUrl(objectUrl), 0);
+    return () => {
+      window.clearTimeout(id);
+      URL.revokeObjectURL(objectUrl);
+    };
   }, [selectedPhoto]);
 
   const onFormError = (errs: FieldErrors<FormValues>) => {
@@ -454,13 +503,13 @@ function WizardPageContent() {
       const submissionEmail = (values.email || authUser.email || "").trim();
       if (!submissionEmail) {
         setCurrentStage(4);
-        throw new Error("Confirma el correo donde quieres recibir tu acceso privado antes de ejecutar la visualización.");
+        throw new Error("Confirma el correo donde quieres recibir y recuperar tu resultado privado antes de ejecutar la visualización.");
       }
 
       // Staged processing states for the private visualization flow
       setProcessStage("upload"); setProcessProgress(20); await new Promise(r => setTimeout(r, 800));
 
-      const sessionSeed = (typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)).replace(/-/g, "").slice(0, 12);
+      const sessionSeed = createSessionSeed();
       const ext = file.name.split(".").pop() || "jpg";
       const uid = authUser.uid;
       const storagePath = `uploads/${uid}/${sessionSeed}/original.${ext}`;
@@ -474,7 +523,15 @@ function WizardPageContent() {
 
       setProcessStage("analyze"); setProcessProgress(50);
 
-      const profile = { ...values, notes: values.notes || "" };
+      const profile = {
+        ...values,
+        weeklyTime: Math.max(
+          1,
+          Math.min(14, ((values.trainingDaysPerWeek || 3) * (values.sessionDurationMinutes || 60)) / 60)
+        ),
+        bodyType: values.bodyType || "mesomorph",
+        notes: values.notes || "",
+      };
       const token = DEMO ? null : await authUser.getIdToken();
 
       // Get landing variant for analytics tracking
@@ -552,7 +609,7 @@ function WizardPageContent() {
   // --- RENDER STAGES ---
 
   return (
-    <div className="relative min-h-screen bg-transparent text-white selection:bg-[#6D00FF]/30 font-[var(--font-body)]">
+    <div className="ngx-wizard-shell relative min-h-screen overflow-x-hidden text-white selection:bg-[#6D00FF]/30 font-[var(--font-body)]">
 
       {/* Unified command bar (back + center title + progress tabs) */}
       <WizardCommandBar
@@ -566,16 +623,13 @@ function WizardPageContent() {
       />
 
       {/* MAIN CONTENT AREA */}
-      <form onSubmit={handleSubmit(onSubmit, onFormError)} className="mx-auto flex min-h-screen max-w-6xl flex-col px-4 pb-24 pt-32 md:px-6 md:pb-28 md:pt-36">
+      <form onSubmit={handleSubmit(onSubmit, onFormError)} className="relative z-10 mx-auto flex min-h-screen max-w-6xl flex-col px-4 pb-24 pt-32 md:px-6 md:pb-28 md:pt-36">
         <input
           type="file"
           accept="image/jpeg,image/png,image/webp"
           className="sr-only"
-          {...register("photo", { onChange: onPhotoInputChange })}
-          ref={(el) => {
-            inputRef.current = el;
-            register("photo").ref(el);
-          }}
+          onChange={onPhotoInputChange}
+          ref={inputRef}
         />
 
         {formError && !loading ? (
@@ -718,11 +772,11 @@ function WizardPageContent() {
             {/* NAVIGATION FOOTER */}
             {currentStage > 1 && (
               <div className="mt-8 w-full pb-2 z-10">
-                <div className="max-w-5xl mx-auto flex items-center justify-between gap-3 rounded-full border border-white/[0.08] bg-black/55 backdrop-blur-2xl px-3 py-3 pointer-events-auto shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+                <div className="ngx-wizard-footerbar max-w-5xl mx-auto flex items-center justify-between gap-3 px-3 py-3 pointer-events-auto">
                   <button
                     type="button"
                     onClick={prevStage}
-                    className="flex items-center gap-2 rounded-full px-4 py-2 text-[10px] font-mono uppercase tracking-[0.18em] text-white/45 transition-colors hover:bg-white/5 hover:text-white"
+                    className="ngx-wizard-footer-button flex items-center gap-2 px-4 py-2"
                   >
                     <ChevronLeft size={14} /> Anterior
                   </button>
@@ -732,14 +786,14 @@ function WizardPageContent() {
                       Paso {currentStage} / 4
                     </span>
                     <span className="h-3 w-px bg-white/15" />
-                    <span className="text-sm text-white/75">{stageMeta.title}</span>
+                    <span className="font-display text-sm font-black uppercase leading-none text-white/75">{stageMeta.title}</span>
                   </div>
 
                   {currentStage < 4 && (
                     <button
                       type="button"
                       onClick={nextStage}
-                      className="flex items-center gap-2 rounded-full bg-[var(--ngx-purple)] px-5 py-2.5 text-[10px] font-mono font-bold uppercase tracking-[0.18em] text-white shadow-[var(--ngx-glow-primary-soft)] transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97]"
+                      className="ngx-wizard-footer-primary flex items-center gap-2 px-5 py-2.5"
                     >
                       Siguiente <ChevronRight size={14} />
                     </button>

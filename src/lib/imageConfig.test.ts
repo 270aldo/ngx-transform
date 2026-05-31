@@ -63,10 +63,10 @@ describe("resolveImageModel — GEMINI_IMAGE_MODEL env var", () => {
     });
   });
 
-  it("returns GEMINI_IMAGE_MODEL when explicitly set — takes priority over everything", () => {
+  it("uses Pro when FF_NB_PRO=true even if the example Flash image model is set", () => {
     setEnv({ GEMINI_IMAGE_MODEL: "gemini-3.1-flash-image-preview", FF_NB_PRO: "true" });
     const config = getImageConfig();
-    expect(config.default.model).toBe("gemini-3.1-flash-image-preview");
+    expect(config.default.model).toBe(MODELS.GEMINI_3_PRO_IMAGE);
   });
 
   it("returns a custom image model when GEMINI_IMAGE_MODEL is set to an arbitrary value", () => {

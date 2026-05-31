@@ -29,6 +29,13 @@ export async function POST(req: NextRequest) {
     const db = getDb();
     const ref = db.collection("sessions").doc(parsed.shareId);
     const snap = await ref.get();
+    if (!snap.exists) {
+      return NextResponse.json(
+        { ok: false, error: "Session not found" },
+        { status: 404 }
+      );
+    }
+
     const email = snap.data()?.email || null;
 
     await ref.set(
@@ -56,4 +63,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "Internal server error" }, { status: 500 });
   }
 }
-

@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NGX · NeoGen-X · Performance &amp; Longevity</title>
+<link rel="stylesheet" href="colors_and_type.css">
+<link rel="stylesheet" href="ngx-lg-tokens.css">
+<link rel="stylesheet" href="landing.css">
+<style>
+  /* ===========================================================
+     LANDING v2 · imagery layer
+     Adds full-bleed photography (Dialpad / Apple Music DJ patterns)
+     on top of v1 layout. Photos sit BEHIND glass cards everywhere.
+     =========================================================== */
+
+  /* HERO — replace mock phone with athlete portrait + glass HUDs */
+  .hero__photo {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    aspect-ratio: 4 / 5.4;
+    margin: 0 auto;
+    border-radius: 32px;
+    overflow: hidden;
+    border: 1px solid var(--lg-rim-regular);
+    box-shadow:
+      0 40px 100px rgba(0, 0, 0, 0.55),
+      0 0 80px rgba(109, 0, 255, 0.30),
+      inset 0 1px 0 rgba(255, 255, 255, 0.10);
+    background: linear-gradient(180deg, #14103D 0%, #050218 100%);
+    z-index: 2;
+  }
+  .hero__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .hero__photo::after {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, transparent 0%, rgba(5, 2, 24, 0.45) 100%),
+      radial-gradient(60% 80% at 100% 100%, rgba(109, 0, 255, 0.35), transparent 70%);
+    mix-blend-mode: multiply;
+    pointer-events: none;
+  }
+  .hero__photo-tag {
+    position: absolute;
+    top: 18px; left: 18px;
+    z-index: 3;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 12px 7px 8px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.55);
+    -webkit-backdrop-filter: var(--lg-blur-thin);
+    backdrop-filter: var(--lg-blur-thin);
+    border: 1px solid var(--lg-rim-thin);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 9.5px;
+    letter-spacing: 0.20em;
+    text-transform: uppercase;
+    color: var(--ngx-white);
+  }
+  .hero__photo-tag::before {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--ngx-success);
+    box-shadow: 0 0 8px var(--ngx-success);
+  }
+
+  /* Overlay HUDs on top of the photo */
+  .hero__hud {
+    position: absolute;
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: rgba(20, 16, 50, 0.55);
+    border: 1px solid var(--lg-rim-regular);
+    -webkit-backdrop-filter: var(--lg-blur-thick);
+    backdrop-filter: var(--lg-blur-thick);
+    box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset);
+    z-index: 4;
+  }
+  .hero__hud--ring {
+    top: 18px; right: 18px;
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px 10px 10px;
+  }
+  .hero__hud--ring .ring-wrap {
+    position: relative; width: 50px; height: 50px; display: grid; place-items: center;
+  }
+  .hero__hud--ring .pct {
+    position: absolute;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 15px;
+    color: var(--ngx-white);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+  .hero__hud--ring .col { display: flex; flex-direction: column; }
+  .hero__hud--ring .l {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 9px;
+    letter-spacing: 0.20em;
+    text-transform: uppercase;
+    color: var(--ngx-gray-400);
+  }
+  .hero__hud--ring .v {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    color: var(--ngx-white);
+    font-variant-numeric: tabular-nums;
+    margin-top: 3px;
+  }
+
+  .hero__hud--nudge {
+    bottom: 100px; left: 18px; right: 18px;
+    background: rgba(109, 0, 255, 0.32);
+    border-color: var(--lg-rim-purple);
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.35),
+      var(--lg-glow-purple-sm),
+      inset 0 0 24px rgba(109, 0, 255, 0.18);
+  }
+  .hero__hud--nudge .l {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ngx-purple-300);
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .hero__hud--nudge .l::before {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--ngx-purple-300);
+    box-shadow: 0 0 8px var(--ngx-purple);
+    animation: lg-pulse 2s infinite;
+  }
+  .hero__hud--nudge .t {
+    font-family: var(--font-text);
+    font-size: 12.5px;
+    line-height: 1.42;
+    color: var(--ngx-white);
+  }
+  .hero__hud--nudge .t b { font-weight: 700; }
+
+  .hero__hud--zone {
+    bottom: 22px; left: 18px;
+    display: flex; align-items: baseline; gap: 6px;
+    padding: 10px 14px;
+  }
+  .hero__hud--zone .v {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 22px;
+    color: var(--ngx-white);
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .hero__hud--zone .l {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ngx-purple-300);
+  }
+
+  /* override v1 visual sizing — drop the absolute-positioned floats */
+  .hero__visual { height: auto; min-height: 580px; }
+  @media (max-width: 1100px) {
+    .hero__visual { min-height: 0; padding-top: 8px; }
+    .hero__photo { max-width: 420px; aspect-ratio: 4 / 5; }
+  }
+  @media (max-width: 768px) {
+    .hero__photo { max-width: 100%; aspect-ratio: 4 / 5; border-radius: 26px; }
+    .hero__hud--ring { top: 14px; right: 14px; padding: 8px 14px 8px 8px; }
+    .hero__hud--ring .v { font-size: 15px; }
+    .hero__hud--nudge { bottom: 84px; left: 14px; right: 14px; padding: 12px 14px; }
+    .hero__hud--zone { bottom: 18px; left: 14px; }
+  }
+
+  /* ===========================================================
+     EDITORIAL · full-bleed image + pull-quote
+     Sits between Method and Programs. The "manifesto" beat.
+     =========================================================== */
+  .editorial {
+    position: relative;
+    margin: 40px 0 0;
+    padding: 0;
+  }
+  .editorial__frame {
+    position: relative;
+    border-radius: 28px;
+    overflow: hidden;
+    min-height: 520px;
+    border: 1px solid var(--lg-rim-thin);
+    box-shadow: var(--lg-shadow-glass-lg);
+    background: linear-gradient(135deg, #14103D, #050218);
+  }
+  .editorial__frame img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+  .editorial__frame::after {
+    content: "";
+    position: absolute; inset: 0; z-index: 2;
+    background:
+      linear-gradient(90deg, rgba(5, 2, 24, 0.85) 0%, rgba(5, 2, 24, 0.55) 45%, rgba(5, 2, 24, 0.20) 100%),
+      radial-gradient(60% 80% at 0% 100%, rgba(109, 0, 255, 0.35), transparent 70%);
+    pointer-events: none;
+  }
+  .editorial__copy {
+    position: relative;
+    z-index: 3;
+    padding: 72px;
+    max-width: 720px;
+    height: 100%;
+    display: flex; flex-direction: column; justify-content: center;
+    min-height: 520px;
+  }
+  .editorial__eyebrow {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ngx-purple-300);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .editorial__eyebrow::before {
+    content: "";
+    width: 24px; height: 1px;
+    background: var(--ngx-purple-300);
+  }
+  .editorial__quote {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(32px, 3.6vw, 52px);
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    text-transform: uppercase;
+    color: var(--ngx-white);
+    text-wrap: balance;
+    margin: 0;
+  }
+  .editorial__quote .charge {
+    background: linear-gradient(180deg, #FFFFFF 0%, var(--ngx-purple) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .editorial__sig {
+    margin-top: 36px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .editorial__sig img {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    object-fit: cover;
+    border: 1px solid var(--lg-rim-purple);
+  }
+  .editorial__sig .who {
+    display: flex; flex-direction: column;
+  }
+  .editorial__sig .name {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ngx-white);
+  }
+  .editorial__sig .role {
+    font-family: var(--font-text);
+    font-size: 12px;
+    color: var(--ngx-gray-300);
+    margin-top: 3px;
+  }
+  @media (max-width: 768px) {
+    .editorial__frame { min-height: 460px; }
+    .editorial__copy { padding: 44px 28px; min-height: 460px; }
+  }
+
+  /* ===========================================================
+     PROGRAMS · add top photo to each card
+     =========================================================== */
+  .program__photo {
+    position: relative;
+    margin: -30px -30px 4px;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-bottom: 1px solid var(--lg-rim-thin);
+  }
+  .program__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .program__photo::after {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, rgba(5, 2, 24, 0.10) 0%, rgba(5, 2, 24, 0.50) 100%),
+      radial-gradient(80% 100% at 50% 100%, rgba(109, 0, 255, 0.30), transparent 70%);
+    pointer-events: none;
+  }
+  .program__photo-pill {
+    position: absolute;
+    top: 14px; right: 14px;
+    z-index: 2;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.55);
+    -webkit-backdrop-filter: var(--lg-blur-thin);
+    backdrop-filter: var(--lg-blur-thin);
+    border: 1px solid var(--lg-rim-thin);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ngx-white);
+  }
+  /* hide v1 pill since program__photo-pill replaces it */
+  .program .program__pill { display: none; }
+  /* compress head row since icon now floats over photo */
+  .program__head {
+    position: absolute;
+    left: 14px; bottom: 14px;
+    z-index: 2;
+    margin: 0;
+  }
+  .program__icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+  }
+  .program__icon img { width: 26px; height: 26px; }
+  .program { padding-top: 0; }
+  /* push first child to top — photo is now first */
+  .program > .program__photo { order: -1; }
+
+  /* ===========================================================
+     SCIENCE · photo avatars + photo on featured quote
+     =========================================================== */
+  .quote__avatar {
+    background: #14103D !important;
+    overflow: hidden;
+    padding: 0 !important;
+  }
+  .quote__avatar img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .quote--feature {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 30px;
+    align-items: stretch;
+    padding: 0;
+    min-height: 320px;
+  }
+  .quote--feature .quote__media {
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px 0 0 24px;
+    background: linear-gradient(135deg, #14103D, #050218);
+  }
+  .quote--feature .quote__media img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .quote--feature .quote__media::after {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, transparent 50%, rgba(5, 2, 24, 0.6) 100%),
+      radial-gradient(80% 60% at 0% 100%, rgba(109, 0, 255, 0.40), transparent 70%);
+  }
+  .quote--feature .quote__body {
+    padding: 30px 30px 26px 0;
+    display: flex; flex-direction: column; gap: 22px;
+    position: relative;
+  }
+  @media (max-width: 1000px) {
+    .quote--feature { grid-template-columns: 1fr; }
+    .quote--feature .quote__media {
+      border-radius: 24px 24px 0 0;
+      aspect-ratio: 16 / 9;
+    }
+    .quote--feature .quote__body { padding: 22px 26px 22px; }
+  }
+
+  /* ===========================================================
+     FINAL CTA · full-bleed photo bg (Apple Music DJ pattern)
+     =========================================================== */
+  .cta-final {
+    margin: 80px auto 0;
+    padding: 0 48px;
+    max-width: 1280px;
+  }
+  .cta-final__frame {
+    position: relative;
+    border-radius: 32px;
+    overflow: hidden;
+    border: 1px solid var(--lg-rim-thin);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.55), 0 0 60px rgba(109, 0, 255, 0.25);
+    background: linear-gradient(135deg, #14103D, #050218);
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 100px 32px 110px;
+  }
+  .cta-final__frame img {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+  .cta-final__frame::after {
+    content: "";
+    position: absolute; inset: 0;
+    z-index: 2;
+    background:
+      radial-gradient(60% 70% at 50% 100%, rgba(109, 0, 255, 0.65) 0%, transparent 70%),
+      linear-gradient(180deg, rgba(5, 2, 24, 0.50) 0%, rgba(5, 2, 24, 0.60) 60%, rgba(5, 2, 24, 0.85) 100%);
+    pointer-events: none;
+  }
+  .cta-final__frame > .cta-final__inner {
+    position: relative;
+    z-index: 3;
+    max-width: 820px;
+  }
+  /* kill the v1 gradient::before since we use our own */
+  .cta-final::before { display: none; }
+  @media (max-width: 768px) {
+    .cta-final { padding: 0 22px; }
+    .cta-final__frame { padding: 72px 22px 80px; min-height: 540px; border-radius: 24px; }
+  }
+
+  /* Subtle Ken-Burns drift on hero portrait — slow and athletic */
+  @keyframes hero-burn {
+    0%, 100% { transform: scale(1.04) translate(0, 0); }
+    50%      { transform: scale(1.08) translate(-1%, -1.5%); }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__photo img { animation: hero-burn 18s ease-in-out infinite; }
+  }
+</style>
+</head>
+<body data-theme="dark">
+
+<!-- ===================== NAV ===================== -->
+<nav class="nav" id="nav">
+  <a href="#" class="nav__brand">
+    <span class="mark"></span>
+    <span>NeoGen&#8209;X</span>
+  </a>
+  <div class="nav__links">
+    <a href="#method">Método</a>
+    <a href="#programs">Programas</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#science">Ciencia</a>
+    <a href="#coach">Coach</a>
+  </div>
+  <a href="#cta" class="nav__cta">
+    <span>Empezar</span>
+    <span aria-hidden="true">→</span>
+  </a>
+</nav>
+
+<main class="page" data-screen-label="Landing Page">
+
+<!-- ===================== HERO ===================== -->
+<section class="hero lg-wallpaper-regular" data-screen-label="01 Hero">
+  <div class="shell">
+    <div class="hero__inner">
+
+      <div class="hero__copy reveal">
+        <div class="hero__eyebrow">
+          <span class="tag">Beta v1.4</span>
+          <span class="dot"></span>
+          <span>Coach AI · Recovery-first training</span>
+        </div>
+
+        <h1 class="hero__headline">
+          PUSH&nbsp;HARD.<br>
+          LIVE <span class="charge">LONG</span><span class="period">.</span>
+        </h1>
+
+        <p class="hero__lede">
+          NGX lee tu <strong>HRV, sueño y carga</strong> cada mañana y reescribe tu programa antes de que entres al gym.
+          Entrenas a la intensidad correcta — <strong>nunca más</strong>, nunca menos. Para atletas que piensan en décadas.
+        </p>
+
+        <div class="hero__ctas">
+          <button class="lg-cta lg-cta--primary">
+            <span>Empezar gratis</span>
+            <span aria-hidden="true">→</span>
+          </button>
+          <button class="lg-cta lg-cta--secondary">
+            <span>Ver el método</span>
+          </button>
+        </div>
+
+        <div class="hero__stats">
+          <div class="hero__stat">
+            <div class="hero__stat-num">12,400<span class="unit">+</span></div>
+            <div class="hero__stat-lbl">Atletas activos</div>
+          </div>
+          <div class="hero__stat">
+            <div class="hero__stat-num"><span class="pre">+</span>18<span class="unit">%</span></div>
+            <div class="hero__stat-lbl">Recovery / 30 días</div>
+          </div>
+          <div class="hero__stat">
+            <div class="hero__stat-num">4.9<span class="unit">★</span></div>
+            <div class="hero__stat-lbl">App Store · 2.4k reviews</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero__visual reveal">
+
+        <div class="hero__photo">
+          <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=900&q=80&auto=format&fit=crop" alt="Atleta entrenando">
+          <span class="hero__photo-tag">Live · sesión 042</span>
+
+          <!-- HUD · Strain ring -->
+          <div class="hero__hud hero__hud--ring">
+            <div class="ring-wrap">
+              <svg viewBox="0 0 60 60" width="50" height="50">
+                <circle cx="30" cy="30" r="24" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="4"/>
+                <circle cx="30" cy="30" r="24" fill="none" stroke="#A368FF" stroke-width="4"
+                        stroke-linecap="round" stroke-dasharray="150.8" stroke-dashoffset="32"
+                        transform="rotate(-90 30 30)"/>
+              </svg>
+              <div class="pct">79</div>
+            </div>
+            <div class="col">
+              <span class="l">Recovery</span>
+              <span class="v">79<span style="font-size:11px;color:var(--ngx-purple-300);font-weight:700;letter-spacing:0.04em;">/100</span></span>
+            </div>
+          </div>
+
+          <!-- HUD · Coach nudge -->
+          <div class="hero__hud hero__hud--nudge">
+            <div class="l">AI Coach · 06:42</div>
+            <div class="t">HRV <b>+8 ms</b> sobre baseline. Buen día para <b>Press &amp; Pull 5×5</b>.</div>
+          </div>
+
+          <!-- HUD · Zone -->
+          <div class="hero__hud hero__hud--zone">
+            <span class="v">Z3</span>
+            <span class="l">38 min · 142 bpm</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<div class="lg-wallpaper-soft">
+
+<!-- ===================== METHOD ===================== -->
+<section class="section section--method" id="method" data-screen-label="02 Method">
+  <div class="shell">
+    <div class="section__head reveal">
+      <div>
+        <span class="eyebrow">01 · Método NGX</span>
+        <h2 class="section-title">Tu cuerpo dice<br>cuándo. <span class="charge">Nosotros</span><br>decimos cómo.</h2>
+      </div>
+      <p class="right">
+        Cuatro pasos. Sin coaches genéricos, sin programas estáticos. NGX integra tus señales fisiológicas con
+        un modelo entrenado en <strong>2.4M sesiones</strong> de atletas longevos, y ajusta tu plan <strong>cada 24 horas</strong>.
+      </p>
+    </div>
+
+    <div class="method-grid reveal-stagger">
+
+      <div class="step">
+        <div class="step__num">Paso 01 <span class="bar"></span></div>
+        <div class="step__icon">
+          <!-- Connect / link -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
+            <path d="M10 14l-2 2a4 4 0 0 1-5.66-5.66l3-3a4 4 0 0 1 5.66 0"/>
+            <path d="M14 10l2-2a4 4 0 0 1 5.66 5.66l-3 3a4 4 0 0 1-5.66 0"/>
+          </svg>
+        </div>
+        <h3 class="step__title">Conectá tus dispositivos</h3>
+        <p class="step__desc">
+          Apple Watch, Whoop, Oura, Garmin. Importamos <b>HRV, RHR, sueño, VO₂, training load</b>. Cero data entry manual. Cero plan B.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="step__num">Paso 02 <span class="bar"></span></div>
+        <div class="step__icon">
+          <!-- Brain / baseline -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
+            <path d="M3 12h4l2-4 4 8 2-4h6"/>
+          </svg>
+        </div>
+        <h3 class="step__title">14 días de baseline</h3>
+        <p class="step__desc">
+          NGX aprende tu fisiología — tu HRV de descanso, tu deuda de sueño promedio, tu respuesta al volumen.
+          <b>No promediamos contra población.</b> Promediamos contra vos.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="step__num">Paso 03 <span class="bar"></span></div>
+        <div class="step__icon">
+          <!-- Lightning / adapt -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
+            <path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" fill="currentColor" stroke="none"/>
+          </svg>
+        </div>
+        <h3 class="step__title">Programa adaptativo</h3>
+        <p class="step__desc">
+          Cada mañana recalculamos. Si dormiste 6:12 y el HRV bajó 14 ms, hoy <b>no es 5×5</b> — es zona-2 y movilidad. El programa respira con vos.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="step__num">Paso 04 <span class="bar"></span></div>
+        <div class="step__icon">
+          <!-- Coach / chat -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
+            <path d="M3 5h18v12H7l-4 4z"/>
+          </svg>
+        </div>
+        <h3 class="step__title">Iteración con tu coach</h3>
+        <p class="step__desc">
+          Coach humano (Pro+) revisa los ajustes del AI cada semana. <b>Vos entrenás, ellos optimizan</b>. Acceso por chat 7/7.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ===================== EDITORIAL · manifesto + photo ===================== -->
+<section class="section" data-screen-label="02b Editorial">
+  <div class="shell">
+    <div class="editorial reveal">
+      <div class="editorial__frame">
+        <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1600&q=80&auto=format&fit=crop" alt="Atleta corriendo al amanecer">
+        <div class="editorial__copy">
+          <span class="editorial__eyebrow">Manifesto · NGX</span>
+          <h2 class="editorial__quote">
+            No entrenamos para el<br>
+            highlight reel. Entrenamos<br>
+            para llegar <span class="charge">enteros</span><br>
+            a los 70.
+          </h2>
+          <div class="editorial__sig">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&q=80&auto=format&fit=crop" alt="">
+            <div class="who">
+              <span class="name">Equipo NGX</span>
+              <span class="role">Madrid · Lisboa · Buenos Aires</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===================== PROGRAMS ===================== -->
+<section class="section" id="programs" data-screen-label="03 Programs">
+  <div class="shell">
+    <div class="section__head reveal">
+      <div>
+        <span class="eyebrow">02 · Programas</span>
+        <h2 class="section-title">Tres vías. Una<br>misma <span class="charge">curva</span><br>de carrera.</h2>
+      </div>
+      <p class="right">
+        Cada programa adapta volumen, intensidad y descanso al <strong>biomarcador dominante</strong> que estás persiguiendo.
+        Elegí uno o combiná dos — el AI Coach equilibra solapamientos automáticamente.
+      </p>
+    </div>
+
+    <div class="programs-grid reveal-stagger">
+
+      <article class="program">
+        <div class="program__photo">
+          <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=900&q=80&auto=format&fit=crop" alt="Strength entrenamiento">
+          <span class="program__photo-pill">12 semanas</span>
+        </div>
+        <div class="program__head">
+          <div class="program__icon">
+            <img src="assets/icons/barbell.png" alt="">
+          </div>
+          <span class="program__pill">12 semanas</span>
+        </div>
+        <h3 class="program__title">Strength<br>Protocol</h3>
+        <p class="program__desc">
+          Fuerza máxima sin gastar la articulación. Bloques de 5×5 y singles, recovery monitorizado en cada serie. Ideal para 1RM y densidad ósea post-40.
+        </p>
+        <div class="program__num">
+          <span class="v">+22<span style="font-size:24px;letter-spacing:0;">%</span></span>
+          <span class="u">1RM promedio · 12wk</span>
+        </div>
+        <div class="program__feat">
+          <div class="program__feat-row"><span class="ch">+</span> <span><b>5 sesiones/sem.</b> · 60–75 min</span></div>
+          <div class="program__feat-row"><span class="ch">+</span> <span>Lifts compuestos · barbell &amp; dumbbell</span></div>
+          <div class="program__feat-row"><span class="ch">+</span> <span>Auto-deload si HRV cae <b>2 días seguidos</b></span></div>
+        </div>
+      </article>
+
+      <article class="program">
+        <div class="program__photo">
+          <img src="https://images.unsplash.com/photo-1486218119243-13883505764c?w=900&q=80&auto=format&fit=crop" alt="Endurance running">
+          <span class="program__photo-pill">16 semanas</span>
+        </div>
+        <div class="program__head">
+          <div class="program__icon">
+            <img src="assets/icons/apple-watch.png" alt="">
+          </div>
+          <span class="program__pill">16 semanas</span>
+        </div>
+        <h3 class="program__title">Endurance<br>Engine</h3>
+        <p class="program__desc">
+          Polarized — 80% zona-2, 20% intervalos. Sube tu VO₂ máx sin acumular fatiga simpática. Para corredores, ciclistas y triatletas amateurs.
+        </p>
+        <div class="program__num">
+          <span class="v">+4.8</span>
+          <span class="u">VO₂ máx · 16wk</span>
+        </div>
+        <div class="program__feat">
+          <div class="program__feat-row"><span class="ch">+</span> <span><b>4–6 sesiones/sem.</b> · 30–120 min</span></div>
+          <div class="program__feat-row"><span class="ch">+</span> <span>Z2 base + Z4/Z5 controlados por HR drift</span></div>
+          <div class="program__feat-row"><span class="ch">+</span> <span>Strength de soporte <b>2× sem.</b></span></div>
+        </div>
+      </article>
+
+      <article class="program">
+        <div class="program__photo">
+          <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=900&q=80&auto=format&fit=crop" alt="Longevity movilidad">
+          <span class="program__photo-pill">∞ · open-ended</span>
+        </div>
+        <div class="program__head">
+          <div class="program__icon">
+            <img src="assets/icons/muscle.png" alt="">
+          </div>
+          <span class="program__pill">∞ · open-ended</span>
+        </div>
+        <h3 class="program__title">Longevity<br>Stack</h3>
+        <p class="program__desc">
+          Para los que entrenan 30 años por delante. Carga moderada, movilidad diaria, sueño y biomarkers como KPI principal. Sin overreach.
+        </p>
+        <div class="program__num">
+          <span class="v">−5.2</span>
+          <span class="u">edad biológica (DunedinPACE)</span>
+        </div>
+        <div class="program__feat">
+          <div class="program__feat-row"><span class="ch">+</span> <span><b>3–4 sesiones/sem.</b> · 45–60 min</span></div>
+          <div class="program__feat-row"><span class="ch">+</span> <span>Movilidad + Z2 + fuerza submáxima</span></div>
+          <div class="program__feat-row"><span class="ch">+</span> <span>Panel biomarkers cada <b>90 días</b> (sangre)</span></div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ===================== PRICING ===================== -->
+<section class="section" id="pricing" data-screen-label="04 Pricing">
+  <div class="shell">
+    <div class="section__head reveal">
+      <div>
+        <span class="eyebrow">03 · Pricing</span>
+        <h2 class="section-title">Datos primero.<br><span class="charge">Coach</span> cuando<br>lo pidas.</h2>
+      </div>
+      <p class="right">
+        Empezá gratis con tracking adaptativo y AI Coach básico. Subí cuando quieras programa completo, biomarkers full o coach humano semanal.
+        <strong>Sin permanencia. Sin letra chica.</strong>
+      </p>
+    </div>
+
+    <div class="pricing-grid reveal-stagger">
+
+      <article class="tier">
+        <div class="tier__name">Free</div>
+        <div class="tier__price">
+          <span class="cur">€</span><span class="v">0</span>
+          <span class="per">/ mes</span>
+        </div>
+        <p class="tier__sub">
+          Lo esencial para leer tu cuerpo. Tracking, baseline y un nudge diario del AI Coach.
+        </p>
+        <button class="tier__cta tier__cta--secondary">Empezar gratis →</button>
+        <div class="tier__feat">
+          <div class="tier__feat-row"><span class="ch">✓</span> <span>Sincronización con <b>Apple Watch, Whoop, Oura</b></span></div>
+          <div class="tier__feat-row"><span class="ch">✓</span> <span>HRV + RHR + sueño · 14 días baseline</span></div>
+          <div class="tier__feat-row"><span class="ch">✓</span> <span>AI Coach nudge diario (lectura)</span></div>
+          <div class="tier__feat-row"><span class="ch">✓</span> <span>Comunidad Discord NGX</span></div>
+        </div>
+      </article>
+
+      <article class="tier tier--featured">
+        <span class="tier__tag">Más elegido</span>
+        <div class="tier__name">Pro</div>
+        <div class="tier__price">
+          <span class="cur">€</span><span class="v">19</span>
+          <span class="per">/ mes</span>
+        </div>
+        <p class="tier__sub">
+          El programa que se reescribe cada mañana. Para atletas que entrenan en serio y miden todo.
+        </p>
+        <button class="tier__cta tier__cta--primary">Probar 14 días →</button>
+        <div class="tier__feat">
+          <div class="tier__feat-row"><span class="ch">✓</span> <span><b>Todo lo de Free</b></span></div>
+          <div class="tier__feat-row"><span class="ch">✓</span> <span>AI Coach <b>full</b> · programa adaptativo diario</span></div>
+          <div class="tier__feat-row"><span class="ch">✓</span> <span>Strength · Endurance · Longevity completos</span></div>
+          <div class="tier__feat-row"><span class="ch">✓</span> <span>Biomarkers extendidos · HRV / drift / load</span></div>
+          <div class="tier__feat-row"><span class="ch">✓</span> <span>Integración con <b>panel de sangre</b> trimestral</span></div>
+          <div class="tier__feat-row"><span class="ch">✓</span> <span>Live Activity + widgets en iOS &amp; watch</span></div>
+        </div>
+      </article>
+
+      <article class="tier">
+        <div class="tier__name">Coach</div>
+        <div class="tier__price">
+          <span class="cur">€</span><span class="v">49</span>
+          <span class="per">/ mes</span>
+        </div>
+        <p class="tier__sub">
+          Coach humano certificado + AI. Revisa tu plan cada semana y te responde por chat 7/7.
+        </p>
+        <button class="tier__cta tier__cta--secondary">Hablá con un coach →</button>
+        <div class="tier__feat">
+          <div class="tier__feat-row"><span class="ch">✓</span> <span><b>Todo lo de Pro</b></span></div>
+          <div class="tier__feat-row"><span class="ch">✓</span> <span>Coach humano · <b>1:1</b> mensual por video</span></div>
+          <div class="tier__feat-row"><span class="ch">✓</span> <span>Revisión semanal del programa adaptativo</span></div>
+          <div class="tier__feat-row"><span class="ch">✓</span> <span>Chat directo 7/7 · respuesta &lt; <b>4 h</b></span></div>
+          <div class="tier__feat-row"><span class="ch">✓</span> <span>Análisis trimestral con MD asesor NGX</span></div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ===================== SOCIAL PROOF / SCIENCE ===================== -->
+<section class="section" id="science" data-screen-label="05 Science">
+  <div class="shell">
+    <div class="section__head reveal">
+      <div>
+        <span class="eyebrow">04 · Ciencia &amp; testimonios</span>
+        <h2 class="section-title">Atletas. Médicos.<br>Investigadores. <span class="charge">Todos</span><br>en la misma curva.</h2>
+      </div>
+      <p class="right">
+        El comité asesor de NGX combina cardiología deportiva, fisiología del envejecimiento y entrenamiento de élite.
+        El resultado: <strong>protocolos validados</strong>, no consejos virales.
+      </p>
+    </div>
+
+    <div class="proof-grid reveal-stagger">
+
+      <article class="quote quote--feature">
+        <div class="quote__media">
+          <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=700&q=80&auto=format&fit=crop" alt="Dra. Solis">
+        </div>
+        <div class="quote__body">
+          <div class="quote__mark">"</div>
+          <div class="quote__text">
+            NGX hace lo que los wearables prometieron y nunca cumplieron: <b>traducir HRV en una decisión de entrenamiento</b>.
+            Mis atletas masters bajan resting HR y suben VO₂ sin acumular fatiga simpática. Es el primer sistema que veo cerrar el loop.
+          </div>
+          <div class="quote__author">
+            <div class="quote__avatar"><img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200&q=80&auto=format&fit=crop" alt=""></div>
+            <div class="quote__who">
+              <span class="name">Dra. Renata Solís, MD</span>
+              <span class="role">Cardiología deportiva · Asesor científico NGX</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="quote">
+        <div class="quote__mark">"</div>
+        <div class="quote__text">
+          A los 47 entreno mejor que a los 32. NGX leyó que <b>dormí 5:48</b> y me cambió la sesión a Z2.
+          Antes hubiera forzado el 5×5 y pagado tres días. Ya no.
+        </div>
+        <div class="quote__author">
+          <div class="quote__avatar"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80&auto=format&fit=crop" alt=""></div>
+          <div class="quote__who">
+            <span class="name">Marco Conte</span>
+            <span class="role">Atleta Pro · Madrid · 8 meses con NGX</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="quote">
+        <div class="quote__mark">"</div>
+        <div class="quote__text">
+          Llevo cohort de 240 ejecutivos en NGX. Mediana de <b>DunedinPACE −0.08</b> a los 12 meses.
+          Es el primer dato real de desaceleración de edad biológica fuera de un laboratorio.
+        </div>
+        <div class="quote__author">
+          <div class="quote__avatar"><img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&q=80&auto=format&fit=crop" alt=""></div>
+          <div class="quote__who">
+            <span class="name">Dr. Tomás Pareja</span>
+            <span class="role">PhD · Longevity Research Lab · Lisboa</span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="proof-strip reveal">
+      <span class="l">Mencionados en</span>
+      <div class="proof-strip__logos">
+        <span class="proof-strip__logo">Outside</span>
+        <span class="proof-strip__logo">Wired</span>
+        <span class="proof-strip__logo ital">Men's Health</span>
+        <span class="proof-strip__logo">Runner's World</span>
+        <span class="proof-strip__logo">El País Semanal</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===================== FINAL CTA ===================== -->
+<section class="cta-final" id="cta" data-screen-label="06 Final CTA">
+  <div class="cta-final__frame reveal">
+    <img src="https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=1800&q=80&auto=format&fit=crop" alt="Atleta corriendo">
+    <div class="cta-final__inner">
+      <h2 class="cta-final__title">
+        Empezá hoy.<br>
+        Entrená <span class="charge">décadas</span>.
+      </h2>
+      <p class="cta-final__sub">
+        14 días de Pro gratis. Conectá tu dispositivo, dejá que NGX aprenda y mirá la primera sesión
+        que se reescribió sola.
+      </p>
+      <div class="cta-final__ctas">
+        <button class="lg-cta lg-cta--primary">
+          <span>Probar 14 días</span>
+          <span aria-hidden="true">→</span>
+        </button>
+        <button class="lg-cta lg-cta--secondary">
+          <span>Hablá con un coach</span>
+        </button>
+      </div>
+      <div class="cta-final__legal">Sin tarjeta · Cancela cuando quieras</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer">
+  <div class="shell">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <div class="row">
+          <span class="mark"></span>
+          <b>NeoGen&#8209;X</b>
+        </div>
+        <p>Performance &amp; Longevity. Construimos para atletas que piensan en décadas, no en highlight reels.</p>
+      </div>
+      <div class="footer__col">
+        <h4>Producto</h4>
+        <ul>
+          <li><a href="#programs">Programas</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#">Coach portal</a></li>
+          <li><a href="#">Apple Watch</a></li>
+          <li><a href="#">Changelog</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h4>Compañía</h4>
+        <ul>
+          <li><a href="#science">Ciencia</a></li>
+          <li><a href="#">Sobre NGX</a></li>
+          <li><a href="#">Press kit</a></li>
+          <li><a href="#">Empleo</a></li>
+          <li><a href="#">Contacto</a></li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Términos</a></li>
+          <li><a href="#">Privacidad</a></li>
+          <li><a href="#">Cookies</a></li>
+          <li><a href="#">Disclaimer médico</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2026 NeoGen-X SL · Madrid · Lisboa</span>
+      <span class="right">
+        <a href="#">IG</a>
+        <a href="#">X</a>
+        <a href="#">YT</a>
+        <a href="#">Strava</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+</div><!-- /lg-wallpaper-soft -->
+
+</main>
+
+<script>
+  // Nav scroll state
+  const nav = document.getElementById('nav');
+  let lastScroll = 0;
+  function onScroll() {
+    const y = window.scrollY;
+    if (y > 12) nav.classList.add('is-scrolled');
+    else nav.classList.remove('is-scrolled');
+    lastScroll = y;
+  }
+  document.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Scroll-driven fade-ins via IntersectionObserver
+  const io = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      }
+    }
+  }, { threshold: 0.16, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal, .reveal-stagger').forEach((el) => io.observe(el));
+</script>
+
+</body>
+</html>

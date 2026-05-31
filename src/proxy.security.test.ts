@@ -8,4 +8,13 @@ describe("API origin validation", () => {
     expect(source).toContain("new URL(origin).origin");
     expect(source).not.toContain("origin.startsWith");
   });
+
+  it("allows production commercial embeds used by the HYBRID exit flow", () => {
+    const source = readFileSync("src/proxy.ts", "utf8");
+
+    expect(source).toContain("https://calendly.com");
+    expect(source).toContain("https://www.youtube.com");
+    expect(source).toContain("https://player.vimeo.com");
+    expect(source).toContain("https://*.mercadopago.com");
+  });
 });

@@ -1,0 +1,62 @@
+- generic [active] [ref=e1] [box=0,0,1435,6307]:
+  - main [ref=e2] [box=0,0,1435,6307]:
+    - generic [ref=e3] [box=0,0,1435,6307]:
+      - article [ref=e4] [box=0,0,1435,3510]:
+        - generic [ref=e6] [box=78,96,1280,519]:
+          - generic [ref=e7] [box=78,123,537,466]
+          - generic [ref=e29] [box=646,96,711,519]
+        - generic [ref=e55] [box=142,1052,1152,473]:
+          - generic [ref=e57] [box=175,1085,442,407]
+          - generic [ref=e69] [box=706,1085,554,332]
+        - generic [ref=e91] [box=78,1613,1280,1212]:
+          - generic [ref=e92] [box=78,1613,768,221]
+          - generic [ref=e96] [box=78,1866,1280,959]
+        - generic [ref=e180] [box=167,2930,1102,82]:
+          - img [ref=e181] [box=167,2930,24,24]
+          - generic [ref=e184] [box=207,2930,1062,82]
+        - generic [ref=e190] [box=191,3166,1054,247]:
+          - generic [ref=e191] [box=191,3166,460,247]
+          - generic [ref=e195] [box=682,3225,562,128]
+      - generic [ref=e212] [box=191,3631,1054,685]:
+        - generic [ref=e213] [box=191,3631,768,194]:
+          - generic [ref=e214] [box=191,3632,207,25]: Estructura · NGX HYBRID
+          - heading "Así se vería tu temporada en HYBRID." [level=2] [ref=e215] [box=191,3677,768,53]
+          - paragraph [ref=e216] [box=191,3746,768,78]: Esto no es un plan personalizado que te bajas hoy. Es la estructura que sigue una temporada de 12 semanas en NGX HYBRID — GENESIS adapta cada semana, un coach humano valida, y cuatro fases con criterio de salida claro reemplazan el PDF que se pierde en la carpeta de descargas.
+        - generic [ref=e217] [box=191,3864,1054,342]:
+          - generic [ref=e219] [box=216,3905,202,292]
+          - generic [ref=e246] [box=483,3905,202,292]
+          - generic [ref=e274] [box=751,3905,202,292]
+          - generic [ref=e302] [box=1018,3905,202,273]
+        - generic [ref=e327] [box=191,4238,1054,78]:
+          - paragraph [ref=e328] [box=382,4238,672,46]: "NGX HYBRID es eso: 12 semanas con dirección, no 7 días con rutinas. La decisión es si quieres ejecutarlo solo, con acompañamiento, o probar primero."
+          - link "Ver opciones de entrada" [ref=e329] [cursor=pointer] [box=584,4296,267,20]:
+            - /url: "#hybrid-offer"
+      - generic [ref=e334] [box=207,4510,1022,1146]:
+        - generic [ref=e335] [box=207,4510,451,1146]:
+          - generic [ref=e336] [box=207,4511,233,25]: NGX Hybrid · Cohorte Marzo
+          - heading "Ya viste hacia dónde puede ir tu cuerpo. Decide cómo quieres ejecutarlo." [level=2] [ref=e337] [box=207,4556,451,213]
+          - paragraph [ref=e338] [box=207,4785,451,130]: "La visualización abre la conversación. NGX HYBRID es el sistema que la convierte en ejecución real: GENESIS adapta tu plan cada semana, un coach humano valida tus decisiones, y 12 semanas de checkpoints sostienen la adherencia."
+          - generic [ref=e339] [box=207,4943,451,169]
+          - generic [ref=e358] [box=207,5136,451,141]
+          - generic [ref=e361] [box=207,5297,451,171]
+          - generic [ref=e371] [box=232,5517,401,86]
+        - generic [ref=e379] [box=698,4510,531,1146]:
+          - generic [ref=e380] [box=698,4510,531,426]
+          - button "Antes de decidir Ver video del fundador 4 min · Cómo funciona HYBRID por dentro" [ref=e422] [box=698,4956,531,109]
+          - button "Hablar con el equipo Agendar llamada 1:1 30 min · Para evaluar fit con tu contexto" [ref=e434] [box=698,5084,531,109]
+          - button "¿Tienes una duda rápida? Escríbenos por WhatsApp" [ref=e445] [box=698,5213,531,44]
+          - generic [ref=e448] [box=698,5277,531,147]
+          - generic [ref=e461] [box=698,5443,531,23]
+      - generic [ref=e480] [box=335,5802,766,424]:
+        - generic [ref=e481] [box=335,5802,766,16]:
+          - img [ref=e482] [box=335,5802,16,16]
+          - generic [ref=e484] [box=359,5802,96,15]: Cierre rápido
+        - heading "¿El siguiente paso ya te quedó claro?" [level=3] [ref=e485] [box=335,5834,766,53]
+        - paragraph [ref=e486] [box=335,5903,672,52]: No estamos midiendo satisfacción vacía. Estamos validando si el flujo realmente te llevó de impacto visual a dirección concreta.
+        - generic [ref=e487] [box=335,5979,766,247]:
+          - generic [ref=e488] [box=360,6004,716,48]
+          - generic [ref=e499] [box=360,6064,716,15]
+          - generic [ref=e503] [box=360,6099,716,102]
+  - button "Open Next.js Dev Tools" [ref=e528] [cursor=pointer] [box=22,1046,32,32]:
+    - img [ref=e529] [box=22,1042,40,40]
+  - alert [ref=e522] [box=-1,6306,1,1]

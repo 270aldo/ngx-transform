@@ -13,7 +13,7 @@
  * - Responsive grid layout
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -30,21 +30,44 @@ interface StatsDeltaProps {
   to: Stats;
   className?: string;
   animate?: boolean;
+  showMethodology?: boolean;
+  baselineMode?: boolean;
 }
 
 const STAT_CONFIG = [
-  { key: "strength" as const, label: "FUERZA", icon: "💪" },
-  { key: "aesthetics" as const, label: "ESTÉTICA", icon: "✨" },
-  { key: "endurance" as const, label: "RESISTENCIA", icon: "🔥" },
-  { key: "mental" as const, label: "MENTAL", icon: "🧠" },
+  {
+    key: "strength" as const,
+    label: "FUERZA",
+    icon: "💪",
+    source: "Aproximado desde edad, peso, experiencia declarada y punto visual.",
+  },
+  {
+    key: "aesthetics" as const,
+    label: "ESTÉTICA",
+    icon: "✨",
+    source: "Aproximado desde composición visual inicial y objetivo elegido.",
+  },
+  {
+    key: "endurance" as const,
+    label: "RESISTENCIA",
+    icon: "🔥",
+    source: "Aproximado desde días disponibles, duración por sesión y estrés.",
+  },
+  {
+    key: "mental" as const,
+    label: "MENTAL",
+    icon: "🧠",
+    source: "Aproximado desde sueño, estrés y disciplina autodeclarados.",
+  },
 ];
 
 function AnimatedNumber({ value, duration = 1000 }: { value: number; duration?: number }) {
   const [displayValue, setDisplayValue] = useState(0);
+  const displayValueRef = useRef(0);
 
   useEffect(() => {
     const startTime = Date.now();
-    const startValue = displayValue;
+    const startValue = displayValueRef.current;
 
     const animate = () => {
       const elapsed = Date.now() - startTime;
@@ -54,6 +77,7 @@ function AnimatedNumber({ value, duration = 1000 }: { value: number; duration?: 
       const eased = 1 - Math.pow(1 - progress, 3);
 
       const current = Math.round(startValue + (value - startValue) * eased);
+      displayValueRef.current = current;
       setDisplayValue(current);
 
       if (progress < 1) {
@@ -72,6 +96,8 @@ export function StatsDelta({
   to,
   className,
   animate = true,
+  showMethodology = false,
+  baselineMode = false,
 }: StatsDeltaProps) {
   return (
     <div className={cn("grid grid-cols-2 gap-3", className)}>
@@ -79,8 +105,8 @@ export function StatsDelta({
         const fromValue = from[stat.key];
         const toValue = to[stat.key];
         const delta = toValue - fromValue;
-        const isPositive = delta > 0;
-        const isNegative = delta < 0;
+        const isPositive = !baselineMode && delta > 0;
+        const isNegative = !baselineMode && delta < 0;
 
         return (
           <motion.div
@@ -109,11 +135,8 @@ export function StatsDelta({
               >
                 {isPositive && <TrendingUp className="w-3 h-3" />}
                 {isNegative && <TrendingDown className="w-3 h-3" />}
-                {!isPositive && !isNegative && <Minus className="w-3 h-3" />}
-                <span>
-                  {isPositive && "+"}
-                  {delta}
-                </span>
+                {!isPositive && !isNegative && !baselineMode && <Minus className="w-3 h-3" />}
+                <span>{baselineMode ? "BASE" : `${isPositive ? "+" : ""}${delta}`}</span>
               </div>
             </div>
 
@@ -128,7 +151,7 @@ export function StatsDelta({
             {/* Progress bar */}
             <div className="mt-3 h-1.5 bg-white/[0.06] rounded-full overflow-hidden border border-white/[0.04]">
               <motion.div
-                initial={animate ? { width: `${fromValue}%` } : { width: `${toValue}%` }}
+                initial={animate && !baselineMode ? { width: `${fromValue}%` } : { width: `${toValue}%` }}
                 animate={{ width: `${toValue}%` }}
                 transition={{ duration: 1, delay: index * 0.1, ease: "easeOut" }}
                 className="h-full rounded-full"
@@ -148,8 +171,14 @@ export function StatsDelta({
 
             {/* From value (small) */}
             <div className="mt-2 text-xs font-mono tabular-nums text-white/45">
-              Inicio: {fromValue}
+              {baselineMode ? "Punto inicial" : `Inicio: ${fromValue}`} · estimado
             </div>
+
+            {showMethodology && (
+              <p className="mt-3 text-[11px] leading-relaxed text-white/42">
+                {stat.source} No es medición clínica.
+              </p>
+            )}
           </motion.div>
         );
       })}

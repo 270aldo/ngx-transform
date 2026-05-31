@@ -28,7 +28,7 @@ export function getResultAdjective(stats?: ShareData["stats"]): string {
 export const shareTemplates = {
   whatsapp: {
     getText: (data: ShareData) =>
-      `Acabo de ver cómo me veré en 12 meses con IA.
+      `Acabo de ver mi Season Vision Report con IA.
 
 Spoiler: Mi yo futuro se ve ${data.resultAdjective}.
 
@@ -42,7 +42,7 @@ ${data.shareUrl}`,
 
   instagram: {
     getText: (data: ShareData) =>
-      `Mi transformación de 12 meses según la IA
+      `Mi Season Vision Report según la IA
 
 Descubre la tuya: ${data.shareUrl}`,
     // Instagram doesn't support direct share, copy to clipboard
@@ -51,7 +51,7 @@ Descubre la tuya: ${data.shareUrl}`,
 
   twitter: {
     getText: (data: ShareData) =>
-      `Acabo de ver mi yo de 12 meses con @NGXGenesis
+      `Acabo de ver mi Season Vision Report con @NGXGenesis
 
 La IA dice que puedo lograrlo. ¿Tú?
 

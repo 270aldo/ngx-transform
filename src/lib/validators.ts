@@ -6,7 +6,7 @@ import { z } from "zod";
 
 export const LeadSchema = z.object({
   email: z.string().email(),
-  source: z.string().optional(),
+  source: z.string().max(120).optional(),
   consent: z.literal(true),
 });
 
@@ -22,7 +22,8 @@ export const ProfileSchema = z.object({
   level: z.enum(["novato", "intermedio", "avanzado"]),
   goal: z.enum(["definicion", "masa", "mixto"]),
   weeklyTime: z.number().min(1).max(14),
-  trainingDaysPerWeek: z.number().min(1).max(7).default(3).optional(),
+  trainingDaysPerWeek: z.number().min(2).max(6).default(3).optional(),
+  sessionDurationMinutes: z.number().min(30).max(75).default(60).optional(),
   trainingHistoryYears: z.number().min(0).max(30).default(0).optional(),
   nutritionQuality: z.number().min(1).max(10).default(6).optional(),
   bodyFatLevel: z.enum(["bajo", "medio", "alto"]).default("medio").optional(),
@@ -140,12 +141,9 @@ export const TelemetryEventSchema = z.object({
     "email_D7_sent",
     "email_D10_sent",
     "email_D14_sent",
-    "agent_cta_viewed",
-    "agent_cta_clicked",
     "referral_code_copied",
     "hybrid_offer_calendly_click",
     "hybrid_offer_whatsapp_click",
-    "hybrid_offer_chat_click",
     "nps_submitted",
     // v12 Comercial Exit Flow
     "hybrid_offer_v2_viewed",
@@ -167,6 +165,11 @@ export const TelemetryEventSchema = z.object({
     "brief_email_requested",
     "brief_email_sent",
     "brief_email_failed",
+    // HYBRID voice classifier
+    "voice_agent_opened",
+    "voice_agent_connected",
+    "voice_agent_classified",
+    "voice_agent_cta_clicked",
   ]),
   stage: z.string().optional(),
   model_id: z.string().optional(),

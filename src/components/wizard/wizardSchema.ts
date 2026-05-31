@@ -21,6 +21,8 @@ export const WizardFormSchema = z.object({
   goal: z.enum(["definicion", "masa", "mixto"]),
   focusZone: z.enum(["upper", "lower", "abs", "full"]).default("full"),
   weeklyTime: z.coerce.number().min(1).max(14),
+  trainingDaysPerWeek: z.coerce.number().min(2).max(6).default(3),
+  sessionDurationMinutes: z.coerce.number().min(30).max(75).default(60),
 
   // Stage 4: Mental
   disciplineRating: z.coerce.number().min(1).max(10).default(5),
@@ -28,7 +30,6 @@ export const WizardFormSchema = z.object({
   sleepQuality: z.coerce.number().min(1).max(10).default(5),
 
   // Extras (Hidden/Defaults)
-  trainingDaysPerWeek: z.coerce.number().min(1).max(7).default(3),
   trainingHistoryYears: z.coerce.number().min(0).max(30).default(0),
   nutritionQuality: z.coerce.number().min(1).max(10).default(6),
   trainingStyle: z.enum(["fuerza", "hipertrofia", "funcional", "hiit", "mixto"]).default("mixto"),

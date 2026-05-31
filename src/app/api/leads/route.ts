@@ -3,9 +3,19 @@ import { getDb } from "@/lib/firebaseAdmin";
 import { LeadSchema } from "@/lib/validators";
 import { FieldValue } from "firebase-admin/firestore";
 import { isEmailSuppressed } from "@/lib/emailSuppression";
+import { checkRateLimit, getClientIP, getRateLimitHeaders } from "@/lib/rateLimit";
 
 export async function POST(req: Request) {
   try {
+    const clientIP = getClientIP(req);
+    const rateLimitResult = await checkRateLimit("api:leads", clientIP);
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please wait a moment." },
+        { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+      );
+    }
+
     const body = await req.json();
     const parsed = LeadSchema.safeParse(body);
     if (!parsed.success) {
@@ -32,7 +42,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true });
   } catch (e: unknown) {
-    const message = e instanceof Error ? e.message : "Unknown error";
     console.error(e);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

@@ -36,11 +36,11 @@ interface PhaseContent {
 const PHASES: PhaseContent[] = [
   {
     number: 1,
-    weeks: "Semanas 1-3",
+    weeks: "Bloque 1",
     title: "Fundación",
     focus: "Baseline, técnica, frecuencia",
     outcomes: [
-      "Establecer mínimos viables: proteína, sueño, adherencia",
+      "Establecer mínimos viables: sueño, agenda, adherencia",
       "Calibrar volumen real de entrenamiento (no aspiracional)",
       "Limpiar ruido en hábitos antes de meter intensidad",
     ],
@@ -48,31 +48,31 @@ const PHASES: PhaseContent[] = [
   },
   {
     number: 2,
-    weeks: "Semanas 4-7",
+    weeks: "Bloque 2",
     title: "Construcción",
     focus: "Progresión de fuerza, recomposición",
     outcomes: [
       "Progresión semanal trazable en básicos",
-      "Ajustes nutricionales con datos, no con intuición",
+      "Ajustes de hábitos con datos, no con intuición",
       "Hábitos sostenibles antes de optimización fina",
     ],
     icon: Hammer,
   },
   {
     number: 3,
-    weeks: "Semanas 8-11",
+    weeks: "Bloque 3",
     title: "Optimización",
     focus: "Refinar lo que funciona, reducir fricción",
     outcomes: [
       "Identificar qué entrenamiento te está dando ROI real",
-      "Consolidar nutrición sin tracking obsesivo",
+      "Consolidar hábitos sin tracking obsesivo",
       "Recuperación como sistema, no como recurso",
     ],
     icon: Sparkles,
   },
   {
     number: 4,
-    weeks: "Semana 12",
+    weeks: "Cierre",
     title: "Evaluación",
     focus: "Decidir siguiente temporada",
     outcomes: [
@@ -92,11 +92,11 @@ export function SeasonRoadmap() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.55, ease: "easeOut" }}
-      className="relative w-full px-4 py-12 scroll-mt-24"
+      className="relative w-full px-4 py-14 md:py-20 scroll-mt-24"
     >
       <div className="mx-auto max-w-6xl">
         <div className="ngx-section-panel relative overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_22%_18%,rgba(109,0,255,0.12),transparent_36%),radial-gradient(circle_at_78%_28%,rgba(184,148,255,0.08),transparent_28%)]" />
+          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_22%_18%,rgba(109,0,255,0.06),transparent_38%)]" />
 
           <div className="relative z-10">
             <div className="max-w-3xl">
@@ -104,14 +104,12 @@ export function SeasonRoadmap() {
                 Estructura · NGX HYBRID
               </span>
               <h2 className="ngx-h1 !text-left">
-                Así se vería tu temporada en HYBRID.
+                Una dirección de 12 semanas.
               </h2>
               <p className="mt-4 text-sm leading-relaxed text-white/62 md:text-base">
-                Esto no es un plan personalizado que te bajas hoy. Es la estructura
-                que sigue una temporada de 12 semanas en NGX HYBRID — GENESIS
-                adapta cada semana, un coach humano valida, y cuatro fases con
-                criterio de salida claro reemplazan el PDF que se pierde en la
-                carpeta de descargas.
+                Esto no es un plan personalizado para ejecutar a ciegas. Es el
+                mapa de conversación que usaríamos para revisar si HYBRID tiene
+                sentido: baseline, progresión, fricción y criterio de salida.
               </p>
             </div>
 
@@ -214,9 +212,9 @@ export function SeasonRoadmap() {
 
             <div className="mt-8 flex flex-col items-center gap-3 text-center">
               <p className="text-sm leading-relaxed text-white/55 max-w-2xl">
-                NGX HYBRID es eso: 12 semanas con dirección, no 7 días con
-                rutinas. La decisión es si quieres ejecutarlo solo, con
-                acompañamiento, o probar primero.
+                Si esta estructura te da claridad, el siguiente paso es revisar
+                fit: qué puedes ejecutar solo, qué necesita acompañamiento y qué
+                no conviene forzar todavía.
               </p>
               <a
                 href="#hybrid-offer"

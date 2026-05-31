@@ -43,7 +43,10 @@ describe("retired GENESIS TTS integration", () => {
   });
 
   it("does not keep the legacy demo TTS phase model", () => {
-    const demoTypes = readFileSync("src/types/demo.ts", "utf8");
+    // The legacy genesis-demo type module was removed entirely. Its absence is
+    // the strongest possible guarantee that the TTS phase model is gone. If it
+    // ever comes back, assert it carries none of the retired TTS shapes.
+    const demoTypes = readIfExists("src/types/demo.ts");
 
     expect(demoTypes).not.toContain(["voice", "_", "intro"].join(""));
     expect(demoTypes).not.toContain("VoiceSegment");

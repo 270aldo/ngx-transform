@@ -90,7 +90,7 @@ PERFIL DEL USUARIO:
 - Sexo: ${profile.sex}
 - Edad: ${profile.age} años
 - Objetivo: ${goalDescriptions[profile.goal]}
-- Tipo de cuerpo: ${profile.bodyType}
+- Composición corporal legacy: ${profile.bodyType}
 - Zona de enfoque: ${focusDescriptions[profile.focusZone]}
 - Nivel: ${profile.level}
 - Tiempo semanal disponible: ${profile.weeklyTime} horas

@@ -1,0 +1,59 @@
+<!-- @dsCard group="Colors" -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/>
+<title>Glass materials · thin / regular / thick / purple</title>
+<link rel="stylesheet" href="../tokens-brand.css"/>
+<link rel="stylesheet" href="../tokens-lg.css"/>
+<link rel="stylesheet" href="../components.css"/>
+<style>
+  html, body { margin: 0; padding: 0; background: #04021A; }
+  body {
+    padding: 24px;
+    color: var(--ngx-white);
+    font-family: var(--font-text);
+    min-height: 280px;
+    background:
+      radial-gradient(40% 60% at 80% 10%, rgba(109,0,255,0.18) 0%, transparent 60%),
+      radial-gradient(30% 40% at 10% 95%, rgba(109,0,255,0.12) 0%, transparent 60%),
+      #04021A;
+    position: relative;
+  }
+  body::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: url("../assets/textures/texture-pattern-navy.png");
+    background-size: 280px; opacity: 0.05;
+    mix-blend-mode: screen; pointer-events: none;
+  }
+  body > * { position: relative; z-index: 1; }
+  .card-label {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 9.5px; letter-spacing: 0.20em; text-transform: uppercase;
+    color: var(--ngx-purple-300);
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-label::before {
+    content: ""; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--ngx-purple); box-shadow: 0 0 8px var(--ngx-purple);
+  }
+  .demo-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .demo-col { display: flex; flex-direction: column; gap: 12px; }
+  .note { font-size: 11px; color: var(--ngx-gray-400); margin-top: 12px; line-height: 1.5; }
+  .swatch-note {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ngx-gray-400);
+  }
+</style></head>
+<body>
+
+<div class="card-label">GLASS MATERIALS</div>
+<div class="demo-row">
+  <div style="width: 110px; height: 90px; background: var(--lg-glass-thin); border: 1px solid var(--lg-rim-thin); -webkit-backdrop-filter: var(--lg-blur-thin); backdrop-filter: var(--lg-blur-thin); border-radius: 14px; display: flex; align-items: flex-end; padding: 10px;"><span class="swatch-note">Thin · 4%</span></div>
+  <div style="width: 110px; height: 90px; background: var(--lg-glass-regular); border: 1px solid var(--lg-rim-regular); -webkit-backdrop-filter: var(--lg-blur-regular); backdrop-filter: var(--lg-blur-regular); border-radius: 14px; display: flex; align-items: flex-end; padding: 10px; box-shadow: var(--lg-shadow-inset);"><span class="swatch-note" style="color: var(--ngx-white);">Regular · 8%</span></div>
+  <div style="width: 110px; height: 90px; background: var(--lg-glass-thick); border: 1px solid var(--lg-rim-strong); -webkit-backdrop-filter: var(--lg-blur-thick); backdrop-filter: var(--lg-blur-thick); border-radius: 14px; display: flex; align-items: flex-end; padding: 10px;"><span class="swatch-note" style="color: var(--ngx-white);">Thick · 14%</span></div>
+  <div style="width: 110px; height: 90px; background: var(--lg-glass-purple); border: 1px solid var(--lg-rim-purple); -webkit-backdrop-filter: var(--lg-blur-regular); backdrop-filter: var(--lg-blur-regular); border-radius: 14px; display: flex; align-items: flex-end; padding: 10px; box-shadow: var(--lg-shadow-inset-purple), var(--lg-glow-purple-sm);"><span class="swatch-note" style="color: var(--ngx-purple-200);">Purple · ACTIVE</span></div>
+</div>
+<div class="note">Regular is the workhorse — ~80% of glass surfaces. Purple is reserved for active / featured / coach-insight. Thin for legends and chrome. Thick for tab bars.</div>
+
+</body></html>

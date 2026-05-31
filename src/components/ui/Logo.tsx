@@ -19,14 +19,17 @@ const SIZE_MAP: Record<NonNullable<LogoProps["size"]>, number> = {
 export function Logo({ variant = "full", size = "md", className }: LogoProps) {
   const [errored, setErrored] = useState(false);
   const h = SIZE_MAP[size];
-  const src = variant === "full" ? "/images/brand/logo.svg" : "/images/brand/logo-mark.svg";
-  const width = useMemo(() => (variant === "full" ? Math.round(h * 3.5) : h), [h, variant]);
+  const src =
+    variant === "full"
+      ? "/images/brand/logo-white.png"
+      : "/images/brand/ngx-mark-purple.png";
+  const width = useMemo(() => (variant === "full" ? Math.round(h * 4.7) : h), [h, variant]);
 
   if (errored) {
     return (
       <span
         className={cn(
-          "inline-flex items-center font-black tracking-tight text-[#6D00FF]",
+          "inline-flex items-center gap-2 font-black tracking-tight text-[#6D00FF]",
           "font-mono",
           size === "sm" && "text-lg",
           size === "md" && "text-xl",
@@ -35,6 +38,11 @@ export function Logo({ variant = "full", size = "md", className }: LogoProps) {
         )}
       >
         NGX
+        {variant === "full" && (
+          <span className="font-medium tracking-[0.18em] text-white/75">
+            TRANSFORM
+          </span>
+        )}
       </span>
     );
   }
@@ -42,13 +50,12 @@ export function Logo({ variant = "full", size = "md", className }: LogoProps) {
   return (
     <Image
       src={src}
-      alt="NGX Genesis"
+      alt="NGX"
       height={h}
       width={width}
-      className={className}
+      className={cn("object-contain", className)}
       onError={() => setErrored(true)}
       priority={size === "lg"}
     />
   );
 }
-

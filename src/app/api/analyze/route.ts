@@ -8,6 +8,7 @@ import { telemetry, startTimer } from "@/lib/telemetry";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
 import { checkSpendLimit, recordSpend } from "@/lib/spendLimiter";
 import { requireAuth } from "@/lib/authServer";
+import { hasInternalApiKey } from "@/lib/internalApiAuth";
 import { getAiGenerationFlag } from "@/lib/aiKillSwitch";
 import {
   getOrCreateJob,
@@ -42,6 +43,7 @@ export async function POST(req: Request) {
 
     const { sessionId } = parsed.data;
     parsedSessionId = sessionId;
+    const isInternal = hasInternalApiKey(req);
 
     // Kill switch for AI generation
     const aiFlag = await getAiGenerationFlag();
@@ -53,16 +55,18 @@ export async function POST(req: Request) {
     }
 
     // Rate limiting by IP (Upstash Redis)
-    const clientIP = getClientIP(req);
-    const rateLimitResult = await checkRateLimit("api:analyze", clientIP);
-    if (!rateLimitResult.success) {
-      if (parsedSessionId) {
-        telemetry.rateLimitBlocked(parsedSessionId, "api:analyze");
+    if (!isInternal) {
+      const clientIP = getClientIP(req);
+      const rateLimitResult = await checkRateLimit("api:analyze", clientIP);
+      if (!rateLimitResult.success) {
+        if (parsedSessionId) {
+          telemetry.rateLimitBlocked(parsedSessionId, "api:analyze");
+        }
+        return NextResponse.json(
+          { error: "Too many requests. Please wait a moment." },
+          { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+        );
       }
-      return NextResponse.json(
-        { error: "Too many requests. Please wait a moment." },
-        { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
-      );
     }
 
     if (!process.env.GEMINI_API_KEY) {
@@ -83,20 +87,22 @@ export async function POST(req: Request) {
     }
 
     // Require authentication and verify session ownership
-    const authUser = await requireAuth(req);
-    const ownerUid = (data as unknown as Record<string, unknown>).ownerUid as string | undefined;
-    if (ownerUid && authUser.uid !== ownerUid) {
-      console.warn(`[Analyze] Owner mismatch: Token uid=${authUser.uid} Session ownerUid=${ownerUid}`);
-      telemetry.authFailed(sessionId, { reason: "owner_mismatch" });
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
-    if (data.email && authUser.email) {
-      const tokenEmail = authUser.email.toLowerCase().trim();
-      const sessionEmail = data.email.toLowerCase().trim();
-      if (tokenEmail !== sessionEmail) {
-        console.warn("[Analyze] Email mismatch");
-        telemetry.authFailed(sessionId, { reason: "email_mismatch" });
+    if (!isInternal) {
+      const authUser = await requireAuth(req);
+      const ownerUid = (data as unknown as Record<string, unknown>).ownerUid as string | undefined;
+      if (ownerUid && authUser.uid !== ownerUid) {
+        console.warn(`[Analyze] Owner mismatch: Token uid=${authUser.uid} Session ownerUid=${ownerUid}`);
+        telemetry.authFailed(sessionId, { reason: "owner_mismatch" });
         return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+      }
+      if (data.email && authUser.email) {
+        const tokenEmail = authUser.email.toLowerCase().trim();
+        const sessionEmail = data.email.toLowerCase().trim();
+        if (tokenEmail !== sessionEmail) {
+          console.warn("[Analyze] Email mismatch");
+          telemetry.authFailed(sessionId, { reason: "email_mismatch" });
+          return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+        }
       }
     }
 
@@ -105,6 +111,12 @@ export async function POST(req: Request) {
     if (job.status === "completed" && data.ai) {
       console.log(`[Analyze] Session ${sessionId} already analyzed, returning cached`);
       return NextResponse.json({ ok: true, ai: data.ai, cached: true });
+    }
+    if (job.status === "failed" && job.retryCount >= job.maxRetries) {
+      return NextResponse.json(
+        { error: "Analysis retry limit reached", status: "failed" },
+        { status: 409 }
+      );
     }
 
     const photoPath = data.photo?.originalStoragePath;
@@ -128,6 +140,12 @@ export async function POST(req: Request) {
     const lock = await acquireJobLock(sessionId, "analysis");
     if (!lock.acquired) {
       telemetry.jobLockDenied(sessionId, "analysis");
+      if (lock.status === "failed") {
+        return NextResponse.json(
+          { error: "Analysis retry limit reached", status: "failed" },
+          { status: 409 }
+        );
+      }
       return NextResponse.json({ ok: true, status: "in_progress" }, { status: 202 });
     }
 

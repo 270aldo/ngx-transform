@@ -5,7 +5,7 @@
  * - Identity Lock: Preserving facial features and unique characteristics
  * - Transformation stages with appropriate percentages
  * - Environment progression (gym → lifestyle → editorial)
- * - NGX visual style (Nike commercial aesthetic)
+ * - NGX visual style (premium athletic editorial aesthetic)
  * - Explicit negative prompts to avoid common failures
  */
 
@@ -55,18 +55,18 @@ const GOAL_DESCRIPTIONS: Record<string, {
   neutral: string;
 }> = {
   definicion: {
-    male: "extremely lean and shredded physique, visible six-pack abs, vascularity on arms, defined deltoids, sharp jawline, low body fat percentage",
-    female: "toned and defined athletic physique, visible muscle definition, lean arms, defined abs outline, athletic build",
-    neutral: "lean and defined athletic physique, visible muscle definition, low body fat, toned appearance",
+    male: "realistic athletic recomposition, leaner waist, improved posture, visible shoulder and arm tone, natural proportions",
+    female: "realistic athletic recomposition, improved posture, visible muscle tone, leaner waist, natural proportions",
+    neutral: "realistic athletic recomposition, improved posture, visible muscle tone, leaner waist, natural proportions",
   },
   masa: {
-    male: "massive muscle hypertrophy, bodybuilder physique, thick chest, broad shoulders, powerful arms, thick neck, substantial muscle mass",
-    female: "strong muscular physique, developed glutes, toned legs, defined arms, athletic curves with muscle",
-    neutral: "muscular and powerful physique, significant muscle development, broad build, strength-focused",
+    male: "functional muscle gain, fuller chest and shoulders, stronger arms, athletic proportions, natural size increase",
+    female: "functional muscle gain, stronger glutes and legs, toned arms, athletic curves, natural size increase",
+    neutral: "functional muscle gain, stronger frame, athletic proportions, natural size increase",
   },
   mixto: {
-    male: "athletic superhero physique, balanced muscle mass with definition, wide shoulders, V-taper, functional strength appearance",
-    female: "athletic model physique, toned all over, balanced proportions, sporty and strong, functional fitness look",
+    male: "balanced athletic physique, visible strength, improved posture, tighter waist, functional performance look",
+    female: "balanced athletic physique, visible tone, improved posture, stronger legs and core, functional performance look",
     neutral: "athletic and balanced physique, good proportions, mix of strength and definition",
   },
 };
@@ -110,9 +110,6 @@ function computeAdherenceScore(context: PromptContext): number {
   }
   if (typeof context.trainingDaysPerWeek === "number") {
     parts.push(normalize(context.trainingDaysPerWeek, 1, 7));
-  }
-  if (typeof context.nutritionQuality === "number") {
-    parts.push(normalize(context.nutritionQuality, 1, 10));
   }
   if (typeof context.disciplineRating === "number") {
     parts.push(normalize(context.disciplineRating, 1, 10));
@@ -205,22 +202,22 @@ function buildVisualDelta(context: PromptContext, intensityWord: string): string
       ? "visible fat loss with a tighter waistline and softer-to-lean transition."
       : "tighter waistline with early ab outline and shoulder separation.";
     byStep.m4 = `${intensityWord} ${earlyFat}`;
-    byStep.m8 = `clear fat reduction, visible ab outline, sharper jawline, defined deltoids and arms.`;
-    byStep.m12 = `COMPLETE METAMORPHOSIS: Deep definition. Razor-sharp abdominal separation. Cross-striations visible. 12 months of diet and training discipline visible.`;
+    byStep.m8 = `clear fat reduction with a lean athletic look, visible abdominal definition starting to show under direct sunlight, sharper jawline, defined deltoids and athletic vascularity in arms.`;
+    byStep.m12 = `realistic peak week 12 transformation: maximum healthy fat loss for this individual, full abdominal grid visible, highly defined oblique muscles, improved posture and shoulder alignment, peak natural proportions. The physical conditioning must be visibly more advanced and shredded compared to the Mes 8 stage.`;
   } else if (goal === "masa") {
     const cleanBulk = bodyFat === "alto"
       ? "cleaner bulk with tighter waistline control to avoid excessive fat gain."
       : "lean muscle gain with minimal fat increase.";
     byStep.m4 = `${intensityWord} increase in muscle fullness, thicker chest and shoulders, early arm growth; ${cleanBulk}`;
-    byStep.m8 = `obvious mass gain in chest, shoulders, back; arms visibly thicker; stronger V-taper.`;
-    byStep.m12 = `COMPLETE METAMORPHOSIS: Peak muscle mass. Unrecognizable density. Thick chest and shelf-like shoulders. Powerful, intimidating build. 12 months of heavy lifting visible.`;
+    byStep.m8 = `pronounced muscle fullness in the chest, back, and shoulders, arms are visibly thicker and athletic, showing active functional power.`;
+    byStep.m12 = `realistic peak week 12 transformation: maximum high-performance lean muscle gain, broad dominant V-taper, thick fully developed shoulders and chest, peak athletic frame and muscle fullness. This represents the ultimate step of progress, showing a much more complete and massive muscular development than in the Mes 8 stage.`;
   } else {
     const recomposition = bodyFat === "alto"
       ? "recomposition with visible waist reduction and improved posture."
       : "recomposition: tighter waist, slightly broader shoulders, improved posture.";
     byStep.m4 = `${intensityWord} ${recomposition}`;
-    byStep.m8 = `athletic silhouette with visible abs, broader shoulders, tighter waist, improved symmetry.`;
-    byStep.m12 = `COMPLETE METAMORPHOSIS: Heroic athletic build. Dramatic V-taper. Crisp definition. 12 months of hardcore dedication visible in every muscle fiber. Unrecognizable from day 1.`;
+    byStep.m8 = `strong athletic recomposition silhouette, flat tight waistline with early visible abs, improved upper-to-lower body symmetry and active posture.`;
+    byStep.m12 = `realistic peak week 12 transformation: ultimate high-performance balanced build, shredded tight midsection, broader powerful shoulders, peak posture and elite athletic symmetry. The overall physical conditioning, leanness, and muscle tone must be visibly superior and more mature than in the Mes 8 stage.`;
   }
 
   return `[VISUAL DELTA - MUST BE VISIBLE]
@@ -275,7 +272,7 @@ function buildTransformation(context: PromptContext): string {
   } else if (context.step === "m8") {
     progressDescription = "Significant transformation in progress. Clear visible changes. Athletic build emerging strongly.";
   } else {
-    progressDescription = "PEAK TRANSFORMATION. 12 MONTHS OF GRIND. The subject is captured MID-WORKOUT, executing a heavy lift with perfect form. SWEAT dripping. VEINS popping. MAXIMUM EFFORT.";
+    progressDescription = "Week 12 realistic peak. The subject shows calm confidence, stronger posture, visible muscle tone, and healthier body composition without exaggerated bodybuilding or facial changes.";
   }
 
   const intensityLabel = describeProgressIntensity(adherenceScore);
@@ -291,6 +288,12 @@ function buildTransformation(context: PromptContext): string {
     ? `Recovery context: sleep ${context.sleepQuality ?? "N/A"}/10, stress ${context.stressLevel ?? "N/A"}/10.`
     : "";
 
+  const varianceRule = context.step === "m8"
+    ? "\n[VISUAL VARIANCE RULE]\n- You MUST completely change the subject's clothing style, clothing color, and posture compared to the original reference photo. The subject is active on an outdoor running track."
+    : context.step === "m12"
+      ? "\n[VISUAL VARIANCE RULE]\n- You MUST completely change the subject's clothing color, clothing style, posture, and framing compared to the Mes 8 reference image.\n- Do NOT copy the background, pose, or clothing from the Mes 8 reference image. Mes 12 is a complete visual styling reset: indoor dark premium cinematic studio with dramatic spotlighting, new dark athletic top, and a calm, focused standing posture."
+      : "";
+
   return `[TRANSFORMATION: ${context.step.toUpperCase()} - ${effectivePercent}% PROGRESS]
 
 Target Physique: ${goalDesc} ${focusEmphasis}
@@ -304,6 +307,7 @@ ${nutritionLine}
 ${recoveryNote}
 ${progressDescription}
 ${visualDelta}
+${varianceRule}
 
 Environment: ${env.description}
 Setting: ${env.setting}
@@ -328,29 +332,49 @@ function buildStyle(context: PromptContext): string {
     minimal: "minimal studio setting with clean geometry",
   };
   const fallbackWardrobe: Record<string, string> = {
-    cinematic: "premium athletic wear (Nike/Under Armour style) or shirtless",
+    cinematic: "premium athletic wear with minimal or no visible branding",
     editorial: "premium athletic fashion styling with clean silhouettes",
     street: "athletic streetwear, fitted, performance fabrics",
     minimal: "simple, clean athletic wear with minimal branding",
   };
 
-  const lighting = context.styleProfile?.lighting || "dramatic studio lighting with sharp shadows";
-  const wardrobe = context.styleProfile?.wardrobe || fallbackWardrobe[aestheticPreference];
-  const background = context.styleProfile?.background || fallbackBackgrounds[aestheticPreference];
-  const colorGrade = context.styleProfile?.color_grade || fallbackColorGrades[aestheticPreference];
+  let lighting = "";
+  let wardrobe = "";
+  let background = "";
+  let colorGrade = "";
+
+  if (context.step === "m4") {
+    // Milestone 1 (m4): Gritty underground gym, cool tones
+    lighting = "cool overhead industrial fluorescent light key, dramatic steep angles creating high-contrast shadows on muscle contours";
+    wardrobe = "simple gray basic sleeveless workout tank top, no logos";
+    background = "gritty raw industrial warehouse gym with exposed dark concrete walls, heavy steel weight racks, blurred background with shallow depth of field";
+    colorGrade = "cool-toned, high-contrast, low-saturation gritty athletic commercial color grade";
+  } else if (context.step === "m8") {
+    // Milestone 2 (m8): Golden hour outdoor running track, warm golden lighting
+    lighting = "dramatic natural golden hour sunlight, warm glowing key-light with organic lens flare and soft organic shadow fill";
+    wardrobe = "fitted bright colored active performance t-shirt (such as active blue or electric orange), clean minimal design";
+    background = "modern outdoor running track at golden hour sunrise, open sky horizon, warm sun disk on horizon line, shallow depth of field with blurred running lanes";
+    colorGrade = "rich warm golden-hour cinematic grade, lifelike saturated skin tones, high-performance athletic commercial color style";
+  } else {
+    // Milestone 3 (m12): Dark premium wood-paneled elite studio, dramatic spotlight, black compression top
+    lighting = "cinematic high-fashion spotlighting, single dramatic high-contrast overhead white spotlight casting soft edge shadows, highlighting peak physical cuts and definition";
+    wardrobe = "sleek premium black long-sleeve compression top or fitted premium dark athletic tee, clean modern silhouette";
+    background = "ultra-sleek premium private fitness space with dark acoustic vertical wood paneling and matte black machines, highly aesthetic premium minimalist environment, blurred background";
+    colorGrade = "high-fashion moody cinematic grade, rich deep blacks, subtle dark violet undertones, premium editorial fitness commercial look";
+  }
 
   return `[PHOTOGRAPHY STYLE]
 Camera: 85mm portrait lens, f/2.8, shallow depth of field
 Lighting: ${lighting}
 Subject: Perfectly sharp and in focus, hero framing
-
+ 
 Wardrobe: ${wardrobe}
 Background: ${background}
 Color Grade: ${colorGrade}
-
-Aesthetic Reference: Nike commercial, Under Armour campaign, ESPN Body Issue
+ 
+Aesthetic Reference: premium athletic editorial campaign, performance and longevity positioning
 Preferred Aesthetic: ${aestheticPreference}
-Quality: 8K ultra-high definition, photorealistic, cinematic action shot, sweat particles, volumetric lighting`;
+Quality: ultra-high definition, photorealistic, cinematic editorial fitness photography, controlled highlights, natural skin texture`;
 }
 
 /**
@@ -385,12 +409,11 @@ function buildDetails(step: NanoStep): string {
 
   if (step === "m12") {
     return `${detailsBase}
-- Visible vascularity (veins) on arms and shoulders
-- Drenched in sweat, glistening skin
-- Mature muscle density (hardened look)
-- Grimace of effort or intense laser focus
-- Atmospheric gym lighting interacting with sweat
-- Competition-ready conditioning`;
+- Natural athletic muscle tone visible through posture and lighting
+- Healthier body composition without contest-level leanness
+- Calm confident expression, not aggressive
+- Editorial lighting that reveals realistic progress
+- Week 12 consistency visible but anatomically plausible`;
   }
 
   return detailsBase;
@@ -427,7 +450,7 @@ ${details}
 ${aiSection}
 ${negativePrompt}
 
-FINAL INSTRUCTION: Create a MASTERPIECE of fitness photography. This should look like a professional billboard campaign, not a casual photo. The subject MUST be clearly recognizable as the same person from the reference image.`;
+FINAL INSTRUCTION: Create premium realistic fitness photography. This is a credible 12-week direction, not a guaranteed or exaggerated transformation. The subject MUST be clearly recognizable as the same person from the reference image.`;
 
   return {
     mainPrompt,
@@ -501,5 +524,5 @@ Output a JSON object with:
 Match the style to:
 - The person's appearance and build
 - NGX brand aesthetic (premium, athletic, aspirational)
-- Nike/Under Armour commercial quality`;
+- premium athletic campaign quality`;
 }

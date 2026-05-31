@@ -46,7 +46,7 @@ export default function D5Ebook({ name, shareId }: D5EbookProps) {
               </Text>
 
               <Text className="text-neutral-300 leading-relaxed">
-                Hace 5 días viste quién puedes ser en 12 meses.
+                Hace 5 días viste una dirección posible en tu diagnóstico visual NGX.
               </Text>
               <Text className="text-neutral-300 leading-relaxed mt-3">
                 GENESIS analizó tus datos y creó un ebook personalizado sobre tu transformación.

@@ -5,6 +5,7 @@
  * We only test exported / testable pure functions — no network calls.
  */
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 
 // cleanJsonResponse is not exported, so we replicate its exact logic here.
 // If the implementation changes, this test will surface the drift.
@@ -54,5 +55,14 @@ describe("cleanJsonResponse", () => {
     const result = cleanJsonResponse(input);
     // Regex is greedy — content between fences is left intact for this edge case
     expect(result).toBeTruthy();
+  });
+});
+
+describe("premium analysis persistence contract", () => {
+  it("does not convert v2 analysis back to a v1-shaped object", () => {
+    const source = readFileSync("src/lib/gemini.ts", "utf8");
+
+    expect(source).toContain("return generateInsightsV2(params)");
+    expect(source).not.toContain("Convert v2 to v1 format");
   });
 });

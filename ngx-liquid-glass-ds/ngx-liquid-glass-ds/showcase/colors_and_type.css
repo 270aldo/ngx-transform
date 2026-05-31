@@ -1,0 +1,360 @@
+/* =====================================================================
+   NeoGen-X · Design Tokens
+   Performance & Longevity
+   ===================================================================== */
+
+/* ---------- Webfonts ---------- */
+/* Primary (display): United Sans Condensed — official brand face */
+@font-face {
+  font-family: "United Sans Cond";
+  src: url("./fonts/UnitedSansCdLight.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "United Sans Cond";
+  src: url("./fonts/UnitedSansCdMd.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "United Sans Cond";
+  src: url("./fonts/UnitedSansCdBk.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "United Sans Cond";
+  src: url("./fonts/UnitedSansCdBold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "United Sans Cond";
+  src: url("./fonts/UnitedSansCdHeavy.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "United Sans Rg";
+  src: url("./fonts/UnitedSansRgMd.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "United Sans Rg";
+  src: url("./fonts/UnitedSansRgBd.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "United Sans Rg";
+  src: url("./fonts/UnitedSansRgHv.otf") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "United Sans Ex";
+  src: url("./fonts/UnitedSansExBd.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Subhead family: Neue Haas Grotesk Display Pro via Adobe Fonts (Typekit).
+   Project: design-ngx — 8 cuts (Display Pro 45/46/75/etc).
+   This kit also covers Text Pro fallback via Typekit if local TTFs fail. */
+@import url("https://use.typekit.net/sfm5goj.css");
+
+/* Secondary (text): Neue Haas Grotesk Text Pro — official body face
+   (Christian Schwartz / Linotype, delivered as the three numeric TTFs).
+   Display Pro cuts are not delivered yet — use Bold here for subheads
+   until Display Pro arrives via Adobe Fonts. */
+@font-face {
+  font-family: "Neue Haas Grotesk Text Pro";
+  src: url("./fonts/NeueHaasGroteskText-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Neue Haas Grotesk Text Pro";
+  src: url("./fonts/NeueHaasGroteskText-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Neue Haas Grotesk Text Pro";
+  src: url("./fonts/NeueHaasGroteskText-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* =================================================================
+     COLOR · Brand Palette (from Brand Guidelines §2.1)
+     ================================================================= */
+  --ngx-navy:      #0A0628;   /* RGB 09 06 38  — predominant dark */
+  --ngx-purple:    #6D00FF;   /* RGB 109 0 255 — predominant accent */
+  --ngx-gray:      #CCCCCC;   /* RGB 212 215 194 (per spec hex) — secondary neutral */
+  --ngx-black:     #0B0B0B;
+  --ngx-white:     #FFFFFF;
+
+  /* Tonal Navy ramp (derived for UI surfaces) */
+  --ngx-navy-950: #050218;
+  --ngx-navy-900: #0A0628;   /* base */
+  --ngx-navy-800: #14103D;
+  --ngx-navy-700: #1F1A55;
+  --ngx-navy-600: #2D2670;
+  --ngx-navy-500: #3D3490;
+
+  /* Tonal Purple ramp (derived for hover / press / fills) */
+  --ngx-purple-700: #5500CC;   /* press / active */
+  --ngx-purple-600: #6D00FF;   /* base */
+  --ngx-purple-500: #8530FF;   /* hover */
+  --ngx-purple-400: #A368FF;
+  --ngx-purple-300: #C29BFF;
+  --ngx-purple-200: #E0CCFF;
+  --ngx-purple-100: #F2E7FF;
+
+  /* Neutral ramp */
+  --ngx-gray-50:  #F7F7F8;
+  --ngx-gray-100: #EDEDEF;
+  --ngx-gray-200: #D9D9DD;
+  --ngx-gray-300: #CCCCCC;     /* base */
+  --ngx-gray-400: #9A9AA0;
+  --ngx-gray-500: #6B6B72;
+  --ngx-gray-600: #44444A;
+  --ngx-gray-700: #2A2A30;
+  --ngx-gray-800: #18181C;
+
+  /* Semantic accents (functional only; not part of core palette) */
+  --ngx-success: #22C55E;
+  --ngx-warning: #F5A524;
+  --ngx-danger:  #EF4444;
+
+  /* =================================================================
+     SEMANTIC TOKENS — Light surface (default)
+     ================================================================= */
+  --bg:          var(--ngx-white);
+  --bg-elev-1:   var(--ngx-gray-50);
+  --bg-elev-2:   #FFFFFF;
+  --bg-inverse:  var(--ngx-navy);
+
+  --fg:          var(--ngx-navy);
+  --fg-muted:    var(--ngx-gray-500);
+  --fg-subtle:   var(--ngx-gray-400);
+  --fg-inverse:  var(--ngx-white);
+  --fg-accent:   var(--ngx-purple);
+
+  --border:        var(--ngx-gray-200);
+  --border-strong: var(--ngx-navy);
+  --border-accent: var(--ngx-purple);
+
+  --accent:        var(--ngx-purple);
+  --accent-hover:  var(--ngx-purple-500);
+  --accent-press:  var(--ngx-purple-700);
+  --accent-soft:   var(--ngx-purple-100);
+
+  /* =================================================================
+     TYPOGRAPHY · Families
+     ================================================================= */
+  --font-display: "United Sans Cond", "United Sans Rg", "Arial Narrow",
+                  "Helvetica Neue Condensed", sans-serif;
+  --font-subhead: "neue-haas-grotesk-display", "Neue Haas Grotesk Display Pro",
+                  "Neue Haas Grotesk Text Pro", "Helvetica Neue", system-ui, sans-serif;
+  --font-text:    "Neue Haas Grotesk Text Pro", "neue-haas-grotesk-display",
+                  "Helvetica Neue", "Helvetica", system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", "SFMono-Regular", ui-monospace, monospace;
+
+  /* Type scale — chunky display, even-rhythm body */
+  --fs-display-xxl: clamp(72px, 9vw, 144px);
+  --fs-display-xl:  clamp(56px, 6.5vw, 96px);
+  --fs-display-lg:  clamp(44px, 5vw, 72px);
+  --fs-h1:          clamp(36px, 3.5vw, 56px);
+  --fs-h2:          clamp(28px, 2.6vw, 40px);
+  --fs-h3:          22px;
+  --fs-h4:          18px;
+  --fs-body-lg:     18px;
+  --fs-body:        16px;
+  --fs-body-sm:     14px;
+  --fs-caption:     12px;
+  --fs-micro:       11px;
+
+  --lh-display: 0.92;
+  --lh-heading: 1.05;
+  --lh-body:    1.55;
+  --lh-tight:   1.2;
+
+  --ls-display: -0.02em;
+  --ls-heading: -0.01em;
+  --ls-eyebrow: 0.14em;
+  --ls-button:  0.06em;
+
+  /* =================================================================
+     SPACING · 4-point grid
+     ================================================================= */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  /* =================================================================
+     RADII · Mostly sharp; chip radii for soft surfaces.
+     The brand wordmark is angular — UI follows suit.
+     ================================================================= */
+  --radius-none: 0;
+  --radius-xs:   2px;
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-2xl:  24px;
+  --radius-pill: 999px;
+
+  /* =================================================================
+     ELEVATION — restrained; the brand reads flat on solid Navy/Purple
+     ================================================================= */
+  --shadow-xs: 0 1px 2px rgba(10, 6, 40, 0.06);
+  --shadow-sm: 0 2px 6px rgba(10, 6, 40, 0.08);
+  --shadow-md: 0 6px 18px rgba(10, 6, 40, 0.10);
+  --shadow-lg: 0 14px 40px rgba(10, 6, 40, 0.16);
+  --shadow-glow-purple: 0 0 24px rgba(109, 0, 255, 0.45);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  /* Motion */
+  --ease-out:  cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in:   cubic-bezier(0.55, 0, 1, 0.45);
+  --ease-std:  cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast:  120ms;
+  --dur-base:  200ms;
+  --dur-slow:  360ms;
+
+  /* Container widths */
+  --container-sm: 640px;
+  --container-md: 960px;
+  --container-lg: 1200px;
+  --container-xl: 1440px;
+}
+
+/* =================================================================
+   Dark surface tokens — primary brand environment.
+   Apply via [data-theme="dark"] or .ngx-dark
+   ================================================================= */
+[data-theme="dark"], .ngx-dark {
+  --bg:          var(--ngx-navy);
+  --bg-elev-1:   var(--ngx-navy-800);
+  --bg-elev-2:   var(--ngx-navy-700);
+  --bg-inverse:  var(--ngx-white);
+
+  --fg:          var(--ngx-white);
+  --fg-muted:    #B3B0C8;
+  --fg-subtle:   #7A7894;
+  --fg-inverse:  var(--ngx-navy);
+  --fg-accent:   var(--ngx-purple);   /* the standout purple is ALWAYS #6D00FF, even on dark */
+
+  --border:        rgba(255, 255, 255, 0.10);
+  --border-strong: rgba(255, 255, 255, 0.40);
+  --border-accent: var(--ngx-purple);
+
+  --accent-soft: rgba(109, 0, 255, 0.18);
+}
+
+/* =================================================================
+   ELEMENT DEFAULTS — semantic styles for raw HTML
+   ================================================================= */
+html { color-scheme: light dark; }
+body {
+  font-family: var(--font-text);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--fg);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: var(--lh-heading);
+  letter-spacing: var(--ls-heading);
+  text-transform: uppercase;
+  margin: 0;
+}
+h1 { font-size: var(--fs-h1); letter-spacing: var(--ls-display); line-height: var(--lh-display); }
+h2 { font-size: var(--fs-h2); }
+h3 { font-size: var(--fs-h3); }
+h4 { font-size: var(--fs-h4); letter-spacing: var(--ls-button); }
+
+p  { margin: 0; }
+small { font-size: var(--fs-body-sm); color: var(--fg-muted); }
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+a:hover { color: var(--accent-hover); }
+
+hr {
+  border: 0;
+  height: 1px;
+  background: var(--border);
+}
+
+code, pre, kbd, samp {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+
+/* =================================================================
+   UTILITY CLASSES — opt-in display + tone helpers
+   ================================================================= */
+.ngx-display-xxl { font-family: var(--font-display); font-weight: 900; font-size: var(--fs-display-xxl); line-height: var(--lh-display); letter-spacing: var(--ls-display); text-transform: uppercase; }
+.ngx-display-xl  { font-family: var(--font-display); font-weight: 800; font-size: var(--fs-display-xl);  line-height: var(--lh-display); letter-spacing: var(--ls-display); text-transform: uppercase; }
+.ngx-display-lg  { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-display-lg);  line-height: var(--lh-display); letter-spacing: var(--ls-display); text-transform: uppercase; }
+
+.ngx-eyebrow {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-caption);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg-accent);
+}
+
+.ngx-body-lg { font-size: var(--fs-body-lg); line-height: var(--lh-body); }
+.ngx-caption { font-size: var(--fs-caption); color: var(--fg-muted); }
+
+/* Brand backgrounds — repeating X-strand textures */
+.ngx-bg-pattern-navy {
+  background-color: var(--ngx-navy);
+  background-image: url("./assets/textures/texture-pattern-navy.png");
+  background-size: 480px auto;
+}
+.ngx-bg-pattern-purple {
+  background-color: var(--ngx-purple);
+  background-image: url("./assets/textures/texture-line-purple.png");
+  background-size: 480px auto;
+}

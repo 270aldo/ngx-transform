@@ -6,6 +6,7 @@
  */
 
 import { NextResponse } from "next/server";
+import * as Sentry from "@sentry/nextjs";
 
 export const runtime = "nodejs";
 
@@ -44,17 +45,30 @@ export async function POST(req: Request) {
       timestamp: new Date().toISOString(),
     });
 
-    // TODO: In production, forward to security monitoring service
-    // Examples:
-    // - Send to Sentry: Sentry.captureMessage("CSP Violation", { extra: report })
-    // - Send to logging service: await logToService("csp_violation", report)
-    // - Store in Firestore for analysis: await db.collection("csp_reports").add(report)
+    if (process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN) {
+      Sentry.captureMessage("CSP Violation", {
+        level: "warning",
+        tags: {
+          security: "csp",
+          directive: report["effective-directive"] || report["violated-directive"] || "unknown",
+        },
+        extra: {
+          documentUri: report["document-uri"],
+          violatedDirective: report["violated-directive"],
+          effectiveDirective: report["effective-directive"],
+          blockedUri: report["blocked-uri"],
+          sourceFile: report["source-file"],
+          lineNumber: report["line-number"],
+          statusCode: report["status-code"],
+        },
+      });
+    }
 
-    return NextResponse.json({ received: true }, { status: 204 });
+    return new NextResponse(null, { status: 204 });
   } catch (error) {
     // CSP reports can have malformed bodies, just acknowledge
     console.error("[CSP-Report] Failed to parse report:", error);
-    return NextResponse.json({ received: true }, { status: 204 });
+    return new NextResponse(null, { status: 204 });
   }
 }
 

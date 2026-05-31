@@ -4,7 +4,7 @@
  * Base templates for workout plans based on goal and focus zone
  */
 
-import type { Exercise, DayWorkout, DayHabits, DayNutrition } from "./planTypes";
+import type { Exercise, DayHabits, DayNutrition } from "./planTypes";
 
 // ============================================================================
 // Exercise Templates by Focus Zone

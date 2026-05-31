@@ -12,7 +12,7 @@ import type { InsightsResult } from "@/types/ai";
 
 export const DEMO_AI: InsightsResult = {
   insightsText:
-    "Tu lectura inicial muestra una base sólida con margen claro de mejora en composición corporal y consistencia. La proyección a 12 meses es realista si sostienes estructura y recuperación adecuada.",
+    "Tu lectura inicial muestra una base sólida con margen claro de mejora en composición corporal y consistencia. La visión de temporada es realista si sostienes estructura y recuperación adecuada.",
   timeline: {
     m0: {
       month: 0,
@@ -31,12 +31,12 @@ export const DEMO_AI: InsightsResult = {
     },
     m4: {
       month: 4,
-      title: "Mes 4 — Génesis",
+      title: "Season 1 — Génesis",
       description:
         "Primera adaptación: el sistema empieza a responder. Más densidad muscular, menos fatiga acumulada.",
       focus: "Construcción de base",
       mental:
-        "Cuatro meses son suficientes para crear un hábito real. El cambio empieza a notarse en cómo te sientes, antes que en cómo te ves.",
+        "Season 1 es suficiente para crear una señal real de hábito. El cambio empieza a notarse en cómo te sientes, antes que en cómo te ves.",
       stats: { strength: 65, aesthetics: 60, endurance: 68, mental: 70 },
       expectations: [
         "Aumento visible de fuerza en básicos",
@@ -47,12 +47,12 @@ export const DEMO_AI: InsightsResult = {
     },
     m8: {
       month: 8,
-      title: "Mes 8 — Metamorfosis",
+      title: "Season 2 — Metamorfosis",
       description:
         "Composición corporal redefinida. La estructura del entrenamiento se vuelve segunda naturaleza.",
       focus: "Refinamiento",
       mental:
-        "A los ocho meses, la disciplina deja de costar. Tu cuerpo y tu mente empiezan a operar como un sistema integrado.",
+        "En Season 2, la disciplina deja de costar. Tu cuerpo y tu mente empiezan a operar como un sistema integrado.",
       stats: { strength: 78, aesthetics: 75, endurance: 80, mental: 80 },
       expectations: [
         "Definición muscular evidente",
@@ -63,15 +63,15 @@ export const DEMO_AI: InsightsResult = {
     },
     m12: {
       month: 12,
-      title: "Mes 12 — Forma",
+      title: "Season 3 — Forma",
       description:
         "Un año de consistencia construye una nueva base. Esto no es un punto final — es el nuevo punto de partida.",
       focus: "Forma estable",
       mental:
-        "Lo que se construyó en doce meses se sostiene en los siguientes doce. No buscaste un cambio puntual — construiste un sistema.",
+        "Lo que se construye con estructura se puede sostener después. No buscaste un cambio puntual — construiste un sistema.",
       stats: { strength: 88, aesthetics: 85, endurance: 86, mental: 88 },
       expectations: [
-        "Composición corporal premium para tu somatotipo",
+        "Composición corporal orientativa para tu punto de partida",
         "Disciplina como identidad, no como esfuerzo",
         "Capacidad de mantener forma sin obsesión",
       ],
@@ -85,7 +85,7 @@ export const DEMO_AI: InsightsResult = {
     bottleneck: "structure",
     leverages: [
       "Subir entrenamiento a 4 sesiones/sem con progresión clara: tu reporte de 4h disponibles permite frecuencia, falta el plan que las ordene.",
-      "Proteína a 1.6g/kg distribuida en 4 ingestas — tu peso de 82kg pide ~130g/día y los mental logs sugieren que estás por debajo.",
+      "Bloquear horarios fijos antes del lunes: tu reporte de 4h disponibles pide estructura, no más intención.",
       "Bloquear 7-8h de sueño consistente: tu stressLevel 6/10 indica que la recuperación está siendo el cuello, no el volumen.",
     ],
     dominant_error:
@@ -96,7 +96,7 @@ export const DEMO_AI: InsightsResult = {
   },
 };
 
-export const DEMO_LETTER = `Si pudieras verte ahora, mes 12, te darías cuenta de algo más importante que cualquier cambio físico: dejaste de necesitar la motivación. Construiste un sistema. Y eso es lo que cambia todo.
+export const DEMO_LETTER = `Si pudieras verte ahora, en Season 3, te darías cuenta de algo más importante que cualquier cambio físico: dejaste de necesitar la motivación. Construiste un sistema. Y eso es lo que cambia todo.
 
 No fue lineal. Hubo semanas donde quisiste rendirte. Pero la diferencia esta vez fue que no te quedaste solo. Tuviste estructura. Tuviste a alguien revisando tu caso cuando aparecía la duda.
 
@@ -133,6 +133,7 @@ export const DEMO_SESSION = {
     shareOriginal: true,
     shareInsights: true,
     shareProfile: true,
+    shareImages: true,
   },
 };
 

@@ -49,32 +49,37 @@ export function WizardClosingStep({
           Cerramos la calibración y activamos tu acceso.
         </h2>
         <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/55 md:text-base">
-          Un último ajuste mental y el correo donde quieres recibir tu acceso privado. Después sí generamos la visualización y el siguiente paso.
+          Cerramos con tres señales de autopercepción y el correo donde enviaremos tu enlace privado. Ese mismo correo te permite recuperar el resultado si cierras la pestaña.
         </p>
       </div>
 
       <div className="w-full ngx-section-panel !p-6 md:!p-8 space-y-5">
         <CyberSlider
-          label="Nivel de Disciplina"
+          label="Consistencia percibida"
           {...register("disciplineRating")}
           min={1} max={10}
           valueDisplay={watch("disciplineRating") + "/10"}
           trackColor="amber"
         />
         <CyberSlider
-          label="Calidad de Sueño"
+          label="Sueño reciente"
           {...register("sleepQuality")}
           min={1} max={10}
           valueDisplay={watch("sleepQuality") + "/10"}
           trackColor="violet"
         />
         <CyberSlider
-          label="Carga de Estrés"
+          label="Estrés reciente"
           {...register("stressLevel")}
           min={1} max={10}
           valueDisplay={watch("stressLevel") + "/10"}
           trackColor="red"
         />
+        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.035] px-4 py-3">
+          <p className="text-xs leading-relaxed text-white/50">
+            Estas respuestas no diagnostican salud mental ni rendimiento. Sólo ayudan a entender si el roadmap debe ser más agresivo, conservador o enfocado en adherencia.
+          </p>
+        </div>
       </div>
 
       <div className="w-full ngx-metal-card !p-5 md:!p-6">
@@ -104,7 +109,7 @@ export function WizardClosingStep({
                   <Eye className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
                 </div>
                 <p className="mt-2 text-xs text-white/45 leading-relaxed">
-                  Te enviaremos aquí el enlace privado a tu visualización y a tu roadmap inicial.
+                  Te enviaremos aquí el enlace privado a tu visualización, lectura inicial y dirección de 12 semanas. También podrás recuperarlo con este correo.
                 </p>
               </>
             )}
@@ -121,7 +126,7 @@ export function WizardClosingStep({
               className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[var(--ngx-purple)]"
             />
             <span className="text-xs text-white/55 group-hover:text-white/80 transition-colors leading-relaxed">
-              Quiero recibir correos de seguimiento y novedades de NGX Transform. <span className="text-white/35">(opcional)</span>
+              Quiero recibir contenido educativo y novedades de NGX Transform. <span className="text-white/35">(opcional; no afecta la entrega del resultado)</span>
             </span>
           </label>
         </div>
@@ -150,21 +155,21 @@ export function WizardClosingStep({
 
       {!canSubmitWizard ? (
         <p className="text-center text-xs text-amber-300">
-          Antes de generar tu visualización necesitamos un correo válido y conservar la foto cargada del paso 1.
+          Antes de generar tu visualización necesitamos un correo válido para enviar y recuperar el resultado, además de conservar la foto cargada del paso 1.
         </p>
       ) : null}
 
       <p className="max-w-2xl text-center text-xs text-white/45 leading-relaxed">
-        En el siguiente paso generaremos una visualización aproximada de tu potencial con IA. Después podrás ver un roadmap inicial para entender qué necesitarías construir antes de pensar en un sistema más serio.
+        En el siguiente paso generaremos una visualización aspiracional con IA. No es garantía de resultado ni diagnóstico médico: sirve para convertir la imagen en insight, dirección y siguiente paso HYBRID.
       </p>
 
       <div className="w-full">
         <Button
           type="submit"
           disabled={!canSubmitWizard || loading}
-          className="h-auto w-full !whitespace-normal rounded-full bg-[var(--ngx-purple)] px-5 py-5 text-sm md:text-base font-bold uppercase tracking-[0.10em] md:tracking-[0.14em] text-white shadow-[var(--ngx-glow-primary)] transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.98] disabled:bg-white/[0.06] disabled:text-white/30 disabled:shadow-none disabled:translate-y-0"
+          className="ngx-primary-cta inline-flex h-auto w-full !whitespace-normal px-5 py-5 text-sm md:text-base disabled:cursor-not-allowed"
         >
-          <span className="text-center leading-snug">Generar visualización y siguiente paso</span>
+          <span className="text-center leading-snug">Generar diagnóstico visual</span>
           <ArrowRight className="ml-2 h-4 w-4 shrink-0" />
         </Button>
       </div>

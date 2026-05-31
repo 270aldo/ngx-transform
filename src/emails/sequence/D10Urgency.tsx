@@ -58,7 +58,7 @@ export default function D10Urgency({
               </Text>
 
               <Text className="text-neutral-300 leading-relaxed">
-                Tu resultado ya está listo y el siguiente paso es claro: convertir esa proyección en progreso real con NGX HYBRID.
+                Tu resultado ya está listo y el siguiente paso es revisar si esa dirección tiene fit con NGX HYBRID.
               </Text>
 
               <Section className="my-6 rounded-xl border border-violet-500/35 bg-violet-900/10 p-5">
@@ -68,7 +68,7 @@ export default function D10Urgency({
               </Section>
 
               <Text className="text-neutral-300 text-sm m-0">
-                Incluye sistema GENESIS, coach humano, bonus Ebook Conversacional y garantía de progreso medible.
+                Incluye sistema GENESIS, coach humano, bonus Ebook Conversacional y checkpoints de 12 semanas.
               </Text>
 
               <Section className="my-8 text-center">
@@ -76,7 +76,7 @@ export default function D10Urgency({
                   href={offerUrl}
                   className="bg-[#6D00FF] text-white px-8 py-4 rounded-xl font-semibold text-base"
                 >
-                  Asegurar mi plaza
+                  Agendar diagnóstico HYBRID
                 </Button>
               </Section>
             </Section>

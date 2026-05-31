@@ -17,40 +17,40 @@ export const mayoresCopy: VariantCopy = {
   hero: {
     badge: {
       aiLabel: "GENESIS",
-      version: "Transform Scan",
+      version: "Diagnóstico visual",
     },
     headline: {
       line1: "Su cuerpo no necesita castigo.",
       line2: "Necesita estrategia.",
     },
     subtitle:
-      "Suba una foto. GENESIS analiza su punto de partida y le muestra una proyección aspiracional de cómo podría mejorar fuerza, composición y vitalidad en una temporada de 12 semanas con un sistema serio.",
-    cta: "Ver mi punto de partida",
+      "Suba una foto. GENESIS analiza su punto de partida y le muestra una proyección aspiracional de cómo podría mejorar fuerza, composición y vitalidad con una temporada seria.",
+    cta: "Iniciar diagnóstico",
     primaryCta: {
-      label: "Ver mi punto de partida",
-      intent: "scan_start",
+      label: "Iniciar diagnóstico",
+      intent: "diagnostic_start",
     },
     secondaryCta: "Cómo funciona",
     supportingPoints: [
-      "Su punto de partida visible.",
-      "Lo que le frena, explicado.",
-      "Una ruta clara para empezar.",
+      "Una referencia visual clara.",
+      "Una posibilidad aspiracional, sin exagerar.",
+      "Una ruta inicial para decidir.",
     ],
     socialProof: {
-      count: "Privado por diseño",
+      count: "",
       label: "Visualización aspiracional · lectura inicial · ruta de acción",
     },
     transformationDemo: {
       beforeImage: "https://images.unsplash.com/photo-1675026482188-8102367ecc16?w=800&h=1000&fit=crop&crop=faces",
       afterImage: "https://images.unsplash.com/photo-1645810809381-97f6fd2f7d10?w=800&h=1000&fit=crop&crop=faces",
-      beforeLabel: "HOY",
-      afterLabel: "12 SEMANAS",
+      beforeLabel: "Punto de partida",
+      afterLabel: "Season 3",
     },
   },
 
   stats: [
     { value: "12", suffix: " sem", label: "proceso estructurado" },
-    { value: "3", suffix: "min", label: "scan inicial" },
+    { value: "3", suffix: "min", label: "diagnóstico inicial" },
     { value: "1", suffix: "", label: "sistema integrado" },
     { value: "0", suffix: "", label: "presión artificial" },
   ],
@@ -137,18 +137,18 @@ export const mayoresCopy: VariantCopy = {
     headline: "No es tarde. Pero sí conviene dejar de improvisar.",
     subtitle:
       "Vea su punto de partida y, si tiene sentido, revise su ruta con un coach humano dentro de HYBRID.",
-    buttonText: "Comenzar mi scan",
+    buttonText: "Iniciar diagnóstico",
     footnote: "Visualización aspiracional. No sustituye evaluación médica.",
   },
 
   footer: {
-    brandName: "NGX Transform Scan",
+    brandName: "NGX Transform",
     status: "GENESIS operativo",
     copyright: "© 2026 NGX. Todos los derechos reservados.",
   },
 
   explainerVideo: {
-    title: "Cómo funciona NGX Transform Scan",
+    title: "Cómo funciona NGX Transform",
     subtitle:
       "Una forma sencilla de visualizar dirección, entender contexto y decidir si necesita acompañamiento HYBRID.",
     videoUrl: "",

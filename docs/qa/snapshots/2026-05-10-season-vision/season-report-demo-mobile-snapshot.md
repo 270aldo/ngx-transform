@@ -1,0 +1,24 @@
+- generic [active] [ref=e1] [box=0,0,385,12496]:
+  - main [ref=e2] [box=0,0,385,12496]:
+    - generic [ref=e3] [box=0,0,385,12496]:
+      - article [ref=e4] [box=0,0,385,7087]:
+        - generic [ref=e6] [box=16,80,353,1593]
+        - generic [ref=e55] [box=16,1761,353,1164]
+        - generic [ref=e91] [box=16,3013,353,3003]
+        - generic [ref=e180] [box=37,6118,311,241]
+        - generic [ref=e190] [box=41,6484,303,530]
+      - generic [ref=e212] [box=41,7184,303,1798]:
+        - generic [ref=e213] [box=41,7184,303,336]
+        - generic [ref=e217] [box=41,7559,303,1267]
+        - generic [ref=e327] [box=41,8858,303,123]
+      - generic [ref=e334] [box=41,9127,303,2519]:
+        - generic [ref=e335] [box=41,9127,303,1328]
+        - generic [ref=e379] [box=41,10495,303,1151]
+      - generic [ref=e480] [box=41,11744,303,695]:
+        - generic [ref=e481] [box=41,11744,303,16]
+        - heading "¿El siguiente paso ya te quedó claro?" [level=3] [ref=e485] [box=41,11776,303,76]
+        - paragraph [ref=e486] [box=41,11868,303,68]: No estamos midiendo satisfacción vacía. Estamos validando si el flujo realmente te llevó de impacto visual a dirección concreta.
+        - generic [ref=e487] [box=41,11961,303,478]
+  - button "Open Next.js Dev Tools" [ref=e528] [cursor=pointer] [box=22,790,32,32]:
+    - img [ref=e529] [box=22,786,40,40]
+  - alert [ref=e522] [box=-1,12495,1,1]

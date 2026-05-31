@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState, use } from "react";
+import { useEffect, useMemo, useState, use, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Brain, Sparkles, TrendingUp, Activity, ArrowRight } from "lucide-react";
+import { Sparkles, Activity, ArrowRight } from "lucide-react";
 import { ComparisonSlider } from "@/components/ComparisonSlider";
 import { EliteCard } from "@/components/EliteCard";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -23,6 +23,28 @@ interface SessionDoc {
     originalUrl?: string;
     images?: Record<string, string>;
   };
+}
+
+function BentoCard({
+  children,
+  className,
+  delay = 0,
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  return (
+    <div
+      className={cn(
+        "relative overflow-hidden animate-in fade-in zoom-in duration-500 fill-mode-backwards lg-glass rounded-[18px] shadow-2xl",
+        className
+      )}
+      style={{ animationDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
 }
 
 export default function DashboardDetailPage({ params }: { params: Promise<{ shareId: string }> }) {
@@ -107,50 +129,37 @@ export default function DashboardDetailPage({ params }: { params: Promise<{ shar
     );
   }
 
-  // --- BENTO GRID LAYOUT ---
-
-  const BentoCard = ({ children, className, delay = 0 }: { children: React.ReactNode, className?: string, delay?: number }) => (
-    <div
-      className={cn(
-        "relative bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl overflow-hidden animate-in fade-in zoom-in duration-500 fill-mode-backwards shadow-2xl shadow-black/50",
-        className
-      )}
-      style={{ animationDelay: `${delay}ms` }}
-    >
-      {children}
-    </div>
-  );
-
   return (
-    <div className="min-h-screen bg-[#050505] text-white p-4 md:p-8 font-sans selection:bg-[#6D00FF]/30 pb-20">
+    <div className="ngx-landing-shell relative min-h-screen overflow-x-hidden selection:bg-[#6D00FF] selection:text-white p-4 md:p-8 pb-20">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_15%,rgba(109,0,255,0.06),transparent_40%)] pointer-events-none" />
 
       {/* Top Bar */}
-      <div className="flex justify-between items-center max-w-7xl mx-auto mb-8 animate-in fade-in slide-in-from-top-4 duration-700">
+      <div className="flex justify-between items-center max-w-7xl mx-auto mb-8 animate-in fade-in slide-in-from-top-4 duration-700 relative z-10 border-b border-white/[0.08] pb-4">
         <div>
-          <h1 className="text-xl font-black italic tracking-tighter">
-            NGX <span className="text-[#6D00FF]">COMMAND</span>
+          <h1 className="font-display text-xl md:text-2xl font-black italic tracking-tighter text-white">
+            NGX <span className="text-[var(--ngx-purple-light)]">COMMAND</span>
           </h1>
-          <p className="text-[10px] uppercase tracking-widest text-neutral-500 mt-1 flex items-center gap-2">
-            SESSION: {shareId.slice(0, 8)}
-            <span className="w-1 h-1 rounded-full bg-neutral-700" />
+          <p className="text-[10px] uppercase tracking-widest text-white/45 mt-1 flex items-center gap-2">
+            SESIÓN: {shareId.toUpperCase()}
+            <span className="w-1.5 h-1.5 rounded-full bg-neutral-700" />
             <span className={cn(
-              "font-bold",
-              statusLabel === "Listo" ? "text-[#00FF94]" : "text-amber-500"
+              "font-bold font-mono tracking-wider",
+              statusLabel === "Listo" ? "text-[var(--ngx-success)]" : "text-amber-500"
             )}>{statusLabel.toUpperCase()}</span>
           </p>
         </div>
         <Link
           href={`/s/${shareId}`}
-          className="hidden md:flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-xs font-bold transition-all hover:scale-105 active:scale-95"
+          className="hidden md:flex items-center gap-2 px-5 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-xs font-bold transition-all hover:scale-105 active:scale-95 text-white"
         >
           VER EXPERIENCIA PÚBLICA <ArrowRight size={14} />
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-7xl mx-auto auto-rows-[minmax(180px,auto)]">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto auto-rows-[minmax(180px,auto)] relative z-10">
 
         {/* 1. HERO CELL (M0 vs M12 Comparison) - 3x2 for Massive impact */}
-        <BentoCard className="col-span-1 md:col-span-3 lg:col-span-3 row-span-2 min-h-[600px] md:min-h-[850px] border-white/20 group">
+        <BentoCard className="col-span-1 md:col-span-3 lg:col-span-3 row-span-2 min-h-[600px] md:min-h-[850px] border-white/20 group rounded-[18px]">
           {m0 && m12 ? (
             <div className="relative w-full h-full">
               <ComparisonSlider
@@ -167,10 +176,10 @@ export default function DashboardDetailPage({ params }: { params: Promise<{ shar
                       </span>
                       <span className="w-1.5 h-1.5 rounded-full bg-[#00FF94] animate-pulse shadow-[0_0_10px_#00FF94]" />
                     </div>
-                    <h2 className="text-5xl md:text-8xl lg:text-9xl font-black italic tracking-tighter mb-4 leading-[0.9]">
+                    <h2 className="font-display text-5xl md:text-8xl lg:text-9xl font-black italic tracking-tighter mb-4 leading-[0.9] text-white">
                       TU VERSIÓN SUPREMA
                     </h2>
-                    <p className="text-sm md:text-lg max-w-2xl leading-relaxed opacity-90 font-medium">
+                    <p className="text-sm md:text-lg max-w-2xl leading-relaxed opacity-90 font-medium text-white">
                       {insights.split('.')[0]}.
                     </p>
                   </div>
@@ -183,10 +192,10 @@ export default function DashboardDetailPage({ params }: { params: Promise<{ shar
                         PERFIL INICIAL
                       </span>
                     </div>
-                    <h2 className="text-5xl md:text-8xl lg:text-9xl font-black italic tracking-tighter mb-4 leading-[0.9]">
+                    <h2 className="font-display text-5xl md:text-8xl lg:text-9xl font-black italic tracking-tighter mb-4 leading-[0.9] text-white">
                       TU PUNTO DE ORIGEN
                     </h2>
-                    <p className="text-sm md:text-lg max-w-2xl leading-relaxed opacity-90 font-medium">
+                    <p className="text-sm md:text-lg max-w-2xl leading-relaxed opacity-90 font-medium text-white">
                       El comienzo de todo. Tu potencial genético estaba esperando ser desbloqueado.
                     </p>
                   </div>
@@ -197,7 +206,7 @@ export default function DashboardDetailPage({ params }: { params: Promise<{ shar
             <>
               <Image
                 src={m12}
-                alt="Proyección Mes 12"
+                alt="Proyección Season 3"
                 fill
                 sizes="(min-width: 1024px) 75vw, 100vw"
                 className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
@@ -206,13 +215,13 @@ export default function DashboardDetailPage({ params }: { params: Promise<{ shar
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
               <div className="absolute bottom-0 left-0 p-8 w-full">
-                <h2 className="text-4xl md:text-6xl font-black italic tracking-tighter text-white mb-2">
+                <h2 className="font-display text-4xl md:text-6xl font-black italic tracking-tighter text-white mb-2">
                   TU VERSIÓN SUPREMA
                 </h2>
               </div>
             </>
           ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center text-neutral-500">
+            <div className="w-full h-full flex flex-col items-center justify-center text-white/30">
               <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center mb-4">
                 <Sparkles size={20} />
               </div>
@@ -222,20 +231,20 @@ export default function DashboardDetailPage({ params }: { params: Promise<{ shar
         </BentoCard>
 
         {/* 2. STATS CELL - Compact 1x1 stackable */}
-        <BentoCard className="col-span-1 row-span-1 p-6 flex flex-col justify-between bg-[#0F0F0F]" delay={100}>
+        <BentoCard className="col-span-1 row-span-1 p-6 flex flex-col justify-between" delay={100}>
           <div>
-            <h3 className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-              <Activity size={12} /> Biometría 12M
+            <h3 className="text-[10.5px] font-display font-bold text-white/40 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <Activity size={12} className="text-[var(--ngx-purple-light)]" /> BIOMETRÍA TEMPORADA
             </h3>
             <div className="space-y-4">
               {[
-                { label: "FUERZA", value: m12Stats?.strength, color: "text-emerald-400" },
-                { label: "ESTÉTICA", value: m12Stats?.aesthetics, color: "text-[#6D00FF]" },
+                { label: "FUERZA", value: m12Stats?.strength, color: "text-[var(--ngx-success)]" },
+                { label: "ESTÉTICA", value: m12Stats?.aesthetics, color: "text-[var(--ngx-purple-light)]" },
                 { label: "MENTAL", value: m12Stats?.mental, color: "text-amber-400" },
               ].map((s) => (
-                <div key={s.label} className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-neutral-400">{s.label}</span>
-                  <span className={cn("text-xl font-bold font-mono", s.color)}>{s.value ?? "-"}</span>
+                <div key={s.label} className="flex items-center justify-between border-b border-white/[0.04] pb-2">
+                  <span className="text-[10px] font-display font-bold text-white/55 tracking-wider">{s.label}</span>
+                  <span className={cn("text-xl font-bold font-mono tracking-wide", s.color)}>{s.value ?? "-"}</span>
                 </div>
               ))}
             </div>
@@ -243,12 +252,12 @@ export default function DashboardDetailPage({ params }: { params: Promise<{ shar
 
           <div className="pt-4 border-t border-white/10 flex justify-between items-end">
             <div>
-              <p className="text-[9px] text-neutral-500 uppercase">Potencial</p>
-              <p className="text-lg font-black italic text-white leading-none">ELITE</p>
+              <p className="text-[9px] text-white/45 uppercase tracking-wider">Potencial</p>
+              <p className="font-display text-lg font-black italic text-white leading-none tracking-tight">ELITE</p>
             </div>
             <div className="h-4 w-px bg-white/10 mx-2" />
             <div className="text-right">
-              <p className="text-[9px] font-bold text-[#00FF94] uppercase tracking-tighter">OPTIMIZADO</p>
+              <p className="text-[9px] font-bold text-[var(--ngx-success)] uppercase tracking-widest">OPTIMIZADO</p>
             </div>
           </div>
         </BentoCard>
@@ -259,17 +268,17 @@ export default function DashboardDetailPage({ params }: { params: Promise<{ shar
           title={"HAZLO\nREALIDAD."}
           actionText="CREAR MI PLAN"
           href={`/demo/${shareId}`}
-          className="col-span-1 row-span-1"
+          className="col-span-1 row-span-1 rounded-[18px]"
           delay={200}
         />
 
       </div>
 
       {/* Mobile only footer link */}
-      <div className="md:hidden mt-8 text-center pb-8 animate-in fade-in delay-700">
+      <div className="md:hidden mt-8 text-center pb-8 animate-in fade-in delay-700 relative z-10">
         <Link
           href={`/s/${shareId}`}
-          className="inline-flex items-center gap-2 text-xs font-bold text-neutral-500 hover:text-white transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-bold text-white/45 hover:text-white transition-colors"
         >
           VER EXPERIENCIA INMERSIVA <ArrowRight size={12} />
         </Link>

@@ -18,6 +18,7 @@ export async function GET(req: Request, context: { params: Promise<{ shareId: st
       shareOriginal?: boolean;
       shareScope?: {
         shareOriginal?: boolean;
+        shareImages?: boolean;
       };
       photo?: { originalStoragePath?: string };
       assets?: { images?: Record<string, string> };
@@ -31,14 +32,16 @@ export async function GET(req: Request, context: { params: Promise<{ shareId: st
     const isOwner = authUser?.uid && data?.ownerUid && authUser.uid === data.ownerUid;
     const shareScope = {
       shareOriginal: data?.shareScope?.shareOriginal ?? !!data?.shareOriginal,
+      shareImages: data?.shareScope?.shareImages ?? false,
     };
     const allowPublicOriginal = FF_EXPOSE_ORIGINAL && shareScope.shareOriginal;
+    const allowPublicImages = shareScope.shareImages;
 
     if (photoPath && (isOwner || allowPublicOriginal)) {
       result.originalUrl = await getSignedUrl(photoPath, { expiresInSeconds: 3600 });
     }
 
-    if (images) {
+    if (images && (isOwner || allowPublicImages)) {
       const out: Record<string, string> = {};
       const timestamp = Date.now();
       await Promise.all(
@@ -52,7 +55,6 @@ export async function GET(req: Request, context: { params: Promise<{ shareId: st
 
     return NextResponse.json(result);
   } catch (e: unknown) {
-    const message = e instanceof Error ? e.message : "Unknown error";
     console.error(e);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

@@ -2,23 +2,28 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // Build Content Security Policy (Static/SSG Compatible)
-function buildCSP(isDev: boolean): string {
+//
+// `strictScripts` produces the hardened variant used ONLY for the
+// Content-Security-Policy-Report-Only header: it drops 'unsafe-inline' from
+// script-src so the browser reports (without blocking) which inline scripts
+// would violate a strict policy. The enforced header keeps 'unsafe-inline' so
+// that statically-rendered pages (/, /privacy, /terms, /j, /m) keep working and
+// stay fast. This is the standard observe-then-enforce migration path.
+function buildCSP(isDev: boolean, strictScripts = false): string {
+    const scriptSrc = strictScripts
+        ? ["'self'", "https://*.google.com", "https://*.gstatic.com"]
+        : [
+              "'self'",
+              "'unsafe-inline'", // Needed for Next.js inline scripts in static render
+              ...(isDev ? ["'unsafe-eval'"] : []),
+              "https://*.google.com",
+              "https://*.gstatic.com",
+          ];
+
     const directives: Record<string, string[]> = {
         "default-src": ["'self'"],
-        "script-src": [
-            "'self'",
-            "'unsafe-inline'", // Needed for Next.js inline scripts in some modes
-            ...(isDev ? ["'unsafe-eval'"] : []),
-            "https://*.google.com",
-            "https://*.gstatic.com",
-        ],
-        "script-src-elem": [
-            "'self'",
-            "'unsafe-inline'",
-            ...(isDev ? ["'unsafe-eval'"] : []),
-            "https://*.google.com",
-            "https://*.gstatic.com",
-        ],
+        "script-src": scriptSrc,
+        "script-src-elem": scriptSrc,
         "style-src": [
             "'self'",
             "'unsafe-inline'",
@@ -53,12 +58,31 @@ function buildCSP(isDev: boolean): string {
             "https://*.upstash.io",
             "https://generativelanguage.googleapis.com",
             "https://vitals.vercel-insights.com",
+            "https://*.ingest.sentry.io",
             ...(isDev ? ["ws://localhost:*", "http://localhost:*"] : []),
+        ],
+        "media-src": [
+            "'self'",
+            "blob:",
+            "data:",
+            "https://storage.googleapis.com",
+            "https://firebasestorage.googleapis.com",
+            "https://*.firebasestorage.app",
+            "https://*.googleusercontent.com",
+            "https://*.vercel.app",
         ],
         "frame-src": [
             "'self'",
             "https://*.firebaseapp.com",
             "https://accounts.google.com",
+            "https://calendly.com",
+            "https://*.calendly.com",
+            "https://www.youtube.com",
+            "https://*.youtube.com",
+            "https://www.youtube-nocookie.com",
+            "https://player.vimeo.com",
+            "https://*.vimeo.com",
+            "https://*.mercadopago.com",
         ],
         "frame-ancestors": ["'self'"],
         "form-action": ["'self'"],
@@ -89,11 +113,17 @@ export function proxy(request: NextRequest) {
     response.headers.set("Referrer-Policy", "origin-when-cross-origin");
     response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
 
-    // Content Security Policy
-    const csp = buildCSP(isDev);
-    response.headers.set("Content-Security-Policy", csp);
+    // Content Security Policy.
+    // Enforced policy keeps 'unsafe-inline' so statically-rendered pages keep
+    // working. In production we ALSO ship a stricter Report-Only policy (no
+    // 'unsafe-inline' in scripts) so violations are reported to /api/csp-report
+    // without breaking anything — data to drive a future move to strict CSP.
+    response.headers.set("Content-Security-Policy", buildCSP(isDev));
     if (!isDev) {
-        response.headers.set("Content-Security-Policy-Report-Only", csp);
+        response.headers.set(
+            "Content-Security-Policy-Report-Only",
+            buildCSP(isDev, /* strictScripts */ true)
+        );
     }
 
     // Origin validation for API routes

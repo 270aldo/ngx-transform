@@ -18,6 +18,7 @@ export async function GET(req: Request, context: { params: Promise<{ shareId: st
       shareId?: string;
       ownerUid?: string;
       shareOriginal?: boolean;
+      shareScope?: unknown;
       status?: string;
       input?: unknown;
       ai?: unknown;
@@ -61,6 +62,7 @@ export async function GET(req: Request, context: { params: Promise<{ shareId: st
       assets: data.assets,
       photo: data.photo,
       shareOriginal: data.shareOriginal || false,
+      shareScope: data.shareScope,
       urls: result,
     });
   } catch (e: unknown) {

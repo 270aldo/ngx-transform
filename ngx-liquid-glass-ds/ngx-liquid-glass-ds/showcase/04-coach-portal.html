@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1520">
+<title>NGX · Coach Portal · Liquid Glass</title>
+<link rel="stylesheet" href="colors_and_type.css">
+<link rel="stylesheet" href="ngx-lg-tokens.css">
+<link rel="stylesheet" href="coach.css">
+</head>
+<body data-theme="dark">
+
+<div class="page-bg"></div>
+<div class="page-shell">
+
+<!-- ===================================================================== BROWSER ===================================================================== -->
+<div class="lg-browser">
+  <div class="lg-browser__chrome">
+    <div class="lg-browser__dots">
+      <div class="lg-browser__dot"></div>
+      <div class="lg-browser__dot"></div>
+      <div class="lg-browser__dot"></div>
+    </div>
+    <div class="browser-actions">
+      <span class="ba-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span>
+      <span class="ba-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+      <span class="ba-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg></span>
+    </div>
+    <div class="lg-browser__url">
+      <span class="lg-browser__url-lock">●</span>
+      <span>app.neogen-x.com</span><span id="url-path" style="color:rgba(255,255,255,0.50);">/coach/athletes</span>
+    </div>
+    <div class="browser-actions">
+      <span class="ba-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+      <span class="ba-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span>
+    </div>
+  </div>
+
+  <!-- ===================================================================== APP ===================================================================== -->
+  <div class="app" id="app" data-view="athletes" data-screen-label="04 Coach Portal">
+
+    <!-- ============================================================ SIDEBAR ============================================================ -->
+    <aside class="side">
+      <div class="side-brand">
+        <div class="side-brand__mk">X</div>
+        <div class="side-brand__name">NEOGEN&#8209;X</div>
+        <div class="side-brand__role">Coach</div>
+      </div>
+
+      <div class="side-profile">
+        <div class="side-profile__avatar">MR</div>
+        <div class="side-profile__body">
+          <div class="side-profile__name">Mariana Reyes</div>
+          <div class="side-profile__meta">Pro coach · 18 athletes</div>
+        </div>
+      </div>
+
+      <div class="side-h">Workspace</div>
+      <nav class="side-nav">
+        <div class="nav-item is-active" data-go="athletes">
+          <span class="nav-item__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
+          <span class="nav-item__lbl">Athletes</span>
+          <span class="nav-item__chip">18</span>
+        </div>
+        <div class="nav-item" data-go="athlete">
+          <span class="nav-item__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
+          <span class="nav-item__lbl">Alex R.</span>
+          <span class="nav-item__chip nav-item__chip--warn">!</span>
+        </div>
+        <div class="nav-item" data-go="programs">
+          <span class="nav-item__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>
+          <span class="nav-item__lbl">Programs</span>
+        </div>
+        <div class="nav-item" data-go="messages">
+          <span class="nav-item__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span>
+          <span class="nav-item__lbl">Messages</span>
+          <span class="nav-item__chip">7</span>
+        </div>
+        <div class="nav-item" data-go="cohort">
+          <span class="nav-item__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line><line x1="3" y1="20" x2="21" y2="20"></line></svg></span>
+          <span class="nav-item__lbl">Cohort analytics</span>
+        </div>
+      </nav>
+
+      <div class="side-divider"></div>
+
+      <div class="side-h">Library</div>
+      <nav class="side-nav">
+        <div class="nav-item">
+          <span class="nav-item__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></span>
+          <span class="nav-item__lbl">Templates</span>
+        </div>
+        <div class="nav-item">
+          <span class="nav-item__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06z"></path></svg></span>
+          <span class="nav-item__lbl">Exercises</span>
+          <span class="nav-item__chip">312</span>
+        </div>
+        <div class="nav-item">
+          <span class="nav-item__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></span>
+          <span class="nav-item__lbl">Protocols</span>
+        </div>
+      </nav>
+
+      <div class="side-divider"></div>
+
+      <div class="side-h">Active cohort</div>
+      <div class="cohort-pick">
+        <span class="cohort-pick__dot"></span>
+        <div class="cohort-pick__body">
+          <div class="cohort-pick__l">Block · Q2-26</div>
+          <div class="cohort-pick__n">Longevity 40+</div>
+        </div>
+        <div class="cohort-pick__cnt">18</div>
+      </div>
+    </aside>
+
+    <!-- ============================================================ MAIN ============================================================ -->
+    <main class="main">
+
+      <!-- ============= VIEW · ATHLETES LIST ============= -->
+      <section class="view view--athletes" data-screen-label="04A Athletes list">
+        <div class="topbar">
+          <div>
+            <div class="topbar__eyebrow">Roster · Q2-26 · Week 6</div>
+            <div class="topbar__h">ATHLETES <span class="dim">/ 18</span></div>
+          </div>
+          <div class="topbar__right">
+            <div class="search-pill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <span>Search athletes</span>
+              <kbd>⌘K</kbd>
+            </div>
+            <span class="icon-pill"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg><span class="badge"></span></span>
+            <button class="coach-cta"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Add athlete</button>
+          </div>
+        </div>
+
+        <!-- Totals strip -->
+        <div class="totals">
+          <div class="tot tot--purple">
+            <div class="tot__l">Ready to push</div>
+            <div class="tot__v">11<span class="u">/ 18</span></div>
+            <div class="tot__foot"><span>Recovery ≥ 70</span><span class="tot__d up">▲ +3 vs ayer</span></div>
+          </div>
+          <div class="tot">
+            <div class="tot__l">Strain · zone amarilla</div>
+            <div class="tot__v">5</div>
+            <div class="tot__foot"><span>Load drift ≥ 1.4</span><span class="tot__d down">▼ −1</span></div>
+          </div>
+          <div class="tot">
+            <div class="tot__l">Flagged · acción hoy</div>
+            <div class="tot__v">2</div>
+            <div class="tot__foot"><span>Recovery &lt; 50 / 48h</span><span class="tot__d up">▲ nuevo</span></div>
+          </div>
+          <div class="tot">
+            <div class="tot__l">Compliance · 7D</div>
+            <div class="tot__v">87<span class="u">%</span></div>
+            <div class="tot__foot"><span>Sesiones completadas</span><span class="tot__d up">▲ +4 pts</span></div>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="toolbar">
+          <div class="toolbar__group">
+            <span class="chip is-active">All <span class="chip__cnt">18</span></span>
+            <span class="chip">Ready <span class="chip__cnt">11</span></span>
+            <span class="chip">Strain <span class="chip__cnt">5</span></span>
+            <span class="chip">Flagged <span class="chip__cnt">2</span></span>
+            <span class="chip">Rest day <span class="chip__cnt">3</span></span>
+          </div>
+          <span class="toolbar__spacer"></span>
+          <span class="chip"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>Block · Q2-26</span>
+          <span class="chip">Sort · Recovery ↓</span>
+          <span class="chip"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>Table</span>
+        </div>
+
+        <!-- Table -->
+        <div class="glass-card athletes-table">
+          <table class="atbl">
+            <thead>
+              <tr>
+                <th style="width: 22%;">Athlete</th>
+                <th style="width: 14%;">Recovery <span class="sort-arrow">↓</span></th>
+                <th style="width: 9%;">HRV · 7d</th>
+                <th style="width: 9%;">RHR</th>
+                <th style="width: 9%;">Sleep</th>
+                <th style="width: 14%;">HRV trend</th>
+                <th style="width: 11%;">Status</th>
+                <th style="width: 12%;">Last session</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- ALEX R · flagged but featured -->
+              <tr data-go="athlete">
+                <td>
+                  <div class="ath-cell">
+                    <div class="ath-cell__av">AR</div>
+                    <div class="ath-cell__body">
+                      <div class="ath-cell__name">Alex Rivera</div>
+                      <div class="ath-cell__meta">42 · Strength · Wk 06 / 12</div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="recov" style="--p: 79%;">
+                    <div class="recov__bar"></div>
+                    <div class="recov__v">79<span class="u">%</span></div>
+                  </div>
+                </td>
+                <td><div class="num-cell">52<span class="u">ms</span><span class="d up">▲ +8</span></div></td>
+                <td><div class="num-cell">44<span class="u">bpm</span><span class="d up">▼ −2</span></div></td>
+                <td><div class="num-cell">7.4<span class="u">h</span><span class="d flat">— flat</span></div></td>
+                <td>
+                  <svg class="spark" viewBox="0 0 110 32" preserveAspectRatio="none">
+                    <defs><linearGradient id="sp1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C29BFF" stop-opacity="0.5"/><stop offset="1" stop-color="#6D00FF" stop-opacity="0"/></linearGradient></defs>
+                    <path d="M0,22 L10,20 L20,24 L30,18 L40,21 L50,15 L60,12 L70,14 L80,9 L90,11 L100,6 L110,4 L110,32 L0,32 Z" fill="url(#sp1)"/>
+                    <polyline points="0,22 10,20 20,24 30,18 40,21 50,15 60,12 70,14 80,9 90,11 100,6 110,4" fill="none" stroke="#6D00FF" stroke-width="1.5" stroke-linejoin="round" style="filter: drop-shadow(0 0 3px rgba(109,0,255,0.7))"/>
+                  </svg>
+                </td>
+                <td><span class="stat-pill stat-pill--ready">Ready</span></td>
+                <td><div class="last-cell">Hace 6h<span class="meta">Press &amp; Pull 5×5 · RPE 7.5</span></div></td>
+                <td>
+                  <div class="row-actions">
+                    <span class="row-action"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span>
+                    <span class="row-action"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg></span>
+                  </div>
+                </td>
+              </tr>
+
+              <tr class="is-flag">
+                <td>
+                  <div class="ath-cell">
+                    <div class="ath-cell__av ath-cell__av--n2">CM</div>
+                    <div class="ath-cell__body">
+                      <div class="ath-cell__name">Camila Mendoza</div>
+                      <div class="ath-cell__meta">38 · Endurance · Wk 04 / 08</div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="recov recov--low" style="--p: 42%;">
+                    <div class="recov__bar"></div>
+                    <div class="recov__v">42<span class="u">%</span></div>
+                  </div>
+                </td>
+                <td><div class="num-cell">31<span class="u">ms</span><span class="d down">▼ −9</span></div></td>
+                <td><div class="num-cell">58<span class="u">bpm</span><span class="d down">▲ +6</span></div></td>
+                <td><div class="num-cell">5.8<span class="u">h</span><span class="d down">▼ −1.2</span></div></td>
+                <td>
+                  <svg class="spark" viewBox="0 0 110 32" preserveAspectRatio="none">
+                    <polyline points="0,8 10,10 20,12 30,11 40,14 50,17 60,18 70,21 80,22 90,24 100,26 110,28" fill="none" stroke="#FF6E6E" stroke-width="1.5" stroke-linejoin="round" style="filter: drop-shadow(0 0 3px rgba(255,110,110,0.6))"/>
+                  </svg>
+                </td>
+                <td><span class="stat-pill stat-pill--flag">Flagged</span></td>
+                <td><div class="last-cell">Hace 2d<span class="meta">Z2 ride 75' · saltó 2 sesiones</span></div></td>
+                <td>
+                  <div class="row-actions">
+                    <span class="row-action"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span>
+                    <span class="row-action"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg></span>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="ath-cell">
+                    <div class="ath-cell__av ath-cell__av--n3">JS</div>
+                    <div class="ath-cell__body">
+                      <div class="ath-cell__name">Jordan Smith</div>
+                      <div class="ath-cell__meta">51 · Longevity · Wk 09 / 12</div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="recov" style="--p: 88%;">
+                    <div class="recov__bar"></div>
+                    <div class="recov__v">88<span class="u">%</span></div>
+                  </div>
+                </td>
+                <td><div class="num-cell">68<span class="u">ms</span><span class="d up">▲ +4</span></div></td>
+                <td><div class="num-cell">52<span class="u">bpm</span><span class="d flat">— flat</span></div></td>
+                <td><div class="num-cell">8.1<span class="u">h</span><span class="d up">▲ +0.4</span></div></td>
+                <td>
+                  <svg class="spark" viewBox="0 0 110 32" preserveAspectRatio="none">
+                    <defs><linearGradient id="sp3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C29BFF" stop-opacity="0.45"/><stop offset="1" stop-color="#6D00FF" stop-opacity="0"/></linearGradient></defs>
+                    <path d="M0,18 L10,20 L20,17 L30,14 L40,15 L50,11 L60,9 L70,12 L80,8 L90,6 L100,7 L110,4 L110,32 L0,32 Z" fill="url(#sp3)"/>
+                    <polyline points="0,18 10,20 20,17 30,14 40,15 50,11 60,9 70,12 80,8 90,6 100,7 110,4" fill="none" stroke="#6D00FF" stroke-width="1.5" stroke-linejoin="round" style="filter: drop-shadow(0 0 3px rgba(109,0,255,0.7))"/>
+                  </svg>
+                </td>
+                <td><span class="stat-pill stat-pill--ready">Ready</span></td>
+                <td><div class="last-cell">Hace 1d<span class="meta">Hill repeats 8×60s · RPE 8</span></div></td>
+                <td>
+                  <div class="row-actions">
+                    <span class="row-action"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span>
+                    <span class="row-action"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg></span>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="ath-cell">
+                    <div class="ath-cell__av ath-cell__av--n4">PG</div>
+                    <div class="ath-cell__body">
+                      <div class="ath-cell__name">Priya Gowda</div>
+                      <div class="ath-cell__meta">36 · Strength · Wk 02 / 16</div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="recov recov--mid" style="--p: 64%;">
+                    <div class="recov__bar"></div>
+                    <div class="recov__v">64<span class="u">%</span></div>
+                  </div>
+                </td>
+                <td><div class="num-cell">47<span class="u">ms</span><span class="d down">▼ −3</span></div></td>
+                <td><div class="num-cell">49<span class="u">bpm</span><span class="d flat">— flat</span></div></td>
+                <td><div class="num-cell">6.9<span class="u">h</span><span class="d down">▼ −0.3</span></div></td>
+                <td>
+                  <svg class="spark" viewBox="0 0 110 32" preserveAspectRatio="none">
+                    <polyline points="0,12 10,10 20,14 30,11 40,15 50,12 60,16 70,13 80,17 90,15 100,18 110,16" fill="none" stroke="#FFB070" stroke-width="1.5" stroke-linejoin="round" style="filter: drop-shadow(0 0 3px rgba(255,176,112,0.5))"/>
+                  </svg>
+                </td>
+                <td><span class="stat-pill stat-pill--strain">Strain</span></td>
+                <td><div class="last-cell">Hace 18h<span class="meta">Squat 5×3 @ 82.5kg · RPE 9</span></div></td>
+                <td>
+                  <div class="row-actions">
+                    <span class="row-action"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span>
+                    <span class="row-action"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg></span>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="ath-cell">
+                    <div class="ath-cell__av ath-cell__av--n5">LO</div>
+                    <div class="ath-cell__body">
+                      <div class="ath-cell__name">Lina Okafor</div>
+                      <div class="ath-cell__meta">44 · Endurance · Wk 11 / 12</div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="recov" style="--p: 81%;">
+                    <div class="recov__bar"></div>
+                    <div class="recov__v">81<span class="u">%</span></div>
+                  </div>
+                </td>
+                <td><div class="num-cell">58<span class="u">ms</span><span class="d up">▲ +6</span></div></td>
+                <td><div class="num-cell">46<span class="u">bpm</span><span class="d up">▼ −1</span></div></td>
+                <td><div class="num-cell">7.8<span class="u">h</span><span class="d up">▲ +0.2</span></div></td>
+                <td>
+                  <svg class="spark" viewBox="0 0 110 32" preserveAspectRatio="none">
+                    <defs><linearGradient id="sp5" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C29BFF" stop-opacity="0.45"/><stop offset="1" stop-color="#6D00FF" stop-opacity="0"/></linearGradient></defs>
+                    <path d="M0,20 L10,17 L20,18 L30,15 L40,12 L50,14 L60,10 L70,12 L80,8 L90,10 L100,7 L110,5 L110,32 L0,32 Z" fill="url(#sp5)"/>
+                    <polyline points="0,20 10,17 20,18 30,15 40,12 50,14 60,10 70,12 80,8 90,10 100,7 110,5" fill="none" stroke="#6D00FF" stroke-width="1.5" stroke-linejoin="round" style="filter: drop-shadow(0 0 3px rgba(109,0,255,0.7))"/>
+                  </svg>
+                </td>
+                <td><span class="stat-pill stat-pill--ready">Ready</span></td>
+                <td><div class="last-cell">Hace 10h<span class="meta">Long run 90' Z2 · RPE 6</span></div></td>
+                <td>
+                  <div class="row-actions">
+                    <span class="row-action"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span>
+                    <span class="row-action"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg></span>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="ath-cell">
+                    <div class="ath-cell__av ath-cell__av--n6">DK</div>
+                    <div class="ath-cell__body">
+                      <div class="ath-cell__name">Diego Kang</div>
+                      <div class="ath-cell__meta">47 · Longevity · Wk 03 / 12</div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="recov" style="--p: 73%;">
+                    <div class="recov__bar"></div>
+                    <div class="recov__v">73<span class="u">%</span></div>
+                  </div>
+                </td>
+                <td><div class="num-cell">49<span class="u">ms</span><span class="d up">▲ +2</span></div></td>
+                <td><div class="num-cell">55<span class="u">bpm</span><span class="d flat">— flat</span></div></td>
+                <td><div class="num-cell">7.0<span class="u">h</span><span class="d up">▲ +0.1</span></div></td>
+                <td>
+                  <svg class="spark" viewBox="0 0 110 32" preserveAspectRatio="none">
+                    <polyline points="0,18 10,16 20,19 30,15 40,17 50,13 60,15 70,12 80,14 90,11 100,13 110,10" fill="none" stroke="#6D00FF" stroke-width="1.5" stroke-linejoin="round" style="filter: drop-shadow(0 0 3px rgba(109,0,255,0.6))"/>
+                  </svg>
+                </td>
+                <td><span class="stat-pill stat-pill--rest">Rest day</span></td>
+                <td><div class="last-cell">Hace 32h<span class="meta">Mobility 30' · planificado</span></div></td>
+                <td>
+                  <div class="row-actions">
+                    <span class="row-action"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span>
+                    <span class="row-action"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg></span>
+                  </div>
+                </td>
+              </tr>
+
+              <tr class="is-flag">
+                <td>
+                  <div class="ath-cell">
+                    <div class="ath-cell__av ath-cell__av--n3">TF</div>
+                    <div class="ath-cell__body">
+                      <div class="ath-cell__name">Theo Falconer</div>
+                      <div class="ath-cell__meta">53 · Strength · Wk 07 / 12</div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="recov recov--low" style="--p: 38%;">
+                    <div class="recov__bar"></div>
+                    <div class="recov__v">38<span class="u">%</span></div>
+                  </div>
+                </td>
+                <td><div class="num-cell">28<span class="u">ms</span><span class="d down">▼ −14</span></div></td>
+                <td><div class="num-cell">62<span class="u">bpm</span><span class="d down">▲ +8</span></div></td>
+                <td><div class="num-cell">5.2<span class="u">h</span><span class="d down">▼ −1.4</span></div></td>
+                <td>
+                  <svg class="spark" viewBox="0 0 110 32" preserveAspectRatio="none">
+                    <polyline points="0,6 10,8 20,7 30,10 40,12 50,14 60,16 70,18 80,21 90,24 100,26 110,28" fill="none" stroke="#FF6E6E" stroke-width="1.5" stroke-linejoin="round" style="filter: drop-shadow(0 0 3px rgba(255,110,110,0.6))"/>
+                  </svg>
+                </td>
+                <td><span class="stat-pill stat-pill--flag">Flagged</span></td>
+                <td><div class="last-cell">Hace 3d<span class="meta">Deadlift session · saltó hoy</span></div></td>
+                <td>
+                  <div class="row-actions">
+                    <span class="row-action"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span>
+                    <span class="row-action"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg></span>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="ath-cell">
+                    <div class="ath-cell__av ath-cell__av--n2">SO</div>
+                    <div class="ath-cell__body">
+                      <div class="ath-cell__name">Sora Ozaki</div>
+                      <div class="ath-cell__meta">40 · Hybrid · Wk 05 / 10</div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="recov" style="--p: 76%;">
+                    <div class="recov__bar"></div>
+                    <div class="recov__v">76<span class="u">%</span></div>
+                  </div>
+                </td>
+                <td><div class="num-cell">54<span class="u">ms</span><span class="d up">▲ +3</span></div></td>
+                <td><div class="num-cell">48<span class="u">bpm</span><span class="d flat">— flat</span></div></td>
+                <td><div class="num-cell">7.6<span class="u">h</span><span class="d up">▲ +0.3</span></div></td>
+                <td>
+                  <svg class="spark" viewBox="0 0 110 32" preserveAspectRatio="none">
+                    <polyline points="0,16 10,14 20,16 30,12 40,14 50,11 60,13 70,9 80,11 90,8 100,10 110,7" fill="none" stroke="#6D00FF" stroke-width="1.5" stroke-linejoin="round" style="filter: drop-shadow(0 0 3px rgba(109,0,255,0.7))"/>
+                  </svg>
+                </td>
+                <td><span class="stat-pill stat-pill--ready">Ready</span></td>
+                <td><div class="last-cell">Hace 14h<span class="meta">Bench 3×5 @ 75kg · RPE 7</span></div></td>
+                <td>
+                  <div class="row-actions">
+                    <span class="row-action"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span>
+                    <span class="row-action"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg></span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============= VIEW · ATHLETE DETAIL · Alex R. ============= -->
+      <section class="view view--athlete" data-screen-label="04B Athlete · Alex R.">
+        <nav class="crumbs">
+          <a data-go="athletes">Athletes</a>
+          <span class="sep">/</span>
+          <span class="cur">Alex Rivera</span>
+        </nav>
+
+        <div class="ath-head">
+          <div class="ath-head__l">
+            <div class="ath-head__av">AR</div>
+            <div>
+              <div class="ath-head__h">Alex Rivera</div>
+              <div class="ath-head__sub">
+                <span>42 yo</span><span class="sep">·</span>
+                <span><b>Strength block</b> · Wk 06 / 12</span><span class="sep">·</span>
+                <span>Last sync <b>6h</b></span><span class="sep">·</span>
+                <span class="lg-purple-300">Streak <b style="color:var(--ngx-purple-200);">12d</b></span>
+              </div>
+            </div>
+          </div>
+          <div class="ath-head__r">
+            <div class="range-pills">
+              <span class="range-pill">7D</span>
+              <span class="range-pill is-active">30D</span>
+              <span class="range-pill">1Y</span>
+            </div>
+            <span class="icon-pill"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></span>
+            <button class="coach-cta"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>Message Alex</button>
+          </div>
+        </div>
+
+        <!-- KPI row -->
+        <div class="kpi-row">
+          <div class="kpi-card kpi-card--feat">
+            <div class="kpi-card__head">
+              <span class="kpi-card__l">Recovery</span>
+              <span class="kpi-card__chip">Ready to push</span>
+            </div>
+            <div class="kpi-card__v">79<span class="u">%</span></div>
+            <div class="kpi-card__foot">
+              <span class="kpi-card__d up">▲ +12 vs 7d avg</span>
+              <span class="kpi-card__base">Baseline 67%</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-card__head">
+              <span class="kpi-card__l">HRV</span>
+              <span class="kpi-card__chip">Whoop</span>
+            </div>
+            <div class="kpi-card__v">52<span class="u">ms</span></div>
+            <div class="kpi-card__foot">
+              <span class="kpi-card__d up">▲ +8 vs baseline</span>
+              <span class="kpi-card__base">44 ms · 30d avg</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-card__head">
+              <span class="kpi-card__l">RHR</span>
+              <span class="kpi-card__chip">Apple</span>
+            </div>
+            <div class="kpi-card__v">44<span class="u">bpm</span></div>
+            <div class="kpi-card__foot">
+              <span class="kpi-card__d up">▼ −2 vs baseline</span>
+              <span class="kpi-card__base">46 bpm · 30d avg</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-card__head">
+              <span class="kpi-card__l">Sleep</span>
+              <span class="kpi-card__chip">Whoop</span>
+            </div>
+            <div class="kpi-card__v">7.4<span class="u">h</span></div>
+            <div class="kpi-card__foot">
+              <span class="kpi-card__d flat">— vs baseline</span>
+              <span class="kpi-card__base">88% efficiency</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart + biomarkers -->
+        <div class="cols">
+          <div class="glass-card">
+            <div class="chart-wrap">
+              <div class="chart-wrap__head">
+                <div>
+                  <div class="chart-wrap__title">HRV · 30-day trend</div>
+                  <div class="chart-wrap__sub">52 ms current · baseline 44 ms · zona óptima 48–60 ms</div>
+                </div>
+                <div class="legend">
+                  <span class="legend__item"><span class="legend__sw legend__sw--p"></span>HRV daily</span>
+                  <span class="legend__item"><span class="legend__sw legend__sw--lt"></span>Below band</span>
+                  <span class="legend__item"><span class="legend__sw legend__sw--line"></span>Baseline</span>
+                </div>
+              </div>
+              <div class="chart">
+                <div class="chart__y">
+                  <span>70</span>
+                  <span>60</span>
+                  <span>50</span>
+                  <span>40</span>
+                  <span>30</span>
+                </div>
+                <div class="chart__plot">
+                  <div class="chart__grid"><div></div><div></div><div></div><div></div><div></div></div>
+                  <div class="chart__band">
+                    <span class="chart__band-lbl">Optimal · 48–60 ms</span>
+                  </div>
+                  <div class="bars">
+                    <div class="col"><div class="b lt" style="height:32%"></div></div>
+                    <div class="col"><div class="b lt" style="height:38%"></div></div>
+                    <div class="col"><div class="b" style="height:48%"></div></div>
+                    <div class="col"><div class="b" style="height:54%"></div></div>
+                    <div class="col"><div class="b lt" style="height:36%"></div></div>
+                    <div class="col"><div class="b lt" style="height:34%"></div></div>
+                    <div class="col"><div class="b" style="height:56%"></div></div>
+                    <div class="col"><div class="b" style="height:62%"></div></div>
+                    <div class="col"><div class="b" style="height:58%"></div></div>
+                    <div class="col"><div class="b lt" style="height:42%"></div></div>
+                    <div class="col"><div class="b" style="height:60%"></div></div>
+                    <div class="col"><div class="b" style="height:66%"></div></div>
+                    <div class="col"><div class="b" style="height:64%"></div></div>
+                    <div class="col"><div class="b warn" style="height:28%"></div></div>
+                    <div class="col"><div class="b lt" style="height:36%"></div></div>
+                    <div class="col"><div class="b" style="height:52%"></div></div>
+                    <div class="col"><div class="b" style="height:60%"></div></div>
+                    <div class="col"><div class="b" style="height:68%"></div></div>
+                    <div class="col"><div class="b" style="height:70%"></div></div>
+                    <div class="col"><div class="b lt" style="height:44%"></div></div>
+                    <div class="col"><div class="b" style="height:64%"></div></div>
+                    <div class="col"><div class="b" style="height:70%"></div></div>
+                    <div class="col"><div class="b" style="height:76%"></div></div>
+                    <div class="col"><div class="b" style="height:72%"></div></div>
+                    <div class="col"><div class="b" style="height:78%"></div></div>
+                    <div class="col"><div class="b" style="height:82%"></div></div>
+                    <div class="col"><div class="b" style="height:74%"></div></div>
+                    <div class="col"><div class="b" style="height:80%"></div></div>
+                    <div class="col"><div class="b" style="height:84%"></div></div>
+                    <div class="col"><div class="b" style="height:86%"></div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="chart__x">
+                <span>D-30</span>
+                <span>D-25</span>
+                <span>D-20</span>
+                <span>D-15</span>
+                <span>D-10</span>
+                <span>D-5</span>
+                <span>Hoy</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card">
+            <div class="card-head">
+              <div class="card-head__l"><span class="dot"></span>Biomarkers</div>
+              <div class="card-head__sub">10 tracked · sync 6h</div>
+            </div>
+            <div class="bio-list">
+              <div class="row">
+                <div class="row__l">
+                  <span class="row__name">VO₂ max</span>
+                  <span class="row__src">Apple · estimación</span>
+                </div>
+                <span class="row__v">46.2<span class="u">ml/kg</span></span>
+                <span class="row__d up">▲ +0.8</span>
+              </div>
+              <div class="row">
+                <div class="row__l">
+                  <span class="row__name">Resting glucose</span>
+                  <span class="row__src">Levels CGM · 7d avg</span>
+                </div>
+                <span class="row__v">87<span class="u">mg/dL</span></span>
+                <span class="row__d flat">— flat</span>
+              </div>
+              <div class="row">
+                <div class="row__l">
+                  <span class="row__name">Body fat</span>
+                  <span class="row__src">DEXA · 14 abr</span>
+                </div>
+                <span class="row__v">14.2<span class="u">%</span></span>
+                <span class="row__d up">▼ −0.6</span>
+              </div>
+              <div class="row">
+                <div class="row__l">
+                  <span class="row__name">Cortisol AM</span>
+                  <span class="row__src">Quest · 21 mayo</span>
+                </div>
+                <span class="row__v">18.4<span class="u">μg/dL</span></span>
+                <span class="row__d warn">▲ alto</span>
+              </div>
+              <div class="row">
+                <div class="row__l">
+                  <span class="row__name">Testosterone</span>
+                  <span class="row__src">Quest · 21 mayo</span>
+                </div>
+                <span class="row__v">612<span class="u">ng/dL</span></span>
+                <span class="row__d up">▲ +42</span>
+              </div>
+              <div class="row">
+                <div class="row__l">
+                  <span class="row__name">hs-CRP</span>
+                  <span class="row__src">Quest · 21 mayo</span>
+                </div>
+                <span class="row__v">0.8<span class="u">mg/L</span></span>
+                <span class="row__d up">▼ −0.3</span>
+              </div>
+              <div class="row">
+                <div class="row__l">
+                  <span class="row__name">Grip strength</span>
+                  <span class="row__src">In-gym · jueves</span>
+                </div>
+                <span class="row__v">58<span class="u">kg</span></span>
+                <span class="row__d up">▲ +3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Coach note + actions -->
+        <div class="coach-actions">
+          <div class="glass-card glass-card--purple note-card">
+            <div class="note-card__head">
+              <div class="note-card__title">Coach note · Hoy</div>
+              <div class="note-card__by">
+                <span class="av">MR</span>
+                <span>Mariana · 9:42</span>
+              </div>
+            </div>
+            <div class="note-card__body">
+              <b>Alex</b> entra a esta semana con <b>HRV 52 ms (+8 vs baseline)</b> y <b>RHR −2</b>. Tres días seguidos en zona óptima, sleep estable en 7.4h. <span class="hl">Recovery 79% justifica progresar squat a 87.5 kg</span> en sesión del viernes. <b>Watch:</b> cortisol AM elevado, mantener carga total ≤ 700 TSS esta semana y suelo de 7h de sueño. Próximo check de biomarcadores 11 jun.
+            </div>
+            <div class="note-card__foot">
+              <span>Sincronizado al programa</span>
+              <div class="right">
+                <span class="tag-pill">Strength</span>
+                <span class="tag-pill">Wk 06</span>
+                <span class="tag-pill">Progresión</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card quick-actions">
+            <div class="quick-actions__h">Quick actions</div>
+            <div class="qa-row">
+              <span class="qa-row__ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></span>
+              <span class="qa-row__l">Ajustar carga semanal</span>
+              <span class="qa-row__chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+            </div>
+            <div class="qa-row">
+              <span class="qa-row__ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg></span>
+              <span class="qa-row__l">Programar check biomarkers</span>
+              <span class="qa-row__chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+            </div>
+            <div class="qa-row">
+              <span class="qa-row__ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06z"></path></svg></span>
+              <span class="qa-row__l">Marcar como PR-week</span>
+              <span class="qa-row__chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+            </div>
+            <div class="qa-row">
+              <span class="qa-row__ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></span>
+              <span class="qa-row__l">Exportar weekly report PDF</span>
+              <span class="qa-row__chev"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============= VIEW · PROGRAMS ============= -->
+      <section class="view view--programs" data-screen-label="04C Programs editor">
+        <div class="prog-head">
+          <div class="prog-head__title">
+            <div class="topbar__eyebrow">Editing program · auto-save 2s</div>
+            <div class="prog-head__name">Strength · Press &amp; Pull · 12wk</div>
+            <div class="prog-head__sub">
+              <span>Assigned to <b>Alex R.</b></span><span class="sep">·</span>
+              <span><b>5</b> días / semana</span><span class="sep">·</span>
+              <span>Avg <b>62</b> TSS · día</span><span class="sep">·</span>
+              <span class="lg-purple-300">Compliance <b style="color:var(--ngx-purple-200);">94%</b></span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="prog-tabs">
+              <span class="prog-tab is-active">Week view</span>
+              <span class="prog-tab">Block view</span>
+              <span class="prog-tab">Timeline</span>
+            </div>
+            <span class="icon-pill"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span>
+            <button class="coach-cta"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>Publish</button>
+          </div>
+        </div>
+
+        <div class="prog-grid">
+          <!-- Weeks list -->
+          <div class="glass-card weeks">
+            <div class="weeks__h">12 weeks</div>
+            <div class="week"><span class="week__n">W01</span><div class="week__body"><div class="week__name">Anatomical adapt.</div><div class="week__sub">5 d · 280 TSS</div></div><span class="week__bullet"></span></div>
+            <div class="week"><span class="week__n">W02</span><div class="week__body"><div class="week__name">Volume build</div><div class="week__sub">5 d · 312 TSS</div></div><span class="week__bullet"></span></div>
+            <div class="week"><span class="week__n">W03</span><div class="week__body"><div class="week__name">Volume build</div><div class="week__sub">5 d · 340 TSS</div></div><span class="week__bullet"></span></div>
+            <div class="week"><span class="week__n">W04</span><div class="week__body"><div class="week__name">Deload</div><div class="week__sub">3 d · 180 TSS</div></div><span class="week__bullet"></span></div>
+            <div class="week"><span class="week__n">W05</span><div class="week__body"><div class="week__name">Intensity rise</div><div class="week__sub">5 d · 360 TSS</div></div><span class="week__bullet"></span></div>
+            <div class="week is-active is-current"><span class="week__n">W06</span><div class="week__body"><div class="week__name">Intensity rise</div><div class="week__sub">5 d · 380 TSS · live</div></div><span class="week__bullet"></span></div>
+            <div class="week"><span class="week__n">W07</span><div class="week__body"><div class="week__name">Peak strength</div><div class="week__sub">4 d · 410 TSS</div></div><span class="week__bullet"></span></div>
+            <div class="week"><span class="week__n">W08</span><div class="week__body"><div class="week__name">Deload</div><div class="week__sub">3 d · 180 TSS</div></div><span class="week__bullet"></span></div>
+            <div class="week"><span class="week__n">W09</span><div class="week__body"><div class="week__name">Test 1RM</div><div class="week__sub">4 d · 320 TSS</div></div><span class="week__bullet"></span></div>
+            <div class="week"><span class="week__n">W10</span><div class="week__body"><div class="week__name">Hypertrophy</div><div class="week__sub">5 d · 360 TSS</div></div><span class="week__bullet"></span></div>
+            <div class="week"><span class="week__n">W11</span><div class="week__body"><div class="week__name">Hypertrophy</div><div class="week__sub">5 d · 380 TSS</div></div><span class="week__bullet"></span></div>
+            <div class="week"><span class="week__n">W12</span><div class="week__body"><div class="week__name">Taper · test</div><div class="week__sub">3 d · 200 TSS</div></div><span class="week__bullet"></span></div>
+            <div class="weeks__add"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Add week</div>
+          </div>
+
+          <!-- Days board -->
+          <div class="glass-card">
+            <div class="card-head">
+              <div class="card-head__l"><span class="dot"></span>Week 06 · Intensity rise · 380 TSS</div>
+              <div class="card-head__sub">3 jun – 9 jun · 5 lift days · 1 cardio · 1 rest</div>
+            </div>
+            <div class="days">
+              <!-- LUN -->
+              <div class="day">
+                <div class="day__head">
+                  <div>
+                    <div class="day__d">Lun</div>
+                    <div class="day__date">03</div>
+                  </div>
+                  <span class="day__chip">Push</span>
+                </div>
+                <div class="day__col">
+                  <div class="block is-strength">
+                    <div class="block__tag"><span>Strength · A</span><span class="grip">⋮⋮</span></div>
+                    <div class="block__name">Bench press</div>
+                    <div class="block__meta"><b>5 × 3</b> @ 82.5 kg · RPE 8</div>
+                  </div>
+                  <div class="block is-strength">
+                    <div class="block__tag"><span>Strength · B</span><span class="grip">⋮⋮</span></div>
+                    <div class="block__name">Overhead press</div>
+                    <div class="block__meta"><b>4 × 6</b> @ 52.5 kg</div>
+                  </div>
+                  <div class="block is-condition">
+                    <div class="block__tag"><span>Accessory</span><span class="grip">⋮⋮</span></div>
+                    <div class="block__name">Dips · weighted</div>
+                    <div class="block__meta"><b>3 × 8</b> +15 kg</div>
+                  </div>
+                  <div class="block__add"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Add block</div>
+                </div>
+              </div>
+
+              <!-- MAR -->
+              <div class="day">
+                <div class="day__head">
+                  <div>
+                    <div class="day__d">Mar</div>
+                    <div class="day__date">04</div>
+                  </div>
+                  <span class="day__chip">Pull</span>
+                </div>
+                <div class="day__col">
+                  <div class="block is-strength">
+                    <div class="block__tag"><span>Strength · A</span><span class="grip">⋮⋮</span></div>
+                    <div class="block__name">Deadlift</div>
+                    <div class="block__meta"><b>5 × 3</b> @ 142.5 kg</div>
+                  </div>
+                  <div class="block is-strength">
+                    <div class="block__tag"><span>Strength · B</span><span class="grip">⋮⋮</span></div>
+                    <div class="block__name">Pendlay row</div>
+                    <div class="block__meta"><b>4 × 6</b> @ 75 kg</div>
+                  </div>
+                  <div class="block is-condition">
+                    <div class="block__tag"><span>Accessory</span><span class="grip">⋮⋮</span></div>
+                    <div class="block__name">Pull-up · weighted</div>
+                    <div class="block__meta"><b>3 × 6</b> +10 kg</div>
+                  </div>
+                  <div class="drop-ghost"></div>
+                  <div class="block__add"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Add block</div>
+                </div>
+              </div>
+
+              <!-- MIE -->
+              <div class="day">
+                <div class="day__head">
+                  <div>
+                    <div class="day__d">Mié</div>
+                    <div class="day__date">05</div>
+                  </div>
+                  <span class="day__chip day__chip--rest">Rest</span>
+                </div>
+                <div class="day__col is-rest">
+                  <div class="block is-mobility">
+                    <div class="block__tag"><span>Mobility</span><span class="grip">⋮⋮</span></div>
+                    <div class="block__name">Hip + T-spine flow</div>
+                    <div class="block__meta">30' · zona 1</div>
+                  </div>
+                  <div class="day__rest">Active recovery</div>
+                </div>
+              </div>
+
+              <!-- JUE -->
+              <div class="day">
+                <div class="day__head">
+                  <div>
+                    <div class="day__d">Jue</div>
+                    <div class="day__date">06</div>
+                  </div>
+                  <span class="day__chip">Legs</span>
+                </div>
+                <div class="day__col">
+                  <div class="block is-strength">
+                    <div class="block__tag"><span>Strength · A</span><span class="grip">⋮⋮</span></div>
+                    <div class="block__name">Back squat</div>
+                    <div class="block__meta"><b>5 × 5</b> @ 85 kg</div>
+                  </div>
+                  <div class="block is-strength">
+                    <div class="block__tag"><span>Strength · B</span><span class="grip">⋮⋮</span></div>
+                    <div class="block__name">RDL</div>
+                    <div class="block__meta"><b>4 × 6</b> @ 110 kg</div>
+                  </div>
+                  <div class="block is-condition">
+                    <div class="block__tag"><span>Accessory</span><span class="grip">⋮⋮</span></div>
+                    <div class="block__name">Walking lunges</div>
+                    <div class="block__meta"><b>3 × 20</b> step · 22.5 kg</div>
+                  </div>
+                  <div class="block is-condition">
+                    <div class="block__tag"><span>Core</span><span class="grip">⋮⋮</span></div>
+                    <div class="block__name">Ab wheel</div>
+                    <div class="block__meta"><b>3 × 12</b></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- VIE — featured / dragging -->
+              <div class="day">
+                <div class="day__head">
+                  <div>
+                    <div class="day__d">Vie</div>
+                    <div class="day__date">07</div>
+                  </div>
+                  <span class="day__chip">Squat PR</span>
+                </div>
+                <div class="day__col">
+                  <div class="block is-strength is-dragging">
+                    <div class="block__tag"><span>PR attempt</span><span class="grip">⋮⋮</span></div>
+                    <div class="block__name">Back squat</div>
+                    <div class="block__meta"><b>3 × 1</b> @ 87.5 kg · RPE 9</div>
+                  </div>
+                  <div class="block is-strength">
+                    <div class="block__tag"><span>Backoff</span><span class="grip">⋮⋮</span></div>
+                    <div class="block__name">Back squat · backoff</div>
+                    <div class="block__meta"><b>3 × 5</b> @ 75 kg</div>
+                  </div>
+                  <div class="block is-condition">
+                    <div class="block__tag"><span>Accessory</span><span class="grip">⋮⋮</span></div>
+                    <div class="block__name">Bulgarian split squat</div>
+                    <div class="block__meta"><b>3 × 8</b> +20 kg</div>
+                  </div>
+                  <div class="block__add"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Add block</div>
+                </div>
+              </div>
+
+              <!-- SAB -->
+              <div class="day">
+                <div class="day__head">
+                  <div>
+                    <div class="day__d">Sáb</div>
+                    <div class="day__date">08</div>
+                  </div>
+                  <span class="day__chip">Z2</span>
+                </div>
+                <div class="day__col">
+                  <div class="block is-cardio">
+                    <div class="block__tag"><span>Cardio · Z2</span><span class="grip">⋮⋮</span></div>
+                    <div class="block__name">Zone-2 ride</div>
+                    <div class="block__meta"><b>90'</b> · HR 130–140</div>
+                  </div>
+                  <div class="block is-mobility">
+                    <div class="block__tag"><span>Mobility</span><span class="grip">⋮⋮</span></div>
+                    <div class="block__name">Cooldown flow</div>
+                    <div class="block__meta">15' · respiración</div>
+                  </div>
+                  <div class="block__add"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Add block</div>
+                </div>
+              </div>
+
+              <!-- DOM -->
+              <div class="day">
+                <div class="day__head">
+                  <div>
+                    <div class="day__d">Dom</div>
+                    <div class="day__date">09</div>
+                  </div>
+                  <span class="day__chip day__chip--rest">Rest</span>
+                </div>
+                <div class="day__col is-rest">
+                  <div class="day__rest">Off · full rest</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============= VIEW · MESSAGES ============= -->
+      <section class="view view--messages" data-screen-label="04D Messages inbox">
+        <div class="topbar">
+          <div>
+            <div class="topbar__eyebrow">Inbox · 7 unread · 3 flagged</div>
+            <div class="topbar__h">MESSAGES</div>
+          </div>
+          <div class="topbar__right">
+            <span class="icon-pill"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg></span>
+            <button class="coach-cta"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"></path><path d="m22 2-7 20-4-9-9-4 20-7z"></path></svg>New message</button>
+          </div>
+        </div>
+
+        <div class="msg-shell">
+          <!-- Inbox list -->
+          <div class="glass-card inbox">
+            <div class="inbox__search">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <span>Search threads</span>
+            </div>
+            <div class="inbox__filters">
+              <span class="inbox__filter is-active">Unread</span>
+              <span class="inbox__filter">All</span>
+              <span class="inbox__filter">Flagged</span>
+              <span class="inbox__filter">AI drafts</span>
+            </div>
+
+            <div class="thread is-unread is-active">
+              <div class="thread__av">AR</div>
+              <div class="thread__body">
+                <div class="thread__top">
+                  <span class="thread__name">Alex Rivera</span>
+                  <span class="thread__time">9:14</span>
+                </div>
+                <div class="thread__preview">¿Subir el squat del viernes a 87.5? Recovery está alto y me siento bien. Confío en tu lectura.</div>
+                <span class="thread__tag">Strength · Wk 06</span>
+              </div>
+              <span class="thread__badge">2</span>
+            </div>
+
+            <div class="thread is-unread">
+              <div class="thread__av thread__av--n2">CM</div>
+              <div class="thread__body">
+                <div class="thread__top">
+                  <span class="thread__name">Camila Mendoza</span>
+                  <span class="thread__time">8:42</span>
+                </div>
+                <div class="thread__preview">No dormí bien esta noche, 5h. ¿Cancelo el rodaje largo o lo bajo a 60' Z2?</div>
+                <span class="thread__tag thread__tag--warn">Flagged · recovery</span>
+              </div>
+              <span class="thread__badge">3</span>
+            </div>
+
+            <div class="thread is-unread">
+              <div class="thread__av thread__av--n3">JS</div>
+              <div class="thread__body">
+                <div class="thread__top">
+                  <span class="thread__name">Jordan Smith</span>
+                  <span class="thread__time">7:55</span>
+                </div>
+                <div class="thread__preview">PR ayer en hill repeats — 8×60s a 6:20 min/mile pace. La pierna izquierda algo cargada hoy.</div>
+                <span class="thread__tag">Endurance · Wk 09</span>
+              </div>
+              <span class="thread__badge">1</span>
+            </div>
+
+            <div class="thread">
+              <div class="thread__av thread__av--n4">PG</div>
+              <div class="thread__body">
+                <div class="thread__top">
+                  <span class="thread__name">Priya Gowda</span>
+                  <span class="thread__time">Ayer</span>
+                </div>
+                <div class="thread__preview">Squat 5×3 @ 82.5 cerró con RPE 9, tres reps al borde. Pregunta si reducir intensity la próxima.</div>
+              </div>
+            </div>
+
+            <div class="thread">
+              <div class="thread__av thread__av--n5">LO</div>
+              <div class="thread__body">
+                <div class="thread__top">
+                  <span class="thread__name">Lina Okafor</span>
+                  <span class="thread__time">Ayer</span>
+                </div>
+                <div class="thread__preview">Carrera larga lista — 18 km a 5:40, HR promedio 142. Adjunto archivo Garmin.</div>
+              </div>
+            </div>
+
+            <div class="thread is-unread">
+              <div class="thread__av thread__av--n3">TF</div>
+              <div class="thread__body">
+                <div class="thread__top">
+                  <span class="thread__name">Theo Falconer</span>
+                  <span class="thread__time">Lun</span>
+                </div>
+                <div class="thread__preview">No me siento bien desde el sábado. Cansancio raro, no es solo el deadlift. ¿Hablamos?</div>
+                <span class="thread__tag thread__tag--warn">Flagged · health</span>
+              </div>
+              <span class="thread__badge">1</span>
+            </div>
+
+            <div class="thread">
+              <div class="thread__av thread__av--n2">SO</div>
+              <div class="thread__body">
+                <div class="thread__top">
+                  <span class="thread__name">Sora Ozaki</span>
+                  <span class="thread__time">Vie</span>
+                </div>
+                <div class="thread__preview">Cerré el block — propongo seguir con hybrid o cambiar a pure strength? Pensemos juntos.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Conversation -->
+          <div class="glass-card conv">
+            <div class="conv__head">
+              <div class="conv__av">AR</div>
+              <div class="conv__body">
+                <div class="conv__name">Alex Rivera</div>
+                <div class="conv__sub">
+                  <span>Strength · Wk 06</span><span class="sep">·</span>
+                  <span class="ind">Online · escribiendo</span>
+                </div>
+              </div>
+              <span class="icon-pill"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg></span>
+            </div>
+            <div class="conv__feed">
+              <div class="conv__day">Lunes · 3 jun</div>
+              <div class="bubble them">
+                Hola Mariana — squat del viernes está en 85 kg para 5×5. Quiero atacar PR a 87.5. Tres días seguidos con HRV en zona y duermo 7.4h estable.
+                <span class="bubble__time">8:38</span>
+              </div>
+              <div class="bubble me">
+                Vi tus números. <b>Recovery 79%, HRV 52 ms, RHR 44.</b> Tu progresión semanal aguanta el salto.
+                <div class="bubble__data">
+                  <div class="cell"><span class="l">Recovery</span><span class="v">79<span class="u">%</span></span></div>
+                  <div class="cell"><span class="l">HRV</span><span class="v">52<span class="u">ms</span></span></div>
+                  <div class="cell"><span class="l">Load drift</span><span class="v">0.94</span></div>
+                </div>
+                <span class="bubble__time">8:51</span>
+              </div>
+              <div class="bubble them">
+                ¿Entonces voy directo a 87.5 × 3 reps top set y backoff?
+                <span class="bubble__time">9:02</span>
+              </div>
+              <div class="bubble me">
+                Sí — <b>3 × 1 @ 87.5</b> top, luego <b>3 × 5 @ 75</b> backoff. RPE proyectado 9. Si no cierras los singles, paramos y cierras en 85.
+                <span class="bubble__time">9:05</span>
+              </div>
+              <div class="bubble them">
+                Hecho. Cortisol AM salió alto el último panel — ¿algo que ajustar?
+                <span class="bubble__time">9:13</span>
+              </div>
+              <div class="bubble them">
+                Y si el día va mal ¿bajo a 85 sin culpa, ya?
+                <span class="bubble__time">9:14</span>
+              </div>
+            </div>
+
+            <!-- Composer -->
+            <div class="composer">
+              <div class="composer__suggest">
+                <span class="composer__pill">Sin culpa — el plan es flexible. 85 cierra el bloque igual.</span>
+                <span class="composer__pill">Cortisol: mantén 7h+ sueño esta semana</span>
+                <span class="composer__pill">Adjunta protocolo cortisol</span>
+              </div>
+              <div class="composer__box">
+                <input class="composer__field" placeholder="Mensaje a Alex…" type="text">
+                <div class="composer__icons">
+                  <span class="composer__ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg></span>
+                  <span class="composer__ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></span>
+                  <span class="composer__ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></span>
+                </div>
+                <span class="composer__send"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Context panel -->
+          <div class="glass-card ctx-panel">
+            <div>
+              <div class="ctx-panel__h">Context · Alex Rivera</div>
+              <div class="ctx-stat"><span class="ctx-stat__l">Recovery</span><span class="ctx-stat__v">79<span class="u">%</span></span></div>
+              <div class="ctx-stat"><span class="ctx-stat__l">HRV today</span><span class="ctx-stat__v">52<span class="u">ms</span><span class="d up">+8</span></span></div>
+              <div class="ctx-stat"><span class="ctx-stat__l">RHR</span><span class="ctx-stat__v">44<span class="u">bpm</span></span></div>
+              <div class="ctx-stat"><span class="ctx-stat__l">Sleep · 7d</span><span class="ctx-stat__v">7.4<span class="u">h</span></span></div>
+              <div class="ctx-stat"><span class="ctx-stat__l">Load drift</span><span class="ctx-stat__v">0.94</span></div>
+              <div class="ctx-stat"><span class="ctx-stat__l">Streak</span><span class="ctx-stat__v">12<span class="u">d</span></span></div>
+            </div>
+
+            <div>
+              <div class="ctx-panel__h">Latest session</div>
+              <div style="margin-top:10px; padding:12px 14px; border-radius:12px; background:var(--lg-glass-purple-soft); border:1px solid var(--lg-rim-purple);">
+                <div style="font-family:var(--font-display);font-weight:900;font-size:11.5px;letter-spacing:0.04em;text-transform:uppercase;color:var(--ngx-white);">Press &amp; Pull 5×5</div>
+                <div style="font-size:10.5px;color:var(--ngx-gray-300);margin-top:4px;font-variant-numeric:tabular-nums;">Hace 6h · 58' · RPE 7.5</div>
+                <div style="font-family:var(--font-display);font-weight:800;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ngx-purple-200);margin-top:8px;">Completo · 100%</div>
+              </div>
+            </div>
+
+            <div>
+              <div class="ctx-panel__h">Quick</div>
+              <div class="ctx-quick">
+                <span class="ctx-quick__btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>Ver athlete profile</span>
+                <span class="ctx-quick__btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>Ajustar viernes</span>
+                <span class="ctx-quick__btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>Marcar flagged</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============= VIEW · COHORT ANALYTICS ============= -->
+      <section class="view view--cohort" data-screen-label="04E Cohort analytics">
+        <div class="cohort-head">
+          <div class="cohort-head__title">
+            <div class="topbar__eyebrow">Cohort · Longevity 40+ · Q2-26</div>
+            <div class="cohort-head__name">COHORT ANALYTICS</div>
+            <div class="cohort-head__sub">
+              <span><b>18</b> athletes</span><span class="sep">·</span>
+              <span>Block <b>06 / 12</b></span><span class="sep">·</span>
+              <span>Compliance <b>87%</b></span><span class="sep">·</span>
+              <span class="lg-purple-300">vs Q1 <b style="color:var(--ngx-purple-200);">+9 pts</b></span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="range-pills">
+              <span class="range-pill">7D</span>
+              <span class="range-pill is-active">30D</span>
+              <span class="range-pill">90D</span>
+              <span class="range-pill">1Y</span>
+            </div>
+            <span class="icon-pill"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></span>
+          </div>
+        </div>
+
+        <!-- Totals strip · cohort -->
+        <div class="totals">
+          <div class="tot tot--purple">
+            <div class="tot__l">Cohort recovery · avg</div>
+            <div class="tot__v">71<span class="u">%</span></div>
+            <div class="tot__foot"><span>30d rolling</span><span class="tot__d up">▲ +6 pts</span></div>
+          </div>
+          <div class="tot">
+            <div class="tot__l">HRV · cohort median</div>
+            <div class="tot__v">48<span class="u">ms</span></div>
+            <div class="tot__foot"><span>Banda óptima 48–60</span><span class="tot__d up">▲ +3 ms</span></div>
+          </div>
+          <div class="tot">
+            <div class="tot__l">Volume · weekly avg</div>
+            <div class="tot__v">312<span class="u">TSS</span></div>
+            <div class="tot__foot"><span>Target 280–340</span><span class="tot__d flat">— en banda</span></div>
+          </div>
+          <div class="tot">
+            <div class="tot__l">Retention · 90d</div>
+            <div class="tot__v">94<span class="u">%</span></div>
+            <div class="tot__foot"><span>17/18 atletas activos</span><span class="tot__d up">▲ +12 vs Q1</span></div>
+          </div>
+        </div>
+
+        <!-- Trend chart + distribution -->
+        <div class="charts-grid">
+          <div class="glass-card chart-card">
+            <div class="card-head">
+              <div class="card-head__l"><span class="dot"></span>Cohort HRV · 30 días</div>
+              <div class="card-head__sub">Mediana cohort vs Alex R. vs banda baseline</div>
+            </div>
+            <div style="padding: 14px 18px 18px;">
+              <svg class="svg-chart" viewBox="0 0 720 220" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="purpleArea" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#6D00FF" stop-opacity="0.45"/>
+                    <stop offset="100%" stop-color="#6D00FF" stop-opacity="0"/>
+                  </linearGradient>
+                  <linearGradient id="softArea" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#C29BFF" stop-opacity="0.20"/>
+                    <stop offset="100%" stop-color="#C29BFF" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+
+                <!-- grid -->
+                <g class="grid">
+                  <line x1="40" y1="20" x2="710" y2="20"/>
+                  <line x1="40" y1="70" x2="710" y2="70"/>
+                  <line x1="40" y1="120" x2="710" y2="120"/>
+                  <line x1="40" y1="170" x2="710" y2="170"/>
+                </g>
+                <!-- y axis -->
+                <g class="axis">
+                  <text x="32" y="24" text-anchor="end">70</text>
+                  <text x="32" y="74" text-anchor="end">55</text>
+                  <text x="32" y="124" text-anchor="end">40</text>
+                  <text x="32" y="174" text-anchor="end">25</text>
+                </g>
+
+                <!-- Cohort median area + line -->
+                <path class="area-soft" d="M40,140 L80,135 L120,130 L160,128 L200,120 L240,115 L280,118 L320,108 L360,102 L400,98 L440,94 L480,92 L520,88 L560,85 L600,82 L640,80 L680,76 L710,72 L710,180 L40,180 Z"/>
+                <polyline class="line-soft" points="40,140 80,135 120,130 160,128 200,120 240,115 280,118 320,108 360,102 400,98 440,94 480,92 520,88 560,85 600,82 640,80 680,76 710,72"/>
+
+                <!-- Alex R area + line -->
+                <path class="area-purple" d="M40,158 L80,150 L120,145 L160,135 L200,128 L240,118 L280,122 L320,112 L360,100 L400,92 L440,82 L480,72 L520,68 L560,60 L600,55 L640,50 L680,42 L710,38 L710,180 L40,180 Z"/>
+                <polyline class="line-purple" points="40,158 80,150 120,145 160,135 200,128 240,118 280,122 320,112 360,100 400,92 440,82 480,72 520,68 560,60 600,55 640,50 680,42 710,38"/>
+                <circle class="dot" cx="710" cy="38" r="5"/>
+
+                <!-- x labels -->
+                <g class="axis">
+                  <text x="40" y="200">D-30</text>
+                  <text x="200" y="200">D-22</text>
+                  <text x="360" y="200">D-15</text>
+                  <text x="520" y="200">D-8</text>
+                  <text x="700" y="200" text-anchor="end">Hoy</text>
+                </g>
+              </svg>
+              <div class="legend" style="margin-top: 10px;">
+                <span class="legend__item"><span class="legend__sw legend__sw--p"></span>Alex R. — 52 ms · top performer</span>
+                <span class="legend__item"><span class="legend__sw legend__sw--lt"></span>Cohort median — 48 ms</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card chart-card">
+            <div class="card-head">
+              <div class="card-head__l"><span class="dot"></span>Top 7 · recovery 30d</div>
+              <div class="card-head__sub">Ordenado por avg recovery score</div>
+            </div>
+            <div style="padding: 4px 0 8px;">
+              <div class="perf-row">
+                <span class="perf-row__rank perf-row__rank--gold">01</span>
+                <div class="perf-row__l">
+                  <span class="perf-row__av" style="background:linear-gradient(135deg,#FFD17A,#D2942F);">JS</span>
+                  <span class="perf-row__name">Jordan Smith</span>
+                </div>
+                <span class="perf-row__d up">▲ +9</span>
+                <span class="perf-row__v">84<span class="u" style="font-size:9px;color:var(--ngx-gray-400);font-weight:700;margin-left:2px;">%</span></span>
+              </div>
+              <div class="perf-row">
+                <span class="perf-row__rank">02</span>
+                <div class="perf-row__l">
+                  <span class="perf-row__av">AR</span>
+                  <span class="perf-row__name">Alex Rivera</span>
+                </div>
+                <span class="perf-row__d up">▲ +12</span>
+                <span class="perf-row__v">79<span class="u" style="font-size:9px;color:var(--ngx-gray-400);font-weight:700;margin-left:2px;">%</span></span>
+              </div>
+              <div class="perf-row">
+                <span class="perf-row__rank">03</span>
+                <div class="perf-row__l">
+                  <span class="perf-row__av" style="background:linear-gradient(135deg,#F38AB6,#C03A78);">LO</span>
+                  <span class="perf-row__name">Lina Okafor</span>
+                </div>
+                <span class="perf-row__d up">▲ +6</span>
+                <span class="perf-row__v">78<span class="u" style="font-size:9px;color:var(--ngx-gray-400);font-weight:700;margin-left:2px;">%</span></span>
+              </div>
+              <div class="perf-row">
+                <span class="perf-row__rank">04</span>
+                <div class="perf-row__l">
+                  <span class="perf-row__av" style="background:linear-gradient(135deg,#5BE3C0,#1E8C7F);">SO</span>
+                  <span class="perf-row__name">Sora Ozaki</span>
+                </div>
+                <span class="perf-row__d up">▲ +4</span>
+                <span class="perf-row__v">75<span class="u" style="font-size:9px;color:var(--ngx-gray-400);font-weight:700;margin-left:2px;">%</span></span>
+              </div>
+              <div class="perf-row">
+                <span class="perf-row__rank">05</span>
+                <div class="perf-row__l">
+                  <span class="perf-row__av" style="background:linear-gradient(135deg,#6F9CFF,#2B5DD0);">DK</span>
+                  <span class="perf-row__name">Diego Kang</span>
+                </div>
+                <span class="perf-row__d up">▲ +2</span>
+                <span class="perf-row__v">72<span class="u" style="font-size:9px;color:var(--ngx-gray-400);font-weight:700;margin-left:2px;">%</span></span>
+              </div>
+              <div class="perf-row">
+                <span class="perf-row__rank">06</span>
+                <div class="perf-row__l">
+                  <span class="perf-row__av" style="background:linear-gradient(135deg,#FFB070,#D27433);">PG</span>
+                  <span class="perf-row__name">Priya Gowda</span>
+                </div>
+                <span class="perf-row__d down">▼ −3</span>
+                <span class="perf-row__v">64<span class="u" style="font-size:9px;color:var(--ngx-gray-400);font-weight:700;margin-left:2px;">%</span></span>
+              </div>
+              <div class="perf-row">
+                <span class="perf-row__rank">07</span>
+                <div class="perf-row__l">
+                  <span class="perf-row__av" style="background:linear-gradient(135deg,#5BE3C0,#1E8C7F);">CM</span>
+                  <span class="perf-row__name">Camila Mendoza</span>
+                </div>
+                <span class="perf-row__d down">▼ −18</span>
+                <span class="perf-row__v">42<span class="u" style="font-size:9px;color:var(--ngx-gray-400);font-weight:700;margin-left:2px;">%</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compliance heatmap -->
+        <div class="glass-card">
+          <div class="card-head">
+            <div class="card-head__l"><span class="dot"></span>Compliance · sesiones completas · últimos 14 días</div>
+            <div class="card-head__sub">Tile más brillante = sesión cerrada · ámbar = parcial · rojo = saltada</div>
+          </div>
+          <div class="heat">
+            <span class="heat__hcell">Athlete</span>
+            <span class="heat__hcell">D-13</span>
+            <span class="heat__hcell">D-12</span>
+            <span class="heat__hcell">D-11</span>
+            <span class="heat__hcell">D-10</span>
+            <span class="heat__hcell">D-9</span>
+            <span class="heat__hcell">D-8</span>
+            <span class="heat__hcell">D-7</span>
+            <span class="heat__hcell">D-6</span>
+            <span class="heat__hcell">D-5</span>
+            <span class="heat__hcell">D-4</span>
+            <span class="heat__hcell">D-3</span>
+            <span class="heat__hcell">D-2</span>
+            <span class="heat__hcell">D-1</span>
+            <span class="heat__hcell">Hoy</span>
+            <span class="heat__hcell">%</span>
+
+            <span class="heat__rlabel heat__rlabel--athlete"><span class="av">AR</span>Alex R.</span>
+            <span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="4"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="0"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="4"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="0"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="4"></span><span class="heat__cell" data-v="5"></span>
+            <span class="heat__total">100%</span>
+
+            <span class="heat__rlabel heat__rlabel--athlete"><span class="av" style="background:linear-gradient(135deg,#FFD17A,#D2942F);">JS</span>Jordan S.</span>
+            <span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="0"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="4"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="0"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="4"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="5"></span>
+            <span class="heat__total">100%</span>
+
+            <span class="heat__rlabel heat__rlabel--athlete"><span class="av" style="background:linear-gradient(135deg,#F38AB6,#C03A78);">LO</span>Lina O.</span>
+            <span class="heat__cell" data-v="4"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="4"></span><span class="heat__cell" data-v="0"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="0"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="warn"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="5"></span>
+            <span class="heat__total">93%</span>
+
+            <span class="heat__rlabel heat__rlabel--athlete"><span class="av" style="background:linear-gradient(135deg,#5BE3C0,#1E8C7F);">SO</span>Sora O.</span>
+            <span class="heat__cell" data-v="3"></span><span class="heat__cell" data-v="4"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="0"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="4"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="0"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="4"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="warn"></span><span class="heat__cell" data-v="5"></span>
+            <span class="heat__total">86%</span>
+
+            <span class="heat__rlabel heat__rlabel--athlete"><span class="av" style="background:linear-gradient(135deg,#6F9CFF,#2B5DD0);">DK</span>Diego K.</span>
+            <span class="heat__cell" data-v="4"></span><span class="heat__cell" data-v="0"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="4"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="0"></span><span class="heat__cell" data-v="3"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="4"></span><span class="heat__cell" data-v="0"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="4"></span><span class="heat__cell" data-v="0"></span><span class="heat__cell" data-v="5"></span>
+            <span class="heat__total">79%</span>
+
+            <span class="heat__rlabel heat__rlabel--athlete"><span class="av" style="background:linear-gradient(135deg,#FFB070,#D27433);">PG</span>Priya G.</span>
+            <span class="heat__cell" data-v="3"></span><span class="heat__cell" data-v="4"></span><span class="heat__cell" data-v="warn"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="0"></span><span class="heat__cell" data-v="3"></span><span class="heat__cell" data-v="warn"></span><span class="heat__cell" data-v="4"></span><span class="heat__cell" data-v="0"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="warn"></span><span class="heat__cell" data-v="3"></span><span class="heat__cell" data-v="5"></span><span class="heat__cell" data-v="warn"></span>
+            <span class="heat__total">71%</span>
+
+            <span class="heat__rlabel heat__rlabel--athlete"><span class="av" style="background:linear-gradient(135deg,#5BE3C0,#1E8C7F);">CM</span>Camila M.</span>
+            <span class="heat__cell" data-v="3"></span><span class="heat__cell" data-v="warn"></span><span class="heat__cell" data-v="0"></span><span class="heat__cell" data-v="warn"></span><span class="heat__cell" data-v="4"></span><span class="heat__cell" data-v="flag"></span><span class="heat__cell" data-v="0"></span><span class="heat__cell" data-v="3"></span><span class="heat__cell" data-v="flag"></span><span class="heat__cell" data-v="0"></span><span class="heat__cell" data-v="4"></span><span class="heat__cell" data-v="flag"></span><span class="heat__cell" data-v="flag"></span><span class="heat__cell" data-v="0"></span>
+            <span class="heat__total">50%</span>
+
+            <span class="heat__rlabel heat__rlabel--athlete"><span class="av" style="background:linear-gradient(135deg,#FFB070,#D27433);">TF</span>Theo F.</span>
+            <span class="heat__cell" data-v="3"></span><span class="heat__cell" data-v="warn"></span><span class="heat__cell" data-v="4"></span><span class="heat__cell" data-v="0"></span><span class="heat__cell" data-v="warn"></span><span class="heat__cell" data-v="flag"></span><span class="heat__cell" data-v="flag"></span><span class="heat__cell" data-v="0"></span><span class="heat__cell" data-v="flag"></span><span class="heat__cell" data-v="flag"></span><span class="heat__cell" data-v="0"></span><span class="heat__cell" data-v="flag"></span><span class="heat__cell" data-v="flag"></span><span class="heat__cell" data-v="flag"></span>
+            <span class="heat__total">36%</span>
+          </div>
+          <div class="heat__legend">
+            <span>Intensidad</span>
+            <span class="swatches">
+              <span class="sw" style="background:rgba(255,255,255,0.03);"></span>
+              <span class="sw" style="background:rgba(109,0,255,0.10);"></span>
+              <span class="sw" style="background:rgba(109,0,255,0.25);"></span>
+              <span class="sw" style="background:rgba(109,0,255,0.45);"></span>
+              <span class="sw" style="background:rgba(109,0,255,0.70);"></span>
+              <span class="sw" style="background:rgba(165,107,255,0.95);"></span>
+            </span>
+            <span style="color:#FFB070;">▮ partial</span>
+            <span style="color:#FF6E6E;">▮ skipped</span>
+            <span style="margin-left:auto;">Cohort total <b style="color:var(--ngx-white);font-variant-numeric:tabular-nums;">87%</b></span>
+          </div>
+        </div>
+
+        <!-- Distribution + side -->
+        <div class="charts-grid">
+          <div class="glass-card">
+            <div class="card-head">
+              <div class="card-head__l"><span class="dot"></span>Recovery distribution · cohort</div>
+              <div class="card-head__sub">18 athletes · 30d avg · bucketed</div>
+            </div>
+            <div style="padding: 14px 18px 18px;">
+              <div class="dist-row" style="--p: 11%;"><span class="dist-row__l">≥ 85%</span><span class="dist-row__bar"></span><span class="dist-row__v">2<span class="u">atl</span></span></div>
+              <div class="dist-row" style="--p: 50%;"><span class="dist-row__l">70 – 84%</span><span class="dist-row__bar"></span><span class="dist-row__v">9<span class="u">atl</span></span></div>
+              <div class="dist-row" style="--p: 28%;"><span class="dist-row__l">55 – 69%</span><span class="dist-row__bar"></span><span class="dist-row__v">5<span class="u">atl</span></span></div>
+              <div class="dist-row" style="--p: 11%;"><span class="dist-row__l">&lt; 55%</span><span class="dist-row__bar" style="background:rgba(255,110,110,0.10);"></span><span class="dist-row__v">2<span class="u">atl</span></span></div>
+            </div>
+          </div>
+
+          <div class="glass-card">
+            <div class="card-head">
+              <div class="card-head__l"><span class="dot"></span>Training load · weekly TSS</div>
+              <div class="card-head__sub">Target band 280–340 · cohort avg 312</div>
+            </div>
+            <div style="padding: 14px 18px 18px;">
+              <div class="dist-row" style="--p: 78%;"><span class="dist-row__l">Strength</span><span class="dist-row__bar"></span><span class="dist-row__v">348<span class="u">TSS</span></span></div>
+              <div class="dist-row" style="--p: 65%;"><span class="dist-row__l">Endurance</span><span class="dist-row__bar"></span><span class="dist-row__v">295<span class="u">TSS</span></span></div>
+              <div class="dist-row" style="--p: 55%;"><span class="dist-row__l">Hybrid</span><span class="dist-row__bar"></span><span class="dist-row__v">258<span class="u">TSS</span></span></div>
+              <div class="dist-row" style="--p: 38%;"><span class="dist-row__l">Longevity</span><span class="dist-row__bar"></span><span class="dist-row__v">182<span class="u">TSS</span></span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+</div>
+
+<script>
+  (function(){
+    var app = document.getElementById('app');
+    var urlPath = document.getElementById('url-path');
+    var paths = {
+      athletes: '/coach/athletes',
+      athlete:  '/coach/athletes/alex-r',
+      programs: '/coach/programs/strength-press-pull',
+      messages: '/coach/inbox',
+      cohort:   '/coach/analytics/longevity-40'
+    };
+    function go(view){
+      if (!view || !paths[view]) return;
+      app.setAttribute('data-view', view);
+      urlPath.textContent = paths[view];
+      document.querySelectorAll('.side-nav .nav-item').forEach(function(el){
+        el.classList.toggle('is-active', el.getAttribute('data-go') === view);
+      });
+      try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e){ window.scrollTo(0,0); }
+    }
+    document.addEventListener('click', function(e){
+      var t = e.target.closest('[data-go]');
+      if (t) {
+        e.preventDefault();
+        go(t.getAttribute('data-go'));
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>

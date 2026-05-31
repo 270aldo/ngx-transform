@@ -38,7 +38,7 @@ export default function D0Results({
   return (
     <Html>
       <Head />
-      <Preview>Tu transformación de 12 meses está lista 🔥</Preview>
+      <Preview>Tu diagnóstico visual NGX está listo</Preview>
       <Tailwind>
         <Body className="bg-[#0A0A0A] text-neutral-100 font-sans">
           <Container className="mx-auto my-8 max-w-xl">
@@ -46,7 +46,7 @@ export default function D0Results({
             <Section className="text-center mb-8">
               <Img src={logoUrl} alt="NGX Genesis" width="140" className="mx-auto mb-3" />
               <Text className="text-sm text-neutral-500 m-0">
-                Tu proyección de 12 meses
+                Tu diagnóstico visual
               </Text>
             </Section>
 
@@ -54,7 +54,7 @@ export default function D0Results({
             <Section className="bg-neutral-900 border border-neutral-800 rounded-2xl p-8">
               {/* Greeting */}
               <Text className="text-xl text-white mb-4">
-                {name ? `${name}, ` : ""}tu transformación está lista.
+                {name ? `${name}, ` : ""}tu diagnóstico visual está listo.
               </Text>
 
               {/* Before/After Preview */}
@@ -65,21 +65,21 @@ export default function D0Results({
                       <td className="w-1/2 pr-2">
                         <Img
                           src={m0ImageUrl}
-                          alt="HOY"
+                          alt="Punto de partida"
                           className="rounded-lg w-full"
                         />
                         <Text className="text-center text-xs text-neutral-500 mt-2">
-                          HOY
+                          Punto de partida
                         </Text>
                       </td>
                       <td className="w-1/2 pl-2">
                         <Img
                           src={m12ImageUrl}
-                          alt="MES 12"
+                          alt="Season 3"
                           className="rounded-lg w-full"
                         />
                         <Text className="text-center text-xs text-neutral-500 mt-2">
-                          MES 12
+                          Season 3
                         </Text>
                       </td>
                     </tr>
@@ -89,9 +89,10 @@ export default function D0Results({
 
               {/* Message */}
               <Text className="text-neutral-300 leading-relaxed">
-                Acabas de ver tu potencial a 12 meses. Este no es solo un
-                filtro - es una proyección basada en tu perfil, tus metas y
-                la ciencia del entrenamiento.
+                Acabas de recibir una visualización aspiracional, una lectura
+                inicial y una dirección de 12 semanas. No es garantía de
+                resultado ni diagnóstico médico: es un punto de partida para
+                decidir con más criterio.
               </Text>
 
               <Text className="text-neutral-300 leading-relaxed mt-4">
@@ -115,7 +116,7 @@ export default function D0Results({
                 En tu página de resultados encontrarás:
               </Text>
               <ul className="text-sm text-neutral-400 mt-2 pl-4">
-                <li>Timeline completo: HOY → MES 4 → MES 8 → MES 12</li>
+                <li>Timeline completo: Punto de partida → Season 1 → Season 2 → Season 3</li>
                 <li>Análisis mental y físico</li>
                 <li>Tu plan personalizado de 7 días</li>
               </ul>

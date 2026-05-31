@@ -15,7 +15,7 @@ import { FieldValue } from "firebase-admin/firestore";
 // Types
 // ============================================================================
 
-export type JobType = "analysis" | "image_generation";
+export type JobType = "analysis" | "image_generation" | "season_pipeline";
 
 export type JobStatus =
   | "pending"
@@ -170,6 +170,17 @@ export async function acquireJobLock(
       return;
     }
 
+    if (
+      current?.status === "failed" &&
+      typeof current.retryCount === "number" &&
+      typeof current.maxRetries === "number" &&
+      current.retryCount >= current.maxRetries
+    ) {
+      acquired = false;
+      status = "failed";
+      return;
+    }
+
     if (current?.status === "in_progress" && current.startedAt) {
       const startedAt = current.startedAt.toDate();
       if (Date.now() - startedAt.getTime() < staleMs) {
@@ -206,11 +217,27 @@ export async function updateJobProgress(
   await db.collection("jobs").doc(jobId).set(
     {
       [`progress.${milestone}`]: completed,
-      status: "partial",
+      status: "in_progress",
       updatedAt: FieldValue.serverTimestamp(),
     },
     { merge: true }
   );
+}
+
+/**
+ * Marca un job como parcialmente completado sin liberar los milestones ya logrados.
+ */
+export async function markJobPartial(jobId: string, error?: string): Promise<void> {
+  const db = getDb();
+  await db.collection("jobs").doc(jobId).set(
+    {
+      status: "partial",
+      ...(error && { lastError: error }),
+      updatedAt: FieldValue.serverTimestamp(),
+    },
+    { merge: true }
+  );
+  console.log(`[JobManager] Job ${jobId} partial${error ? `: ${error}` : ""}`);
 }
 
 /**

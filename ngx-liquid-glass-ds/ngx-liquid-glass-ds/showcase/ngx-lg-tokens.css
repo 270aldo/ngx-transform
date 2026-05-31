@@ -1,0 +1,1274 @@
+/* =====================================================================
+   NGX · LIQUID GLASS TOKENS · v1
+   The visual contract for all 4 surfaces:
+   01 Mobile App · 02 Landing · 03 Web App · 04 Coach Portal
+   
+   This file extends colors_and_type.css with the LG-specific layer:
+   glass materials, wallpapers, glow effects, and reusable utilities
+   that should look identical across every prototype.
+   
+   IMPORT ORDER (always):
+     1. colors_and_type.css   (base brand)
+     2. ngx-lg-tokens.css     (this file)
+     3. your-prototype.css    (surface-specific)
+   ===================================================================== */
+
+/* =================================================================
+   01 · GLASS MATERIAL TOKENS
+   The three pressure points of Liquid Glass: thin, regular, thick.
+   "Regular" is the workhorse — use it for ~80% of glass surfaces.
+   ================================================================= */
+:root {
+  /* Glass fills — translucency over a tinted backdrop */
+  --lg-glass-thin:        rgba(255, 255, 255, 0.04);
+  --lg-glass-regular:     rgba(255, 255, 255, 0.08);
+  --lg-glass-thick:       rgba(255, 255, 255, 0.14);
+  --lg-glass-purple:      rgba(109, 0, 255, 0.22);   /* "active" glass — selected state */
+  --lg-glass-purple-soft: rgba(109, 0, 255, 0.10);
+
+  /* Glass borders / rims */
+  --lg-rim-thin:    rgba(255, 255, 255, 0.10);
+  --lg-rim-regular: rgba(255, 255, 255, 0.16);
+  --lg-rim-strong:  rgba(255, 255, 255, 0.28);
+  --lg-rim-purple:  rgba(109, 0, 255, 0.45);
+  --lg-rim-purple-strong: rgba(109, 0, 255, 0.70);
+
+  /* Glass shadow + inset (depth) */
+  --lg-shadow-glass: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --lg-shadow-glass-lg: 0 16px 48px rgba(0, 0, 0, 0.45);
+  --lg-shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.10);
+  --lg-shadow-inset-purple: inset 0 0 24px rgba(109, 0, 255, 0.18);
+
+  /* Purple glow — for CTAs and active states ONLY */
+  --lg-glow-purple-sm: 0 0 12px rgba(109, 0, 255, 0.40);
+  --lg-glow-purple-md: 0 0 24px rgba(109, 0, 255, 0.50);
+  --lg-glow-purple-lg: 0 0 40px rgba(109, 0, 255, 0.55);
+
+  /* Blur amounts — calibrated for backdrop-filter */
+  --lg-blur-thin:    blur(12px) saturate(140%);
+  --lg-blur-regular: blur(20px) saturate(160%);
+  --lg-blur-thick:   blur(32px) saturate(180%);
+  --lg-blur-sheet:   blur(40px) saturate(180%);   /* full-screen sheets, modals */
+}
+
+/* =================================================================
+   02 · WALLPAPER · The Navy/Purple Bloom
+   The signature NGX background. ALWAYS present behind glass.
+   Three intensities depending on surface:
+     .lg-wallpaper-soft   → web pages, dashboards (subtle, mostly navy)
+     .lg-wallpaper-regular → mobile home, onboarding (signature look)
+     .lg-wallpaper-bloom  → workout active, focus moments (heavy bloom)
+   ================================================================= */
+.lg-wallpaper-soft,
+.lg-wallpaper-regular,
+.lg-wallpaper-bloom {
+  position: relative;
+  background-color: var(--ngx-navy-950);
+}
+
+.lg-wallpaper-soft {
+  background-image:
+    radial-gradient(40% 30% at 85% 15%, rgba(109, 0, 255, 0.10) 0%, transparent 70%),
+    radial-gradient(30% 40% at 15% 85%, rgba(109, 0, 255, 0.08) 0%, transparent 70%);
+}
+
+.lg-wallpaper-regular {
+  background-image:
+    radial-gradient(60% 50% at 25% 100%, rgba(109, 0, 255, 0.40) 0%, transparent 60%),
+    radial-gradient(40% 30% at 80% 20%, rgba(109, 0, 255, 0.22) 0%, transparent 70%),
+    linear-gradient(180deg, #050218 0%, #14103D 60%, #050218 100%);
+}
+
+.lg-wallpaper-bloom {
+  background-image:
+    radial-gradient(70% 60% at 50% 50%, rgba(109, 0, 255, 0.55) 0%, transparent 60%),
+    radial-gradient(40% 30% at 80% 20%, rgba(109, 0, 255, 0.28) 0%, transparent 70%),
+    linear-gradient(180deg, #14103D 0%, #050218 60%, #0A0628 100%);
+}
+
+/* The diamond/argyle pattern overlay — NGX signature texture.
+   Applied as ::before pseudo so it sits behind the content. */
+.lg-wallpaper-soft::before,
+.lg-wallpaper-regular::before,
+.lg-wallpaper-bloom::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("assets/textures/texture-pattern-navy.png");
+  background-size: 320px;
+  background-repeat: repeat;
+  opacity: 0.10;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.lg-wallpaper-bloom::before { opacity: 0.14; background-size: 360px; }
+.lg-wallpaper-soft::before { opacity: 0.06; background-size: 280px; }
+
+/* Make sure direct children sit above the pattern */
+.lg-wallpaper-soft > *,
+.lg-wallpaper-regular > *,
+.lg-wallpaper-bloom > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* =================================================================
+   03 · GLASS UTILITIES
+   Apply directly as classes. The base .lg-glass uses regular fill;
+   modifiers thin/thick/purple swap the fill.
+   ================================================================= */
+.lg-glass {
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-regular);
+  backdrop-filter: var(--lg-blur-regular);
+  box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset);
+}
+
+.lg-glass--thin {
+  background: var(--lg-glass-thin);
+  border-color: var(--lg-rim-thin);
+  -webkit-backdrop-filter: var(--lg-blur-thin);
+  backdrop-filter: var(--lg-blur-thin);
+}
+
+.lg-glass--thick {
+  background: var(--lg-glass-thick);
+  border-color: var(--lg-rim-strong);
+  -webkit-backdrop-filter: var(--lg-blur-thick);
+  backdrop-filter: var(--lg-blur-thick);
+}
+
+/* "Active" / selected glass — purple-tinted fill + purple rim */
+.lg-glass--purple {
+  background: var(--lg-glass-purple);
+  border-color: var(--lg-rim-purple);
+  -webkit-backdrop-filter: var(--lg-blur-regular);
+  backdrop-filter: var(--lg-blur-regular);
+  box-shadow:
+    var(--lg-shadow-glass),
+    var(--lg-shadow-inset-purple),
+    var(--lg-glow-purple-sm);
+}
+
+/* Sheet variant — for bottom sheets / modals that float above content */
+.lg-glass--sheet {
+  background: rgba(20, 16, 50, 0.65);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-sheet);
+  backdrop-filter: var(--lg-blur-sheet);
+  box-shadow: var(--lg-shadow-glass-lg);
+}
+
+/* =================================================================
+   04 · CAPSULES & PILLS
+   The capsule shape is iconic NGX-LG. Use for tab bars, status pills,
+   inline labels, segmented controls.
+   ================================================================= */
+.lg-capsule {
+  border-radius: 999px;
+  padding: 10px 16px;
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-regular);
+  backdrop-filter: var(--lg-blur-regular);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ngx-white);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lg-capsule--active {
+  background: var(--lg-glass-purple);
+  border-color: var(--lg-rim-purple);
+  box-shadow: var(--lg-glow-purple-sm);
+}
+
+.lg-capsule .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ngx-purple);
+  box-shadow: 0 0 8px var(--ngx-purple);
+}
+
+/* =================================================================
+   05 · CTAs · The two-button system
+   Primary: purple solid glow.
+   Secondary: glass translucent.
+   Both pill-shaped.
+   ================================================================= */
+.lg-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 28px;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: none;
+  transition: transform var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+}
+
+.lg-cta--primary {
+  background: linear-gradient(180deg, #8530FF 0%, var(--ngx-purple) 100%);
+  color: var(--ngx-white);
+  box-shadow:
+    var(--lg-glow-purple-md),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.lg-cta--primary:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    var(--lg-glow-purple-lg),
+    inset 0 1px 0 rgba(255, 255, 255, 0.30);
+}
+
+.lg-cta--secondary {
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-regular);
+  backdrop-filter: var(--lg-blur-regular);
+  color: var(--ngx-white);
+}
+
+.lg-cta--secondary:hover {
+  background: var(--lg-glass-thick);
+  border-color: var(--lg-rim-strong);
+}
+
+/* =================================================================
+   06 · NUMERAL TREATMENT
+   Tabular nums + United Sans Heavy is THE NGX number signature.
+   Always pair big number + small unit + status caps label.
+   ================================================================= */
+.lg-num {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.025em;
+  color: var(--ngx-white);
+  line-height: 1;
+}
+
+.lg-num__unit {
+  font-size: 0.4em;
+  font-weight: 700;
+  color: var(--ngx-gray-400);
+  letter-spacing: 0.04em;
+  margin-left: 0.2em;
+}
+
+.lg-num__delta {
+  font-family: var(--font-text);
+  font-weight: 700;
+  font-size: 11px;
+}
+.lg-num__delta--up   { color: var(--ngx-success); }
+.lg-num__delta--down { color: var(--ngx-danger); }
+.lg-num__delta--flat { color: var(--ngx-gray-400); }
+
+.lg-label {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ngx-gray-400);
+}
+
+.lg-label--purple { color: var(--ngx-purple-300); }
+
+/* =================================================================
+   07 · TYPOGRAPHY — display headlines with "charge" word in purple
+   The signature "PUSH HARD. LIVE LONG." treatment.
+   The .charge span renders as gradient white→purple.
+   ================================================================= */
+.lg-headline {
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 0.88;
+  letter-spacing: -0.025em;
+  color: var(--ngx-white);
+}
+
+.lg-headline .charge {
+  background: linear-gradient(180deg, #FFFFFF 0%, var(--ngx-purple) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+/* Alternative: solid purple (no gradient) for smaller headlines */
+.lg-headline .accent { color: var(--ngx-purple); }
+
+/* =================================================================
+   08 · MICRO-INTERACTIONS · Common animation primitives
+   ================================================================= */
+@keyframes lg-pulse {
+  0%, 100% { box-shadow: var(--lg-glow-purple-sm); }
+  50%      { box-shadow: var(--lg-glow-purple-lg); }
+}
+
+@keyframes lg-shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes lg-breathe {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.04); }
+}
+
+.lg-pulse  { animation: lg-pulse 2s var(--ease-std) infinite; }
+.lg-breathe { animation: lg-breathe 3s var(--ease-std) infinite; }
+
+/* =================================================================
+   09 · IOS / WEB PRIMITIVES
+   Phone island, browser chrome, status bar — used across prototypes.
+   ================================================================= */
+.lg-phone {
+  width: 100%;
+  max-width: 390px;
+  aspect-ratio: 9 / 19.5;
+  background: #000;
+  border-radius: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-text);
+  color: var(--ngx-white);
+}
+
+.lg-phone__island {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 34px;
+  background: #000;
+  border-radius: 999px;
+  z-index: 20;
+}
+
+.lg-phone__sb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 54px;
+  padding: 16px 30px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ngx-white);
+  z-index: 15;
+}
+
+.lg-phone__sb-right {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+}
+
+/* Browser chrome for web mockups */
+.lg-browser {
+  width: 100%;
+  background: var(--ngx-navy-900);
+  border-radius: 16px;
+  border: 1px solid var(--lg-rim-thin);
+  box-shadow: var(--lg-shadow-glass-lg);
+  overflow: hidden;
+}
+
+.lg-browser__chrome {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid var(--lg-rim-thin);
+}
+
+.lg-browser__dots {
+  display: flex;
+  gap: 7px;
+}
+
+.lg-browser__dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.lg-browser__url {
+  flex: 1;
+  height: 26px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ngx-gray-400);
+}
+
+.lg-browser__url-lock {
+  color: var(--ngx-success);
+  margin-right: 8px;
+  font-size: 9px;
+}
+
+/* =================================================================
+   10 · RING / RING-KPI · The hero data viz element
+   3-ring KPI cluster (strain, recovery, sleep) is iconic.
+   ================================================================= */
+.lg-ring-card {
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-regular);
+  border-radius: 18px;
+  padding: 16px 12px;
+  -webkit-backdrop-filter: var(--lg-blur-regular);
+  backdrop-filter: var(--lg-blur-regular);
+  box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.lg-ring {
+  width: 84px;
+  height: 84px;
+  position: relative;
+}
+
+.lg-ring__pct {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: -0.025em;
+  color: var(--ngx-white);
+  font-variant-numeric: tabular-nums;
+}
+
+/* =================================================================
+   11 · TAB BAR · Bottom navigation as glass capsule
+   Mobile-only. Floats above content with backdrop-filter.
+   ================================================================= */
+.lg-tabbar {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  height: 64px;
+  background: var(--lg-glass-thick);
+  border: 1px solid var(--lg-rim-regular);
+  border-radius: 999px;
+  -webkit-backdrop-filter: var(--lg-blur-thick);
+  backdrop-filter: var(--lg-blur-thick);
+  box-shadow: var(--lg-shadow-glass);
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: center;
+}
+
+.lg-tabbar__tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ngx-gray-400);
+}
+
+.lg-tabbar__tab--active {
+  color: var(--ngx-purple);
+}
+
+.lg-tabbar__tab-icon {
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid currentColor;
+  border-radius: 5px;
+}
+
+.lg-tabbar__tab--active .lg-tabbar__tab-icon {
+  background: var(--ngx-purple);
+  border-color: var(--ngx-purple);
+  box-shadow: var(--lg-glow-purple-sm);
+}
+
+/* =================================================================
+   12 · QUICK SHORTHANDS
+   Just-in-case helpers so you don't reach for inline styles.
+   ================================================================= */
+.lg-purple    { color: var(--ngx-purple) !important; }
+.lg-purple-300 { color: var(--ngx-purple-300) !important; }
+.lg-white     { color: var(--ngx-white) !important; }
+.lg-gray-300  { color: var(--ngx-gray-300) !important; }
+.lg-gray-400  { color: var(--ngx-gray-400) !important; }
+
+.lg-flex      { display: flex; }
+.lg-flex-col  { display: flex; flex-direction: column; }
+.lg-grid      { display: grid; }
+.lg-items-center { align-items: center; }
+.lg-justify-between { justify-content: space-between; }
+.lg-gap-2 { gap: 8px; }
+.lg-gap-3 { gap: 12px; }
+.lg-gap-4 { gap: 16px; }
+.lg-gap-6 { gap: 24px; }
+.lg-gap-8 { gap: 32px; }
+
+/* =================================================================
+   13 · APP COMPONENTS · v1
+   Components born in Surface 01 (Mobile App). Promoted here so
+   Web App + Coach Portal + Landing inherit them.
+   ================================================================= */
+
+/* ---- Numerals & captions (generic) ---- */
+.ngx-tabular { font-variant-numeric: tabular-nums; }
+
+.ngx-caps {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ngx-gray-400);
+}
+.ngx-caps--white  { color: var(--ngx-white); }
+.ngx-caps--purple { color: var(--ngx-purple-300); }
+.ngx-caps--12 { font-size: 11px; letter-spacing: 0.14em; }
+
+.ngx-bignum {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.035em;
+  line-height: 0.92;
+  color: var(--ngx-white);
+}
+
+.ngx-delta-up   { color: var(--ngx-success); }
+.ngx-delta-down { color: var(--ngx-danger); }
+.ngx-delta-flat { color: var(--ngx-gray-400); }
+
+/* ---- Section label row (eyebrow + link) ---- */
+.sect-l {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ngx-gray-400);
+}
+.sect-l .more { color: var(--ngx-purple-300); }
+
+/* ---- Biomarker pill (label CAPS · big tabular num · delta) ---- */
+.bio-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.bio {
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-regular);
+  backdrop-filter: var(--lg-blur-regular);
+  border-radius: 14px;
+  padding: 12px 11px 11px;
+  display: flex; flex-direction: column;
+  gap: 4px;
+  box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset);
+}
+.bio__l {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ngx-gray-400);
+}
+.bio__v {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--ngx-white);
+  font-variant-numeric: tabular-nums;
+  display: flex; align-items: baseline; gap: 3px;
+}
+.bio__unit {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ngx-gray-400);
+  letter-spacing: 0.04em;
+}
+.bio__d {
+  font-family: var(--font-text);
+  font-weight: 700;
+  font-size: 11px;
+}
+
+/* ---- Coach nudge — purple-tinted glass insight card ---- */
+.nudge {
+  background: var(--lg-glass-purple);
+  border: 1px solid var(--lg-rim-purple);
+  -webkit-backdrop-filter: var(--lg-blur-regular);
+  backdrop-filter: var(--lg-blur-regular);
+  box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset-purple), var(--lg-glow-purple-sm);
+  border-radius: 20px;
+  padding: 14px 16px 16px;
+  position: relative;
+  overflow: hidden;
+}
+.nudge::before {
+  content: "";
+  position: absolute;
+  inset: -50% -10% auto auto;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(165,107,255,0.6), transparent 60%);
+  filter: blur(20px);
+  pointer-events: none;
+}
+.nudge__lbl {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ngx-purple-300);
+  margin-bottom: 8px;
+  display: flex; align-items: center; gap: 8px;
+}
+.nudge__lbl::before {
+  content: "";
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--ngx-purple);
+  box-shadow: 0 0 10px var(--ngx-purple);
+  animation: lg-pulse 2s infinite;
+}
+.nudge__text {
+  font-family: var(--font-text);
+  font-size: 14px;
+  line-height: 1.42;
+  color: var(--ngx-white);
+}
+.nudge__text b { font-weight: 700; color: var(--ngx-white); }
+
+/* ---- Session card (one-liner workout / program preview) ---- */
+.session {
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-regular);
+  backdrop-filter: var(--lg-blur-regular);
+  box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset);
+  border-radius: 20px;
+  padding: 14px 14px 14px 16px;
+  display: flex; align-items: center; gap: 14px;
+}
+.session__icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(165,107,255,0.4), rgba(109,0,255,0.7));
+  border: 1px solid var(--lg-rim-purple);
+  display: flex; align-items: center; justify-content: center;
+  flex: 0 0 44px;
+  box-shadow: var(--lg-glow-purple-sm);
+  color: var(--ngx-white);
+}
+.session__title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  color: var(--ngx-white);
+  line-height: 1.1;
+}
+.session__meta {
+  font-family: var(--font-text);
+  font-size: 11px;
+  color: var(--ngx-gray-400);
+  margin-top: 3px;
+}
+
+/* ---- 3-ring KPI strip (Strain · Recovery · Sleep style) ---- */
+.rings-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  padding: 16px 12px 14px;
+  border-radius: 22px;
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-regular);
+  backdrop-filter: var(--lg-blur-regular);
+  box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset);
+  position: relative;
+}
+.rings-strip__div {
+  position: absolute;
+  top: 18px; bottom: 18px;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(255,255,255,0.10), transparent);
+}
+.ring-cell { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.ring-cell__pct {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  color: var(--ngx-white);
+}
+.ring-cell__lbl {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.72);
+}
+
+/* ---- Settings / list card ---- */
+.list-card {
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-regular);
+  backdrop-filter: var(--lg-blur-regular);
+  box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset);
+  border-radius: 18px;
+  overflow: hidden;
+}
+.list-row {
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  cursor: pointer;
+}
+.list-row:last-child { border-bottom: 0; }
+.list-row__icon {
+  width: 32px; height: 32px; border-radius: 9px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--lg-rim-thin);
+  display: flex; align-items: center; justify-content: center;
+  flex: 0 0 32px;
+  color: var(--ngx-white);
+}
+.list-row__icon--purple {
+  background: var(--lg-glass-purple);
+  border-color: var(--lg-rim-purple);
+  box-shadow: var(--lg-glow-purple-sm);
+}
+.list-row__body { flex: 1; min-width: 0; }
+.list-row__title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ngx-white);
+  line-height: 1.1;
+}
+.list-row__sub {
+  font-family: var(--font-text);
+  font-size: 11px;
+  color: var(--ngx-gray-400);
+  margin-top: 3px;
+}
+.list-row__chev { color: rgba(255,255,255,0.4); flex: 0 0 auto; }
+.list-row__chip {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ngx-purple-300);
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--lg-glass-purple-soft);
+  border: 1px solid var(--lg-rim-purple);
+}
+
+/* ---- Option card (onboarding picker, pricing tier, athlete picker) ---- */
+.opt-card {
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-regular);
+  backdrop-filter: var(--lg-blur-regular);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex; align-items: center; gap: 14px;
+  box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset);
+  cursor: pointer;
+  transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
+}
+.opt-card--active {
+  background: var(--lg-glass-purple);
+  border-color: var(--lg-rim-purple);
+  box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset-purple), var(--lg-glow-purple-md);
+  transform: translateY(-1px);
+}
+.opt-card__icon {
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--lg-rim-thin);
+  display: flex; align-items: center; justify-content: center;
+  flex: 0 0 48px;
+  color: var(--ngx-white);
+}
+.opt-card--active .opt-card__icon {
+  background: rgba(0,0,0,0.35);
+  border-color: var(--lg-rim-purple);
+  box-shadow: var(--lg-glow-purple-sm);
+}
+.opt-card__body { flex: 1; min-width: 0; }
+.opt-card__title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 16px;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  color: var(--ngx-white);
+  line-height: 1.04;
+}
+.opt-card__sub {
+  font-family: var(--font-text);
+  font-size: 12px;
+  color: var(--ngx-gray-400);
+  margin-top: 5px;
+  line-height: 1.4;
+}
+.opt-card__check {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid var(--lg-rim-strong);
+  flex: 0 0 24px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ngx-white);
+}
+.opt-card--active .opt-card__check {
+  background: var(--ngx-purple);
+  border-color: var(--ngx-purple);
+  box-shadow: var(--lg-glow-purple-sm);
+}
+
+/* ---- Floating mobile tab bar (supersedes .lg-tabbar for the v1 mobile app) ---- */
+.mtab {
+  position: absolute;
+  bottom: 26px;
+  left: 14px; right: 14px;
+  height: 64px;
+  background: rgba(20, 16, 50, 0.55);
+  border: 1px solid var(--lg-rim-regular);
+  border-radius: 999px;
+  -webkit-backdrop-filter: var(--lg-blur-thick);
+  backdrop-filter: var(--lg-blur-thick);
+  box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset);
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: center;
+  z-index: 10;
+}
+.mtab__tab {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  cursor: pointer;
+  color: rgba(255,255,255,0.55);
+  position: relative;
+}
+.mtab__tab--active { color: var(--ngx-white); }
+.mtab__lbl {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.mtab__tab--active::before {
+  content: "";
+  position: absolute;
+  inset: -10px -16px;
+  background: radial-gradient(circle, rgba(109,0,255,0.5), transparent 60%);
+  border-radius: 50%;
+  filter: blur(8px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ---- Lock-screen widget (Apple Fitness / Flighty inspired) ---- */
+.lock-widget {
+  border-radius: 20px;
+  padding: 14px 16px;
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-thick);
+  backdrop-filter: var(--lg-blur-thick);
+  box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset);
+  position: relative;
+  overflow: hidden;
+}
+.lock-widget__head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.lock-widget__brand {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ngx-white);
+}
+.lock-widget__brand .mark {
+  width: 14px; height: 14px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #8530FF, var(--ngx-purple));
+  box-shadow: 0 0 8px rgba(109, 0, 255, 0.6);
+}
+
+/* ---- Live activity pill (iOS Live Activity / Dynamic Island ground form) ---- */
+.live-act {
+  border-radius: 26px;
+  background: rgba(0, 0, 0, 0.55);
+  -webkit-backdrop-filter: var(--lg-blur-thick);
+  backdrop-filter: var(--lg-blur-thick);
+  border: 1px solid var(--lg-rim-thin);
+  padding: 14px 18px 16px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+  color: var(--ngx-white);
+}
+
+/* ---- Workout HUD primitives ---- */
+.hud-cell {
+  background: rgba(0,0,0,0.4);
+  border-radius: 14px;
+  padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.hud-cell__l {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ngx-gray-400);
+}
+.hud-cell__v {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: var(--ngx-white);
+  font-variant-numeric: tabular-nums;
+  display: flex; align-items: baseline; gap: 3px;
+}
+.hud-cell__u { font-size: 11px; color: var(--ngx-gray-400); }
+
+.icon-btn {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-regular);
+  backdrop-filter: var(--lg-blur-regular);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ngx-white);
+  cursor: pointer;
+}
+.log-btn {
+  height: 56px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #8530FF 0%, var(--ngx-purple) 100%);
+  color: var(--ngx-white);
+  box-shadow: var(--lg-glow-purple-md), inset 0 1px 0 rgba(255,255,255,0.25);
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+}
+
+/* ---- Peek pill (Spotify "Lyrics" pattern) ---- */
+.next-up {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 14px 8px 8px;
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-regular);
+  backdrop-filter: var(--lg-blur-regular);
+  border-radius: 999px;
+  box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset);
+}
+.next-up__thumb {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: linear-gradient(135deg, rgba(165,107,255,0.5), rgba(109,0,255,0.7));
+  border: 1px solid var(--lg-rim-purple);
+  flex: 0 0 32px;
+}
+.next-up__txt {
+  flex: 1;
+  font-family: var(--font-text);
+  font-size: 12px;
+  color: var(--ngx-white);
+  line-height: 1.2;
+}
+.next-up__txt b {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ---- Set tracker (segmented progress dots) ---- */
+.set-tracker { display: flex; gap: 6px; }
+.set-dot {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.14);
+  position: relative;
+  overflow: hidden;
+}
+.set-dot--done { background: rgba(165,107,255,0.6); }
+.set-dot--active {
+  background: var(--ngx-purple);
+  box-shadow: 0 0 10px var(--ngx-purple);
+}
+.set-dot--active::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent);
+  animation: lg-shimmer 1.8s infinite;
+}
+
+/* ---- Coach chat: sheet + bubbles + composer ---- */
+.coach-sheet {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  top: 90px;
+  background: rgba(20, 16, 50, 0.72);
+  -webkit-backdrop-filter: var(--lg-blur-sheet);
+  backdrop-filter: var(--lg-blur-sheet);
+  border-top-left-radius: 32px;
+  border-top-right-radius: 32px;
+  border-top: 1px solid var(--lg-rim-strong);
+  box-shadow: 0 -20px 60px rgba(0,0,0,0.4);
+  display: flex; flex-direction: column;
+  z-index: 5;
+}
+.coach-sheet--solid {
+  background: rgba(10, 6, 40, 0.94);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.coach-grabber {
+  width: 40px; height: 4px;
+  background: rgba(255,255,255,0.28);
+  border-radius: 2px;
+  margin: 10px auto 0;
+}
+.coach-head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid var(--lg-rim-thin);
+}
+.coach-head__avatar {
+  width: 36px; height: 36px; border-radius: 12px;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,0.5), transparent 50%),
+    linear-gradient(135deg, #C29BFF, #6D00FF);
+  border: 1px solid var(--lg-rim-purple);
+  position: relative;
+  flex: 0 0 36px;
+}
+.coach-head__avatar::after {
+  content: "";
+  position: absolute; inset: -4px;
+  border-radius: 14px;
+  border: 1px solid rgba(165,107,255,0.35);
+  animation: lg-breathe 3s infinite;
+}
+.coach-head__name {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 15px;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  color: var(--ngx-white);
+  line-height: 1;
+}
+.coach-head__status {
+  font-family: var(--font-text);
+  font-size: 11px;
+  color: var(--ngx-gray-400);
+  margin-top: 3px;
+  display: flex; align-items: center; gap: 6px;
+}
+.coach-head__status::before {
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--ngx-success);
+}
+.coach-feed {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 16px 14px;
+  display: flex; flex-direction: column;
+  gap: 12px;
+}
+.msg {
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 18px;
+  font-family: var(--font-text);
+  font-size: 13.5px;
+  line-height: 1.42;
+}
+.msg--coach {
+  align-self: flex-start;
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-thin);
+  color: var(--ngx-white);
+  border-bottom-left-radius: 6px;
+}
+.msg--user {
+  align-self: flex-end;
+  background: linear-gradient(180deg, #8530FF 0%, var(--ngx-purple) 100%);
+  color: var(--ngx-white);
+  border-bottom-right-radius: 6px;
+  box-shadow: var(--lg-glow-purple-sm);
+}
+.msg__data {
+  background: rgba(0,0,0,0.45);
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+}
+.msg__data .bio__v { font-size: 18px; }
+.msg__data .bio__l { font-size: 8px; }
+.msg__eyebrow {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ngx-purple-300);
+  margin-bottom: 4px;
+}
+.coach-suggest {
+  display: flex; gap: 8px;
+  padding: 0 16px 10px;
+  overflow-x: auto;
+}
+.coach-suggest__pill {
+  flex: 0 0 auto;
+  padding: 9px 14px;
+  border-radius: 999px;
+  background: var(--lg-glass-thin);
+  border: 1px solid var(--lg-rim-thin);
+  color: var(--ngx-white);
+  font-family: var(--font-text);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.coach-input {
+  margin: 0 14px 22px;
+  padding: 8px 8px 8px 16px;
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-regular);
+  backdrop-filter: var(--lg-blur-regular);
+  border-radius: 999px;
+}
+.coach-input__field {
+  flex: 1;
+  font-family: var(--font-text);
+  font-size: 13.5px;
+  color: rgba(255,255,255,0.55);
+}
+.coach-input__send {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #8530FF, var(--ngx-purple));
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--lg-glow-purple-sm);
+}
+
+/* ---- Glass dose modifiers (applied at Phone/Page root) ---- */
+[data-dose="light"] .dose-glass {
+  background: rgba(20, 16, 50, 0.78) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  box-shadow: none !important;
+}
+[data-dose="full"] .dose-glass {
+  background: var(--lg-glass-thick) !important;
+  -webkit-backdrop-filter: var(--lg-blur-thick) !important;
+  backdrop-filter: var(--lg-blur-thick) !important;
+}
+
+/* ---- Diamond pattern off (toggle) ---- */
+[data-pattern="off"] .lg-wallpaper-soft::before,
+[data-pattern="off"] .lg-wallpaper-regular::before,
+[data-pattern="off"] .lg-wallpaper-bloom::before {
+  display: none;
+}
+
+/* =================================================================
+   END · ngx-lg-tokens.css
+   ================================================================= */

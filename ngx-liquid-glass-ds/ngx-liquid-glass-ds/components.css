@@ -1,0 +1,805 @@
+/* =====================================================================
+   NGX · Liquid Glass · COMPONENTS
+   Reusable component layer for dashboards, web apps, B2B portals.
+
+   Stacks on top of:
+     1. tokens-brand.css   (base brand · colors, fonts, spacing)
+     2. tokens-lg.css      (LG materials · glass, wallpapers, primitives)
+     3. components.css     (this file · dashboard density components)
+
+   Born in: Web App (atleta) and Coach Portal (B2B).
+   ===================================================================== */
+
+/* =====================================================================
+   01 · BROWSER FRAME · for product mockups
+   ===================================================================== */
+.ngx-browser {
+  background: var(--ngx-navy-950);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  box-shadow:
+    0 40px 120px rgba(0, 0, 0, 0.55),
+    0 8px 28px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+}
+.ngx-browser__chrome {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px;
+  background: rgba(0, 0, 0, 0.55);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.ngx-browser__dots { display: flex; gap: 7px; }
+.ngx-browser__dot {
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+}
+.ngx-browser__url {
+  flex: 1; max-width: 560px; margin: 0 auto;
+  height: 28px; padding: 0 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--ngx-gray-300);
+}
+.ngx-browser__url-lock { color: var(--ngx-success); font-size: 9px; }
+
+/* =====================================================================
+   02 · SIDEBAR · App chrome navigation
+   ===================================================================== */
+.ngx-side {
+  padding: 20px 12px 20px 16px;
+  display: flex; flex-direction: column; gap: 16px;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  background: linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.005));
+}
+.ngx-side-brand {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 4px 2px;
+}
+.ngx-side-brand__mk {
+  width: 26px; height: 26px; border-radius: 7px;
+  background: linear-gradient(135deg, #C29BFF 0%, var(--ngx-purple) 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 900; font-size: 14px;
+  color: var(--ngx-white);
+  box-shadow: 0 0 14px rgba(109, 0, 255, 0.45), inset 0 1px 0 rgba(255,255,255,0.30);
+}
+.ngx-side-brand__name {
+  font-family: var(--font-display); font-weight: 900;
+  font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ngx-white);
+}
+.ngx-side-brand__role {
+  margin-left: auto;
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 8.5px; letter-spacing: 0.20em; text-transform: uppercase;
+  color: var(--ngx-purple-300);
+  padding: 3px 7px; border-radius: 999px;
+  background: var(--lg-glass-purple-soft);
+  border: 1px solid var(--lg-rim-purple);
+}
+.ngx-side-h {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 9.5px; letter-spacing: 0.20em; text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.32);
+  padding: 0 8px; margin: 4px 0 4px;
+}
+.ngx-side-profile {
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-regular); backdrop-filter: var(--lg-blur-regular);
+  box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset);
+  display: flex; align-items: center; gap: 10px;
+}
+.ngx-side-profile__avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,0.35), transparent 50%),
+    linear-gradient(135deg, #C29BFF 0%, #6D00FF 100%);
+  border: 1px solid var(--lg-rim-purple);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 900; font-size: 13px;
+  color: var(--ngx-white); flex: 0 0 38px;
+  box-shadow: var(--lg-glow-purple-sm);
+}
+.ngx-side-profile__name {
+  font-family: var(--font-display); font-weight: 900;
+  font-size: 13px; letter-spacing: 0.02em; text-transform: uppercase;
+  color: var(--ngx-white); line-height: 1;
+}
+.ngx-side-profile__meta {
+  font-size: 11px; color: var(--ngx-gray-400); margin-top: 4px;
+  display: flex; align-items: center; gap: 5px;
+}
+.ngx-side-profile__meta::before {
+  content: ""; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--ngx-success); box-shadow: 0 0 6px rgba(40, 200, 120, 0.6);
+}
+
+/* Nav items */
+.ngx-side-nav { display: flex; flex-direction: column; gap: 2px; }
+.ngx-nav-item {
+  display: flex; align-items: center; gap: 11px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.70);
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase;
+  border: 1px solid transparent;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.ngx-nav-item:hover { background: rgba(255, 255, 255, 0.04); color: var(--ngx-white); }
+.ngx-nav-item__ico {
+  width: 18px; height: 18px; flex: 0 0 18px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: currentColor;
+}
+.ngx-nav-item__ico svg { width: 100%; height: 100%; }
+.ngx-nav-item__lbl { flex: 1; }
+.ngx-nav-item__chip {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 9px; letter-spacing: 0.16em;
+  padding: 3px 7px; border-radius: 999px;
+  background: rgba(109, 0, 255, 0.20);
+  color: var(--ngx-purple-300);
+  border: 1px solid rgba(109, 0, 255, 0.32);
+  font-variant-numeric: tabular-nums;
+}
+.ngx-nav-item.is-active {
+  background: var(--lg-glass-purple);
+  border-color: var(--lg-rim-purple);
+  color: var(--ngx-white);
+  box-shadow: var(--lg-shadow-inset-purple), var(--lg-glow-purple-sm);
+}
+
+/* =====================================================================
+   03 · TOPBAR · Eyebrow + headline + tools
+   ===================================================================== */
+.ngx-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px;
+}
+.ngx-topbar__eyebrow {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--ngx-purple-300);
+  display: flex; align-items: center; gap: 8px;
+}
+.ngx-topbar__eyebrow::before {
+  content: ""; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--ngx-purple); box-shadow: 0 0 8px var(--ngx-purple);
+}
+.ngx-topbar__h {
+  font-family: var(--font-display); font-weight: 900;
+  font-size: 28px; letter-spacing: -0.015em; text-transform: uppercase;
+  color: var(--ngx-white); line-height: 1; margin-top: 4px;
+}
+.ngx-topbar__h .dim { color: rgba(255,255,255,0.50); }
+.ngx-topbar__right { display: flex; align-items: center; gap: 10px; }
+
+/* Range pills (7D / 30D / 1Y) */
+.ngx-range-pills {
+  display: inline-flex; padding: 3px; gap: 2px;
+  border-radius: 999px;
+  background: var(--lg-glass-thin);
+  border: 1px solid var(--lg-rim-thin);
+  -webkit-backdrop-filter: var(--lg-blur-thin); backdrop-filter: var(--lg-blur-thin);
+}
+.ngx-range-pill {
+  padding: 7px 13px; border-radius: 999px;
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ngx-gray-400); cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+.ngx-range-pill.is-active {
+  background: linear-gradient(135deg, rgba(195,155,255,0.55), rgba(109,0,255,0.60));
+  color: var(--ngx-white);
+  box-shadow: var(--lg-glow-purple-sm), inset 0 1px 0 rgba(255,255,255,0.20);
+}
+
+/* Icon pill (circular icon button) */
+.ngx-icon-pill {
+  width: 36px; height: 36px; border-radius: 999px;
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-regular); backdrop-filter: var(--lg-blur-regular);
+  color: var(--ngx-white);
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; position: relative;
+  box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset);
+}
+.ngx-icon-pill .badge {
+  position: absolute; top: 6px; right: 7px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--ngx-purple); box-shadow: 0 0 8px var(--ngx-purple);
+}
+
+/* Search pill (with kbd shortcut) */
+.ngx-search-pill {
+  height: 36px; border-radius: 999px;
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-regular); backdrop-filter: var(--lg-blur-regular);
+  box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset);
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 0 14px 0 12px;
+  color: rgba(255,255,255,0.55);
+  font-family: var(--font-text); font-size: 12px;
+  min-width: 220px;
+}
+.ngx-search-pill kbd {
+  margin-left: auto;
+  font-family: var(--font-mono); font-size: 9.5px;
+  padding: 2px 6px; border-radius: 4px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: var(--ngx-gray-400);
+}
+
+/* Coach CTA — gradient purple chip button */
+.ngx-cta-chip {
+  padding: 9px 16px 9px 12px;
+  border-radius: 999px; white-space: nowrap;
+  background: linear-gradient(135deg, rgba(195,155,255,0.45), rgba(109,0,255,0.55));
+  color: var(--ngx-white);
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid var(--lg-rim-purple);
+  box-shadow: var(--lg-glow-purple-sm), inset 0 1px 0 rgba(255,255,255,0.20);
+  cursor: pointer;
+}
+
+/* =====================================================================
+   04 · GLASS CARD · the universal container
+   ===================================================================== */
+.ngx-card {
+  border-radius: 16px;
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-regular); backdrop-filter: var(--lg-blur-regular);
+  box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset);
+}
+.ngx-card--purple {
+  background:
+    linear-gradient(135deg, rgba(195,155,255,0.18) 0%, rgba(109,0,255,0.08) 100%),
+    var(--lg-glass-purple);
+  border-color: var(--lg-rim-purple);
+  box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset-purple), var(--lg-glow-purple-md);
+}
+.ngx-card__head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.ngx-card__head-l {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ngx-white);
+  display: flex; align-items: center; gap: 8px;
+}
+.ngx-card__head-l .dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--ngx-purple); box-shadow: 0 0 8px var(--ngx-purple);
+}
+.ngx-card__head-sub {
+  font-family: var(--font-text);
+  font-size: 11px; color: var(--ngx-gray-400);
+  font-variant-numeric: tabular-nums;
+}
+
+/* =====================================================================
+   05 · KPI CARD · the hero metric tile
+   ===================================================================== */
+.ngx-kpi {
+  position: relative;
+  padding: 16px 18px 18px;
+  border-radius: 16px;
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-regular); backdrop-filter: var(--lg-blur-regular);
+  box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset);
+  overflow: hidden;
+}
+.ngx-kpi--feat {
+  background:
+    linear-gradient(135deg, rgba(195,155,255,0.22) 0%, rgba(109,0,255,0.08) 100%),
+    var(--lg-glass-purple);
+  border-color: var(--lg-rim-purple);
+  box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset-purple), var(--lg-glow-purple-md);
+}
+.ngx-kpi--feat::before {
+  content: ""; position: absolute;
+  top: -40%; right: -10%; width: 220px; height: 220px;
+  background: radial-gradient(circle, rgba(195,155,255,0.45), transparent 60%);
+  filter: blur(28px); pointer-events: none;
+}
+.ngx-kpi > * { position: relative; }
+.ngx-kpi__head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.ngx-kpi__l {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 10px; letter-spacing: 0.20em; text-transform: uppercase;
+  color: rgba(255,255,255,0.62);
+}
+.ngx-kpi--feat .ngx-kpi__l { color: var(--ngx-purple-200); }
+.ngx-kpi__chip {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 8.5px; letter-spacing: 0.16em; text-transform: uppercase;
+  padding: 3px 7px; border-radius: 999px;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10);
+  color: var(--ngx-gray-300);
+}
+.ngx-kpi--feat .ngx-kpi__chip {
+  background: rgba(0,0,0,0.30);
+  border-color: var(--lg-rim-purple);
+  color: var(--ngx-purple-200);
+}
+.ngx-kpi__v {
+  display: flex; align-items: baseline; gap: 6px;
+  font-family: var(--font-display); font-weight: 900;
+  line-height: 1; letter-spacing: -0.03em;
+  color: var(--ngx-white); font-variant-numeric: tabular-nums;
+  font-size: 42px;
+}
+.ngx-kpi--feat .ngx-kpi__v { font-size: 54px; }
+.ngx-kpi__v .u { font-size: 13px; color: var(--ngx-gray-400); font-weight: 700; letter-spacing: 0.04em; }
+.ngx-kpi--feat .ngx-kpi__v .u { color: var(--ngx-purple-200); }
+.ngx-kpi__foot {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 10px;
+}
+.ngx-kpi__d {
+  font-family: var(--font-text); font-weight: 700;
+  font-size: 11px; font-variant-numeric: tabular-nums;
+}
+.ngx-kpi__d.up   { color: var(--ngx-success); }
+.ngx-kpi__d.down { color: var(--ngx-danger); }
+.ngx-kpi__d.flat { color: var(--ngx-gray-400); }
+.ngx-kpi__base {
+  font-family: var(--font-text); font-weight: 500;
+  font-size: 10.5px; color: var(--ngx-gray-400);
+  font-variant-numeric: tabular-nums;
+}
+
+/* =====================================================================
+   06 · STAT PILL · status chip family
+   ===================================================================== */
+.ngx-stat-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 999px;
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase;
+}
+.ngx-stat-pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; }
+.ngx-stat-pill--ok      { background: rgba(40, 200, 120, 0.14); color: #5BE3A0; border: 1px solid rgba(40,200,120,0.30); }
+.ngx-stat-pill--ok::before { background: #5BE3A0; box-shadow: 0 0 8px rgba(91,227,160,0.7); }
+.ngx-stat-pill--warn    { background: rgba(255, 176, 112, 0.14); color: #FFB070; border: 1px solid rgba(255,176,112,0.30); }
+.ngx-stat-pill--warn::before { background: #FFB070; }
+.ngx-stat-pill--danger  { background: rgba(255, 90, 90, 0.14); color: #FF8E8E; border: 1px solid rgba(255,90,90,0.30); }
+.ngx-stat-pill--danger::before { background: #FF6E6E; box-shadow: 0 0 8px rgba(255,110,110,0.7); }
+.ngx-stat-pill--info    { background: rgba(111, 156, 255, 0.12); color: #9DBBFF; border: 1px solid rgba(111,156,255,0.28); }
+.ngx-stat-pill--info::before { background: #9DBBFF; }
+.ngx-stat-pill--purple  { background: var(--lg-glass-purple-soft); color: var(--ngx-purple-300); border: 1px solid var(--lg-rim-purple); }
+.ngx-stat-pill--purple::before { background: var(--ngx-purple); box-shadow: 0 0 8px var(--ngx-purple); }
+
+/* =====================================================================
+   07 · NUM CELL · the universal tabular metric
+   ===================================================================== */
+.ngx-num-cell {
+  font-family: var(--font-display); font-weight: 900;
+  font-size: 14px; letter-spacing: -0.02em;
+  color: var(--ngx-white); font-variant-numeric: tabular-nums;
+}
+.ngx-num-cell .u { font-size: 9.5px; color: var(--ngx-gray-400); margin-left: 2px; font-weight: 700; letter-spacing: 0.04em; }
+.ngx-num-cell .d {
+  display: block;
+  font-family: var(--font-text); font-weight: 700;
+  font-size: 10.5px; margin-top: 3px;
+}
+.ngx-num-cell .d.up   { color: var(--ngx-success); }
+.ngx-num-cell .d.down { color: var(--ngx-danger); }
+.ngx-num-cell .d.flat { color: var(--ngx-gray-400); }
+
+/* =====================================================================
+   08 · CHIP · filter chips, tag chips
+   ===================================================================== */
+.ngx-chip {
+  padding: 7px 12px; border-radius: 999px;
+  background: var(--lg-glass-thin);
+  border: 1px solid var(--lg-rim-thin);
+  -webkit-backdrop-filter: var(--lg-blur-thin); backdrop-filter: var(--lg-blur-thin);
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(255,255,255,0.72);
+  display: inline-flex; align-items: center; gap: 6px;
+  cursor: pointer;
+}
+.ngx-chip.is-active {
+  background: var(--lg-glass-purple);
+  border-color: var(--lg-rim-purple);
+  color: var(--ngx-white);
+  box-shadow: var(--lg-glow-purple-sm);
+}
+.ngx-chip__cnt {
+  font-variant-numeric: tabular-nums;
+  color: var(--ngx-purple-300);
+  font-weight: 800;
+}
+.ngx-chip.is-active .ngx-chip__cnt { color: var(--ngx-white); }
+
+/* =====================================================================
+   09 · TABLE · dense data table
+   ===================================================================== */
+.ngx-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.ngx-table thead th {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ngx-gray-400);
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.025);
+}
+.ngx-table thead th .sort-arrow { color: var(--ngx-purple-300); margin-left: 4px; }
+.ngx-table tbody tr {
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background var(--dur-fast) var(--ease-out);
+  cursor: pointer;
+}
+.ngx-table tbody tr:hover { background: rgba(109, 0, 255, 0.06); }
+.ngx-table tbody tr.is-flag { background: rgba(255, 90, 90, 0.04); }
+.ngx-table tbody tr.is-flag:hover { background: rgba(255, 90, 90, 0.08); }
+.ngx-table tbody tr:last-child { border-bottom: 0; }
+.ngx-table td {
+  padding: 12px 14px;
+  font-size: 12.5px;
+  color: rgba(255,255,255,0.85);
+  vertical-align: middle;
+}
+
+/* Athlete cell (avatar + name + meta) */
+.ngx-entity-cell {
+  display: flex; align-items: center; gap: 11px;
+}
+.ngx-entity-cell__av {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,0.30), transparent 50%),
+    linear-gradient(135deg, #C29BFF 0%, #6D00FF 100%);
+  border: 1px solid var(--lg-rim-purple);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 900; font-size: 11px;
+  color: var(--ngx-white); flex: 0 0 34px;
+}
+.ngx-entity-cell__av--teal   { background: linear-gradient(135deg, #5BE3C0 0%, #1E8C7F 100%); border-color: rgba(91,227,192,0.6); }
+.ngx-entity-cell__av--amber  { background: linear-gradient(135deg, #FFB070 0%, #D27433 100%); border-color: rgba(255,176,112,0.6); }
+.ngx-entity-cell__av--blue   { background: linear-gradient(135deg, #6F9CFF 0%, #2B5DD0 100%); border-color: rgba(111,156,255,0.6); }
+.ngx-entity-cell__av--pink   { background: linear-gradient(135deg, #F38AB6 0%, #C03A78 100%); border-color: rgba(243,138,182,0.6); }
+.ngx-entity-cell__av--gold   { background: linear-gradient(135deg, #FFD17A 0%, #D2942F 100%); border-color: rgba(255,209,122,0.6); }
+.ngx-entity-cell__name {
+  font-family: var(--font-display); font-weight: 900;
+  font-size: 13px; letter-spacing: 0.02em; text-transform: uppercase;
+  color: var(--ngx-white); line-height: 1;
+}
+.ngx-entity-cell__meta {
+  font-size: 11px; color: var(--ngx-gray-400); margin-top: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Recovery / progress mini bar */
+.ngx-progress {
+  display: flex; align-items: center; gap: 10px;
+}
+.ngx-progress__bar {
+  width: 56px; height: 5px; border-radius: 3px;
+  background: rgba(255,255,255,0.08);
+  position: relative; overflow: hidden;
+}
+.ngx-progress__bar::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+  width: var(--p, 50%);
+  background: linear-gradient(90deg, rgba(195,155,255,0.85), var(--ngx-purple));
+  box-shadow: 0 0 8px rgba(109,0,255,0.5);
+  border-radius: 3px;
+}
+.ngx-progress--low .ngx-progress__bar::before { background: linear-gradient(90deg, #FFB070, #FF6E6E); box-shadow: 0 0 8px rgba(255,110,110,0.5); }
+.ngx-progress--mid .ngx-progress__bar::before { background: linear-gradient(90deg, #FFD17A, #FFB070); box-shadow: 0 0 6px rgba(255,176,112,0.4); }
+.ngx-progress__v {
+  font-family: var(--font-display); font-weight: 900;
+  font-size: 14px; letter-spacing: -0.02em;
+  color: var(--ngx-white); font-variant-numeric: tabular-nums;
+}
+.ngx-progress__v .u { font-size: 9.5px; color: var(--ngx-gray-400); margin-left: 2px; font-weight: 700; }
+
+/* =====================================================================
+   10 · BAR CHART · the canonical HRV chart pattern
+   ===================================================================== */
+.ngx-chart {
+  height: 240px;
+  position: relative;
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 12px;
+}
+.ngx-chart__y {
+  display: flex; flex-direction: column;
+  justify-content: space-between;
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 9px; letter-spacing: 0.10em;
+  color: var(--ngx-gray-400);
+  text-align: right; padding: 4px 0;
+  font-variant-numeric: tabular-nums;
+}
+.ngx-chart__plot {
+  position: relative;
+  border-left: 1px solid rgba(255,255,255,0.10);
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+  display: flex; align-items: flex-end;
+  gap: 5px; padding: 0 6px;
+}
+.ngx-chart__grid {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.ngx-chart__grid div { height: 1px; background: rgba(255,255,255,0.06); }
+.ngx-chart__band {
+  position: absolute; left: 0; right: 0;
+  top: 18%; height: 30%;
+  background: linear-gradient(180deg, rgba(109,0,255,0.18), rgba(109,0,255,0.05));
+  border-top: 1px dashed rgba(195,155,255,0.32);
+  border-bottom: 1px dashed rgba(195,155,255,0.32);
+  pointer-events: none;
+}
+.ngx-chart__band-lbl {
+  position: absolute;
+  right: 8px; top: -10px;
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ngx-purple-300);
+  background: rgba(10,6,40,0.85);
+  padding: 3px 7px; border-radius: 999px;
+  border: 1px solid var(--lg-rim-purple);
+}
+.ngx-chart__bars {
+  position: relative; z-index: 1;
+  width: 100%; height: 100%;
+  display: flex; align-items: flex-end;
+  gap: 5px;
+}
+.ngx-chart__col { flex: 1; display: flex; align-items: flex-end; height: 100%; }
+.ngx-bar {
+  width: 100%;
+  background: linear-gradient(180deg, #C29BFF 0%, var(--ngx-purple) 100%);
+  border-radius: 3px 3px 0 0;
+  box-shadow: 0 0 8px rgba(109,0,255,0.4), inset 0 1px 0 rgba(255,255,255,0.25);
+}
+.ngx-bar--lt {
+  background: linear-gradient(180deg, rgba(195,155,255,0.35), rgba(109,0,255,0.20));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.ngx-bar--warn {
+  background: linear-gradient(180deg, #FFB070, #C26B33);
+  box-shadow: 0 0 8px rgba(255,176,112,0.4), inset 0 1px 0 rgba(255,255,255,0.25);
+}
+.ngx-chart__x {
+  margin-left: 52px;
+  display: flex; justify-content: space-between;
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ngx-gray-400);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Legend */
+.ngx-legend { display: flex; gap: 12px; }
+.ngx-legend__item {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ngx-gray-400);
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.ngx-legend__sw { width: 10px; height: 10px; border-radius: 3px; }
+.ngx-legend__sw--p  { background: linear-gradient(180deg, #C29BFF, var(--ngx-purple)); box-shadow: 0 0 6px rgba(109,0,255,0.6); }
+.ngx-legend__sw--lt { background: rgba(195,155,255,0.35); }
+.ngx-legend__sw--line { background: transparent; border-bottom: 2px dashed rgba(255,255,255,0.30); height: 2px; align-self: center; }
+
+/* =====================================================================
+   11 · DISTRIBUTION ROW · for bucketed bars
+   ===================================================================== */
+.ngx-dist-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 70px;
+  align-items: center; gap: 14px;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.ngx-dist-row:last-child { border-bottom: 0; }
+.ngx-dist-row__l {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--ngx-white);
+}
+.ngx-dist-row__bar { height: 8px; border-radius: 4px; background: rgba(255,255,255,0.06); position: relative; overflow: hidden; }
+.ngx-dist-row__bar::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+  width: var(--p, 50%);
+  background: linear-gradient(90deg, rgba(195,155,255,0.65), var(--ngx-purple));
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(109,0,255,0.45);
+}
+.ngx-dist-row__v {
+  text-align: right;
+  font-family: var(--font-display); font-weight: 900;
+  font-size: 14px; letter-spacing: -0.02em;
+  color: var(--ngx-white); font-variant-numeric: tabular-nums;
+}
+.ngx-dist-row__v .u { font-size: 9px; color: var(--ngx-gray-400); margin-left: 2px; font-weight: 700; }
+
+/* =====================================================================
+   12 · HEAT GRID · compliance / activity heatmap
+   ===================================================================== */
+.ngx-heat {
+  display: grid;
+  gap: 3px;
+  padding: 14px 16px;
+}
+.ngx-heat__hcell, .ngx-heat__rlabel {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 8.5px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ngx-gray-400);
+  display: flex; align-items: center;
+  font-variant-numeric: tabular-nums;
+}
+.ngx-heat__hcell { justify-content: center; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.ngx-heat__rlabel { padding: 4px 6px; }
+.ngx-heat__cell {
+  height: 22px;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+.ngx-heat__cell[data-v="0"] { background: rgba(255,255,255,0.03); }
+.ngx-heat__cell[data-v="1"] { background: rgba(109,0,255,0.10); }
+.ngx-heat__cell[data-v="2"] { background: rgba(109,0,255,0.25); }
+.ngx-heat__cell[data-v="3"] { background: rgba(109,0,255,0.45); }
+.ngx-heat__cell[data-v="4"] { background: rgba(109,0,255,0.70); box-shadow: 0 0 6px rgba(109,0,255,0.4); }
+.ngx-heat__cell[data-v="5"] { background: rgba(165,107,255,0.95); box-shadow: 0 0 10px rgba(109,0,255,0.6); }
+.ngx-heat__cell[data-v="warn"] { background: rgba(255,176,112,0.55); box-shadow: 0 0 8px rgba(255,176,112,0.4); }
+.ngx-heat__cell[data-v="flag"] { background: rgba(255,110,110,0.70); box-shadow: 0 0 8px rgba(255,110,110,0.5); }
+
+/* =====================================================================
+   13 · TOTALS · top-of-page metric strip
+   ===================================================================== */
+.ngx-totals {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.ngx-tot {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-regular);
+  -webkit-backdrop-filter: var(--lg-blur-regular); backdrop-filter: var(--lg-blur-regular);
+  box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.ngx-tot--purple {
+  background:
+    linear-gradient(135deg, rgba(195,155,255,0.16) 0%, rgba(109,0,255,0.06) 100%),
+    var(--lg-glass-purple);
+  border-color: var(--lg-rim-purple);
+  box-shadow: var(--lg-shadow-glass), var(--lg-shadow-inset-purple), var(--lg-glow-purple-sm);
+}
+.ngx-tot__l {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 9.5px; letter-spacing: 0.20em; text-transform: uppercase;
+  color: rgba(255,255,255,0.62);
+}
+.ngx-tot__v {
+  display: flex; align-items: baseline; gap: 6px;
+  font-family: var(--font-display); font-weight: 900;
+  font-size: 30px; line-height: 1; letter-spacing: -0.025em;
+  color: var(--ngx-white); font-variant-numeric: tabular-nums;
+}
+.ngx-tot__v .u { font-size: 11px; color: var(--ngx-gray-400); font-weight: 700; letter-spacing: 0.06em; }
+.ngx-tot__foot {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 11px; color: var(--ngx-gray-400);
+}
+.ngx-tot__d { font-weight: 700; font-variant-numeric: tabular-nums; }
+.ngx-tot__d.up   { color: var(--ngx-success); }
+.ngx-tot__d.down { color: var(--ngx-danger); }
+
+/* =====================================================================
+   14 · MESSAGE BUBBLE · inbox / coach chat
+   ===================================================================== */
+.ngx-bubble {
+  max-width: 72%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-family: var(--font-text); font-size: 13px; line-height: 1.45;
+}
+.ngx-bubble--them {
+  align-self: flex-start;
+  background: var(--lg-glass-regular);
+  border: 1px solid var(--lg-rim-thin);
+  -webkit-backdrop-filter: var(--lg-blur-thin); backdrop-filter: var(--lg-blur-thin);
+  border-bottom-left-radius: 4px;
+  color: var(--ngx-white);
+}
+.ngx-bubble--me {
+  align-self: flex-end;
+  background: linear-gradient(180deg, #8530FF 0%, var(--ngx-purple) 100%);
+  color: var(--ngx-white);
+  border-bottom-right-radius: 4px;
+  box-shadow: var(--lg-glow-purple-sm), inset 0 1px 0 rgba(255,255,255,0.18);
+}
+.ngx-bubble__time {
+  display: block; margin-top: 5px;
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 8.5px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: rgba(255,255,255,0.50);
+  font-variant-numeric: tabular-nums;
+}
+.ngx-bubble--me .ngx-bubble__time { color: rgba(255,255,255,0.65); text-align: right; }
+
+/* =====================================================================
+   15 · PROGRAM BLOCK · exercise drag-and-drop card
+   ===================================================================== */
+.ngx-block {
+  padding: 9px 10px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025));
+  border: 1px solid rgba(255,255,255,0.10);
+  cursor: grab;
+  position: relative;
+}
+.ngx-block--strength  { border-left: 3px solid var(--ngx-purple); }
+.ngx-block--cardio    { border-left: 3px solid #6F9CFF; }
+.ngx-block--mobility  { border-left: 3px solid #5BE3C0; }
+.ngx-block--accessory { border-left: 3px solid #FFB070; }
+.ngx-block--dragging {
+  background: var(--lg-glass-purple);
+  border-color: var(--lg-rim-purple);
+  box-shadow: var(--lg-glow-purple-md);
+  transform: rotate(-1deg);
+}
+.ngx-block__tag {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 8.5px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ngx-gray-400); margin-bottom: 4px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ngx-block__name {
+  font-family: var(--font-display); font-weight: 900;
+  font-size: 11.5px; letter-spacing: 0.02em; text-transform: uppercase;
+  color: var(--ngx-white); line-height: 1.15;
+}
+.ngx-block__meta {
+  margin-top: 4px;
+  font-family: var(--font-text); font-weight: 500;
+  font-size: 10.5px; color: var(--ngx-gray-300);
+  font-variant-numeric: tabular-nums;
+}
+.ngx-block__meta b { color: var(--ngx-white); font-weight: 700; }
+
+/* =====================================================================
+   END · components.css
+   ===================================================================== */

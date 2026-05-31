@@ -9,6 +9,7 @@ const ShareSettingsSchema = z
     shareOriginal: z.boolean().optional(),
     shareInsights: z.boolean().optional(),
     shareProfile: z.boolean().optional(),
+    shareImages: z.boolean().optional(),
   })
   .refine((data) => Object.values(data).some((v) => v !== undefined), {
     message: "At least one setting is required",
@@ -38,6 +39,7 @@ export async function POST(req: Request, context: { params: Promise<{ shareId: s
         shareOriginal?: boolean;
         shareInsights?: boolean;
         shareProfile?: boolean;
+        shareImages?: boolean;
       };
     } | undefined;
     if (!data?.ownerUid || data.ownerUid !== authUser.uid) {
@@ -48,6 +50,7 @@ export async function POST(req: Request, context: { params: Promise<{ shareId: s
       shareOriginal: data.shareScope?.shareOriginal ?? !!data.shareOriginal,
       shareInsights: data.shareScope?.shareInsights ?? false,
       shareProfile: data.shareScope?.shareProfile ?? false,
+      shareImages: data.shareScope?.shareImages ?? false,
     };
 
     const nextScope = {

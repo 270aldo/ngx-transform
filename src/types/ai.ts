@@ -24,7 +24,7 @@ export {
   migrateV1toV2,
 } from "@/lib/schemas/analysis";
 
-import { DiagnosticSchema } from "@/lib/schemas/analysis";
+import { DiagnosticSchema, type AnalysisOutput as AnalysisOutputType } from "@/lib/schemas/analysis";
 
 // ============================================================================
 // Legacy Types (v1) - Kept for backward compatibility
@@ -105,6 +105,7 @@ export interface SessionDocument {
     goal: "definicion" | "masa" | "mixto";
     weeklyTime: number;
     trainingDaysPerWeek?: number;
+    sessionDurationMinutes?: number;
     trainingHistoryYears?: number;
     nutritionQuality?: number;
     bodyFatLevel?: "bajo" | "medio" | "alto";
@@ -121,9 +122,16 @@ export interface SessionDocument {
   photo: {
     originalStoragePath: string;
   };
-  ai?: InsightsResult | null;
+  ai?: InsightsResult | AnalysisOutputType | null;
   assets?: {
     images?: Record<string, string>;
+  };
+  shareOriginal?: boolean;
+  shareScope?: {
+    shareOriginal?: boolean;
+    shareInsights?: boolean;
+    shareProfile?: boolean;
+    shareImages?: boolean;
   };
   status: SessionStatus;
   deleteToken?: string;

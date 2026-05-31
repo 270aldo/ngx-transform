@@ -29,8 +29,9 @@ plan/ (Gemini 2.0 Flash Lite)
 
 ## 1. Profile Analysis — `gemini.ts`
 
-**Model:** Gemini 2.5 Flash (configurable via `GEMINI_MODEL`)
-> ⚠️ Consider upgrading to `gemini-3.1-flash` for text analysis (same API, better quality).
+**Model:** configurable via `GEMINI_MODEL`. The production example currently uses `gemini-flash-latest`.
+
+Before launch, validate the configured model with a real session in the target Google project. Do not ship a model id that has not been verified against the production `GEMINI_API_KEY`.
 
 **Exported functions:**
 

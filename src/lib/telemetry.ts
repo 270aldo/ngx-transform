@@ -57,12 +57,9 @@ export type FunnelEvent =
   | "email_D7_sent"
   | "email_D10_sent"
   | "email_D14_sent"
-  | "agent_cta_viewed"
-  | "agent_cta_clicked"
   | "referral_code_copied"
   | "hybrid_offer_calendly_click"
   | "hybrid_offer_whatsapp_click"
-  | "hybrid_offer_chat_click"
   | "nps_submitted"
   // v12 Comercial Exit Flow
   | "hybrid_offer_v2_viewed"
@@ -83,7 +80,12 @@ export type FunnelEvent =
   // v12.1 Brief by email
   | "brief_email_requested"
   | "brief_email_sent"
-  | "brief_email_failed";
+  | "brief_email_failed"
+  // HYBRID voice classifier
+  | "voice_agent_opened"
+  | "voice_agent_connected"
+  | "voice_agent_classified"
+  | "voice_agent_cta_clicked";
 
 export interface EventPayload {
   sessionId: string;

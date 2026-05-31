@@ -54,10 +54,22 @@ function getRateLimiters(): Map<string, Ratelimit> | null {
     prefix: "rl:remarketing",
   }));
 
+  rateLimiters.set("api:leads", new Ratelimit({
+    redis: redisClient,
+    limiter: Ratelimit.slidingWindow(10, "1 h"), // 10 lead captures per hour
+    prefix: "rl:leads",
+  }));
+
   rateLimiters.set("api:generate-plan", new Ratelimit({
     redis: redisClient,
     limiter: Ratelimit.slidingWindow(5, "1 h"), // 5 plan generations per hour
     prefix: "rl:plan",
+  }));
+
+  rateLimiters.set("api:report", new Ratelimit({
+    redis: redisClient,
+    limiter: Ratelimit.slidingWindow(5, "1 h"), // 5 report generations per hour
+    prefix: "rl:report",
   }));
 
   rateLimiters.set("api:plan", new Ratelimit({
@@ -76,18 +88,6 @@ function getRateLimiters(): Map<string, Ratelimit> | null {
     redis: redisClient,
     limiter: Ratelimit.slidingWindow(5, "1 h"), // 5 image generations per hour
     prefix: "rl:images",
-  }));
-
-  rateLimiters.set("api:genesis-demo", new Ratelimit({
-    redis: redisClient,
-    limiter: Ratelimit.slidingWindow(10, "1 m"), // 10 demo requests per minute
-    prefix: "rl:genesis-demo",
-  }));
-
-  rateLimiters.set("api:genesis-chat", new Ratelimit({
-    redis: redisClient,
-    limiter: Ratelimit.slidingWindow(20, "1 m"), // 20 chat requests per minute
-    prefix: "rl:genesis-chat",
   }));
 
   rateLimiters.set("api:referral", new Ratelimit({
@@ -132,12 +132,12 @@ let lastPruneAt = 0;
 const IN_MEMORY_LIMITS: Record<string, { max: number; windowMs: number }> = {
   "api:sessions": { max: 3, windowMs: 86400000 },    // 3/day
   "api:email": { max: 5, windowMs: 3600000 },         // 5/hour
+  "api:leads": { max: 10, windowMs: 3600000 },         // 10/hour
   "api:analyze": { max: 10, windowMs: 3600000 },      // 10/hour
   "api:generate-images": { max: 5, windowMs: 3600000 },// 5/hour
   "api:generate-plan": { max: 5, windowMs: 3600000 },  // 5/hour
+  "api:report": { max: 5, windowMs: 3600000 },          // 5/hour
   "api:plan": { max: 5, windowMs: 3600000 },           // 5/hour
-  "api:genesis-demo": { max: 10, windowMs: 60000 },    // 10/min
-  "api:genesis-chat": { max: 20, windowMs: 60000 },    // 20/min
   "api:referral": { max: 30, windowMs: 60000 },        // 30/min
   "api:unlock": { max: 30, windowMs: 60000 },          // 30/min
   "api:checkout": { max: 10, windowMs: 60000 },        // 10/min
@@ -185,6 +185,7 @@ const CRITICAL_ENDPOINTS = new Set([
   "api:generate-images",
   "api:plan",
   "api:generate-plan",
+  "api:report",
 ]);
 
 function allowFallbackInProd(endpoint: string): boolean {

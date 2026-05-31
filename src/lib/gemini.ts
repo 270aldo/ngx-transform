@@ -12,13 +12,11 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import {
   InsightsResultZ,
   type InsightsResult,
-  AnalysisOutputSchema,
   type AnalysisOutput,
   validateAnalysisOutput,
   attemptJsonRepair,
   migrateV1toV2,
 } from "@/types/ai";
-import { getVisualAnchorSystemPrompt, getStyleProfileSystemPrompt } from "./promptBuilder";
 import { getFeatureFlags } from "./validators";
 
 // ============================================================================
@@ -39,6 +37,7 @@ export interface AnalysisParams {
     level?: string;
     weeklyTime?: string | number;
     trainingDaysPerWeek?: number;
+    sessionDurationMinutes?: number;
     trainingHistoryYears?: number;
     nutritionQuality?: number;
     bodyFatLevel?: string;
@@ -107,18 +106,19 @@ function getV2SystemPrompt(profile: AnalysisParams["profile"]): string {
   const goals = profile.goals ?? profile.goal;
 
   return `Eres un Entrenador de Alto Rendimiento Elite y Experto en Fisiología Deportiva con capacidades de análisis forense visual.
-Tu misión: Analizar la foto y datos del usuario para proyectar su evolución física en 12 meses basándote en PRINCIPIOS CIENTÍFICOS REALES (adaptación fisiológica, hipertrofia, recomposición).
+Tu misión: Analizar la foto y datos del usuario para proyectar su Season Vision Report basándote en PRINCIPIOS CIENTÍFICOS REALES (adaptación fisiológica, hipertrofia, recomposición).
 
 DATOS DEL USUARIO:
 - Edad: ${profile.age}, Sexo: ${profile.sex}
 - Altura: ${height}cm, Peso: ${weight}kg
-- Somatotipo: ${profile.bodyType || "no especificado"}
+- Punto de partida corporal: grasa ${profile.bodyFatLevel || "medio"}; bodyType legacy ${profile.bodyType || "no especificado"}
 - Nivel Actual: ${profile.level || "novato"}
 - Objetivo Principal: ${goals || "mixto"}
 - Dedicación Semanal: ${profile.weeklyTime || 3} horas
 - Días/Semana: ${profile.trainingDaysPerWeek || "N/A"}
+- Duración/Sesión: ${profile.sessionDurationMinutes || "N/A"} minutos
 - Historia de Entrenamiento: ${profile.trainingHistoryYears ?? "N/A"} años
-- Nutrición: ${profile.nutritionQuality ?? "N/A"}/10
+- Nutrición: NO CAPTURADA en este flujo. No infieras proteína, calorías, macros ni consistencia nutricional personalizada.
 - Grasa Corporal: ${profile.bodyFatLevel || "medio"}
 - Estilo: ${profile.trainingStyle || "mixto"}
 - Deep Data: Estrés ${profile.stressLevel}/10, Sueño ${profile.sleepQuality}/10, Disciplina ${profile.disciplineRating}/10
@@ -158,30 +158,30 @@ FORMATO JSON REQUERIDO (estricto, sin envoltorio markdown, sin texto fuera del J
     },
     "m4": {
       "month": 4,
-      "title": "Nombre fase mes 4 (ESPAÑOL)",
+      "title": "Nombre fase Season 1 (ESPAÑOL)",
       "description": "Cambios tempranos visibles, adaptación neuromuscular en ESPAÑOL (50-450 chars).",
       "stats": { "strength": int, "aesthetics": int, "endurance": int, "mental": int },
       "image_prompt": "ENGLISH prompt - subject training hard, gym setting, athletic.",
-      "mental": "Mentalidad mes 4 ESPAÑOL."
+      "mental": "Mentalidad Season 1 ESPAÑOL."
     },
     "m8": {
       "month": 8,
-      "title": "Nombre fase mes 8 (ESPAÑOL)",
+      "title": "Nombre fase Season 2 (ESPAÑOL)",
       "description": "Ganancias musculares notables, definición en ESPAÑOL.",
       "stats": { "strength": int, "aesthetics": int, "endurance": int, "mental": int },
       "image_prompt": "ENGLISH prompt - dynamic athlete pose, lifestyle setting.",
-      "mental": "Mentalidad mes 8 ESPAÑOL."
+      "mental": "Mentalidad Season 2 ESPAÑOL."
     },
     "m12": {
       "month": 12,
       "title": "Nombre fase final (ESPAÑOL, ej: 'CÚSPIDE')",
       "description": "Estado final transformado, peak form en ESPAÑOL.",
       "stats": { "strength": int, "aesthetics": int, "endurance": int, "mental": int },
-      "image_prompt": "ENGLISH prompt - hero static pose, editorial Nike-style cover.",
+      "image_prompt": "ENGLISH prompt - calm hero pose, premium athletic editorial cover.",
       "mental": "Mentalidad final ESPAÑOL."
     }
   },
-  "letter_from_future": "Carta motivacional del yo del mes 12 al yo presente, ESPAÑOL, tono estoico y empático, 100-550 caracteres.",
+  "letter_from_future": "Carta motivacional del yo de Season 3 al yo presente, ESPAÑOL, tono estoico y empático, 100-550 caracteres.",
   "style_profile": {
     "lighting": "Descripción de iluminación en INGLÉS (5-95 chars, ej: 'dramatic rim lighting, golden hour')",
     "wardrobe": "Vestimenta deportiva en INGLÉS (5-95 chars)",
@@ -189,9 +189,9 @@ FORMATO JSON REQUERIDO (estricto, sin envoltorio markdown, sin texto fuera del J
     "color_grade": "Color grade en INGLÉS (5-95 chars, ej: 'cinematic teal-orange grade')"
   },
   "diagnostic": {
-    "bottleneck": "training_progression | nutrition_consistency | recovery | structure | expectations | accountability — el cuello de botella DOMINANTE de este usuario, basado en sus mental logs y biometría.",
+    "bottleneck": "training_progression | recovery | structure | expectations | accountability — el cuello de botella DOMINANTE de este usuario, basado en sus mental logs y biometría. NO uses nutrition_consistency porque no capturamos datos nutricionales explícitos.",
     "leverages": [
-      "Palanca 1 ESPECÍFICA al usuario en ESPAÑOL (no genérica, 30-180 chars). Ej: 'Subir proteína a 1.6g/kg con 4 ingestas; tu reporte de cero sueño profundo necesita esto antes que volumen de entreno.'",
+      "Palanca 1 ESPECÍFICA al usuario en ESPAÑOL (no genérica, 30-180 chars). Debe basarse en entrenamiento, sueño, estrés, disciplina, agenda o estructura; NO proteína, calorías, macros ni dieta.",
       "Palanca 2 ESPECÍFICA en ESPAÑOL.",
       "Palanca 3 ESPECÍFICA en ESPAÑOL."
     ],
@@ -219,16 +219,17 @@ function getV1SystemPrompt(profile: AnalysisParams["profile"]): string {
 
   return `
     Eres un Entrenador de Alto Rendimiento Elite y Futurista (Estoico, Clínico, Motivacional).
-    Tu objetivo es analizar la foto y datos del usuario para proyectar su evolución física y mental en 12 meses.
+    Tu objetivo es analizar la foto y datos del usuario para proyectar su Season Vision Report físico y mental.
 
     DATOS DEL USUARIO:
     - Edad: ${profile.age}, Sexo: ${profile.sex}
     - Altura: ${height}cm, Peso: ${weight}kg
-    - Somatotipo: ${profile.bodyType}
+    - Punto de partida corporal: grasa ${profile.bodyFatLevel || "medio"}; bodyType legacy ${profile.bodyType}
     - Nivel Actual: ${profile.level}
     - Objetivo: ${goals}
     - Dedicación: ${profile.weeklyTime} horas/semana
     - Días Entreno: ${profile.trainingDaysPerWeek || "N/A"}
+    - Duración/Sesión: ${profile.sessionDurationMinutes || "N/A"} minutos
     - Historia: ${profile.trainingHistoryYears ?? "N/A"} años
     - Nutrición: ${profile.nutritionQuality ?? "N/A"}/10
     - Grasa: ${profile.bodyFatLevel || "medio"}
@@ -243,9 +244,9 @@ function getV1SystemPrompt(profile: AnalysisParams["profile"]): string {
 
     Genera un JSON con una línea de tiempo de 4 fases (OUTPUT IN SPANISH):
     - "m0" (Actual): Análisis del punto de partida.
-    - "m4" (Fundación): Cambios visibles tempranos, adaptación.
-    - "m8" (Expansión): Ganancias musculares notables, definición.
-    - "m12" (Cúspide): Estado final transformado.
+    - "m4" (Season 1): Cambios visibles tempranos, adaptación.
+    - "m8" (Season 2): Ganancias musculares notables, definición.
+    - "m12" (Season 3): Estado final transformado.
 
     Para cada fase:
     1. "title": Nombre de fase poderoso (ej: "GÉNESIS", "METAMORFOSIS").
@@ -253,7 +254,7 @@ function getV1SystemPrompt(profile: AnalysisParams["profile"]): string {
     3. "stats": Numéricos (0-100) Fuerza, Estética, Resistencia, Mental.
     4. "image_prompt": Prompt en INGLÉS altamente detallado para generar la foto.
        - Mantén la identidad facial.
-       - Estilo: Cinematic, 8k, dramatic lighting, Nike commercial.
+       - Estilo: Cinematic, dramatic lighting, premium athletic editorial.
        - POSES: m4 = Entrenando duro; m8 = Atleta dinámico; m12 = Héroe estático/Portada.
     5. "mental": Cambio de mentalidad estoico (en ESPAÑOL).
     6. "risks" (m0): Riesgos potenciales (en ESPAÑOL).
@@ -376,45 +377,13 @@ export async function generateInsightsV2(
  */
 export async function generateInsightsFromImage(
   params: AnalysisParams
-): Promise<InsightsResult> {
+): Promise<InsightsResult | AnalysisOutput> {
   const flags = getFeatureFlags();
 
-  // If NB Pro is enabled, use v2 and convert back to v1 for compatibility
+  // Premium paths must persist the full v2 object. The image pipeline depends on
+  // user_visual_anchor and style_profile for identity preservation.
   if (flags.FF_NB_PRO || flags.FF_IDENTITY_CHAIN) {
-    const v2Result = await generateInsightsV2(params);
-
-    // Convert v2 to v1 format for backward compatibility
-    return {
-      insightsText: v2Result.insightsText,
-      timeline: {
-        m0: {
-          ...v2Result.timeline.m0,
-          stats: v2Result.timeline.m0.stats,
-          risks: v2Result.timeline.m0.risks || [],
-          expectations: v2Result.timeline.m0.expectations || [],
-        },
-        m4: {
-          ...v2Result.timeline.m4,
-          stats: v2Result.timeline.m4.stats,
-          risks: [],
-          expectations: [],
-        },
-        m8: {
-          ...v2Result.timeline.m8,
-          stats: v2Result.timeline.m8.stats,
-          risks: [],
-          expectations: [],
-        },
-        m12: {
-          ...v2Result.timeline.m12,
-          stats: v2Result.timeline.m12.stats,
-          risks: [],
-          expectations: [],
-        },
-      },
-      overlays: v2Result.overlays || {},
-      diagnostic: v2Result.diagnostic,
-    };
+    return generateInsightsV2(params);
   }
 
   // Legacy path

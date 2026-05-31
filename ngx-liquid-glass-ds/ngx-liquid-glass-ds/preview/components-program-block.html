@@ -1,0 +1,75 @@
+<!-- @dsCard group="Components" -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/>
+<title>Program block · exercise tile</title>
+<link rel="stylesheet" href="../tokens-brand.css"/>
+<link rel="stylesheet" href="../tokens-lg.css"/>
+<link rel="stylesheet" href="../components.css"/>
+<style>
+  html, body { margin: 0; padding: 0; background: #04021A; }
+  body {
+    padding: 24px;
+    color: var(--ngx-white);
+    font-family: var(--font-text);
+    min-height: 280px;
+    background:
+      radial-gradient(40% 60% at 80% 10%, rgba(109,0,255,0.18) 0%, transparent 60%),
+      radial-gradient(30% 40% at 10% 95%, rgba(109,0,255,0.12) 0%, transparent 60%),
+      #04021A;
+    position: relative;
+  }
+  body::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: url("../assets/textures/texture-pattern-navy.png");
+    background-size: 280px; opacity: 0.05;
+    mix-blend-mode: screen; pointer-events: none;
+  }
+  body > * { position: relative; z-index: 1; }
+  .card-label {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 9.5px; letter-spacing: 0.20em; text-transform: uppercase;
+    color: var(--ngx-purple-300);
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-label::before {
+    content: ""; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--ngx-purple); box-shadow: 0 0 8px var(--ngx-purple);
+  }
+  .demo-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .demo-col { display: flex; flex-direction: column; gap: 12px; }
+  .note { font-size: 11px; color: var(--ngx-gray-400); margin-top: 12px; line-height: 1.5; }
+  .swatch-note {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ngx-gray-400);
+  }
+</style></head>
+<body>
+
+<div class="card-label">PROGRAM BLOCK</div>
+<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+  <div class="ngx-block ngx-block--strength">
+    <div class="ngx-block__tag"><span>Strength · A</span><span style="color: rgba(255,255,255,0.30)">⋮⋮</span></div>
+    <div class="ngx-block__name">Back squat</div>
+    <div class="ngx-block__meta"><b>5 × 5</b> @ 85 kg</div>
+  </div>
+  <div class="ngx-block ngx-block--cardio">
+    <div class="ngx-block__tag"><span>Cardio · Z2</span><span style="color: rgba(255,255,255,0.30)">⋮⋮</span></div>
+    <div class="ngx-block__name">Zone-2 ride</div>
+    <div class="ngx-block__meta"><b>90'</b> · HR 130–140</div>
+  </div>
+  <div class="ngx-block ngx-block--mobility">
+    <div class="ngx-block__tag"><span>Mobility</span><span style="color: rgba(255,255,255,0.30)">⋮⋮</span></div>
+    <div class="ngx-block__name">T-spine flow</div>
+    <div class="ngx-block__meta">30' · zona 1</div>
+  </div>
+  <div class="ngx-block ngx-block--strength ngx-block--dragging">
+    <div class="ngx-block__tag"><span>PR attempt</span><span style="color: rgba(255,255,255,0.30)">⋮⋮</span></div>
+    <div class="ngx-block__name">Back squat</div>
+    <div class="ngx-block__meta"><b>3 × 1</b> @ 87.5 kg</div>
+  </div>
+</div>
+<div class="note">Drag-and-drop primitive for the programs editor. Left accent stripe carries the modality: purple=strength, blue=cardio, teal=mobility, amber=accessory. Dragging = full purple glass + −1° rotation.</div>
+
+</body></html>

@@ -1,6 +1,8 @@
+/* eslint-disable @next/next/no-img-element */
 import { ImageResponse } from "next/og";
 import { getDb } from "@/lib/firebaseAdmin";
 import { getSignedUrl } from "@/lib/storage";
+import { getSeasonMilestoneLabel } from "@/lib/seasonMilestones";
 
 export const runtime = "nodejs";
 export const revalidate = 3600; // 1 hora de cache ISR para mejor performance
@@ -27,13 +29,14 @@ async function getSessionImages(shareId: string): Promise<SessionImages | null> 
     assets?: { images?: Record<string, string> };
     input?: { goal?: string; level?: string };
     shareOriginal?: boolean;
-    shareScope?: { shareOriginal?: boolean };
+    shareScope?: { shareOriginal?: boolean; shareImages?: boolean };
   } | undefined;
   if (!data) return null;
 
   const allowOriginal = data.shareScope?.shareOriginal ?? !!data.shareOriginal;
+  const allowImages = data.shareScope?.shareImages ?? false;
   const originalPath = allowOriginal ? data.photo?.originalStoragePath : undefined;
-  const m12Path = data.assets?.images?.m12;
+  const m12Path = allowImages ? data.assets?.images?.m12 : undefined;
 
   const [originalUrl, m12Url] = await Promise.all([
     originalPath ? getSignedUrl(originalPath, { expiresInSeconds: 604800 }) : Promise.resolve(undefined),
@@ -58,15 +61,18 @@ async function getBestImage(shareId: string) {
     assets?: { images?: Record<string, string> };
     input?: { goal?: string; level?: string };
     shareOriginal?: boolean;
-    shareScope?: { shareOriginal?: boolean };
+    shareScope?: { shareOriginal?: boolean; shareImages?: boolean };
   } | undefined;
   if (!data) return null;
 
   const allowOriginal = data.shareScope?.shareOriginal ?? !!data.shareOriginal;
+  const allowImages = data.shareScope?.shareImages ?? false;
   const targetPath =
-    data.assets?.images?.m12 ||
-    data.assets?.images?.m8 ||
-    data.assets?.images?.m4 ||
+    (allowImages
+      ? data.assets?.images?.m12 ||
+        data.assets?.images?.m8 ||
+        data.assets?.images?.m4
+      : undefined) ||
     (allowOriginal ? data.photo?.originalStoragePath : undefined);
   if (!targetPath) return null;
   const imageUrl = await getSignedUrl(targetPath, { expiresInSeconds: 604800 }); // 7 días para social media crawlers
@@ -79,7 +85,7 @@ async function getBestImage(shareId: string) {
 
 /**
  * PR-3: Split-Screen OG Image
- * HOY (m0 desaturated) vs 12 MESES (m12 vibrant)
+ * Punto de partida (m0 desaturated) vs Season 3 (m12 vibrant)
  */
 function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel: string }) {
   return (
@@ -93,7 +99,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
         overflow: "hidden",
       }}
     >
-      {/* Left side - HOY (m0) */}
+      {/* Left side - m0 */}
       <div
         style={{
           width: "50%",
@@ -105,7 +111,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
         {images.originalUrl && (
           <img
             src={images.originalUrl}
-            alt="Hoy"
+            alt={getSeasonMilestoneLabel("m0")}
             style={{
               width: "100%",
               height: "100%",
@@ -121,7 +127,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
             background: "linear-gradient(90deg, transparent 70%, #050505 100%)",
           }}
         />
-        {/* HOY label */}
+        {/* Baseline label */}
         <div
           style={{
             position: "absolute",
@@ -150,7 +156,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
               marginTop: 8,
             }}
           >
-            HOY
+            {getSeasonMilestoneLabel("m0")}
           </span>
         </div>
       </div>
@@ -169,7 +175,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
         }}
       />
 
-      {/* Right side - 12 MESES (m12) */}
+      {/* Right side - m12 */}
       <div
         style={{
           width: "50%",
@@ -181,7 +187,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
         {images.m12Url && (
           <img
             src={images.m12Url}
-            alt="12 Meses"
+            alt={getSeasonMilestoneLabel("m12")}
             style={{
               width: "100%",
               height: "100%",
@@ -196,7 +202,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
             background: "linear-gradient(90deg, #050505 0%, transparent 30%)",
           }}
         />
-        {/* 12 MESES label */}
+        {/* Season 3 label */}
         <div
           style={{
             position: "absolute",
@@ -215,7 +221,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
               fontWeight: 600,
             }}
           >
-            TU MEJOR VERSIÓN
+            VISIÓN COMPLETA
           </span>
           <span
             style={{
@@ -226,7 +232,7 @@ function SplitScreenOG({ images, goalLabel }: { images: SessionImages; goalLabel
               marginTop: 8,
             }}
           >
-            12 MESES
+            {getSeasonMilestoneLabel("m12")}
           </span>
         </div>
       </div>
@@ -388,7 +394,7 @@ export async function GET(_: Request, context: { params: Promise<{ shareId: stri
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
                 <div style={{ fontSize: 20, letterSpacing: "0.35em", color: "#9E7BFF", fontWeight: 700 }}>NGX TRANSFORM</div>
-                <div style={{ fontSize: 14, color: "#8C8C8C", marginTop: 6 }}>Visual fitness premium · Gemini + NanoBanana</div>
+                <div style={{ fontSize: 14, color: "#8C8C8C", marginTop: 6 }}>Diagnóstico visual de salud muscular · Dirección 12 semanas</div>
               </div>
               <div
                 style={{
@@ -414,9 +420,9 @@ export async function GET(_: Request, context: { params: Promise<{ shareId: stri
                   maxWidth: 720,
                 }}
               >
-                <div style={{ fontSize: 54, fontWeight: 800, lineHeight: 1.05 }}>Tu futuro físico en 12 meses</div>
+                <div style={{ fontSize: 54, fontWeight: 800, lineHeight: 1.05 }}>Tu diagnóstico visual</div>
                 <div style={{ fontSize: 20, color: "#B3B3B3", marginTop: 12 }}>
-                  Análisis biométrico, proyección 0/4/8/12m y visuales cinematográficos listos para compartir.
+                  Visualización aspiracional, lectura muscular inicial y dirección HYBRID.
                 </div>
               </div>
               <div style={{ textAlign: "right" }}>

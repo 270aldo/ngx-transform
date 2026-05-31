@@ -64,7 +64,7 @@ export function WizardUploadCard({
         className={cn(
           "group relative mt-4 flex min-h-[280px] md:min-h-[360px] w-full flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed transition-all cursor-pointer",
           hasPreview
-            ? "border-[color:var(--ngx-border-active)] bg-[var(--ngx-purple)]/[0.05]"
+            ? "border-[color:var(--ngx-border-active)] bg-[var(--ngx-purple)]/[0.08]"
             : "border-[color:var(--ngx-border-subtle)] bg-white/[0.015] hover:border-white/[0.22] hover:bg-white/[0.03]"
         )}
       >
@@ -147,7 +147,7 @@ function PreviewState({ previewUrl }: { previewUrl: string }) {
             Puedes cambiarla antes de continuar al perfil corporal.
           </p>
         </div>
-        <div className="inline-flex items-center gap-2 rounded-full bg-[var(--ngx-purple)] px-4 py-2 text-xs font-bold text-white shadow-[var(--ngx-glow-primary)] whitespace-nowrap">
+        <div className="ngx-primary-cta inline-flex !min-h-0 px-4 py-2 text-xs whitespace-nowrap">
           <Upload size={14} />
           Cambiar foto
         </div>

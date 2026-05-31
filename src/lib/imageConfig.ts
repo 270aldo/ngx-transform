@@ -7,8 +7,8 @@
  * - Cost optimization strategies (standard vs batch)
  * - Identity Chain configuration
  *
- * Default image model: gemini-3.1-flash-image-preview (NanoBanana 2)
- * Pro image model:     gemini-3-pro-image-preview    (NanoBanana Pro, FF_NB_PRO=true)
+ * Standard image model: gemini-3.1-flash-image-preview (NanoBanana 2)
+ * Pro image model:      gemini-3-pro-image-preview    (NanoBanana Pro, FF_NB_PRO=true)
  */
 
 import { getFeatureFlags } from "./validators";
@@ -57,6 +57,15 @@ export const MODELS = {
 
 function resolveImageModel(ffNbProEnabled: boolean): string {
   const explicitImageModel = process.env.GEMINI_IMAGE_MODEL?.trim();
+  if (
+    ffNbProEnabled &&
+    (!explicitImageModel ||
+      explicitImageModel === MODELS.GEMINI_31_FLASH_IMAGE ||
+      explicitImageModel === MODELS.GEMINI_25_FLASH_IMAGE)
+  ) {
+    return MODELS.GEMINI_3_PRO_IMAGE;
+  }
+
   if (explicitImageModel) {
     return explicitImageModel;
   }
@@ -97,14 +106,14 @@ export const ENVIRONMENT_BY_STEP: Record<NanoStep, {
     setting: "industrial gym with exposed brick, heavy weights, chalk dust in air",
   },
   m8: {
-    description: "lifestyle setting",
-    mood: "earned confidence, visible progress",
-    setting: "premium fitness studio, natural light, modern equipment",
+    description: "dynamic outdoor athletic setting during golden hour",
+    mood: "high athletic energy, absolute confidence, dynamic movement, premium athletic commercial vibe",
+    setting: "modern outdoor running track at sunrise, dramatic warm sunlight, soft natural sky background, training lanes blurred in shallow depth of field, natural environment",
   },
   m12: {
-    description: "elite training facility",
-    mood: "raw power, maximum intensity, sweat-drenched victory, peak visualization",
-    setting: "high-end dark gym with cinematic lighting, heavy iron plates, atmospheric haze, sweat, focus",
+    description: "premium editorial training space",
+    mood: "calm confidence, visible consistency, realistic week 12 peak",
+    setting: "high-end training studio with cinematic lighting, clean equipment, controlled atmosphere, focused posture",
   },
 };
 

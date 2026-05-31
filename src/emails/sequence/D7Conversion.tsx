@@ -29,13 +29,14 @@ export default function D7Conversion({
     process.env.NEXT_PUBLIC_APP_URL ||
     process.env.NEXT_PUBLIC_BASE_URL ||
     "https://transform.ngxgenesis.com";
-  // v12: anclaje directo a HybridOfferV2 (checkout MP visible al primer scroll)
+  // v12: anclaje directo al bloque HYBRID de diagnostico, no al checkout.
   const offerUrl = `${baseUrl}/s/${shareId}?section=offer#hybrid-offer`;
   const coachUrl =
     bookingUrl ||
     process.env.NEXT_PUBLIC_CALENDLY_URL ||
     process.env.NEXT_PUBLIC_BOOKING_URL ||
-    "https://calendly.com/ngx-genesis";
+    "";
+  const primaryUrl = coachUrl || offerUrl;
   const unsubscribeUrl = buildUnsubscribeUrl(baseUrl, shareId);
   const logoUrl = `${baseUrl}/images/brand/logo.svg`;
 
@@ -57,7 +58,9 @@ export default function D7Conversion({
               </Text>
 
               <Text className="text-neutral-300 leading-relaxed">
-                Tu transformación visual ya te mostró el potencial. Ahora toca ejecutar con un sistema real de 12 semanas.
+                Tu diagnóstico visual ya te dio una lectura inicial. Ahora toca
+                revisar si tiene sentido convertir esa dirección en un sistema
+                HYBRID de 12 semanas.
               </Text>
 
               <Section className="my-6 border border-violet-500/35 rounded-xl p-5 bg-violet-900/10">
@@ -67,7 +70,7 @@ export default function D7Conversion({
                 <Text className="text-neutral-200 text-sm m-0 mb-2">• Sistema GENESIS que adapta tu plan cada semana</Text>
                 <Text className="text-neutral-200 text-sm m-0 mb-2">• Coach humano para validar ejecución y adherencia</Text>
                 <Text className="text-neutral-200 text-sm m-0 mb-2">• 3 fases progresivas con checkpoints semanales</Text>
-                <Text className="text-neutral-200 text-sm m-0">• Tracking de fuerza, energía y progreso medible</Text>
+                <Text className="text-neutral-200 text-sm m-0">• Tracking de fuerza, energía y adherencia sin prometer resultados</Text>
               </Section>
 
               <Section className="my-6 border border-white/10 rounded-xl p-5 bg-neutral-800/50">
@@ -83,26 +86,29 @@ export default function D7Conversion({
 
               <Section className="text-center my-8">
                 <Button
-                  href={offerUrl}
+                  href={primaryUrl}
                   className="bg-[#6D00FF] text-white px-8 py-4 rounded-xl font-semibold text-base"
                 >
-                  Entrar a NGX HYBRID hoy
+                  Agendar diagnóstico HYBRID
                 </Button>
               </Section>
 
-              <Section className="text-center my-5">
-                <Button
-                  href={coachUrl}
-                  className="bg-white text-black px-8 py-4 rounded-xl font-semibold text-base"
-                >
-                  Agendar llamada con el equipo
-                </Button>
-              </Section>
+              {coachUrl ? (
+                <Section className="text-center my-5">
+                  <Button
+                    href={offerUrl}
+                    className="bg-white text-black px-8 py-4 rounded-xl font-semibold text-base"
+                  >
+                    Ver mi brief HYBRID
+                  </Button>
+                </Section>
+              ) : null}
 
               <Section className="text-center mt-4">
                 <Text className="text-xs text-neutral-500 m-0">
                   En la página también encontrarás un video corto del fundador
-                  explicando cómo funciona el sistema. Pago seguro vía Mercado Pago.
+                  explicando cómo funciona el sistema y la opción de recibir tu
+                  brief por correo.
                 </Text>
               </Section>
 

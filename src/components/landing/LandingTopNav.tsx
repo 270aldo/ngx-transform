@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useLandingConfig } from "./LandingProvider";
@@ -16,41 +17,37 @@ export function LandingTopNav() {
     <>
       <header className="fixed z-50 pt-5 md:pt-6 top-0 right-0 left-0">
         <div className="max-w-6xl mx-auto px-4">
-          <nav className="landing-surface rounded-full border border-white/10 px-3 py-2.5 md:px-4 flex items-center justify-between shadow-[0_12px_46px_rgba(0,0,0,0.42)] backdrop-blur-2xl">
+          <nav className="landing-surface rounded-full px-3 py-2.5 md:px-4 flex items-center justify-between backdrop-blur-2xl">
             <Link href="/" className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#6D00FF] to-[#5B21B6] flex items-center justify-center shadow-[0_0_16px_rgba(109,0,255,0.35)]">
-                <span className="text-white text-[11px] font-body font-bold leading-none">N</span>
-              </div>
+              <Image
+                src="/images/brand/ngx-mark-purple.png"
+                alt="NGX"
+                width={30}
+                height={30}
+                className="h-7 w-7 object-contain"
+                priority
+              />
               <div className="leading-none">
-                <span className="text-white font-body font-semibold text-sm tracking-[0.04em] uppercase">
+                <span className="font-display text-sm font-black uppercase tracking-[0.14em] text-white">
                   NGX <span className="text-[#B98CFF]">Transform</span>
                 </span>
-                <p className="hidden md:block text-[10px] uppercase tracking-[0.24em] text-slate-500 mt-1">by Genesis</p>
+                <p className="hidden md:block mt-1 font-mono text-[9px] uppercase tracking-[0.18em] text-slate-500">by Genesis</p>
               </div>
             </Link>
 
-            <div className="hidden md:flex items-center gap-1 rounded-full bg-white/[0.045] p-1">
-              <a href="#como-funciona" className="rounded-full px-4 py-2 text-xs font-medium text-white/55 transition-colors hover:bg-white/10 hover:text-white">Cómo Funciona</a>
-              <a href="#que-recibes" className="rounded-full px-4 py-2 text-xs font-medium text-white/55 transition-colors hover:bg-white/10 hover:text-white">Qué Recibes</a>
-              <a href="#reporte-ejemplo" className="hidden lg:inline-flex rounded-full px-4 py-2 text-xs font-medium text-white/55 transition-colors hover:bg-white/10 hover:text-white">Ejemplo</a>
-              <a href="#faq" className="rounded-full px-4 py-2 text-xs font-medium text-white/55 transition-colors hover:bg-white/10 hover:text-white">FAQ</a>
+            <div className="hidden md:flex items-center gap-1 rounded-full border border-white/[0.07] bg-white/[0.055] p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.07)]">
+              <a href="#como-funciona" className="rounded-full px-4 py-2 text-xs font-medium text-white/58 transition-colors hover:bg-white/[0.09] hover:text-white">Cómo Funciona</a>
+              <a href="#que-recibes" className="rounded-full px-4 py-2 text-xs font-medium text-white/58 transition-colors hover:bg-white/[0.09] hover:text-white">Qué Recibes</a>
+              <a href="#reporte-ejemplo" className="hidden lg:inline-flex rounded-full px-4 py-2 text-xs font-medium text-white/58 transition-colors hover:bg-white/[0.09] hover:text-white">Ejemplo</a>
+              <a href="#puente" className="hidden lg:inline-flex rounded-full px-4 py-2 text-xs font-medium text-white/58 transition-colors hover:bg-white/[0.09] hover:text-white">HYBRID</a>
+              <a href="#faq" className="rounded-full px-4 py-2 text-xs font-medium text-white/58 transition-colors hover:bg-white/[0.09] hover:text-white">FAQ</a>
             </div>
 
             <div className="flex items-center gap-3">
               <Link
                 href="/wizard"
                 onClick={() => trackCta("topnav_primary", hero.primaryCta.intent, hero.primaryCta.label)}
-                className="hidden md:inline-flex h-11 items-center justify-center rounded-full px-6 text-xs font-bold font-body text-white transition-all duration-200 hover:-translate-y-0.5"
-                style={{
-                  backgroundColor: "var(--ngx-purple)",
-                  boxShadow: "var(--ngx-glow-primary)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = "var(--ngx-glow-primary-strong)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = "var(--ngx-glow-primary)";
-                }}
+                className="ngx-primary-cta hidden !min-h-0 px-6 py-3 text-xs md:inline-flex"
               >
                 {hero.primaryCta.label}
               </Link>
@@ -83,10 +80,11 @@ export function LandingTopNav() {
           <div className="flex flex-col items-center justify-center h-full gap-8">
             <a href="#como-funciona" className="text-2xl text-white font-display" onClick={closeMenu}>Cómo Funciona</a>
             <a href="#que-recibes" className="text-2xl text-white font-display" onClick={closeMenu}>Qué Recibes</a>
+            <a href="#puente" className="text-2xl text-white font-display" onClick={closeMenu}>HYBRID</a>
             <a href="#faq" className="text-2xl text-white font-display" onClick={closeMenu}>FAQ</a>
             <Link
               href="/wizard"
-              className="px-8 py-4 rounded-full bg-[#6D00FF] text-white font-semibold text-lg font-body"
+              className="ngx-primary-cta inline-flex px-8 py-4 text-lg"
               onClick={() => {
                 trackCta("mobile_menu_primary", hero.primaryCta.intent, hero.primaryCta.label);
                 closeMenu();

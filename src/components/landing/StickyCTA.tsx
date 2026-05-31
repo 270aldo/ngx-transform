@@ -12,7 +12,6 @@ import { useLandingConfig } from "./LandingProvider";
 export function StickyCTA() {
   const { config } = useLandingConfig();
   const { hero } = config.copy;
-  const { theme } = config;
 
   const [isVisible, setIsVisible] = useState(false);
 
@@ -51,16 +50,9 @@ export function StickyCTA() {
       <div className="bg-[#030005]/95 backdrop-blur-xl border-t border-white/10 px-4 py-3 safe-area-inset-bottom">
         <Link
           href="/auth?next=/wizard"
-          className="group relative flex items-center justify-center gap-2 w-full px-6 py-3.5 rounded-full text-white text-sm font-semibold tracking-wide overflow-hidden transition-all duration-300 active:scale-[0.98]"
-          style={{
-            backgroundColor: theme.primary,
-            boxShadow: `0 0 30px -5px ${theme.primary}99`,
-          }}
+          className="ngx-primary-cta group relative flex w-full overflow-hidden px-6 py-3.5 text-sm"
         >
-          {/* Shine effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out" />
-
-          <span className="relative">{hero.cta}</span>
+          <span className="relative">{hero.primaryCta.label}</span>
           <ArrowRight className="relative w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
         </Link>
 

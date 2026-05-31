@@ -19,7 +19,7 @@
  * Controlled by feature flags
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
 import type { InsightsResult, TimelineEntry } from "@/types/ai";
@@ -37,12 +37,20 @@ import { SocialCounter } from "./SocialCounter";
 import { AgentBridgeCTA } from "./AgentBridgeCTA";
 import { ReferralCard } from "./ReferralCard";
 import { cn } from "@/lib/utils";
+import { getSeasonMilestoneLabel } from "@/lib/seasonMilestones";
 
 export type TimelineStep = "m0" | "m4" | "m8" | "m12";
 
 const STEPS: TimelineStep[] = ["m0", "m4", "m8", "m12"];
 
 const STEP_LABELS: Record<TimelineStep, string> = {
+  m0: getSeasonMilestoneLabel("m0"),
+  m4: getSeasonMilestoneLabel("m4"),
+  m8: getSeasonMilestoneLabel("m8"),
+  m12: getSeasonMilestoneLabel("m12"),
+};
+
+const STEP_SHORT_LABELS: Record<TimelineStep, string> = {
   m0: "HOY",
   m4: "MES 4",
   m8: "MES 8",
@@ -57,6 +65,7 @@ interface TransformationViewer2Props {
   };
   shareId: string;
   isReady?: boolean;
+  surfaceMode?: "default" | "lead-magnet";
   letterFromFuture?: string;
   // v2.1 Viral props
   userName?: string;
@@ -84,6 +93,7 @@ export function TransformationViewer2({
   imageUrls,
   shareId,
   isReady = true,
+  surfaceMode = "default",
   letterFromFuture,
   // v2.1 Viral props
   userName,
@@ -93,55 +103,60 @@ export function TransformationViewer2({
   sessionId,
   featureFlags = {},
 }: TransformationViewer2Props) {
+  const isLeadMagnet = surfaceMode === "lead-magnet";
+
   // Feature flags with defaults
   const {
     FF_DRAMATIC_REVEAL = true,
     FF_SOCIAL_COUNTER = true,
     FF_AGENT_BRIDGE_CTA = true,
-    FF_SHARE_TO_UNLOCK = true,
+    FF_SHARE_TO_UNLOCK = false,
     FF_SHARE_UNLOCK,
     FF_REFERRAL_TRACKING = true,
   } = featureFlags;
-  const shareUnlockEnabled = FF_SHARE_UNLOCK ?? FF_SHARE_TO_UNLOCK;
+  // The dramatic reveal is the signature "wow" moment. It needs the full
+  // generated chain (m4/m8/m12) to morph through; only enable it once those
+  // images exist so we never reveal blank frames. In lead-magnet mode it is
+  // the core payoff, so it runs there too — not only on the dashboard surface.
+  const hasFullRevealChain = !!(
+    imageUrls.images?.m4 &&
+    imageUrls.images?.m8 &&
+    imageUrls.images?.m12
+  );
+  const allowDramaticReveal =
+    FF_DRAMATIC_REVEAL && hasFullRevealChain && (!isLeadMagnet || isReady);
+  const allowCinematicAutoplay = !isLeadMagnet && !FF_DRAMATIC_REVEAL;
+  const shareUnlockEnabled =
+    !isLeadMagnet && (FF_SHARE_UNLOCK ?? FF_SHARE_TO_UNLOCK);
 
   // State
-  const [showDramaticReveal, setShowDramaticReveal] = useState(FF_DRAMATIC_REVEAL);
+  const [showDramaticReveal, setShowDramaticReveal] = useState(() => {
+    if (typeof window === "undefined") return allowDramaticReveal;
+    return allowDramaticReveal && !localStorage.getItem(`ngx-dramatic-seen-${shareId}`);
+  });
   const [showShareModal, setShowShareModal] = useState(false);
-  const [unlockedContent, setUnlockedContent] = useState<string[]>([]);
-  const [showCinematic, setShowCinematic] = useState(!FF_DRAMATIC_REVEAL); // Only show if no dramatic reveal
+  const [unlockedContent, setUnlockedContent] = useState<string[]>(() => {
+    if (typeof window === "undefined") return [];
+    const unlocked = localStorage.getItem(`ngx-unlocked-${shareId}`);
+    if (!unlocked) return [];
+    try {
+      return JSON.parse(unlocked);
+    } catch {
+      localStorage.removeItem(`ngx-unlocked-${shareId}`);
+      return [];
+    }
+  });
+  const [showCinematic, setShowCinematic] = useState(() => {
+    if (typeof window === "undefined") return allowCinematicAutoplay;
+    return allowCinematicAutoplay && !localStorage.getItem(`ngx-cinematic-seen-${shareId}`);
+  }); // Only show if no dramatic reveal
   const [currentStep, setCurrentStep] = useState<TimelineStep>("m0");
   const [showLetter, setShowLetter] = useState(false);
   const [showNav, setShowNav] = useState(false);
-  const [hasSeenCinematic, setHasSeenCinematic] = useState(false);
-
-  // Check if user has already seen the dramatic reveal / cinematic
-  useEffect(() => {
-    const dramaticKey = `ngx-dramatic-seen-${shareId}`;
-    const cinematicKey = `ngx-cinematic-seen-${shareId}`;
-    const unlockKey = `ngx-unlocked-${shareId}`;
-
-    // Check dramatic reveal
-    if (localStorage.getItem(dramaticKey)) {
-      setShowDramaticReveal(false);
-    }
-
-    // Check cinematic
-    if (localStorage.getItem(cinematicKey)) {
-      setShowCinematic(false);
-      setHasSeenCinematic(true);
-    }
-
-    // Check unlocked content
-    const unlocked = localStorage.getItem(unlockKey);
-    if (unlocked) {
-      try {
-        setUnlockedContent(JSON.parse(unlocked));
-      } catch {
-        // Invalid JSON, reset
-        localStorage.removeItem(unlockKey);
-      }
-    }
-  }, [shareId]);
+  const [hasSeenCinematic, setHasSeenCinematic] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return !!localStorage.getItem(`ngx-cinematic-seen-${shareId}`);
+  });
 
   // Get current data
   const currentEntry = ai.timeline[currentStep] as TimelineEntry;
@@ -195,6 +210,34 @@ export function TransformationViewer2({
     setShowNav(false);
   };
 
+  // Touch swipe between milestones (mobile). Clamped to [m0..m12] — unlike the
+  // bottom "next" arrow, a swipe never navigates away to the dashboard.
+  const touchStartXRef = useRef<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
+  const stepBy = (dir: 1 | -1) => {
+    const i = STEPS.indexOf(currentStep);
+    const next = i + dir;
+    if (next >= 0 && next < STEPS.length) setCurrentStep(STEPS[next]);
+  };
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    touchStartXRef.current = t.clientX;
+    touchStartYRef.current = t.clientY;
+  };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const startX = touchStartXRef.current;
+    const startY = touchStartYRef.current;
+    touchStartXRef.current = null;
+    touchStartYRef.current = null;
+    if (startX === null || startY === null) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - startX;
+    const dy = t.clientY - startY;
+    // Horizontal intent only: ignore mostly-vertical scrolls and tiny moves.
+    if (Math.abs(dx) < 56 || Math.abs(dx) <= Math.abs(dy)) return;
+    stepBy(dx < 0 ? 1 : -1); // swipe left → next, swipe right → prev
+  };
+
   const handlePrevStep = () => {
     const currentIndex = STEPS.indexOf(currentStep);
     if (currentIndex > 0) {
@@ -218,8 +261,8 @@ export function TransformationViewer2({
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `Mi Transformación ${STEP_LABELS[milestone]} - NGX`,
-          text: `Mira mi transformación proyectada para ${STEP_LABELS[milestone]}`,
+          title: `Mi diagnóstico visual ${STEP_LABELS[milestone]} - NGX`,
+          text: `Mira mi diagnóstico visual de salud muscular en ${STEP_LABELS[milestone]}`,
           url: window.location.href,
         });
       } catch (err) {
@@ -240,7 +283,7 @@ export function TransformationViewer2({
   };
 
   // Show dramatic reveal first (v2.1)
-  if (showDramaticReveal && isReady && FF_DRAMATIC_REVEAL) {
+  if (showDramaticReveal && isReady && allowDramaticReveal) {
     return (
       <DramaticReveal
         images={{
@@ -257,7 +300,7 @@ export function TransformationViewer2({
   }
 
   // Show cinematic on first view (only if ready and no dramatic reveal)
-  if (showCinematic && isReady && !FF_DRAMATIC_REVEAL) {
+  if (showCinematic && isReady && allowCinematicAutoplay) {
     return (
       <CinematicAutoplay
         images={cinematicImages}
@@ -293,34 +336,41 @@ export function TransformationViewer2({
               )}
             </button>
 
-            {/* Center: Current milestone */}
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-bold tabular-nums text-white/55">
-                {currentIndex + 1}/{STEPS.length}
-              </span>
-              <span
-                className="px-3 py-1 rounded-full text-white text-sm font-bold tracking-[0.04em] uppercase"
-                style={{
-                  backgroundColor: "var(--ngx-purple)",
-                  boxShadow: "var(--ngx-glow-primary-soft)",
-                }}
-              >
-                {STEP_LABELS[currentStep]}
-              </span>
+            {/* Center: Segmented Timeline Navigation */}
+            <div className="flex items-center">
+              {/* On mobile we allow horizontal scroll so the 4 pills remain comfortable to tap */}
+              <div className="ngx-range-pills shadow-[var(--lg-glow-primary-soft)] border-[rgba(255,255,255,0.06)] bg-black/40 overflow-x-auto max-w-[68vw] sm:max-w-none snap-x snap-mandatory [-webkit-overflow-scrolling:touch]">
+                {STEPS.map((step) => {
+                  const isActive = step === currentStep;
+                  return (
+                    <button
+                      key={step}
+                      type="button"
+                      onClick={() => handleStepChange(step)}
+                      className={cn(
+                        "ngx-range-pill snap-center shrink-0 !px-3.5 sm:!px-5 !py-1.5 text-[10px] sm:text-[10.5px] !font-black tracking-[0.16em] uppercase cursor-pointer min-w-[58px] sm:min-w-0",
+                        isActive && "is-active"
+                      )}
+                    >
+                      {STEP_SHORT_LABELS[step]}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Right: Actions */}
             <div className="flex items-center gap-2">
               {isReady ? (
                 <>
-                  <SocialShareButton shareId={shareId} imageUrl={currentImage} />
+              <SocialShareButton shareId={shareId} imageUrl={currentImage} />
                 </>
               ) : (
                 <div className="ngx-glass-clear flex items-center gap-2 px-3 py-2 rounded-full text-sm text-white/65">
                   <Loader2 className="w-4 h-4 animate-spin" />
                 </div>
               )}
-              <BookingHeaderButton />
+              {!isLeadMagnet && <BookingHeaderButton />}
             </div>
           </div>
         </header>
@@ -385,7 +435,11 @@ export function TransformationViewer2({
         </AnimatePresence>
 
         {/* Main Content */}
-        <main className="pt-16">
+        <main
+          className="pt-16 touch-pan-y"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           <AnimatePresence mode="wait">
             <motion.div
               key={currentStep}
@@ -406,8 +460,13 @@ export function TransformationViewer2({
                 baselineStats={baselineStats}
                 currentImage={currentImage}
                 originalImage={originalImage}
-                onShare={handleShare}
-                onShowLetter={currentStep === "m12" ? () => setShowLetter(true) : undefined}
+                surfaceMode={surfaceMode}
+                onShare={isLeadMagnet ? undefined : handleShare}
+                onShowLetter={
+                  !isLeadMagnet && currentStep === "m12"
+                    ? () => setShowLetter(true)
+                    : undefined
+                }
               />
             </motion.div>
           </AnimatePresence>
@@ -442,36 +501,37 @@ export function TransformationViewer2({
         </div>
       </section>
 
-      {/* v2.1 Viral Section */}
-      <div className="px-6 py-8 space-y-8" style={{ background: "linear-gradient(to top, var(--ngx-bg-mid), var(--ngx-bg-end))" }}>
-        {/* Social Counter */}
-        {FF_SOCIAL_COUNTER && (
-          <div className="text-center">
-            <SocialCounter variant="results" sessionId={sessionId} />
-          </div>
-        )}
+      {!isLeadMagnet && (
+        <div className="px-6 py-8 space-y-8 border-t border-white/[0.08] backdrop-blur-xl bg-[var(--ngx-surface-glass)]">
+          {/* Social Counter */}
+          {FF_SOCIAL_COUNTER && (
+            <div className="text-center">
+              <SocialCounter variant="results" sessionId={sessionId} />
+            </div>
+          )}
 
-        {/* Agent Bridge CTA (replaces BookingCTA when enabled) */}
-        {FF_AGENT_BRIDGE_CTA && userProfile ? (
-          <AgentBridgeCTA
-            userProfile={userProfile}
-            shareId={shareId}
-            sessionId={sessionId}
-          />
-        ) : (
-          <BookingCTA />
-        )}
+          {/* Agent Bridge CTA (replaces BookingCTA when enabled) */}
+          {FF_AGENT_BRIDGE_CTA && userProfile ? (
+            <AgentBridgeCTA
+              userProfile={userProfile}
+              shareId={shareId}
+              sessionId={sessionId}
+            />
+          ) : (
+            <BookingCTA />
+          )}
 
-        {/* Referral Card */}
-        {FF_REFERRAL_TRACKING && referralCode && (
-          <ReferralCard
-            referralCode={referralCode}
-            referralCount={referralCount}
-            shareId={shareId}
-            sessionId={sessionId}
-          />
-        )}
-      </div>
+          {/* Referral Card */}
+          {FF_REFERRAL_TRACKING && referralCode && (
+            <ReferralCard
+              referralCode={referralCode}
+              referralCount={referralCount}
+              shareId={shareId}
+              sessionId={sessionId}
+            />
+          )}
+        </div>
+      )}
 
       {/* Letter From Future Modal */}
       <LetterFromFuture

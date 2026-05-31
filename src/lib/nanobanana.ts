@@ -151,15 +151,10 @@ function buildRequestBody(params: {
       },
     ],
     generationConfig: {
-      // Only include imageConfig if we have non-default values
-      ...(params.aspectRatio || params.imageSize
-        ? {
-          imageConfig: {
-            aspectRatio: params.aspectRatio || "4:5",
-            imageSize: params.imageSize || "2K",
-          },
-        }
-        : {}),
+      imageConfig: {
+        aspectRatio: params.aspectRatio || "4:5",
+        imageSize: params.imageSize || "2K",
+      },
     },
     safetySettings: [
       { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },

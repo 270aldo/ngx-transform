@@ -4,6 +4,14 @@ import { useEffect } from "react";
 
 export function useScrollAnimations() {
   useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const elements = document.querySelectorAll(
+        ".animate-on-scroll, .animate-on-scroll-left, .animate-on-scroll-right, .animate-on-scroll-scale"
+      );
+      elements.forEach((el) => el.classList.add("animated"));
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {

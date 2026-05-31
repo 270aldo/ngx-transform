@@ -1,0 +1,72 @@
+- generic [active] [ref=e1] [box=0,0,1435,1180]:
+  - generic [ref=e6] [cursor=pointer] [box=20,846,118,32]:
+    - button "Open Next.js Dev Tools" [ref=e7] [box=22,846,32,32]:
+      - img [ref=e8] [box=22,842,40,40]
+    - generic [ref=e11] [box=56,846,80,32]:
+      - button "Open issues overlay" [ref=e12] [box=64,846,42,32]:
+        - generic [ref=e13] [box=64,844,8,36]:
+          - generic [ref=e14] [box=64,832,8,36]: "0"
+          - generic [ref=e15] [box=64,844,8,36]: "1"
+        - generic [ref=e16] [box=74,844,32,36]: Issue
+      - button "Collapse issues badge" [ref=e17] [box=108,850,24,24]:
+        - img [ref=e18] [box=114,856,12,12]
+  - main [ref=e20] [box=0,0,1435,1180]:
+    - generic [ref=e21] [box=0,0,1435,1180]:
+      - generic [ref=e23] [box=142,24,1152,97]:
+        - button "Atrás" [ref=e24] [box=159,53,92,40]:
+          - img [ref=e25] [box=172,66,14,14]
+          - generic [ref=e27] [box=194,65,44,15]: Atrás
+        - generic [ref=e28] [box=270,39,655,67]:
+          - img [ref=e30] [box=281,64,18,18]
+          - generic [ref=e33] [box=322,39,603,67]:
+            - generic [ref=e34] [box=322,39,603,20]:
+              - generic [ref=e35] [box=322,41,109,15]: Wizard privado
+              - generic [ref=e36] [box=440,39,80,20]: Paso 2 / 4
+            - generic [ref=e38] [box=322,61,110,24]: Perfil corporal
+            - paragraph [ref=e39] [box=322,87,603,20]: Edad, medidas y parámetros físicos iniciales
+        - generic [ref=e40] [box=945,52,331,41]:
+          - generic [ref=e41] [box=952,59,59,27]: Foto
+          - generic [ref=e42] [box=1017,59,75,27]: Perfil
+          - generic [ref=e43] [box=1098,59,90,27]: Objetivo
+          - generic [ref=e44] [box=1195,59,75,27]: Cierre
+      - generic [ref=e45] [box=142,0,1152,1180]:
+        - button "Choose File" [ref=e46] [box=165,143,1,1]
+        - generic [ref=e60] [box=206,144,1024,924]:
+          - generic [ref=e61] [box=206,144,1024,221]:
+            - generic [ref=e62] [box=615,146,205,25]: Paso 2 · Perfil corporal
+            - heading "Le damos contexto a tu punto de partida." [level=2] [ref=e63] [box=473,191,489,106]
+            - paragraph [ref=e64] [box=382,313,672,52]: Estos datos no sustituyen una medición clínica. Sólo calibran el rango de la visualización para que no se sienta como un juguete genérico.
+          - generic [ref=e65] [box=206,397,1024,671]:
+            - generic [ref=e66] [box=206,397,475,528]:
+              - generic [ref=e67] [box=231,422,425,83]:
+                - generic [ref=e68] [box=248,439,391,27]
+                - slider [ref=e75] [cursor=pointer] [box=248,477,391,10]: "25"
+              - generic [ref=e76] [box=231,524,425,83]:
+                - generic [ref=e77] [box=248,541,391,27]
+                - slider [ref=e84] [cursor=pointer] [box=248,580,391,10]: "175"
+              - generic [ref=e85] [box=231,627,425,83]:
+                - generic [ref=e86] [box=248,644,391,27]
+                - slider [ref=e93] [cursor=pointer] [box=248,682,391,10]: "75"
+              - generic [ref=e95] [box=248,746,391,77]:
+                - text: Género biológico
+                - generic [ref=e96] [box=248,782,391,41]
+              - paragraph [ref=e99] [box=231,860,425,39]: Mientras más honestos sean estos datos, mejor se sentirá el puente entre la visualización y el roadmap.
+            - generic [ref=e100] [box=705,397,525,671]:
+              - generic [ref=e101] [box=705,397,525,504]:
+                - text: Tipo somático
+                - generic [ref=e102] [box=730,462,475,414]
+              - generic [ref=e131] [box=726,937,483,110]:
+                - text: Lectura inicial
+                - paragraph [ref=e132] [box=726,969,483,24]: Todavía no estamos diagnosticando.
+                - paragraph [ref=e133] [box=726,1001,483,46]: Sólo estamos construyendo una base más útil para que la visualización y el siguiente paso tengan coherencia entre sí.
+        - generic [ref=e134] [box=206,819,1024,61]:
+          - button "Anterior" [ref=e135] [box=219,834,116,31]:
+            - img [ref=e136] [box=235,843,14,14]
+            - text: Anterior
+          - generic [ref=e138] [box=621,840,177,20]:
+            - generic [ref=e139] [box=621,842,66,15]: Paso 2 / 4
+            - generic [ref=e141] [box=704,840,94,20]: Perfil corporal
+          - button "Siguiente" [ref=e142] [box=1084,832,132,35]:
+            - text: Siguiente
+            - img [ref=e143] [box=1183,843,14,14]
+  - alert [ref=e59] [box=-1,1179,1,1]

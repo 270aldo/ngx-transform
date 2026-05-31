@@ -25,6 +25,15 @@ export async function POST(req: NextRequest) {
 
     const payload = FeedbackSchema.parse(await req.json());
     const db = getDb();
+    const sessionRef = db.collection("sessions").doc(payload.shareId);
+    const sessionSnap = await sessionRef.get();
+    if (!sessionSnap.exists) {
+      return NextResponse.json(
+        { ok: false, error: "Session not found" },
+        { status: 404 }
+      );
+    }
+
     await db.collection("feedback").add({
       ...payload,
       createdAt: FieldValue.serverTimestamp(),
@@ -32,16 +41,13 @@ export async function POST(req: NextRequest) {
       ip: clientIP,
     });
 
-    await db
-      .collection("sessions")
-      .doc(payload.shareId)
-      .set(
-        {
-          lastActivityAt: FieldValue.serverTimestamp(),
-          npsScore: payload.score,
-        },
-        { merge: true }
-      );
+    await sessionRef.set(
+      {
+        lastActivityAt: FieldValue.serverTimestamp(),
+        npsScore: payload.score,
+      },
+      { merge: true }
+    );
 
     return NextResponse.json({ ok: true });
   } catch (error) {
@@ -55,4 +61,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "Internal server error" }, { status: 500 });
   }
 }
-
