@@ -1,5 +1,10 @@
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
+import { assertLegalConfigForProductionDeploy } from "./src/lib/legalConfig";
+
+// Fail a real production deploy (Vercel VERCEL_ENV=production) if the legal
+// responsible-party data is missing. No-op on local dev and CI.
+assertLegalConfigForProductionDeploy();
 
 const nextConfig: NextConfig = {
   output: "standalone",
