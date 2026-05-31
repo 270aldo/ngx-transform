@@ -216,7 +216,7 @@ export function HybridVoiceAgent({ shareId, className }: HybridVoiceAgentProps) 
   return (
     <section
       id="hybrid-voice-agent"
-      className={cn("relative mx-auto max-w-6xl px-4 py-10 scroll-mt-24", className)}
+      className={cn("relative mx-auto max-w-6xl px-4 py-14 md:py-20 scroll-mt-24", className)}
     >
       <div className="ngx-section-panel relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_72%_20%,rgba(109,0,255,0.10),transparent_36%)]" />

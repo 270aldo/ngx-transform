@@ -210,7 +210,7 @@ export function MuscleHealthScore({
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className={cn("w-full px-4 py-10", className)}
+      className={cn("w-full px-4 py-14 md:py-20", className)}
     >
       <div className="mx-auto max-w-5xl">
         <div className="ngx-section-panel">

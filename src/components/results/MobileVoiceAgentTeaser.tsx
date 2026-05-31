@@ -36,45 +36,57 @@ export function MobileVoiceAgentTeaser({
   return (
     <section
       className={cn(
-        "lg:hidden mx-auto max-w-6xl px-4 pt-6 pb-8",
+        "lg:hidden mx-auto max-w-6xl px-4 pt-10 pb-12",
         className
       )}
     >
-      <div
+      <span className="ngx-eyebrow !text-[10px] mb-3 block text-center tracking-[0.16em] text-[var(--ngx-purple-light)]">
+        Tu siguiente paso
+      </span>
+      <button
+        type="button"
         onClick={scrollToVoiceAgent}
-        className="group cursor-pointer ngx-glass relative overflow-hidden rounded-3xl border border-white/[0.08] p-5 active:scale-[0.985] transition-all duration-150"
+        aria-label="Hablar con GENESIS por voz"
+        className="group relative block w-full cursor-pointer overflow-hidden rounded-[28px] border border-[var(--ngx-purple)]/35 bg-[var(--ngx-purple)]/[0.06] p-6 text-left shadow-[var(--ngx-glow-primary-soft)] transition-all duration-150 active:scale-[0.98]"
       >
+        {/* Accent rail — signals this is the hero action, not just a card */}
+        <div
+          className="absolute inset-x-0 top-0 h-[3px]"
+          style={{
+            background:
+              "linear-gradient(90deg, var(--ngx-purple), var(--ngx-purple-light), var(--ngx-purple))",
+          }}
+        />
+
         <div className="flex items-start gap-4">
-          <div className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--ngx-purple)]/10 text-[var(--ngx-purple)]">
-            <Mic className="h-5 w-5" />
+          <div className="mt-0.5 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[var(--ngx-purple)]/30 bg-[var(--ngx-purple)]/15 text-[var(--ngx-purple-light)]">
+            <Mic className="h-6 w-6" />
           </div>
 
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
-              <span className="ngx-eyebrow !text-[10px] tracking-[0.14em] text-[var(--ngx-purple-light)]">
-                GENESIS · POR VOZ
-              </span>
-            </div>
+            <span className="ngx-eyebrow !text-[10px] tracking-[0.14em] text-[var(--ngx-purple-light)]">
+              GENESIS · POR VOZ
+            </span>
 
-            <h3 className="mt-1 text-[17px] font-bold leading-tight tracking-[-0.01em] text-white">
+            <h3 className="mt-1.5 text-[21px] font-black leading-[1.05] tracking-[-0.01em] text-white">
               Habla con GENESIS ahora
             </h3>
 
-            <p className="mt-1.5 text-[13px] leading-snug text-white/60">
+            <p className="mt-2 text-[14px] leading-snug text-white/65">
               Un agente de voz te entrevista en minutos, te explica HYBRID y
               clasifica tu siguiente paso.
             </p>
-
-            <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-white/[0.06] px-4 py-2 text-sm font-medium text-white transition-colors group-active:bg-white/[0.1]">
-              Empezar conversación por voz
-              <ArrowRight className="h-4 w-4 transition-transform group-active:translate-x-0.5" />
-            </div>
           </div>
         </div>
 
-        {/* Subtle purple glow accent on the right */}
-        <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[var(--ngx-purple)]/5 blur-3xl" />
-      </div>
+        <div className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-[var(--ngx-purple)] px-5 py-3.5 text-sm font-bold uppercase tracking-[0.08em] text-white shadow-[var(--ngx-glow-primary)] transition-transform group-active:scale-[0.98]">
+          Empezar conversación por voz
+          <ArrowRight className="h-4 w-4 transition-transform group-active:translate-x-0.5" />
+        </div>
+
+        {/* Ambient glow */}
+        <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-[var(--ngx-purple)]/15 blur-3xl" />
+      </button>
     </section>
   );
 }

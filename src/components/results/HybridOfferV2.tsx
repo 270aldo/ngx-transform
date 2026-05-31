@@ -327,7 +327,7 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
   return (
     <section
       id="hybrid-offer"
-      className="relative mx-auto max-w-6xl px-4 py-12 scroll-mt-24"
+      className="relative mx-auto max-w-6xl px-4 py-14 md:py-20 scroll-mt-24"
     >
       <motion.div
         initial={{ opacity: 0, y: 24 }}

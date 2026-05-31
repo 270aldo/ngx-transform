@@ -92,7 +92,7 @@ export function SeasonRoadmap() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.55, ease: "easeOut" }}
-      className="relative w-full px-4 py-12 scroll-mt-24"
+      className="relative w-full px-4 py-14 md:py-20 scroll-mt-24"
     >
       <div className="mx-auto max-w-6xl">
         <div className="ngx-section-panel relative overflow-hidden">

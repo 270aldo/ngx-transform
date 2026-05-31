@@ -136,7 +136,7 @@ export function TransformationSummary({
       initial={{ opacity: 0, y: 32 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.25 }}
-      className="relative w-full px-4 py-10 scroll-mt-24"
+      className="relative w-full px-4 py-14 md:py-20 scroll-mt-24"
     >
       <div className="mx-auto max-w-5xl">
         <div className="ngx-section-panel">
