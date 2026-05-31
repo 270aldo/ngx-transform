@@ -49,7 +49,11 @@ describe("lead magnet result copy policy", () => {
   });
 
   it("guards duplicate timeline URLs in the summary sequence", () => {
-    expect(summarySource).toContain("seenUrls");
-    expect(summarySource).toContain("seenUrls.has(item.url)");
+    // The summary must dedup timeline images so the same storage object never
+    // renders twice. The implementation normalizes signed URLs to their base
+    // path before comparing, which is stronger than raw-URL comparison.
+    expect(summarySource).toContain("seenBases");
+    expect(summarySource).toContain("seenBases.has(base)");
+    expect(summarySource).toContain("getBaseUrl(item.url)");
   });
 });
