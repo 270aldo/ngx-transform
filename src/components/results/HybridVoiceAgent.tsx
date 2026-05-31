@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  ArrowRight,
   CalendarDays,
   Mic,
   MicOff,
@@ -36,6 +37,22 @@ function parseClassification(text: string): FitClassification | null {
   if (text.includes("no_fit_ahora")) return "no_fit_ahora";
   return null;
 }
+
+/**
+ * The segmented next step per fit classification. This is the funnel routing:
+ * - listo  → NGX HYBRID (book a human diagnosis call)
+ * - claridad → NGX ASCEND / the offer section (self-serve path)
+ * - no fit → soft exit (the email nurture already has them)
+ */
+type RouteIntent = "hybrid" | "ascend" | "nurture";
+const CTA_BY_CLASSIFICATION: Record<
+  FitClassification,
+  { intent: RouteIntent; label: string }
+> = {
+  listo_para_diagnostico: { intent: "hybrid", label: "Agendar diagnóstico HYBRID" },
+  necesita_claridad: { intent: "ascend", label: "Ver opciones y siguiente paso" },
+  no_fit_ahora: { intent: "nurture", label: "Recibir mi brief por correo" },
+};
 
 async function emitTelemetry(
   shareId: string,
@@ -113,9 +130,20 @@ export function HybridVoiceAgent({ shareId, className }: HybridVoiceAgentProps) 
         emitTelemetry(shareId, "voice_agent_classified", {
           classification: parsed,
         });
+        // Persist the fit classification + route the lead into the funnel.
+        // Fire-and-forget: never block the live conversation on this write.
+        void fetch(`/api/sessions/${shareId}/classify`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            classification: parsed,
+            consentSummary: saveTranscript,
+            summary: saveTranscript ? transcript.join(" ").slice(0, 2000) : undefined,
+          }),
+        }).catch(() => {});
       }
     },
-    [shareId]
+    [shareId, saveTranscript, transcript]
   );
 
   const startConversation = async () => {
@@ -197,20 +225,37 @@ export function HybridVoiceAgent({ shareId, className }: HybridVoiceAgentProps) 
     }
   };
 
-  const onBookDiagnosis = async () => {
-    await emitTelemetry(shareId, "voice_agent_cta_clicked", {
-      classification,
-    });
-    const calendlyUrl =
-      process.env.NEXT_PUBLIC_CALENDLY_URL ||
-      process.env.NEXT_PUBLIC_BOOKING_URL;
-    if (calendlyUrl) {
-      window.open(calendlyUrl, "_blank", "noopener,noreferrer");
-      return;
-    }
+  // Segmented CTA: defaults to the HYBRID diagnosis path until the agent
+  // classifies the lead, then adapts the label + destination to the track.
+  const cta = classification
+    ? CTA_BY_CLASSIFICATION[classification]
+    : { intent: "hybrid" as RouteIntent, label: "Agendar diagnóstico HYBRID" };
+
+  const scrollToOffer = () => {
     document
       .getElementById("hybrid-offer")
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const onCtaClick = async () => {
+    await emitTelemetry(shareId, "voice_agent_cta_clicked", {
+      classification,
+      intent: cta.intent,
+    });
+
+    // HYBRID lead → open the booking flow if configured.
+    if (cta.intent === "hybrid") {
+      const calendlyUrl =
+        process.env.NEXT_PUBLIC_CALENDLY_URL ||
+        process.env.NEXT_PUBLIC_BOOKING_URL;
+      if (calendlyUrl) {
+        window.open(calendlyUrl, "_blank", "noopener,noreferrer");
+        return;
+      }
+    }
+    // ASCEND / nurture (and HYBRID fallback) → the offer section handles
+    // direct checkout, brief-by-email and WhatsApp paths.
+    scrollToOffer();
   };
 
   return (
@@ -354,12 +399,16 @@ export function HybridVoiceAgent({ shareId, className }: HybridVoiceAgentProps) 
               )}
 
               <button
-                onClick={onBookDiagnosis}
+                onClick={onCtaClick}
                 className="ngx-glass-clear inline-flex min-h-[50px] items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-medium text-white/85 transition-all duration-150 hover:bg-white/[0.06] active:scale-[0.97]"
               >
                 <CalendarDays className="h-4 w-4" />
-                Agendar diagnóstico HYBRID
-                <PhoneCall className="h-4 w-4" />
+                {cta.label}
+                {cta.intent === "hybrid" ? (
+                  <PhoneCall className="h-4 w-4" />
+                ) : (
+                  <ArrowRight className="h-4 w-4" />
+                )}
               </button>
             </div>
           </div>
