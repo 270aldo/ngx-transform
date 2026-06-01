@@ -148,7 +148,7 @@ export function SeasonRoadmap() {
                     <div className="relative z-10">
                       <div className="flex items-center justify-between gap-3 mb-4">
                         <span
-                          className="ngx-eyebrow !text-[10px]"
+                          className="ngx-eyebrow !text-[11px]"
                           style={{ color: "var(--ngx-fg-3)" }}
                         >
                           Fase {phase.number} · {phase.weeks}

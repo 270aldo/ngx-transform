@@ -222,7 +222,7 @@ export function ShareToUnlockModal({
                   </div>
                   <Icon
                     className={`h-4 w-4 ${
-                      isUnlocked ? "text-green-400" : "text-white/30"
+                      isUnlocked ? "text-green-400" : "text-white/45"
                     }`}
                   />
                 </div>
@@ -256,7 +256,7 @@ export function ShareToUnlockModal({
                       />
                     )}
                   </div>
-                  <span className="text-[10px] text-white/60">
+                  <span className="text-[11px] text-white/60">
                     {platform.id === "copy" && copied ? "Copiado" : platform.label}
                   </span>
                 </button>

@@ -19,7 +19,7 @@
  * Controlled by feature flags
  */
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
 import type { InsightsResult, TimelineEntry } from "@/types/ai";
@@ -130,33 +130,53 @@ export function TransformationViewer2({
     !isLeadMagnet && (FF_SHARE_UNLOCK ?? FF_SHARE_TO_UNLOCK);
 
   // State
-  const [showDramaticReveal, setShowDramaticReveal] = useState(() => {
-    if (typeof window === "undefined") return allowDramaticReveal;
-    return allowDramaticReveal && !localStorage.getItem(`ngx-dramatic-seen-${shareId}`);
-  });
+  //
+  // IMPORTANT (hydration): these four states are derived from localStorage,
+  // which is unavailable during SSR. Reading it inside the useState initializer
+  // makes the client's first render differ from the server HTML → React throws
+  // "Hydration failed" and regenerates the tree (flash/jank on the results page).
+  // So we initialize with deterministic, SSR-safe defaults (which match the
+  // server output) and reconcile from localStorage in a useEffect after mount.
+  // First-time visitors — the core lead-magnet audience — still get the clean
+  // SSR reveal; only returning visitors see a ~1-frame reveal before it hides.
+  const [showDramaticReveal, setShowDramaticReveal] = useState(allowDramaticReveal);
   const [showShareModal, setShowShareModal] = useState(false);
-  const [unlockedContent, setUnlockedContent] = useState<string[]>(() => {
-    if (typeof window === "undefined") return [];
-    const unlocked = localStorage.getItem(`ngx-unlocked-${shareId}`);
-    if (!unlocked) return [];
-    try {
-      return JSON.parse(unlocked);
-    } catch {
-      localStorage.removeItem(`ngx-unlocked-${shareId}`);
-      return [];
-    }
-  });
-  const [showCinematic, setShowCinematic] = useState(() => {
-    if (typeof window === "undefined") return allowCinematicAutoplay;
-    return allowCinematicAutoplay && !localStorage.getItem(`ngx-cinematic-seen-${shareId}`);
-  }); // Only show if no dramatic reveal
+  const [unlockedContent, setUnlockedContent] = useState<string[]>([]);
+  const [showCinematic, setShowCinematic] = useState(allowCinematicAutoplay); // Only show if no dramatic reveal
   const [currentStep, setCurrentStep] = useState<TimelineStep>("m0");
   const [showLetter, setShowLetter] = useState(false);
   const [showNav, setShowNav] = useState(false);
-  const [hasSeenCinematic, setHasSeenCinematic] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return !!localStorage.getItem(`ngx-cinematic-seen-${shareId}`);
-  });
+  const [hasSeenCinematic, setHasSeenCinematic] = useState(false);
+
+  // Reconcile localStorage-derived state after mount (see hydration note above).
+  // setState-in-effect is intentional here: it's a one-time SSR→client
+  // reconciliation that React batches into a single re-render (not cascading).
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    try {
+      if (allowDramaticReveal && localStorage.getItem(`ngx-dramatic-seen-${shareId}`)) {
+        setShowDramaticReveal(false);
+      }
+      const cinematicSeen = !!localStorage.getItem(`ngx-cinematic-seen-${shareId}`);
+      if (cinematicSeen) {
+        setHasSeenCinematic(true);
+        if (allowCinematicAutoplay) setShowCinematic(false);
+      }
+      const unlocked = localStorage.getItem(`ngx-unlocked-${shareId}`);
+      if (unlocked) {
+        try {
+          setUnlockedContent(JSON.parse(unlocked));
+        } catch {
+          localStorage.removeItem(`ngx-unlocked-${shareId}`);
+        }
+      }
+    } catch {
+      /* localStorage unavailable (e.g. private mode) — keep SSR defaults */
+    }
+    // allowDramaticReveal / allowCinematicAutoplay are deterministic from props.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shareId]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Get current data
   const currentEntry = ai.timeline[currentStep] as TimelineEntry;
@@ -320,7 +340,7 @@ export function TransformationViewer2({
     <div className="min-h-screen bg-transparent text-white">
       <section className="relative min-h-screen overflow-hidden">
         {/* Header */}
-        <header className="absolute top-0 left-0 right-0 z-30 px-4 py-3">
+        <header className="safe-area-inset-top absolute top-0 left-0 right-0 z-30 px-4 py-3">
           <div className="flex items-center justify-between">
             {/* Left: Menu / Back */}
             <button
@@ -348,7 +368,7 @@ export function TransformationViewer2({
                       type="button"
                       onClick={() => handleStepChange(step)}
                       className={cn(
-                        "ngx-range-pill snap-center shrink-0 !px-3.5 sm:!px-5 !py-1.5 text-[10px] sm:text-[10.5px] !font-black tracking-[0.16em] uppercase cursor-pointer min-w-[58px] sm:min-w-0",
+                        "ngx-range-pill snap-center shrink-0 !px-3.5 sm:!px-5 text-[11px] !font-black tracking-[0.16em] uppercase cursor-pointer min-w-[58px] sm:min-w-0",
                         isActive && "is-active"
                       )}
                     >
@@ -385,7 +405,7 @@ export function TransformationViewer2({
               className="fixed inset-0 z-40 bg-black/95 backdrop-blur-lg flex items-center justify-center"
             >
               <div className="space-y-4 text-center">
-                <span className="ngx-eyebrow !text-[10px] mb-6 block" style={{ color: "var(--ngx-fg-3)" }}>
+                <span className="ngx-eyebrow !text-[11px] mb-6 block" style={{ color: "var(--ngx-fg-3)" }}>
                   Ir a
                 </span>
                 {STEPS.map((step, index) => (
@@ -477,6 +497,7 @@ export function TransformationViewer2({
           <button
             onClick={handlePrevStep}
             disabled={!hasPrev}
+            aria-label="Hito anterior"
             className={cn(
               "p-4 rounded-full transition-all duration-150 pointer-events-auto active:scale-[0.97]",
               hasPrev
@@ -489,6 +510,7 @@ export function TransformationViewer2({
           <button
             onClick={handleNextStep}
             disabled={!hasNext}
+            aria-label="Hito siguiente"
             className={cn(
               "p-4 rounded-full transition-all pointer-events-auto",
               hasNext

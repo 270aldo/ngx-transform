@@ -167,10 +167,10 @@ export function TransformationSummary({
               <div className="relative z-10">
                 <div className="flex items-center justify-between gap-3 mb-5">
                   <div>
-                    <span className="ngx-eyebrow !text-[10px]" style={{ color: 'var(--ngx-fg-3)' }}>Secuencia visual</span>
+                    <span className="ngx-eyebrow !text-[11px]" style={{ color: 'var(--ngx-fg-3)' }}>Secuencia visual</span>
                     <p className="mt-1 text-base font-bold text-white md:text-lg">De hoy hacia una posibilidad</p>
                   </div>
-                  <span className="rounded-full border border-[color:var(--ngx-border-subtle)] bg-white/[0.04] px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-white/55 whitespace-nowrap shrink-0">
+                  <span className="rounded-full border border-[color:var(--ngx-border-subtle)] bg-white/[0.04] px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] text-white/55 whitespace-nowrap shrink-0">
                     4 hitos
                   </span>
                 </div>
@@ -201,21 +201,21 @@ export function TransformationSummary({
                             <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
                           </>
                         ) : (
-                          <div className="flex h-full w-full items-center justify-center bg-white/[0.02] text-[10px] uppercase tracking-[0.18em] text-white/35">
+                          <div className="flex h-full w-full items-center justify-center bg-white/[0.02] text-[11px] uppercase tracking-[0.18em] text-white/35">
                             Procesando
                           </div>
                         )}
                       </div>
                       <div className="mt-3 flex items-center justify-between gap-2">
                         <span
-                          className="text-[10px] uppercase tracking-[0.18em]"
+                          className="text-[11px] uppercase tracking-[0.18em]"
                           style={{ color: index === 3 ? 'var(--ngx-purple-light)' : 'var(--ngx-fg-4)' }}
                         >
                           {item.label}
                         </span>
                         {index === 3 ? (
                           <span
-                            className="rounded-full px-2 py-1 text-[9px] uppercase tracking-[0.16em]"
+                            className="rounded-full px-2 py-1 text-[11px] uppercase tracking-[0.16em]"
                             style={{
                               background: 'rgba(109,0,255,0.10)',
                               border: '1px solid rgba(109,0,255,0.25)',
@@ -247,7 +247,7 @@ export function TransformationSummary({
               <div className="space-y-5">
                 <div className="ngx-metal-card !p-5">
                   <div className="relative z-10">
-                    <span className="ngx-eyebrow !text-[10px]" style={{ color: 'var(--ngx-fg-3)' }}>Esta pieza responde</span>
+                    <span className="ngx-eyebrow !text-[11px]" style={{ color: 'var(--ngx-fg-3)' }}>Esta pieza responde</span>
                     <div className="mt-3 space-y-3">
                       {bridgeQuestions.map((item) => (
                         <div key={item} className="flex items-start gap-3">
@@ -271,7 +271,7 @@ export function TransformationSummary({
                           style={{ color: 'var(--ngx-purple-light)' }}
                         />
                         <span
-                          className="ngx-eyebrow !text-[10px]"
+                          className="ngx-eyebrow !text-[11px]"
                           style={{ color: 'var(--ngx-purple-light)' }}
                         >
                           Tu palanca principal parece ser
@@ -294,7 +294,7 @@ export function TransformationSummary({
                   <div className="relative z-10">
                     <div className="flex items-center gap-2">
                       <Sparkles className="h-4 w-4" style={{ color: 'var(--ngx-purple-light)' }} />
-                      <span className="ngx-eyebrow !text-[10px]" style={{ color: 'var(--ngx-fg-3)' }}>Resumen orientativo</span>
+                      <span className="ngx-eyebrow !text-[11px]" style={{ color: 'var(--ngx-fg-3)' }}>Resumen orientativo</span>
                     </div>
 
                     <div className="mt-5 grid gap-3 grid-cols-3">
@@ -306,7 +306,7 @@ export function TransformationSummary({
                               {strengthDelta >= 0 ? `+${strengthDelta}` : strengthDelta}
                             </span>
                           </div>
-                          <span className="ngx-eyebrow !text-[9px] mt-1.5 block" style={{ color: 'var(--ngx-fg-4)' }}>Fuerza visual</span>
+                          <span className="ngx-eyebrow !text-[11px] mt-1.5 block" style={{ color: 'var(--ngx-fg-4)' }}>Fuerza visual</span>
                         </div>
                       </div>
                       <div className="ngx-metal-card !p-3">
@@ -317,7 +317,7 @@ export function TransformationSummary({
                               {aestheticsDelta >= 0 ? `+${aestheticsDelta}` : aestheticsDelta}
                             </span>
                           </div>
-                          <span className="ngx-eyebrow !text-[9px] mt-1.5 block" style={{ color: 'var(--ngx-fg-4)' }}>Composición visual</span>
+                          <span className="ngx-eyebrow !text-[11px] mt-1.5 block" style={{ color: 'var(--ngx-fg-4)' }}>Composición visual</span>
                         </div>
                       </div>
                       <div className="ngx-metal-card !p-3">
@@ -328,7 +328,7 @@ export function TransformationSummary({
                               {enduranceDelta >= 0 ? `+${enduranceDelta}` : enduranceDelta}
                             </span>
                           </div>
-                          <span className="ngx-eyebrow !text-[9px] mt-1.5 block" style={{ color: 'var(--ngx-fg-4)' }}>Capacidad de trabajo</span>
+                          <span className="ngx-eyebrow !text-[11px] mt-1.5 block" style={{ color: 'var(--ngx-fg-4)' }}>Capacidad de trabajo</span>
                         </div>
                       </div>
                     </div>

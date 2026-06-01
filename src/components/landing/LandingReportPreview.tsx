@@ -225,7 +225,7 @@ export function LandingReportPreview() {
               <div className="space-y-4">
                 <div>
                   <span
-                    className="font-mono text-[10px] uppercase tracking-[0.28em]"
+                    className="font-mono text-[11px] uppercase tracking-[0.28em]"
                     style={{ color: "var(--ngx-purple-light)" }}
                   >
                     {copy.scoreLabel}
@@ -263,7 +263,7 @@ export function LandingReportPreview() {
                   style={{ color: "var(--ngx-purple-light)" }}
                 />
                 <span
-                  className="font-mono text-[10px] uppercase tracking-[0.28em]"
+                  className="font-mono text-[11px] uppercase tracking-[0.28em]"
                   style={{ color: "var(--ngx-purple-light)" }}
                 >
                   Tu palanca principal
@@ -287,7 +287,7 @@ export function LandingReportPreview() {
                   style={{ color: "var(--ngx-purple-light)" }}
                 />
                 <span
-                  className="font-mono text-[10px] uppercase tracking-[0.28em]"
+                  className="font-mono text-[11px] uppercase tracking-[0.28em]"
                   style={{ color: "rgba(184,148,255,0.7)" }}
                 >
                   Tus 3 palancas accionables
@@ -331,7 +331,7 @@ export function LandingReportPreview() {
                       <div className="min-w-0 flex-1">
                         {isPrimary && (
                           <span
-                            className="font-mono text-[9px] uppercase tracking-[0.22em] block mb-1"
+                            className="font-mono text-[11px] uppercase tracking-[0.22em] block mb-1"
                             style={{ color: "var(--ngx-purple-light)" }}
                           >
                             Empieza por aquí
@@ -367,7 +367,7 @@ export function LandingReportPreview() {
               </span>
               <div className="min-w-0 flex-1">
                 <span
-                  className="font-mono text-[10px] uppercase tracking-[0.28em]"
+                  className="font-mono text-[11px] uppercase tracking-[0.28em]"
                   style={{ color: "rgba(252, 211, 77, 0.85)" }}
                 >
                   Error dominante
@@ -383,7 +383,7 @@ export function LandingReportPreview() {
             {/* ROADMAP — timeline horizontal inline (no cards) */}
             <div className="p-5 md:p-7">
               <span
-                className="font-mono text-[10px] uppercase tracking-[0.28em] block mb-5"
+                className="font-mono text-[11px] uppercase tracking-[0.28em] block mb-5"
                 style={{ color: "rgba(184,148,255,0.7)" }}
               >
                 Estructura HYBRID · 12 semanas
@@ -427,7 +427,7 @@ export function LandingReportPreview() {
                       <p className="text-center sm:text-left font-body font-bold text-sm md:text-[0.95rem] text-white leading-tight">
                         {phase.title}
                       </p>
-                      <p className="mt-1 text-center sm:text-left font-mono text-[10px] uppercase tracking-[0.18em] text-white/45 tabular-nums">
+                      <p className="mt-1 text-center sm:text-left font-mono text-[11px] uppercase tracking-[0.18em] text-white/45 tabular-nums">
                         Sem {phase.weeks}
                       </p>
                     </div>
@@ -480,7 +480,7 @@ function Stat({
   return (
     <div>
       <span
-        className="font-mono text-[10px] uppercase tracking-[0.22em] block"
+        className="font-mono text-[11px] uppercase tracking-[0.22em] block"
         style={{ color: "var(--ngx-fg-3)" }}
       >
         {label}

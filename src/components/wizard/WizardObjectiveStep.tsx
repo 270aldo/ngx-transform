@@ -86,7 +86,7 @@ export function WizardObjectiveStep({ watch, setValue }: WizardObjectiveStepProp
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="ngx-metal-card !p-6">
           <div className="relative z-10">
-            <span className="ngx-eyebrow !text-[10px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>Nivel de experiencia</span>
+            <span className="ngx-eyebrow !text-[11px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>Nivel de experiencia</span>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
               {([
                 {
@@ -112,7 +112,7 @@ export function WizardObjectiveStep({ watch, setValue }: WizardObjectiveStepProp
                   data-selected={watch("level") === lv.id}
                   className="ngx-choice-button flex min-h-[72px] flex-col items-start justify-center gap-1 px-4 py-3 text-left"
                 >
-                  <span className="font-mono text-[10px] uppercase tracking-[0.18em]">
+                  <span className="font-mono text-[11px] uppercase tracking-[0.18em]">
                     {lv.l}
                   </span>
                   <span className="text-[11px] leading-snug text-white/45">
@@ -126,7 +126,7 @@ export function WizardObjectiveStep({ watch, setValue }: WizardObjectiveStepProp
 
         <div className="ngx-metal-card !p-6">
           <div className="relative z-10">
-            <span className="ngx-eyebrow !text-[10px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>Días disponibles por semana</span>
+            <span className="ngx-eyebrow !text-[11px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>Días disponibles por semana</span>
             <div className="grid grid-cols-5 gap-2">
               {[2, 3, 4, 5, 6].map((d) => (
                 <button
@@ -147,7 +147,7 @@ export function WizardObjectiveStep({ watch, setValue }: WizardObjectiveStepProp
       <div className="ngx-section-panel !p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <span className="ngx-eyebrow !text-[10px] block mb-2" style={{ color: "var(--ngx-fg-3)" }}>Duración real por sesión</span>
+            <span className="ngx-eyebrow !text-[11px] block mb-2" style={{ color: "var(--ngx-fg-3)" }}>Duración real por sesión</span>
             <p className="text-sm leading-relaxed text-white/55">
               GENESIS usa esto para calibrar una visualización aspiracional, no una promesa de volumen imposible.
             </p>
@@ -176,7 +176,7 @@ export function WizardObjectiveStep({ watch, setValue }: WizardObjectiveStepProp
       </div>
 
       <div className="ngx-section-panel !p-6 md:!p-8">
-        <span className="ngx-eyebrow !text-[10px] block mb-5" style={{ color: "var(--ngx-fg-3)" }}>Zona de enfoque principal</span>
+        <span className="ngx-eyebrow !text-[11px] block mb-5" style={{ color: "var(--ngx-fg-3)" }}>Zona de enfoque principal</span>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           {([
             { id: "upper", l: "Tren Superior" }, { id: "lower", l: "Tren Inferior" },

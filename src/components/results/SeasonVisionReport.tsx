@@ -167,7 +167,7 @@ export function SeasonVisionReport({
                 </p>
 
                 <div className="mt-8">
-                  <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.18em] text-white/45">
+                  <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.18em] text-white/45">
                     Delta proyectado · Hoy → Season 3
                   </p>
                   <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -177,7 +177,7 @@ export function SeasonVisionReport({
                           <p className="font-mono text-2xl font-bold tabular-nums text-white">
                             {getDelta(baselineStats[stat.key], finalStats[stat.key])}
                           </p>
-                          <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/55">
+                          <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/55">
                             {stat.label}
                           </p>
                         </div>
@@ -207,7 +207,7 @@ export function SeasonVisionReport({
                 <div className="relative z-10">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
+                      <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>
                         Secuencia visual
                       </span>
                       <p className="mt-1.5 text-base font-bold text-white md:text-lg">De hoy a Season 3</p>
@@ -237,7 +237,7 @@ export function SeasonVisionReport({
                     <p className="text-sm font-medium text-white/78">
                       {isReady ? "Reporte listo" : "Reporte parcial mientras se generan visualizaciones"}
                     </p>
-                    <span className="whitespace-nowrap rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-white/55">
+                    <span className="whitespace-nowrap rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-white/55">
                       4 hitos
                     </span>
                   </div>
@@ -263,7 +263,7 @@ export function SeasonVisionReport({
 
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
                   <div className="rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4">
-                    <p className="text-[10px] uppercase tracking-[0.18em] text-white/40">Muscle Health Score</p>
+                    <p className="text-[11px] uppercase tracking-[0.18em] text-white/40">Muscle Health Score</p>
                     <p className="mt-3 font-mono text-5xl font-bold tabular-nums leading-none text-white">
                       {readinessScore}
                       <span className="ml-2 text-lg font-medium text-white/35">/100</span>
@@ -279,7 +279,7 @@ export function SeasonVisionReport({
                     </div>
                   </div>
                   <div className="rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4">
-                    <p className="text-[10px] uppercase tracking-[0.18em] text-white/40">Palanca principal</p>
+                    <p className="text-[11px] uppercase tracking-[0.18em] text-white/40">Palanca principal</p>
                     <p className="mt-3 text-base font-bold leading-snug text-white">
                       {bottleneckLabel}
                     </p>
@@ -310,7 +310,7 @@ export function SeasonVisionReport({
                 )}
 
                 <div className="mt-6 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4">
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-white/40">Error dominante</p>
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-white/40">Error dominante</p>
                   <p className="mt-2 text-sm leading-relaxed text-white/70">
                     {ai.diagnostic?.dominant_error ||
                       "La lectura inicial identifica el factor principal que puede limitar el avance si no se trabaja con estructura."}
@@ -350,12 +350,12 @@ export function SeasonVisionReport({
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center text-[10px] uppercase tracking-[0.18em] text-white/35">
+                        <div className="flex h-full w-full items-center justify-center text-[11px] uppercase tracking-[0.18em] text-white/35">
                           Procesando visual
                         </div>
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent" />
-                      <div className="absolute left-3 top-3 rounded-full border border-white/[0.10] bg-black/55 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur-md">
+                      <div className="absolute left-3 top-3 rounded-full border border-white/[0.10] bg-black/55 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur-md">
                         {getSeasonMilestoneLabel(step)}
                       </div>
                     </div>
@@ -377,7 +377,7 @@ export function SeasonVisionReport({
                       <div className="flex items-center gap-2">
                         <Activity className="h-4 w-4" style={{ color: "var(--ngx-purple-light)" }} />
                         <span
-                          className="text-[10px] font-semibold uppercase tracking-[0.18em]"
+                          className="text-[11px] font-semibold uppercase tracking-[0.18em]"
                           style={{ color: "var(--ngx-purple-light)" }}
                         >
                           Observación GENESIS
@@ -394,7 +394,7 @@ export function SeasonVisionReport({
                           <p className="font-mono text-xl font-bold tabular-nums leading-none text-white">
                             {stats[stat.key]}
                           </p>
-                          <p className="mt-1.5 text-[10px] font-medium uppercase tracking-[0.16em] text-white/50">
+                          <p className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.16em] text-white/50">
                             {stat.label}
                           </p>
                         </div>
@@ -453,7 +453,7 @@ export function SeasonVisionReport({
                 </div>
                 {(bookingUrl || whatsappUrl) ? (
                   <div className="flex flex-wrap items-center gap-2 border-t border-white/[0.06] pt-4">
-                    <p className="mr-2 text-[10px] font-medium uppercase tracking-[0.18em] text-white/40">
+                    <p className="mr-2 text-[11px] font-medium uppercase tracking-[0.18em] text-white/40">
                       Otros canales
                     </p>
                     {bookingUrl ? (
@@ -517,13 +517,13 @@ function ImagePanel({
           className={`h-full w-full object-cover ${muted ? "grayscale-[0.45] brightness-[0.72]" : ""}`}
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center bg-white/[0.02] text-[10px] uppercase tracking-[0.18em] text-white/35">
+        <div className="flex h-full w-full items-center justify-center bg-white/[0.02] text-[11px] uppercase tracking-[0.18em] text-white/35">
           Procesando
         </div>
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
       <div className="absolute inset-x-3 bottom-3">
-        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/70">
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/70">
           {label}
         </p>
       </div>

@@ -299,7 +299,7 @@ export function HybridVoiceAgent({ shareId, className }: HybridVoiceAgentProps) 
             <audio ref={audioRef} autoPlay className="hidden" />
             <div className="flex items-center justify-between gap-3">
               <div>
-                <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
+                <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>
                   Estado
                 </span>
                 <p className="mt-1 text-base font-bold text-white">
@@ -355,7 +355,7 @@ export function HybridVoiceAgent({ shareId, className }: HybridVoiceAgentProps) 
 
             {classification && (
               <div className="mt-4 rounded-2xl border border-[var(--ngx-purple)]/30 bg-[var(--ngx-purple)]/10 px-4 py-3">
-                <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-purple-light)" }}>
+                <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-purple-light)" }}>
                   Clasificación preliminar
                 </span>
                 <p className="mt-1 font-bold text-white">

@@ -51,7 +51,7 @@ export function LandingStats() {
                     color: i % 2 === 0 ? "var(--ngx-purple-light)" : "var(--ngx-success)",
                   }}
                 />
-                <p className="text-[10px] font-mono uppercase tracking-[0.2em] leading-relaxed text-white/45">
+                <p className="text-[11px] font-mono uppercase tracking-[0.2em] leading-relaxed text-white/45">
                   {stat.label}
                 </p>
               </div>

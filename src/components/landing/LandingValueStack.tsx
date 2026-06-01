@@ -68,7 +68,7 @@ export function LandingValueStack() {
                 >
                   <div className="min-w-0">
                     <span
-                      className="mb-2 inline-block font-mono text-[10px] uppercase tracking-[0.30em]"
+                      className="mb-2 inline-block font-mono text-[11px] uppercase tracking-[0.30em]"
                       style={{ color: "rgba(184,148,255,0.86)" }}
                     >
                       {label}
@@ -208,7 +208,7 @@ function RutaMock() {
       {phases.map((p, i) => (
         <div key={p} className="flex items-center">
           <div
-            className="flex h-7 w-7 items-center justify-center rounded-md font-mono text-[10px] font-bold tabular-nums"
+            className="flex h-7 w-7 items-center justify-center rounded-md font-mono text-[11px] font-bold tabular-nums"
             style={{
               background:
                 i === 0
@@ -244,7 +244,7 @@ function DireccionMock() {
   return (
     <div className="flex flex-col items-start gap-2">
       <span
-        className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.22em]"
+        className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.22em]"
         style={{
           background: "rgba(109,0,255,0.18)",
           border: "1px solid rgba(109,0,255,0.45)",
@@ -262,7 +262,7 @@ function DireccionMock() {
         Empieza por aquí
       </span>
       <div
-        className="rounded-md px-3 py-2 text-[10px] leading-tight text-white/72"
+        className="rounded-md px-3 py-2 text-[11px] leading-tight text-white/72"
         style={{
           background: "rgba(255,255,255,0.03)",
           border: "1px solid rgba(255,255,255,0.08)",

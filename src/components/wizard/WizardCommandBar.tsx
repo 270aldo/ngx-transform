@@ -29,13 +29,14 @@ export function WizardCommandBar({
   isDemoMode = false,
 }: WizardCommandBarProps) {
   return (
-    <div className="fixed inset-x-0 top-3 z-50 px-3 md:top-5 md:px-4">
+    <div className="safe-area-mt-top fixed inset-x-0 top-3 z-50 px-3 md:top-5 md:px-4">
       <div className="ngx-wizard-commandbar mx-auto grid w-full max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-3 px-3 py-3 md:gap-5 md:px-4">
         {/* Left: back button */}
         <button
           type="button"
           onClick={onBack}
-          className="ngx-wizard-glass-button inline-flex h-10 shrink-0 items-center gap-2 px-3"
+          aria-label="Atrás"
+          className="ngx-wizard-glass-button inline-flex h-11 min-w-[44px] shrink-0 items-center gap-2 px-3"
         >
           <ChevronLeft size={14} />
           <span className="hidden sm:inline">Atrás</span>
@@ -48,7 +49,7 @@ export function WizardCommandBar({
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-purple-300)" }}>
+              <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-purple-300)" }}>
                 Wizard privado
               </span>
               <span className="ngx-wizard-step-chip px-2 py-0.5">
@@ -60,7 +61,7 @@ export function WizardCommandBar({
                 {title}
               </span>
               {isDemoMode ? (
-                <span className="rounded-full border border-[var(--ngx-purple)]/30 bg-[var(--ngx-purple)]/15 px-2 py-0.5 text-[9px] font-mono uppercase tracking-[0.18em] text-[var(--ngx-purple-light)]">
+                <span className="rounded-full border border-[var(--ngx-purple)]/30 bg-[var(--ngx-purple)]/15 px-2 py-0.5 text-[11px] font-mono uppercase tracking-[0.18em] text-[var(--ngx-purple-light)]">
                   Demo
                 </span>
               ) : null}

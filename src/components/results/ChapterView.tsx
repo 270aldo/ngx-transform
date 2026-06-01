@@ -166,10 +166,10 @@ export function ChapterView({
             <div className="ngx-metal-card !p-5 md:!p-6">
               <div className="relative z-10">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
+                  <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>
                     Tu resultado en esta vista
                   </span>
-                  <span className="rounded-full border border-white/[0.10] bg-white/[0.04] px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] text-white/45">
+                  <span className="rounded-full border border-white/[0.10] bg-white/[0.04] px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-white/45">
                     Aspiracional · no clínico
                   </span>
                 </div>
@@ -210,7 +210,7 @@ export function ChapterView({
             </div>
 
             <div>
-              <span className="ngx-eyebrow !text-[10px] mb-3 block" style={{ color: "var(--ngx-fg-3)" }}>
+              <span className="ngx-eyebrow !text-[11px] mb-3 block" style={{ color: "var(--ngx-fg-3)" }}>
                 Scores orientativos
               </span>
               <StatsDelta
@@ -241,7 +241,7 @@ export function ChapterView({
                     <span className="ngx-icon-box h-9 w-9">
                       <Quote className="h-4 w-4" />
                     </span>
-                    <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
+                    <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>
                       Mentalidad
                     </span>
                   </div>
@@ -360,7 +360,7 @@ export function ChapterView({
           transition={{ delay: 0.3 }}
           className="mb-8 md:mb-10"
         >
-          <span className="ngx-eyebrow !text-[10px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>
+          <span className="ngx-eyebrow !text-[11px] block mb-4" style={{ color: "var(--ngx-fg-3)" }}>
             Progreso
           </span>
           <StatsDelta
@@ -387,7 +387,7 @@ export function ChapterView({
                     <span className="ngx-icon-box h-9 w-9">
                       <TrendingUp className="h-4 w-4" />
                     </span>
-                    <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
+                    <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>
                       Tu evolución
                     </span>
                   </div>
@@ -455,7 +455,7 @@ export function ChapterView({
                   <span className="ngx-icon-box h-9 w-9">
                     <Quote className="h-4 w-4" />
                   </span>
-                  <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
+                  <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>
                     Mentalidad
                   </span>
                 </div>

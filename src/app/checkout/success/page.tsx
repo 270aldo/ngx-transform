@@ -51,7 +51,7 @@ export default async function CheckoutSuccess({
         </p>
 
         <div className="mt-8 ngx-card !p-5 max-w-md text-left">
-          <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
+          <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>
             Lo que sigue
           </span>
           <ul className="mt-3 space-y-2 text-sm text-white/72">

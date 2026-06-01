@@ -89,7 +89,7 @@ export function HeroTransformation({ className, compact = false }: HeroTransform
               </div>
               <p className={`${compact ? "text-xs" : "text-sm"} font-bold text-white tracking-normal`}>Visualización GENESIS</p>
             </div>
-            <span className={`${compact ? "hidden min-[380px]:inline-flex" : "inline-flex"} items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] text-white/55`}>
+            <span className={`${compact ? "hidden min-[380px]:inline-flex" : "inline-flex"} items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[11px] text-white/55`}>
               <ShieldCheck className="h-3 w-3" />
               No compartida
             </span>
@@ -148,12 +148,12 @@ export function HeroTransformation({ className, compact = false }: HeroTransform
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 to-transparent" />
 
                 {/* Labels */}
-                <span className={`pointer-events-none absolute ${compact ? "top-3 left-3" : "top-4 left-4"} inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/55 backdrop-blur-sm px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-white/85`}>
+                <span className={`pointer-events-none absolute ${compact ? "top-3 left-3" : "top-4 left-4"} inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/55 backdrop-blur-sm px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-white/85`}>
                   <span className="h-1.5 w-1.5 rounded-full bg-white/60" />
                   {demo.beforeLabel ?? "Punto de partida"}
                 </span>
                 <span
-                  className={`pointer-events-none absolute ${compact ? "top-3 right-3" : "top-4 right-4"} inline-flex items-center gap-1.5 rounded-full backdrop-blur-sm px-3 py-1 text-[10px] uppercase tracking-[0.22em]`}
+                  className={`pointer-events-none absolute ${compact ? "top-3 right-3" : "top-4 right-4"} inline-flex items-center gap-1.5 rounded-full backdrop-blur-sm px-3 py-1 text-[11px] uppercase tracking-[0.22em]`}
                   style={{
                     border: "1px solid rgba(109, 0, 255, 0.30)",
                     background: "rgba(109, 0, 255, 0.15)",
@@ -196,7 +196,7 @@ export function HeroTransformation({ className, compact = false }: HeroTransform
                 </div>
 
                 {/* Hint pill (bottom) */}
-                <span className={`${compact ? "hidden sm:inline-flex" : "inline-flex"} pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-black/60 backdrop-blur-sm px-3 py-1 text-[9px] uppercase tracking-[0.22em] text-white/65`}>
+                <span className={`${compact ? "hidden sm:inline-flex" : "inline-flex"} pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-black/60 backdrop-blur-sm px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-white/65`}>
                   Arrastra para ver tu progresión
                 </span>
               </>

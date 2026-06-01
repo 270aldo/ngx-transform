@@ -70,7 +70,7 @@ export function LandingBridge() {
 
             {bridge.footnote && (
               <p
-                className="inline-flex self-start font-mono text-[10px] uppercase tracking-[0.28em]"
+                className="inline-flex self-start font-mono text-[11px] uppercase tracking-[0.28em]"
                 style={{ color: "rgba(184,148,255,0.7)" }}
               >
                 <span
@@ -83,7 +83,7 @@ export function LandingBridge() {
             )}
 
             <div className="pt-2">
-              <span className="mb-3 inline-flex rounded-full border border-white/[0.08] bg-white/[0.045] px-3 py-1 font-mono text-[10px] uppercase tracking-[0.22em] text-white/50">
+              <span className="mb-3 inline-flex rounded-full border border-white/[0.08] bg-white/[0.045] px-3 py-1 font-mono text-[11px] uppercase tracking-[0.22em] text-white/50">
                 15 min · gratis · sin compromiso
               </span>
               <a
@@ -163,7 +163,7 @@ export function LandingBridge() {
                   {/* Contenido del paso — sin card */}
                   <div>
                     <span
-                      className="font-mono text-[10px] uppercase tracking-[0.28em]"
+                      className="font-mono text-[11px] uppercase tracking-[0.28em]"
                       style={{ color: "rgba(184,148,255,0.65)" }}
                     >
                       Paso 0{index + 1}

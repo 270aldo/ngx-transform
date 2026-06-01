@@ -627,6 +627,7 @@ function WizardPageContent() {
         <input
           type="file"
           accept="image/jpeg,image/png,image/webp"
+          aria-label="Sube tu foto base"
           className="sr-only"
           onChange={onPhotoInputChange}
           ref={inputRef}
@@ -666,7 +667,7 @@ function WizardPageContent() {
                 <div className="flex items-start gap-3">
                   <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[#6D00FF] animate-pulse" />
                   <div className="space-y-1">
-                    <p className="text-[10px] font-mono uppercase tracking-[0.22em] text-[#C8A5FF]">
+                    <p className="text-[11px] font-mono uppercase tracking-[0.22em] text-[#C8A5FF]">
                       Sesión segura
                     </p>
                     <p className="text-sm leading-relaxed text-white/75">
@@ -676,7 +677,7 @@ function WizardPageContent() {
                 </div>
               </div>
 
-              <p className="mt-6 text-[11px] uppercase tracking-[0.22em] text-white/30">
+              <p className="mt-6 text-[11px] uppercase tracking-[0.22em] text-white/45">
                 No cierres esta pestaña todavía
               </p>
             </div>
@@ -782,7 +783,7 @@ function WizardPageContent() {
                   </button>
 
                   <div className="hidden md:flex items-center gap-2">
-                    <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
+                    <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>
                       Paso {currentStage} / 4
                     </span>
                     <span className="h-3 w-px bg-white/15" />

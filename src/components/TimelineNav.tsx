@@ -71,7 +71,7 @@ export function TimelineNav({ currentStep, onStepChange }: TimelineNavProps) {
               {/* Label */}
               <span
                 className={`
-                  max-w-[72px] text-center text-[10px] sm:text-xs font-medium leading-tight transition-colors duration-300
+                  max-w-[72px] text-center text-[11px] sm:text-xs font-medium leading-tight transition-colors duration-300
                   ${isActive
                     ? "text-white"
                     : isPast

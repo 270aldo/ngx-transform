@@ -115,7 +115,7 @@ export function LandingTrustStrip() {
                 style={{ background: "rgba(0, 245, 170, 0.45)" }}
               />
               <span
-                className="font-mono text-[10px] uppercase tracking-[0.28em]"
+                className="font-mono text-[11px] uppercase tracking-[0.28em]"
                 style={{ color: "rgba(0, 245, 170, 0.65)" }}
               >
                 Cuatro principios

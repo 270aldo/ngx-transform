@@ -56,7 +56,7 @@ export function WizardProfileStep({ register, watch, setValue }: WizardProfileSt
 
           <div className="ngx-metal-card !p-4">
             <div className="relative z-10">
-              <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Referencia corporal</span>
+              <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>Referencia corporal</span>
               <div className="mt-3 grid grid-cols-2 gap-3">
                 {(["male", "female"] as const).map((s) => (
                   <button
@@ -64,7 +64,7 @@ export function WizardProfileStep({ register, watch, setValue }: WizardProfileSt
                     type="button"
                     onClick={() => setValue("sex", s)}
                     data-selected={watch("sex") === s}
-                    className="ngx-choice-button py-3 text-[10px] font-mono uppercase tracking-[0.18em]"
+                    className="ngx-choice-button py-3 text-[11px] font-mono uppercase tracking-[0.18em]"
                   >
                     {s === "male" ? "Masculino" : "Femenino"}
                   </button>
@@ -78,7 +78,7 @@ export function WizardProfileStep({ register, watch, setValue }: WizardProfileSt
 
           <div className="ngx-metal-card !p-4">
             <div className="relative z-10">
-              <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Cómo se usa</span>
+              <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>Cómo se usa</span>
               <div className="mt-3 grid gap-2 text-xs leading-relaxed text-white/55">
                 <p>Edad, altura y peso ayudan a evitar una visualización exagerada.</p>
                 <p>La composición visual orienta el tipo de cambio: postura, proporción, cintura o músculo funcional.</p>
@@ -93,7 +93,7 @@ export function WizardProfileStep({ register, watch, setValue }: WizardProfileSt
 
         <div className="flex h-full flex-col gap-4">
           <div className="ngx-glass !p-5 md:!p-6 flex-1">
-            <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Composición visual inicial</span>
+            <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>Composición visual inicial</span>
             <div className="mt-4 grid grid-cols-1 gap-3">
               <EliteOptionCard
                 title="BASE LIGERA"
@@ -121,7 +121,7 @@ export function WizardProfileStep({ register, watch, setValue }: WizardProfileSt
 
           <div className="ngx-metal-card !p-5">
             <div className="relative z-10">
-              <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Lectura inicial</span>
+              <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>Lectura inicial</span>
               <p className="mt-2 text-base font-bold text-white">Todavía no estamos diagnosticando.</p>
               <p className="mt-2 text-sm leading-relaxed text-white/55">
                 Sólo estamos construyendo una base más útil para que la visualización y el siguiente paso tengan coherencia entre sí.

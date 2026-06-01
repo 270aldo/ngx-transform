@@ -263,6 +263,10 @@ export default async function Page({
 
   return (
     <>
+      {/* Single semantic h1 for the page (a11y/SEO). Milestone titles inside the
+          viewer are h2; the page itself had no h1 before. Visually hidden so it
+          doesn't disturb the cinematic layout. */}
+      <h1 className="sr-only">Tu diagnóstico visual de salud muscular — NGX Transform</h1>
       <ScrollToSection />
       <TransformationViewer2
         ai={ai}

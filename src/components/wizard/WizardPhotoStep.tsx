@@ -142,7 +142,7 @@ function LeftIntro() {
 
       <div className="ngx-metal-card mt-6 !p-4 md:!p-5">
         <div className="relative z-10">
-          <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
+          <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>
             Contrato de experiencia
           </span>
           <p className="mt-2 text-sm leading-relaxed text-white/75">

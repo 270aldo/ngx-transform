@@ -51,19 +51,19 @@ export function GlobalHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/5 bg-[#050505]/80 backdrop-blur-xl">
+    <header className="safe-area-inset-top sticky top-0 z-50 border-b border-white/5 bg-[#050505]/80 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <Logo variant="full" size="md" />
         </Link>
         <nav className="flex items-center gap-3">
-          <Link className="text-sm text-muted-foreground hover:text-foreground" href="/auth?next=/wizard">Probar</Link>
+          <Link className="inline-flex items-center min-h-[44px] text-sm text-muted-foreground hover:text-foreground" href="/auth?next=/wizard">Probar</Link>
           {user && (
-            <Link className="text-sm text-muted-foreground hover:text-foreground" href="/dashboard">
+            <Link className="inline-flex items-center min-h-[44px] text-sm text-muted-foreground hover:text-foreground" href="/dashboard">
               Dashboard
             </Link>
           )}
-          <a className="text-sm text-muted-foreground hover:text-foreground" href="#hybrid-offer">HYBRID</a>
+          <a className="inline-flex items-center min-h-[44px] text-sm text-muted-foreground hover:text-foreground" href="#hybrid-offer">HYBRID</a>
         </nav>
         <div className="flex items-center gap-3">
           {!loading && user ? (

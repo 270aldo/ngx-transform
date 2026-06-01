@@ -43,7 +43,7 @@ export function WizardProgressTabs({ tabs, current }: WizardProgressTabsProps) {
 
       {/* Mobile: counter + thin progress bar */}
       <div className="flex flex-col items-end gap-1.5 min-w-[88px] xl:hidden">
-        <span className="font-display text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">
+        <span className="font-display text-[11px] font-bold uppercase tracking-[0.14em] text-white/55">
           {current} / {totalSteps}
         </span>
         <div className="w-full h-1 rounded-full bg-white/[0.06] overflow-hidden">

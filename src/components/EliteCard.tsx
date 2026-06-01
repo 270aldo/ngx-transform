@@ -39,7 +39,7 @@ export function EliteCard({
 
             <div className="relative z-10 flex justify-between items-start">
                 <div>
-                    <p className="text-[10px] font-bold text-white/90 uppercase tracking-widest mb-2 border-b border-white/20 pb-2 inline-block">
+                    <p className="text-[11px] font-bold text-white/90 uppercase tracking-widest mb-2 border-b border-white/20 pb-2 inline-block">
                         {label}
                     </p>
                     <h3 className="text-2xl font-black italic text-white leading-none mt-2 uppercase">
