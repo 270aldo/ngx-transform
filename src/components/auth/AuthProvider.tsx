@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { onAuthStateChanged, type User } from "firebase/auth";
+import { onIdTokenChanged, type User } from "firebase/auth";
 import { getClientAuth } from "@/lib/firebaseClient";
 
 interface AuthContextValue {
@@ -47,24 +47,25 @@ async function clearSessionCookie(): Promise<void> {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const lastSyncedUidRef = useRef<string | null>(null);
+  const lastSyncedTokenRef = useRef<string | null>(null);
 
   useEffect(() => {
     const auth = getClientAuth();
-    const unsub = onAuthStateChanged(auth, async (u) => {
+    const unsub = onIdTokenChanged(auth, async (u) => {
       setUser(u);
       setLoading(false);
 
       // Sync HTTP session cookie so Server Components can identify the owner.
-      // Only sync once per uid change to avoid spamming the endpoint on token refresh.
-      if (u && lastSyncedUidRef.current !== u.uid) {
-        lastSyncedUidRef.current = u.uid;
+      // onIdTokenChanged fires on token refresh, keeping the 5-day cookie usable
+      // for return visits from nurture emails without requiring a new login.
+      if (u) {
         const idToken = await u.getIdToken().catch(() => null);
-        if (idToken) {
+        if (idToken && lastSyncedTokenRef.current !== idToken) {
+          lastSyncedTokenRef.current = idToken;
           void syncSessionCookie(idToken);
         }
-      } else if (!u && lastSyncedUidRef.current) {
-        lastSyncedUidRef.current = null;
+      } else if (!u && lastSyncedTokenRef.current) {
+        lastSyncedTokenRef.current = null;
         void clearSessionCookie();
       }
     });

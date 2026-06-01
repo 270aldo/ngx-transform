@@ -24,6 +24,7 @@ import {
   Crown,
 } from "lucide-react";
 import { VideoFounderModal } from "./VideoFounderModal";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 interface CohorteInfo {
   label?: string;
@@ -83,7 +84,8 @@ function formatMxn(amount: number): string {
 async function emitTelemetry(
   shareId: string,
   event: string,
-  metadata?: Record<string, unknown>
+  metadata?: Record<string, unknown>,
+  ownerToken?: string | null
 ) {
   const webhookEvent = HYBRID_OFFER_WEBHOOK_EVENTS[event];
 
@@ -101,7 +103,10 @@ async function emitTelemetry(
     webhookEvent
       ? fetch("/api/events/hybrid-offer", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(ownerToken ? { Authorization: `Bearer ${ownerToken}` } : {}),
+          },
           body: JSON.stringify({ event: webhookEvent, shareId }),
         }).catch(() => {})
       : Promise.resolve(),
@@ -119,6 +124,7 @@ function pickDefaultSku(): Sku | null {
 }
 
 export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
+  const { user, loading: authLoading, getIdToken } = useAuth();
   const directCheckoutEnabled =
     process.env.NEXT_PUBLIC_FF_HYBRID_DIRECT_CHECKOUT === "true";
   const [videoOpen, setVideoOpen] = useState(false);
@@ -169,6 +175,11 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
     Number(process.env.NEXT_PUBLIC_HYBRID_VIDEO_DURATION_SEC || "240") || 240;
   const voiceAgentEnabled =
     process.env.NEXT_PUBLIC_FF_HYBRID_VOICE_AGENT === "true";
+
+  const getOwnerToken = async (): Promise<string | null> => {
+    if (authLoading || !user) return null;
+    return getIdToken();
+  };
 
   // Construir SKUs disponibles desde env vars
   const skus = useMemo<SkuCardData[]>(() => {
@@ -233,9 +244,17 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
     await emitTelemetry(shareId, "mp_checkout_clicked", { sku: selectedSku });
 
     try {
+      const token = await getOwnerToken();
+      if (!token) {
+        throw new Error("Abre tu sesión original para iniciar checkout.");
+      }
+
       const res = await fetch("/api/checkout/create-preference", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ shareId, sku: selectedSku }),
       });
 
@@ -269,13 +288,15 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
 
   const onCalendly = async () => {
     if (!calendlyUrl) return;
-    await emitTelemetry(shareId, "calendly_v2_clicked");
+    const token = await getOwnerToken();
+    await emitTelemetry(shareId, "calendly_v2_clicked", undefined, token);
     window.open(calendlyUrl, "_blank", "noopener,noreferrer");
   };
 
   const onWhatsapp = async () => {
     if (!whatsappUrl) return;
-    await emitTelemetry(shareId, "whatsapp_v2_clicked");
+    const token = await getOwnerToken();
+    await emitTelemetry(shareId, "whatsapp_v2_clicked", undefined, token);
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   };
 
@@ -286,9 +307,17 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
     await emitTelemetry(shareId, "brief_email_requested");
 
     try {
+      const token = await getOwnerToken();
+      if (!token) {
+        throw new Error("Abre tu sesión original para recibir el brief por correo.");
+      }
+
       const res = await fetch("/api/brief/send", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ shareId }),
       });
 

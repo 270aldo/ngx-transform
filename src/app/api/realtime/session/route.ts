@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import {
   checkRateLimit,
-  getClientIP,
   getRateLimitHeaders,
 } from "@/lib/rateLimit";
+import { isSessionOwnerAuthError, requireSessionOwner } from "@/lib/authServer";
 
 const RealtimeSessionRequestSchema = z.object({
-  shareId: z.string().min(1).max(120).optional(),
+  shareId: z.string().min(1).max(120),
   saveTranscript: z.boolean().default(false),
 });
 
@@ -34,25 +34,36 @@ function readClientSecret(payload: unknown): {
 }
 
 export async function POST(req: NextRequest) {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    return NextResponse.json(
-      { ok: false, error: "OPENAI_API_KEY not configured" },
-      { status: 503 }
-    );
-  }
-
-  const clientIP = getClientIP(req);
-  const limit = await checkRateLimit("api:general", clientIP);
-  if (!limit.success) {
-    return NextResponse.json(
-      { ok: false, error: "Too many requests" },
-      { status: 429, headers: getRateLimitHeaders(limit) }
-    );
-  }
-
   try {
     const body = RealtimeSessionRequestSchema.parse(await req.json().catch(() => ({})));
+    const voiceAgentEnabled =
+      process.env.FF_HYBRID_VOICE_AGENT === "true" ||
+      process.env.NEXT_PUBLIC_FF_HYBRID_VOICE_AGENT === "true";
+    if (!voiceAgentEnabled) {
+      return NextResponse.json(
+        { ok: false, error: "Realtime voice agent is disabled" },
+        { status: 403 }
+      );
+    }
+
+    const { authUser } = await requireSessionOwner(req, body.shareId);
+
+    const limit = await checkRateLimit("api:realtime-session", authUser.uid);
+    if (!limit.success) {
+      return NextResponse.json(
+        { ok: false, error: "Too many requests" },
+        { status: 429, headers: getRateLimitHeaders(limit) }
+      );
+    }
+
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        { ok: false, error: "OPENAI_API_KEY not configured" },
+        { status: 503 }
+      );
+    }
+
     const model = process.env.OPENAI_REALTIME_MODEL || "gpt-realtime";
 
     const instructions = [
@@ -121,6 +132,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { ok: false, error: "Validation failed", details: error.issues },
         { status: 400 }
+      );
+    }
+    if (isSessionOwnerAuthError(error)) {
+      return NextResponse.json(
+        { ok: false, error: error.code },
+        { status: error.status }
       );
     }
 

@@ -18,6 +18,17 @@ import { useAuth } from "@/components/auth/AuthProvider";
 
 type Mode = "login" | "register";
 
+function safeNextPath(next: string | null): string {
+  if (!next || !next.startsWith("/") || next.startsWith("//")) return "/wizard";
+  try {
+    const url = new URL(next, "https://ngx.local");
+    if (url.origin !== "https://ngx.local") return "/wizard";
+    return `${url.pathname}${url.search}${url.hash}`;
+  } catch {
+    return "/wizard";
+  }
+}
+
 function AuthPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -31,7 +42,7 @@ function AuthPageContent() {
 
   const nextUrl = useMemo(() => {
     const next = searchParams?.get("next");
-    return next && next.startsWith("/") ? next : "/wizard";
+    return safeNextPath(next);
   }, [searchParams]);
 
   useEffect(() => {

@@ -90,6 +90,30 @@ function getRateLimiters(): Map<string, Ratelimit> | null {
     prefix: "rl:images",
   }));
 
+  rateLimiters.set("api:realtime-session", new Ratelimit({
+    redis: redisClient,
+    limiter: Ratelimit.slidingWindow(5, "10 m"), // 5 realtime sessions per owner per 10 min
+    prefix: "rl:realtime-session",
+  }));
+
+  rateLimiters.set("api:feedback", new Ratelimit({
+    redis: redisClient,
+    limiter: Ratelimit.slidingWindow(5, "1 h"), // 5 feedback writes per owner per hour
+    prefix: "rl:feedback",
+  }));
+
+  rateLimiters.set("api:telemetry", new Ratelimit({
+    redis: redisClient,
+    limiter: Ratelimit.slidingWindow(120, "1 m"), // public telemetry is noisy by design
+    prefix: "rl:telemetry",
+  }));
+
+  rateLimiters.set("api:csp-report", new Ratelimit({
+    redis: redisClient,
+    limiter: Ratelimit.slidingWindow(30, "1 m"),
+    prefix: "rl:csp-report",
+  }));
+
   rateLimiters.set("api:referral", new Ratelimit({
     redis: redisClient,
     limiter: Ratelimit.slidingWindow(30, "1 m"), // 30 referral actions per minute
@@ -135,6 +159,10 @@ const IN_MEMORY_LIMITS: Record<string, { max: number; windowMs: number }> = {
   "api:leads": { max: 10, windowMs: 3600000 },         // 10/hour
   "api:analyze": { max: 10, windowMs: 3600000 },      // 10/hour
   "api:generate-images": { max: 5, windowMs: 3600000 },// 5/hour
+  "api:realtime-session": { max: 5, windowMs: 600000 },// 5/10min
+  "api:feedback": { max: 5, windowMs: 3600000 },       // 5/hour
+  "api:telemetry": { max: 120, windowMs: 60000 },       // 120/min
+  "api:csp-report": { max: 30, windowMs: 60000 },       // 30/min
   "api:generate-plan": { max: 5, windowMs: 3600000 },  // 5/hour
   "api:report": { max: 5, windowMs: 3600000 },          // 5/hour
   "api:plan": { max: 5, windowMs: 3600000 },           // 5/hour
@@ -186,6 +214,7 @@ const CRITICAL_ENDPOINTS = new Set([
   "api:plan",
   "api:generate-plan",
   "api:report",
+  "api:realtime-session",
 ]);
 
 function allowFallbackInProd(endpoint: string): boolean {
@@ -333,22 +362,23 @@ export function getRateLimitHeaders(result: RateLimitResult): Record<string, str
  * Extract client IP from request
  */
 export function getClientIP(request: Request): string {
-  // Prefer provider-populated headers over generic forwarded headers.
+  // Prefer provider-populated headers. Generic proxy headers are ignored unless
+  // explicitly trusted; otherwise clients can spoof them to reset rate limits.
   const vercelIP = request.headers.get("x-vercel-forwarded-for");
   if (vercelIP) {
     return vercelIP.split(",")[0].trim();
   }
 
-  const realIP = request.headers.get("x-real-ip");
-  if (realIP) {
-    return realIP.trim();
-  }
+  if (process.env.TRUST_PROXY_IP_HEADERS === "true") {
+    const realIP = request.headers.get("x-real-ip");
+    if (realIP) {
+      return realIP.trim();
+    }
 
-  // Check common headers for real IP (behind proxies/load balancers)
-  const forwardedFor = request.headers.get("x-forwarded-for");
-  if (forwardedFor) {
-    // Take the first IP in the chain
-    return forwardedFor.split(",")[0].trim();
+    const forwardedFor = request.headers.get("x-forwarded-for");
+    if (forwardedFor) {
+      return forwardedFor.split(",")[0].trim();
+    }
   }
 
   return "unknown";

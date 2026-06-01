@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getDb } from "@/lib/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
 import { sendN8NWebhook } from "@/lib/n8nWebhook";
-import { checkRateLimit, getClientIP, getRateLimitHeaders } from "@/lib/rateLimit";
+import { checkRateLimit, getRateLimitHeaders } from "@/lib/rateLimit";
+import { isSessionOwnerAuthError, requireSessionOwner } from "@/lib/authServer";
 
 const EventSchema = z.object({
   shareId: z.string().min(1),
@@ -16,27 +16,19 @@ const EventSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    const clientIP = getClientIP(req);
-    const limit = await checkRateLimit("api:general", clientIP);
+    const parsed = EventSchema.parse(await req.json());
+    const { authUser, sessionRef: ref, session } = await requireSessionOwner<{
+      ownerUid?: string;
+      email?: string | null;
+    }>(req, parsed.shareId);
+
+    const limit = await checkRateLimit("api:telemetry", authUser.uid);
     if (!limit.success) {
       return NextResponse.json(
         { ok: false, error: "Too many requests" },
         { status: 429, headers: getRateLimitHeaders(limit) }
       );
     }
-
-    const parsed = EventSchema.parse(await req.json());
-    const db = getDb();
-    const ref = db.collection("sessions").doc(parsed.shareId);
-    const snap = await ref.get();
-    if (!snap.exists) {
-      return NextResponse.json(
-        { ok: false, error: "Session not found" },
-        { status: 404 }
-      );
-    }
-
-    const email = snap.data()?.email || null;
 
     await ref.set(
       {
@@ -47,7 +39,7 @@ export async function POST(req: NextRequest) {
 
     await sendN8NWebhook(parsed.event, {
       shareId: parsed.shareId,
-      email,
+      email: session.email ?? null,
       source: "hybrid_offer",
     });
 
@@ -58,6 +50,9 @@ export async function POST(req: NextRequest) {
         { ok: false, error: "Validation failed", details: error.issues },
         { status: 400 }
       );
+    }
+    if (isSessionOwnerAuthError(error)) {
+      return NextResponse.json({ ok: false, error: error.code }, { status: error.status });
     }
     console.error("[HYBRID_OFFER_EVENT]", error);
     return NextResponse.json({ ok: false, error: "Internal server error" }, { status: 500 });

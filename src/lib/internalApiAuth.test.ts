@@ -1,5 +1,10 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { getInternalApiHeaders, hasInternalApiKey } from "./internalApiAuth";
+import {
+  getInternalApiHeaders,
+  hasCronApiKey,
+  hasInternalApiKey,
+  hasWorkerApiKey,
+} from "./internalApiAuth";
 
 function request(headers: Record<string, string>) {
   return new Request("https://ngx.test/api/pipeline", { headers });
@@ -14,13 +19,17 @@ describe("internal API auth", () => {
   it("accepts the cron key from x-api-key", () => {
     process.env.CRON_API_KEY = "cron-secret";
 
+    expect(hasCronApiKey(request({ "x-api-key": "cron-secret" }))).toBe(true);
     expect(hasInternalApiKey(request({ "x-api-key": "cron-secret" }))).toBe(true);
+    expect(hasWorkerApiKey(request({ "x-api-key": "cron-secret" }))).toBe(false);
   });
 
   it("accepts the worker token from x-worker-token", () => {
     process.env.AI_WORKER_TOKEN = "worker-secret";
 
+    expect(hasWorkerApiKey(request({ "x-worker-token": "worker-secret" }))).toBe(true);
     expect(hasInternalApiKey(request({ "x-worker-token": "worker-secret" }))).toBe(true);
+    expect(hasCronApiKey(request({ "x-worker-token": "worker-secret" }))).toBe(false);
   });
 
   it("prefers worker token when building internal headers", () => {
@@ -28,6 +37,12 @@ describe("internal API auth", () => {
     process.env.AI_WORKER_TOKEN = "worker-secret";
 
     expect(getInternalApiHeaders()).toEqual({ "x-worker-token": "worker-secret" });
+  });
+
+  it("does not use the cron key as downstream AI worker credentials", () => {
+    process.env.CRON_API_KEY = "cron-secret";
+
+    expect(getInternalApiHeaders()).toBeNull();
   });
 
   it("rejects missing or wrong credentials", () => {

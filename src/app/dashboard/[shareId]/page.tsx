@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState, use, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Sparkles, Activity, ArrowRight } from "lucide-react";
+import { Sparkles, Activity, ArrowRight, Loader2, Trash2 } from "lucide-react";
 import { ComparisonSlider } from "@/components/ComparisonSlider";
 import { EliteCard } from "@/components/EliteCard";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -54,6 +54,7 @@ export default function DashboardDetailPage({ params }: { params: Promise<{ shar
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<SessionDoc | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -98,6 +99,33 @@ export default function DashboardDetailPage({ params }: { params: Promise<{ shar
   const m12Stats = ai?.timeline?.m12?.stats;
 
   const insights = ai?.insightsText || "Tu proyección está lista.";
+
+  const deleteSession = async () => {
+    if (deleting) return;
+    const confirmed = window.confirm(
+      "Esto eliminará tu sesión, foto original y visualizaciones generadas. Esta acción no se puede deshacer."
+    );
+    if (!confirmed) return;
+
+    try {
+      setDeleting(true);
+      const token = await getIdToken();
+      if (!token) throw new Error("No se pudo validar tu sesión");
+
+      const res = await fetch(`/api/sessions/${shareId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j.error || "No se pudo eliminar la sesión");
+      }
+      router.push("/dashboard");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "No se pudo eliminar la sesión");
+      setDeleting(false);
+    }
+  };
 
   const statusLabel = useMemo(() => {
     if (!data?.status) return "Procesando";
@@ -148,12 +176,39 @@ export default function DashboardDetailPage({ params }: { params: Promise<{ shar
             )}>{statusLabel.toUpperCase()}</span>
           </p>
         </div>
+        <div className="hidden md:flex items-center gap-3">
+          <button
+            onClick={deleteSession}
+            disabled={deleting}
+            className="inline-flex items-center gap-2 px-5 py-2 bg-red-500/10 hover:bg-red-500/15 border border-red-400/20 rounded-full text-xs font-bold transition-all active:scale-95 text-red-100 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {deleting ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+            ELIMINAR SESIÓN
+          </button>
+          <Link
+            href={`/s/${shareId}`}
+            className="flex items-center gap-2 px-5 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-xs font-bold transition-all hover:scale-105 active:scale-95 text-white"
+          >
+            VER EXPERIENCIA PÚBLICA <ArrowRight size={14} />
+          </Link>
+        </div>
+      </div>
+
+      <div className="md:hidden max-w-7xl mx-auto mb-6 grid grid-cols-1 gap-3 relative z-10">
         <Link
           href={`/s/${shareId}`}
-          className="hidden md:flex items-center gap-2 px-5 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-xs font-bold transition-all hover:scale-105 active:scale-95 text-white"
+          className="flex items-center justify-center gap-2 px-5 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-xs font-bold transition-all active:scale-95 text-white"
         >
           VER EXPERIENCIA PÚBLICA <ArrowRight size={14} />
         </Link>
+        <button
+          onClick={deleteSession}
+          disabled={deleting}
+          className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-red-500/10 hover:bg-red-500/15 border border-red-400/20 rounded-full text-xs font-bold transition-all active:scale-95 text-red-100 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {deleting ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+          ELIMINAR SESIÓN
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto auto-rows-[minmax(180px,auto)] relative z-10">

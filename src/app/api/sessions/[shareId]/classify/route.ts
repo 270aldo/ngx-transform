@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getDb } from "@/lib/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
-import { checkRateLimit, getClientIP, getRateLimitHeaders } from "@/lib/rateLimit";
+import { checkRateLimit, getRateLimitHeaders } from "@/lib/rateLimit";
 import { sendN8NWebhook } from "@/lib/n8nWebhook";
 import { trackEvent } from "@/lib/telemetry";
+import { isSessionOwnerAuthError, requireSessionOwner } from "@/lib/authServer";
 
 export const runtime = "nodejs";
 
@@ -45,16 +45,6 @@ export async function POST(
       return NextResponse.json({ error: "Missing shareId" }, { status: 400 });
     }
 
-    // Rate limit by IP — funnel writes are low-stakes but should not be floodable.
-    const ip = getClientIP(req);
-    const rl = await checkRateLimit("api:general", ip);
-    if (!rl.success) {
-      return NextResponse.json(
-        { error: "Too many requests" },
-        { status: 429, headers: getRateLimitHeaders(rl) }
-      );
-    }
-
     const parsed = ClassifySchema.safeParse(await req.json().catch(() => ({})));
     if (!parsed.success) {
       return NextResponse.json(
@@ -65,14 +55,18 @@ export async function POST(
     const { classification, summary, consentSummary } = parsed.data;
     const track = TRACK_BY_CLASSIFICATION[classification];
 
-    const db = getDb();
-    const ref = db.collection("sessions").doc(shareId);
-    const snap = await ref.get();
-    if (!snap.exists) {
-      return NextResponse.json({ error: "Session not found" }, { status: 404 });
-    }
+    const { authUser, sessionRef: ref, session } = await requireSessionOwner<{
+      ownerUid?: string;
+      email?: string | null;
+    }>(req, shareId);
 
-    const existing = snap.data() as { email?: string | null } | undefined;
+    const rl = await checkRateLimit("api:realtime-session", authUser.uid);
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "Too many requests" },
+        { status: 429, headers: getRateLimitHeaders(rl) }
+      );
+    }
 
     await ref.set(
       {
@@ -102,12 +96,15 @@ export async function POST(
       shareId,
       classification,
       track,
-      email: existing?.email ?? null,
+      email: session.email ?? null,
       hasSummary: !!(consentSummary && summary),
     });
 
     return NextResponse.json({ ok: true, classification, track });
   } catch (e: unknown) {
+    if (isSessionOwnerAuthError(e)) {
+      return NextResponse.json({ error: e.code }, { status: e.status });
+    }
     console.error("[Classify]", e);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
