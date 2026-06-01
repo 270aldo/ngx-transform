@@ -90,7 +90,10 @@ export function ChapterView({
         <div className="mx-auto grid min-h-[calc(100vh-8rem)] max-w-7xl gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(420px,0.85fr)] lg:items-center">
           <div className="relative overflow-hidden rounded-[18px] border border-white/[0.08] bg-white/[0.025]">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(109,0,255,0.16),transparent_42%)]" />
-            <div className="relative aspect-[4/5] max-h-[78vh] min-h-[460px] lg:aspect-[5/6]">
+            {/* max-w-full caps width to the parent card: min-h-[460px] + aspect-[4/5]
+                would otherwise derive a width (~368px) wider than the card on a 360px
+                viewport, clipping the image/overlay (object-contain letterboxes instead). */}
+            <div className="relative aspect-[4/5] max-h-[78vh] min-h-[460px] max-w-full lg:aspect-[5/6]">
               <AnimatePresence mode="wait">
                 {showCompare && !isM0 && originalImage && currentImage ? (
                   <motion.div
