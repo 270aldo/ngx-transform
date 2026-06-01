@@ -35,6 +35,38 @@ TEST_BASE_URL=http://localhost:3000 TEST_USER_A_TOKEN="$TEST_USER_A_TOKEN" TEST_
 
 Expected: all configured tests pass. Skips are acceptable only when the fixture env var named in the skip message is intentionally absent.
 
+## Local Emulator Gate (no staging required)
+
+Runs the full owner/non-owner/anonymous + delete matrix against the Firebase Emulator Suite — zero paid APIs, zero production data. The emulator host env vars force `firebase-admin` to localhost, so it can never reach a real project even if a real `.env.local` is present.
+
+Prerequisites (one-time):
+
+- `brew install openjdk` (the Firestore/Storage emulators need a JRE).
+- `firebase-tools` available as the global `firebase` CLI.
+- `cp .env.emulator.example .env.emulator.local`, then generate a throwaway key (see the header of `.env.emulator.example`). `.env.emulator.local` is gitignored.
+
+Run:
+
+```bash
+pnpm test:gate:local
+```
+
+This starts the auth/firestore/storage emulators, boots a Next dev server on a dedicated free port, seeds two users + an owned `ready` session + two disposable sessions, mints owner (A) and other-user (B) ID tokens, and runs `test:auth`, `test:smoke`, and `test:delete`.
+
+Acceptance (all green):
+
+- `test:auth` — 13 tests, 0 skipped: owner `200`, non-owner `403`, anonymous `401` across `/private`, classify, hybrid-offer, feedback, brief, checkout.
+- `test:smoke` — 5 pass, 1 skip: the skip is the `REQUIRE_SMOKE_ENV` prod-env assertion, which belongs to the staging gate below.
+- `test:delete` — 4 tests: anonymous/non-owner rejected, owner delete `200` (session then `404`), legacy delete-token wrong-token rejected / correct token `200`.
+
+Telemetry isolation (`trusted:false` → no `session_metrics` mutation) and the MercadoPago mock gate (signature/amount/currency/idempotency) are covered by the vitest suites in `pnpm test` (136/136) and do not require the emulator.
+
+Building blocks (to run pieces manually):
+
+- `pnpm emulators` — start the emulator suite (auth, firestore, storage).
+- `pnpm seed:emulator` — seed users + fixtures (emulator must be running).
+- `pnpm mint:token A` / `pnpm mint:token B` — print an owner / other-user ID token.
+
 ## Staging Gates
 
 ```bash
