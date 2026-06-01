@@ -139,7 +139,7 @@ export default function DashboardDetailPage({ params }: { params: Promise<{ shar
           <h1 className="font-display text-xl md:text-2xl font-black italic tracking-tighter text-white">
             NGX <span className="text-[var(--ngx-purple-light)]">COMMAND</span>
           </h1>
-          <p className="text-[10px] uppercase tracking-widest text-white/45 mt-1 flex items-center gap-2">
+          <p className="text-[11px] uppercase tracking-widest text-white/45 mt-1 flex items-center gap-2">
             SESIÓN: {shareId.toUpperCase()}
             <span className="w-1.5 h-1.5 rounded-full bg-neutral-700" />
             <span className={cn(
@@ -171,7 +171,7 @@ export default function DashboardDetailPage({ params }: { params: Promise<{ shar
                 contentAfter={
                   <div className="flex flex-col justify-end h-full">
                     <div className="flex items-center gap-2 mb-3">
-                      <span className="px-2 py-0.5 rounded-sm bg-white text-black text-[10px] font-bold tracking-widest uppercase shadow-[0_0_15px_rgba(255,255,255,0.5)]">
+                      <span className="px-2 py-0.5 rounded-sm bg-white text-black text-[11px] font-bold tracking-widest uppercase shadow-[0_0_15px_rgba(255,255,255,0.5)]">
                         MÁXIMIZACIÓN GENÉTICA
                       </span>
                       <span className="w-1.5 h-1.5 rounded-full bg-[#00FF94] animate-pulse shadow-[0_0_10px_#00FF94]" />
@@ -188,7 +188,7 @@ export default function DashboardDetailPage({ params }: { params: Promise<{ shar
                   <div className="flex flex-col justify-end h-full items-end text-right">
                     <div className="flex items-center gap-2 mb-3 justify-end">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#6D00FF] animate-pulse shadow-[0_0_10px_#6D00FF]" />
-                      <span className="px-2 py-0.5 rounded-sm bg-white text-black text-[10px] font-bold tracking-widest uppercase shadow-[0_0_15px_rgba(255,255,255,0.5)]">
+                      <span className="px-2 py-0.5 rounded-sm bg-white text-black text-[11px] font-bold tracking-widest uppercase shadow-[0_0_15px_rgba(255,255,255,0.5)]">
                         PERFIL INICIAL
                       </span>
                     </div>
@@ -221,7 +221,7 @@ export default function DashboardDetailPage({ params }: { params: Promise<{ shar
               </div>
             </>
           ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center text-white/30">
+            <div className="w-full h-full flex flex-col items-center justify-center text-white/45">
               <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center mb-4">
                 <Sparkles size={20} />
               </div>
@@ -243,7 +243,7 @@ export default function DashboardDetailPage({ params }: { params: Promise<{ shar
                 { label: "MENTAL", value: m12Stats?.mental, color: "text-amber-400" },
               ].map((s) => (
                 <div key={s.label} className="flex items-center justify-between border-b border-white/[0.04] pb-2">
-                  <span className="text-[10px] font-display font-bold text-white/55 tracking-wider">{s.label}</span>
+                  <span className="text-[11px] font-display font-bold text-white/55 tracking-wider">{s.label}</span>
                   <span className={cn("text-xl font-bold font-mono tracking-wide", s.color)}>{s.value ?? "-"}</span>
                 </div>
               ))}
@@ -252,12 +252,12 @@ export default function DashboardDetailPage({ params }: { params: Promise<{ shar
 
           <div className="pt-4 border-t border-white/10 flex justify-between items-end">
             <div>
-              <p className="text-[9px] text-white/45 uppercase tracking-wider">Potencial</p>
+              <p className="text-[11px] text-white/45 uppercase tracking-wider">Potencial</p>
               <p className="font-display text-lg font-black italic text-white leading-none tracking-tight">ELITE</p>
             </div>
             <div className="h-4 w-px bg-white/10 mx-2" />
             <div className="text-right">
-              <p className="text-[9px] font-bold text-[var(--ngx-success)] uppercase tracking-widest">OPTIMIZADO</p>
+              <p className="text-[11px] font-bold text-[var(--ngx-success)] uppercase tracking-widest">OPTIMIZADO</p>
             </div>
           </div>
         </BentoCard>

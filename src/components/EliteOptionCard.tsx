@@ -92,7 +92,7 @@ export function EliteOptionCard({
       >
         <div>
           {idx ? (
-            <span className="block mb-3 ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
+            <span className="block mb-3 ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>
               Opción {String(idx).padStart(2, "0")}
             </span>
           ) : null}
@@ -112,7 +112,7 @@ export function EliteOptionCard({
         </div>
 
         {Icon ? (
-          <div className="inline-flex items-center gap-2 self-start rounded-full border border-[var(--lg-rim-thin)] bg-[var(--lg-glass-thin)] px-3 py-1.5 font-display text-[10px] font-bold uppercase tracking-[0.16em] text-white/75">
+          <div className="inline-flex items-center gap-2 self-start rounded-full border border-[var(--lg-rim-thin)] bg-[var(--lg-glass-thin)] px-3 py-1.5 font-display text-[11px] font-bold uppercase tracking-[0.16em] text-white/75">
             <Icon size={12} className="text-[var(--ngx-purple-300)]" />
             <span>{iconLabel ?? "Misión elite"}</span>
           </div>

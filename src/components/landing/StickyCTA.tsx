@@ -57,7 +57,7 @@ export function StickyCTA() {
         </Link>
 
         {/* Subtle text below */}
-        <p className="text-center text-[10px] text-slate-500 mt-2">
+        <p className="text-center text-[11px] text-slate-500 mt-2">
           Sin costo • Sin compromiso • Con honestidad
         </p>
       </div>

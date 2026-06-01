@@ -67,7 +67,7 @@ export function LandingFeatures() {
                 {feature.badge && (
                   <div className="mt-8 flex gap-2 items-center">
                     <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_#22c55e]" />
-                    <span className="text-[10px] uppercase text-slate-500 font-mono tracking-widest">
+                    <span className="text-[11px] uppercase text-slate-500 font-mono tracking-widest">
                       {feature.badge}
                     </span>
                   </div>

@@ -71,7 +71,7 @@ export function CyberSlider({
       <div className="flex items-end justify-between gap-4">
         <div>
           <span
-            className="ngx-eyebrow !text-[10px]"
+            className="ngx-eyebrow !text-[11px]"
             style={{ color: "var(--ngx-fg-3)" }}
           >
             {label}
@@ -86,7 +86,7 @@ export function CyberSlider({
           </span>
           {suffix ? (
             <span
-              className="font-display text-[10px] font-bold uppercase tracking-[0.18em]"
+              className="font-display text-[11px] font-bold uppercase tracking-[0.18em]"
               style={{ color: "var(--ngx-fg-4)" }}
             >
               {suffix}

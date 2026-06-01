@@ -156,7 +156,7 @@ export default function DashboardPage() {
                           session.status === "ready" ? "bg-[var(--ngx-success)]" : "bg-amber-500"
                         )}
                       />
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-white/45">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-white/45">
                         {session.status === "ready" ? "Calibración lista" : "Procesando..."}
                       </span>
                     </div>
@@ -216,12 +216,12 @@ export default function DashboardPage() {
                       >
                         <div className="space-y-0.5">
                           <p className="text-xs font-bold text-white">{item.title}</p>
-                          <p className="text-[10px] text-white/45 leading-tight max-w-[32ch]">{item.desc}</p>
+                          <p className="text-[11px] text-white/45 leading-tight max-w-[32ch]">{item.desc}</p>
                         </div>
                         <button
                           type="button"
                           className={cn(
-                            "rounded-full px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer",
+                            "rounded-full px-3.5 py-1.5 text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer",
                             current
                               ? "bg-[var(--ngx-purple)] text-white shadow-[var(--lg-glow-primary-sm)]"
                               : "border border-white/10 bg-white/5 text-white/50 hover:bg-white/10"

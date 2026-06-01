@@ -193,7 +193,7 @@ export function SocialShareButton({ shareId, imageUrl }: SocialShareButtonProps)
                         <network.Icon />
                       </div>
                     </div>
-                    <span className="text-[10px] text-neutral-400 font-medium">
+                    <span className="text-[11px] text-neutral-400 font-medium">
                       {network.name}
                     </span>
                   </motion.button>

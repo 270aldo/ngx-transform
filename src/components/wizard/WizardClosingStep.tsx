@@ -85,7 +85,7 @@ export function WizardClosingStep({
       <div className="w-full ngx-metal-card !p-5 md:!p-6">
         <div className="relative z-10">
           <div>
-            <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Acceso privado</span>
+            <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>Acceso privado</span>
             {authedEmail && !usingAnonymousAccess ? (
               <>
                 <p className="mt-2 text-sm text-white">{authedEmail}</p>
@@ -106,7 +106,7 @@ export function WizardClosingStep({
                     placeholder="tu@email.com"
                     className="bg-white/5 border-[color:var(--ngx-border-subtle)] rounded-2xl py-6 pl-12 text-white focus:border-[var(--ngx-purple)] transition-all"
                   />
-                  <Eye className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={18} />
+                  <Eye className="absolute left-4 top-1/2 -translate-y-1/2 text-white/45" size={18} />
                 </div>
                 <p className="mt-2 text-xs text-white/45 leading-relaxed">
                   Te enviaremos aquí el enlace privado a tu visualización, lectura inicial y dirección de 12 semanas. También podrás recuperarlo con este correo.
@@ -135,19 +135,19 @@ export function WizardClosingStep({
       <div className="w-full ngx-metal-card !p-5">
         <div className="relative z-10 grid grid-cols-2 gap-4 md:gap-5">
           <div>
-            <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Acceso</span>
+            <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>Acceso</span>
             <p className="mt-1.5 text-sm text-white">{resolvedEmail || "Pendiente de confirmar"}</p>
           </div>
           <div>
-            <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Foto</span>
+            <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>Foto</span>
             <p className="mt-1.5 text-sm text-white">{previewUrl ? "Cargada y lista" : "No detectada"}</p>
           </div>
           <div>
-            <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Objetivo</span>
+            <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>Objetivo</span>
             <p className="mt-1.5 text-sm text-white">{selectedGoalLabel}</p>
           </div>
           <div>
-            <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Enfoque</span>
+            <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>Enfoque</span>
             <p className="mt-1.5 text-sm text-white">{selectedFocusLabel}</p>
           </div>
         </div>

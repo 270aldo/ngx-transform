@@ -98,7 +98,7 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
         <div className="relative z-10">
           <div className="mb-4 flex items-center gap-2">
             <MessageSquareText className="h-4 w-4 text-[#C8A5FF]" />
-            <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>Cierre rápido</span>
+            <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>Cierre rápido</span>
           </div>
 
           <h3 className="ngx-h1 !text-left">
@@ -129,7 +129,7 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
               })}
             </div>
 
-            <div className="mt-3 flex items-center justify-between text-[10px] uppercase tracking-[0.18em] text-white/30">
+            <div className="mt-3 flex items-center justify-between text-[11px] uppercase tracking-[0.18em] text-white/45">
               <span>Nada claro</span>
               <span>Muy claro</span>
             </div>
@@ -142,7 +142,7 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
                       <CheckCircle2 className="h-5 w-5 text-emerald-300" />
                     </div>
                     <div>
-                      <p className="ngx-eyebrow !text-[10px] !text-emerald-200/80">Feedback guardado</p>
+                      <p className="ngx-eyebrow !text-[11px] !text-emerald-200/80">Feedback guardado</p>
                       <p className="mt-3 text-base font-semibold text-white">
                         {highIntent ? "Perfecto. Ya hay claridad suficiente para avanzar." : "Gracias. Esto ayuda a afinar el puente hacia el siguiente paso."}
                       </p>
@@ -190,7 +190,7 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
                 </div>
               ) : highIntent ? (
                 <div className="rounded-[24px] border border-white/8 bg-white/[0.03] p-5 md:p-6">
-                  <p className="ngx-eyebrow !text-[10px]">Lectura del resultado</p>
+                  <p className="ngx-eyebrow !text-[11px]">Lectura del resultado</p>
                   <p className="mt-3 text-lg font-semibold text-white">Se siente suficientemente claro como para avanzar.</p>
                   <p className="mt-2 text-sm leading-relaxed text-white/60">
                     Si el flujo ya te dejó claro qué hacer después, guarda ese feedback y, si quieres, comparte tu resultado.
@@ -217,7 +217,7 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
                 </div>
               ) : (
                 <div className="rounded-[24px] border border-white/8 bg-white/[0.03] p-5 md:p-6">
-                  <p className="ngx-eyebrow !text-[10px]">Qué faltó para cerrar</p>
+                  <p className="ngx-eyebrow !text-[11px]">Qué faltó para cerrar</p>
                   <p className="mt-3 text-base font-semibold text-white">Marca lo que rompió claridad.</p>
 
                   <div className="mt-4 grid gap-3">

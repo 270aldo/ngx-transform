@@ -299,7 +299,7 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
               <span className="h-2 w-2 rounded-full bg-yellow-500/80" />
               <span className="h-2 w-2 rounded-full bg-[var(--ngx-success)]/80 animate-pulse" />
             </div>
-            <span className="text-[9px] uppercase tracking-wider text-white/30">GÉNESIS CONSOLE FEED</span>
+            <span className="text-[11px] uppercase tracking-wider text-white/45">GÉNESIS CONSOLE FEED</span>
           </div>
           <div ref={consoleRef} className="h-24 overflow-y-auto space-y-1.5 scrollbar-none scroll-smooth">
             {visibleLogs.map((log, index) => (
@@ -332,7 +332,7 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
               </div>
               <button
                 onClick={requestNotificationPermission}
-                className="shrink-0 rounded-full bg-[var(--ngx-purple)] px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-white shadow-[var(--ngx-glow-primary-soft)] hover:bg-[var(--ngx-primary-hover)] active:scale-95 transition-all cursor-pointer"
+                className="shrink-0 rounded-full bg-[var(--ngx-purple)] px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-white shadow-[var(--ngx-glow-primary-soft)] hover:bg-[var(--ngx-primary-hover)] active:scale-95 transition-all cursor-pointer"
               >
                 Notificarme
               </button>
@@ -342,7 +342,7 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
       )}
 
       {notificationPermission === "granted" && (
-        <div className="z-10 mt-4 flex items-center justify-center gap-1.5 text-[10px] text-[var(--ngx-success)] uppercase tracking-widest font-semibold">
+        <div className="z-10 mt-4 flex items-center justify-center gap-1.5 text-[11px] text-[var(--ngx-success)] uppercase tracking-widest font-semibold">
           <span className="h-1.5 w-1.5 rounded-full bg-[var(--ngx-success)] animate-pulse" />
           Notificaciones activadas. Puedes cambiar de pestaña con seguridad.
         </div>

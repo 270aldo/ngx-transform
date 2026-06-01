@@ -132,7 +132,7 @@ export function CinematicViewer({
                     </h1>
                     <div className="flex items-center gap-2 mt-1.5">
                         <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: "var(--ngx-success)" }} />
-                        <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
+                        <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>
                             PROTOCOL: {getSeasonMilestoneLabel(activeStep).toUpperCase()}
                         </span>
                     </div>
@@ -197,7 +197,7 @@ export function CinematicViewer({
                             {/* Expand Button */}
                             <button
                                 onClick={() => setIsDetailsOpen(!isDetailsOpen)}
-                                className="ngx-eyebrow !text-[10px] flex items-center gap-1 transition-colors hover:text-white"
+                                className="ngx-eyebrow !text-[11px] flex items-center gap-1 transition-colors hover:text-white"
                                 style={{ color: "var(--ngx-purple-light)" }}
                             >
                                 {isDetailsOpen ? "MENOS DETALLES" : "VER ANÁLISIS TÁCTICO"}
@@ -217,7 +217,7 @@ export function CinematicViewer({
                         )}>
                             {/* Focus Points */}
                             <div className="space-y-2">
-                                <h3 className="ngx-eyebrow !text-[10px] flex items-center gap-2" style={{ color: "var(--ngx-success)" }}>
+                                <h3 className="ngx-eyebrow !text-[11px] flex items-center gap-2" style={{ color: "var(--ngx-success)" }}>
                                     <Target size={12} /> OBJETIVOS TÁCTICOS
                                 </h3>
                                 <ul className="space-y-1">
@@ -231,7 +231,7 @@ export function CinematicViewer({
 
                             {/* Risks */}
                             <div className="space-y-2">
-                                <h3 className="ngx-eyebrow !text-[10px] flex items-center gap-2" style={{ color: "var(--ngx-error)" }}>
+                                <h3 className="ngx-eyebrow !text-[11px] flex items-center gap-2" style={{ color: "var(--ngx-error)" }}>
                                     <AlertTriangle size={12} /> RIESGOS POTENCIALES
                                 </h3>
                                 <ul className="space-y-1">
@@ -318,7 +318,7 @@ export function CinematicViewer({
                                     }
                                 />
                                 <span className={cn(
-                                    "max-w-[78px] text-center text-[10px] font-bold tracking-widest leading-tight transition-colors",
+                                    "max-w-[78px] text-center text-[11px] font-bold tracking-widest leading-tight transition-colors",
                                     isActive ? "text-white" : "text-white/35 group-hover:text-white/65"
                                 )}>
                                     {step.label}

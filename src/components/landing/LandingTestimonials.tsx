@@ -39,7 +39,7 @@ export function LandingTestimonials() {
                 <div className="text-white text-xs font-display font-medium">
                   {testimonial.name}
                 </div>
-                <div className="text-slate-500 text-[10px] font-mono uppercase tracking-widest">
+                <div className="text-slate-500 text-[11px] font-mono uppercase tracking-widest">
                   {testimonial.role}
                 </div>
               </div>

@@ -82,7 +82,7 @@ export function LandingJourney() {
                 index === 0 ? "bg-[var(--ngx-purple)] shadow-[0_0_12px_rgba(109,0,255,0.75)]" : "bg-white/20"
               }`}
             />
-            <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-white/28">
+            <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/45">
               {item}
             </span>
           </div>
@@ -191,7 +191,7 @@ export function LandingJourney() {
                 <span className="h-2.5 w-2.5 rounded-full bg-white/12" />
                 <span className="h-2.5 w-2.5 rounded-full bg-white/12" />
               </div>
-              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/36">
+              <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/36">
                 Resultado privado
               </span>
             </div>
@@ -240,7 +240,7 @@ export function LandingJourney() {
                           {row.value}
                         </span>
                         <span
-                          className={`rounded-full px-2 py-1 font-mono text-[9px] uppercase tracking-[0.12em] ${
+                          className={`rounded-full px-2 py-1 font-mono text-[11px] uppercase tracking-[0.12em] ${
                             row.tone === "purple"
                               ? "border border-[var(--lg-rim-purple)] bg-[var(--lg-glass-purple-soft)] text-[var(--ngx-purple-light)]"
                               : "border border-white/[0.08] bg-white/[0.035] text-white/42"
@@ -259,7 +259,7 @@ export function LandingJourney() {
                     {ROADMAP.map((item, index) => (
                       <div key={item.phase}>
                         <span
-                          className={`inline-flex h-7 w-7 items-center justify-center rounded-full border font-mono text-[10px] font-bold ${
+                          className={`inline-flex h-7 w-7 items-center justify-center rounded-full border font-mono text-[11px] font-bold ${
                             index === 0
                               ? "border-[var(--lg-rim-purple)] bg-[var(--lg-glass-purple)] text-white"
                               : "border-white/[0.10] bg-black/20 text-white/55"
@@ -270,7 +270,7 @@ export function LandingJourney() {
                         <p className="mt-3 font-display text-sm font-black uppercase leading-none text-white">
                           {item.title}
                         </p>
-                        <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.14em] text-white/38">
+                        <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.14em] text-white/38">
                           Sem {item.weeks}
                         </p>
                       </div>
@@ -347,12 +347,12 @@ export function LandingJourney() {
                   trackCta("landing_hybrid_video", "founder_video_interest", "Ver video fundador");
                   setVideoOpen(true);
                 }}
-                className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.035] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-white/58 transition hover:border-white/[0.16] hover:text-white"
+                className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.035] px-4 min-h-[44px] py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-white/58 transition hover:border-white/[0.16] hover:text-white"
               >
                 <PlayCircle className="h-3.5 w-3.5" />
                 Ver video fundador
               </button>
-              <span className="inline-flex items-center rounded-full border border-white/[0.08] bg-white/[0.025] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-white/36">
+              <span className="inline-flex items-center rounded-full border border-white/[0.08] bg-white/[0.025] px-4 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-white/36">
                 15 min · sin presión
               </span>
             </div>

@@ -40,7 +40,7 @@ export function MobileVoiceAgentTeaser({
         className
       )}
     >
-      <span className="ngx-eyebrow !text-[10px] mb-3 block text-center tracking-[0.16em] text-[var(--ngx-purple-light)]">
+      <span className="ngx-eyebrow !text-[11px] mb-3 block text-center tracking-[0.16em] text-[var(--ngx-purple-light)]">
         Tu siguiente paso
       </span>
       <button
@@ -64,7 +64,7 @@ export function MobileVoiceAgentTeaser({
           </div>
 
           <div className="min-w-0 flex-1">
-            <span className="ngx-eyebrow !text-[10px] tracking-[0.14em] text-[var(--ngx-purple-light)]">
+            <span className="ngx-eyebrow !text-[11px] tracking-[0.14em] text-[var(--ngx-purple-light)]">
               GENESIS · POR VOZ
             </span>
 

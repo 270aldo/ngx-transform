@@ -31,7 +31,7 @@ export function LandingTopNav() {
                 <span className="font-display text-sm font-black uppercase tracking-[0.14em] text-white">
                   NGX <span className="text-[#B98CFF]">Transform</span>
                 </span>
-                <p className="hidden md:block mt-1 font-mono text-[9px] uppercase tracking-[0.18em] text-slate-500">by Genesis</p>
+                <p className="hidden md:block mt-1 font-mono text-[11px] uppercase tracking-[0.18em] text-slate-500">by Genesis</p>
               </div>
             </Link>
 
@@ -53,7 +53,7 @@ export function LandingTopNav() {
               </Link>
               <button
                 type="button"
-                className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white"
+                className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white"
                 onClick={() => setMenuOpen((prev) => !prev)}
                 aria-label="Abrir menú"
                 aria-expanded={menuOpen}

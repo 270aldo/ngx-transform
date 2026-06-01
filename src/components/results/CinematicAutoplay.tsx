@@ -153,7 +153,7 @@ export function CinematicAutoplay({
             <h1 className="font-display text-2xl font-black uppercase tracking-tighter">
               NGX <span style={{ color: "var(--ngx-purple-light)" }}>TRANSFORM</span>
             </h1>
-            <p className="ngx-eyebrow !text-[10px] mt-1.5" style={{ color: "var(--ngx-fg-3)" }}>
+            <p className="ngx-eyebrow !text-[11px] mt-1.5" style={{ color: "var(--ngx-fg-3)" }}>
               EXPERIENCIA INMERSIVA
             </p>
           </div>

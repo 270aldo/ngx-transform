@@ -121,7 +121,7 @@ export function LandingHero() {
                     >
                       <Icon className="h-4 w-4" style={{ color: "var(--ngx-purple-light)" }} />
                     </div>
-                    <span className="ngx-eyebrow !text-[10px]">{item.label}</span>
+                    <span className="ngx-eyebrow !text-[11px]">{item.label}</span>
                   </div>
                   <p className="text-sm leading-relaxed" style={{ color: "var(--ngx-fg-2)" }}>{item.text}</p>
                 </div>

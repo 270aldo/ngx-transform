@@ -236,7 +236,7 @@ export function MuscleHealthScore({
                     <div className="flex items-end justify-between gap-4">
                       <div>
                         <span
-                          className="ngx-eyebrow !text-[10px]"
+                          className="ngx-eyebrow !text-[11px]"
                           style={{ color: "var(--ngx-fg-3)" }}
                         >
                           Indicador inicial
@@ -248,7 +248,7 @@ export function MuscleHealthScore({
                           </span>
                         </p>
                       </div>
-                      <div className="rounded-full border border-[color:var(--ngx-border-subtle)] bg-white/[0.04] px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-white/45 whitespace-nowrap">
+                      <div className="rounded-full border border-[color:var(--ngx-border-subtle)] bg-white/[0.04] px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-white/45 whitespace-nowrap">
                         Score orientativo
                       </div>
                     </div>
@@ -279,7 +279,7 @@ export function MuscleHealthScore({
                       <div className="ngx-metal-card !p-4">
                         <div className="relative z-10">
                           <span
-                            className="ngx-eyebrow !text-[10px]"
+                            className="ngx-eyebrow !text-[11px]"
                             style={{ color: "var(--ngx-fg-3)" }}
                           >
                             Edad cronológica
@@ -292,7 +292,7 @@ export function MuscleHealthScore({
                       <div className="ngx-metal-card !p-4">
                         <div className="relative z-10">
                           <span
-                            className="ngx-eyebrow !text-[10px]"
+                            className="ngx-eyebrow !text-[11px]"
                             style={{ color: "var(--ngx-fg-3)" }}
                           >
                             Edad funcional est.
@@ -305,7 +305,7 @@ export function MuscleHealthScore({
                       <div className="ngx-metal-card !p-4">
                         <div className="relative z-10">
                           <span
-                            className="ngx-eyebrow !text-[10px]"
+                            className="ngx-eyebrow !text-[11px]"
                             style={{ color: "var(--ngx-fg-3)" }}
                           >
                             Diferencia
@@ -334,7 +334,7 @@ export function MuscleHealthScore({
                     <div className="flex items-center justify-between gap-3">
                       <div>
                         <span
-                          className="ngx-eyebrow !text-[10px]"
+                          className="ngx-eyebrow !text-[11px]"
                           style={{ color: "var(--ngx-fg-3)" }}
                         >
                           Riesgo de fricción
@@ -359,7 +359,7 @@ export function MuscleHealthScore({
 
                     <div className="space-y-3">
                       <span
-                        className="ngx-eyebrow !text-[10px]"
+                        className="ngx-eyebrow !text-[11px]"
                         style={{ color: "var(--ngx-fg-3)" }}
                       >
                         3 hipótesis accionables
@@ -397,7 +397,7 @@ export function MuscleHealthScore({
                               <div className="min-w-0 flex-1">
                                 {isPrimary && (
                                   <span
-                                    className="ngx-eyebrow !text-[9px] block mb-1"
+                                    className="ngx-eyebrow !text-[11px] block mb-1"
                                     style={{ color: "var(--ngx-purple-light)" }}
                                   >
                                     Empieza por aquí
@@ -436,7 +436,7 @@ export function MuscleHealthScore({
                     </span>
                     <div>
                       <span
-                        className="ngx-eyebrow !text-[10px]"
+                        className="ngx-eyebrow !text-[11px]"
                         style={{ color: "rgba(252, 211, 77, 0.8)" }}
                       >
                         Error dominante
@@ -451,7 +451,7 @@ export function MuscleHealthScore({
                 <div className="ngx-metal-card !p-5 md:!p-6">
                   <div className="relative z-10">
                     <span
-                      className="ngx-eyebrow !text-[10px]"
+                      className="ngx-eyebrow !text-[11px]"
                       style={{ color: "var(--ngx-fg-3)" }}
                     >
                       Siguiente paso recomendado

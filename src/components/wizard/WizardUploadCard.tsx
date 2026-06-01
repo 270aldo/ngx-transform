@@ -36,7 +36,7 @@ export function WizardUploadCard({
       {/* Header */}
       <div className="flex items-center justify-between gap-3 border-b border-[color:var(--ngx-border-subtle)] pb-4">
         <div>
-          <span className="ngx-eyebrow !text-[10px]" style={{ color: "var(--ngx-fg-3)" }}>
+          <span className="ngx-eyebrow !text-[11px]" style={{ color: "var(--ngx-fg-3)" }}>
             Foto base
           </span>
           <p className="mt-1.5 text-base font-bold text-white tracking-[-0.005em]">
@@ -45,7 +45,7 @@ export function WizardUploadCard({
         </div>
         <span
           className={cn(
-            "rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.18em] transition-colors whitespace-nowrap",
+            "rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.18em] transition-colors whitespace-nowrap",
             hasPreview
               ? "border border-[var(--ngx-success)]/30 bg-[var(--ngx-success)]/10 text-[var(--ngx-success)]"
               : "border border-white/10 bg-white/[0.04] text-white/45"
@@ -82,16 +82,17 @@ function EmptyState() {
         <Upload className="h-6 w-6" />
       </div>
 
-      {/* Headline — clean body bold instead of italic chunky display */}
-      <h3 className="mt-4 font-body font-bold text-base md:text-lg text-white leading-tight tracking-[-0.005em]">
+      {/* Instructional label inside the upload control — intentionally a <p>,
+          not a heading, to avoid an h1→h3 heading-order skip on the photo step. */}
+      <p className="mt-4 font-body font-bold text-base md:text-lg text-white leading-tight tracking-[-0.005em]">
         Arrastra tu foto aquí
-      </h3>
+      </p>
       <p className="mt-2 text-xs leading-relaxed text-white/55">
         JPG, PNG o WEBP · máximo 8MB
       </p>
 
       {/* Inline meta — replaces gordo chips. One sober line with bullets. */}
-      <p className="mt-4 text-[10px] uppercase tracking-[0.16em] font-mono text-white/40 leading-relaxed">
+      <p className="mt-4 text-[11px] uppercase tracking-[0.16em] font-mono text-white/40 leading-relaxed">
         Privado · Consentimiento · Sin login
       </p>
 
@@ -135,7 +136,7 @@ function PreviewState({ previewUrl }: { previewUrl: string }) {
       />
       {/* Bottom gradient + label */}
       <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/85 via-black/15 to-transparent pointer-events-none" />
-      <div className="absolute left-4 top-4 z-20 rounded-full border border-[color:var(--ngx-border-subtle)] bg-black/55 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-white/75 backdrop-blur-md">
+      <div className="absolute left-4 top-4 z-20 rounded-full border border-[color:var(--ngx-border-subtle)] bg-black/55 px-3 py-1.5 text-[11px] uppercase tracking-[0.18em] text-white/75 backdrop-blur-md">
         Vista previa protegida
       </div>
       <div className="absolute bottom-4 left-4 right-4 z-20 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

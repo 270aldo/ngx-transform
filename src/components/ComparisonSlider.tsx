@@ -93,7 +93,7 @@ export function ComparisonSlider({
                     className="object-contain"
                     unoptimized
                 />
-                <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black italic tracking-widest text-white z-10 border border-white/10 shadow-xl">
+                <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-black italic tracking-widest text-white z-10 border border-white/10 shadow-xl">
                     {labelAfter}
                 </div>
             </div>
@@ -119,7 +119,7 @@ export function ComparisonSlider({
                         className="object-contain"
                         unoptimized
                     />
-                    <div className="absolute top-4 left-4 bg-[#6D00FF]/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black italic tracking-widest text-white z-10 border border-white/20 shadow-xl">
+                    <div className="absolute top-4 left-4 bg-[#6D00FF]/80 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-black italic tracking-widest text-white z-10 border border-white/20 shadow-xl">
                         {labelBefore}
                     </div>
                 </div>

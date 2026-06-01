@@ -25,25 +25,25 @@ export function LandingFooter() {
               <span className="font-display text-sm font-black uppercase tracking-[0.14em] text-white/86">
                 {footer.brandName}
               </span>
-              <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.18em] text-white/38">
+              <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.18em] text-white/38">
                 {footer.status}
               </p>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-            <Link href="/privacy" className="text-sm text-white/48 transition-colors hover:text-white font-body">
+            <Link href="/privacy" className="inline-flex items-center min-h-[44px] text-sm text-white/55 transition-colors hover:text-white font-body">
               Privacidad
             </Link>
-            <Link href="/terms" className="text-sm text-white/48 transition-colors hover:text-white font-body">
+            <Link href="/terms" className="inline-flex items-center min-h-[44px] text-sm text-white/55 transition-colors hover:text-white font-body">
               Términos
             </Link>
             {supportEmail ? (
-              <a href={`mailto:${supportEmail}`} className="text-sm text-white/48 transition-colors hover:text-white font-body">
+              <a href={`mailto:${supportEmail}`} className="inline-flex items-center min-h-[44px] text-sm text-white/55 transition-colors hover:text-white font-body">
                 Contacto
               </a>
             ) : (
-              <Link href="/privacy" className="text-sm text-white/48 transition-colors hover:text-white font-body">
+              <Link href="/privacy" className="inline-flex items-center min-h-[44px] text-sm text-white/55 transition-colors hover:text-white font-body">
                 Contacto
               </Link>
             )}

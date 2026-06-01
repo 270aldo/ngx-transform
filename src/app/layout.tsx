@@ -64,6 +64,9 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#6D00FF",
+  // Extend under the notch/home-indicator so `env(safe-area-inset-*)` is
+  // non-zero on iPhone; fixed/sticky chrome uses it below to avoid overlap.
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

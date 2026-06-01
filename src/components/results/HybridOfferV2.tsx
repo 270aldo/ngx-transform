@@ -374,7 +374,7 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
 
             <div className="mt-6 ngx-card !p-5 md:!p-6">
               <span
-                className="ngx-eyebrow !text-[10px]"
+                className="ngx-eyebrow !text-[11px]"
                 style={{ color: "var(--ngx-fg-3)" }}
               >
                 Cuándo sí tiene sentido
@@ -399,13 +399,13 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
               />
               <div className="flex items-center justify-between gap-3 mb-3">
                 <span
-                  className="ngx-eyebrow !text-[10px]"
+                  className="ngx-eyebrow !text-[11px]"
                   style={{ color: "var(--ngx-fg-3)" }}
                 >
                   Siguiente paso recomendado
                 </span>
                 <span
-                  className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[9px] uppercase tracking-[0.18em]"
+                  className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] uppercase tracking-[0.18em]"
                   style={{
                     background: "rgba(109,0,255,0.16)",
                     border: "1px solid rgba(109,0,255,0.32)",
@@ -490,7 +490,7 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
             </div>
 
             <div className="rounded-[18px] border border-white/[0.08] bg-white/[0.025] px-4 py-3">
-              <div className="mb-2 text-[10px] uppercase tracking-[0.16em] text-white/35">
+              <div className="mb-2 text-[11px] uppercase tracking-[0.16em] text-white/35">
                 Ayudas antes de decidir
               </div>
               <div className="flex flex-wrap gap-2">
@@ -522,7 +522,7 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
             {/* Bonus incluido */}
             <div className="ngx-card !p-5 md:!p-6">
               <span
-                className="ngx-eyebrow !text-[10px]"
+                className="ngx-eyebrow !text-[11px]"
                 style={{ color: "var(--ngx-fg-3)" }}
               >
                 Bonus incluido
@@ -568,7 +568,7 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
                     </p>
                   </div>
                   <span
-                    className="rounded-full px-3 py-1.5 text-[10px] uppercase tracking-[0.18em]"
+                    className="rounded-full px-3 py-1.5 text-[11px] uppercase tracking-[0.18em]"
                     style={{
                       background: "rgba(109,0,255,0.10)",
                       border: "1px solid rgba(109,0,255,0.25)",
@@ -602,13 +602,13 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
               <div className="ngx-glass !p-5 md:!p-6 relative overflow-hidden">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <span
-                    className="ngx-eyebrow !text-[10px]"
+                    className="ngx-eyebrow !text-[11px]"
                     style={{ color: "var(--ngx-fg-3)" }}
                   >
                     Compra directa opcional
                   </span>
                   <span
-                    className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[9px] uppercase tracking-[0.18em]"
+                    className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] uppercase tracking-[0.18em]"
                     style={{
                       background: "rgba(255,255,255,0.04)",
                       border: "1px solid rgba(255,255,255,0.10)",
@@ -711,7 +711,7 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
               ].map(({ icon: Icon, label }) => (
                 <div
                   key={label}
-                  className="flex min-w-0 items-center justify-center gap-1 text-[9px] uppercase tracking-[0.10em] text-white/40 sm:justify-start sm:text-[10px] sm:tracking-[0.14em]"
+                  className="flex min-w-0 items-center justify-center gap-1 text-[11px] uppercase tracking-[0.10em] text-white/40 sm:justify-start sm:text-[11px] sm:tracking-[0.14em]"
                 >
                   <Icon className="h-3 w-3" />
                   <span>{label}</span>
