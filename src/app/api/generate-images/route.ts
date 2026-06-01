@@ -27,9 +27,9 @@ import { FieldValue } from "firebase-admin/firestore";
 import sharp from "sharp";
 import { telemetry, startTimer } from "@/lib/telemetry";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
-import { checkSpendLimit, recordSpend } from "@/lib/spendLimiter";
+import { reserveSpend } from "@/lib/spendLimiter";
 import { requireAuth } from "@/lib/authServer";
-import { hasInternalApiKey } from "@/lib/internalApiAuth";
+import { hasWorkerApiKey } from "@/lib/internalApiAuth";
 import { getAiGenerationFlag } from "@/lib/aiKillSwitch";
 import {
   getOrCreateJob,
@@ -141,7 +141,7 @@ export async function POST(req: Request) {
     const { sessionId } = parsed.data;
     parsedSessionId = sessionId;
 
-    const isWorker = hasInternalApiKey(req);
+    const isWorker = hasWorkerApiKey(req);
 
     // Kill switch for AI generation
     const aiFlag = await getAiGenerationFlag();
@@ -291,7 +291,7 @@ export async function POST(req: Request) {
     const estimatedCost = estimateSessionCost(stepsToProcess);
     console.log(`[GenerateImages] Estimated cost for ${stepsToProcess.join(",")}: $${estimatedCost.toFixed(3)}`);
 
-    const spendCheck = await checkSpendLimit(estimatedCost);
+    const spendCheck = await reserveSpend(estimatedCost, `image_generation_${stepsToProcess.join("_")}`);
     if (!spendCheck.allowed) {
       console.error(`[GenerateImages] Spend limit exceeded: ${spendCheck.reason}`);
       telemetry.spendLimitBlocked(sessionId, spendCheck.reason);
@@ -448,10 +448,6 @@ export async function POST(req: Request) {
           result.model,
           imageConfig.byStep[step].imageSize
         );
-
-        // Record spend for this step
-        const stepCost = estimateSessionCost([step]);
-        await recordSpend(stepCost, `image_generation_${step}`);
 
         console.log(
           `[GenerateImages] ${step} completed for ${sessionId} in ${stepLatency}ms ` +

@@ -5,8 +5,9 @@
  * Reports are logged for analysis and can be forwarded to external services.
  */
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import * as Sentry from "@sentry/nextjs";
+import { checkRateLimit, getClientIP } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 
@@ -25,9 +26,28 @@ interface CSPViolationReport {
   };
 }
 
-export async function POST(req: Request) {
+const MAX_CSP_REPORT_BYTES = 10 * 1024;
+const CSP_REPORT_SAMPLE_RATE = Number(process.env.CSP_REPORT_SAMPLE_RATE || "0.1");
+
+export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as CSPViolationReport;
+    const clientIP = getClientIP(req);
+    const limit = await checkRateLimit("api:csp-report", clientIP);
+    if (!limit.success) {
+      return new NextResponse(null, { status: 204 });
+    }
+
+    const contentLength = Number(req.headers.get("content-length") || "0");
+    if (contentLength > MAX_CSP_REPORT_BYTES) {
+      return new NextResponse(null, { status: 204 });
+    }
+
+    const rawBody = await req.text();
+    if (rawBody.length > MAX_CSP_REPORT_BYTES) {
+      return new NextResponse(null, { status: 204 });
+    }
+
+    const body = JSON.parse(rawBody) as CSPViolationReport;
     const report = body["csp-report"];
 
     if (!report) {
@@ -45,7 +65,10 @@ export async function POST(req: Request) {
       timestamp: new Date().toISOString(),
     });
 
-    if (process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN) {
+    if (
+      (process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN) &&
+      Math.random() < CSP_REPORT_SAMPLE_RATE
+    ) {
       Sentry.captureMessage("CSP Violation", {
         level: "warning",
         tags: {

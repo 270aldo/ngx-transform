@@ -67,7 +67,7 @@ describe("Season pipeline API", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     process.env.CRON_API_KEY = "server-secret";
-    delete process.env.AI_WORKER_TOKEN;
+    process.env.AI_WORKER_TOKEN = "worker-secret";
     vi.mocked(getOrCreateJob).mockResolvedValue({
       jobId: "share_1_season_pipeline",
       sessionId: "share_1",

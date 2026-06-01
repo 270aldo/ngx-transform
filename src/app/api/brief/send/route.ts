@@ -18,18 +18,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { Resend } from "resend";
 import { FieldValue } from "firebase-admin/firestore";
-import { getDb } from "@/lib/firebaseAdmin";
 import { getSignedUrl } from "@/lib/storage";
 import { trackEvent } from "@/lib/telemetry";
 import { isEmailSuppressed } from "@/lib/emailSuppression";
 import {
   checkRateLimit,
-  getClientIP,
   getRateLimitHeaders,
 } from "@/lib/rateLimit";
 import { getConfiguredFromEmail } from "@/lib/emailConfig";
 import BriefDelivery from "@/emails/transactional/BriefDelivery";
 import type { Bottleneck, Diagnostic, InsightsResult } from "@/types/ai";
+import { isSessionOwnerAuthError, requireSessionOwner } from "@/lib/authServer";
 
 export const runtime = "nodejs";
 
@@ -129,6 +128,7 @@ function getResend(): Resend | null {
 }
 
 interface SessionPartial {
+  ownerUid?: string;
   email?: string | null;
   input?: UserInputSnapshot & { age?: number };
   ai?: InsightsResult;
@@ -140,32 +140,15 @@ interface SessionPartial {
 
 export async function POST(req: NextRequest) {
   try {
-    const ip = getClientIP(req);
-    const limit = await checkRateLimit("api:brief", ip);
+    const parsed = Body.parse(await req.json());
+    const { authUser, sessionRef, session: data } =
+      await requireSessionOwner<SessionPartial>(req, parsed.shareId);
+
+    const limit = await checkRateLimit("api:brief", authUser.uid);
     if (!limit.success) {
       return NextResponse.json(
         { ok: false, error: "Too many requests. Espera unos minutos." },
         { status: 429, headers: getRateLimitHeaders(limit) }
-      );
-    }
-
-    const parsed = Body.parse(await req.json());
-
-    const db = getDb();
-    const sessionRef = db.collection("sessions").doc(parsed.shareId);
-    const snap = await sessionRef.get();
-    if (!snap.exists) {
-      return NextResponse.json(
-        { ok: false, error: "Sesión no encontrada." },
-        { status: 404 }
-      );
-    }
-
-    const data = snap.data() as SessionPartial | undefined;
-    if (!data) {
-      return NextResponse.json(
-        { ok: false, error: "Datos incompletos." },
-        { status: 404 }
       );
     }
 
@@ -323,6 +306,9 @@ export async function POST(req: NextRequest) {
         { ok: false, error: "Validation failed", details: error.issues },
         { status: 400 }
       );
+    }
+    if (isSessionOwnerAuthError(error)) {
+      return NextResponse.json({ ok: false, error: error.code }, { status: error.status });
     }
     console.error("[BRIEF_SEND]", error);
     return NextResponse.json(

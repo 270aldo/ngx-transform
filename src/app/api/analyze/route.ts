@@ -6,9 +6,9 @@ import { generateInsightsFromImage } from "@/lib/gemini";
 import { FieldValue } from "firebase-admin/firestore";
 import { telemetry, startTimer } from "@/lib/telemetry";
 import { checkRateLimit, getRateLimitHeaders, getClientIP } from "@/lib/rateLimit";
-import { checkSpendLimit, recordSpend } from "@/lib/spendLimiter";
+import { reserveSpend } from "@/lib/spendLimiter";
 import { requireAuth } from "@/lib/authServer";
-import { hasInternalApiKey } from "@/lib/internalApiAuth";
+import { hasWorkerApiKey } from "@/lib/internalApiAuth";
 import { getAiGenerationFlag } from "@/lib/aiKillSwitch";
 import {
   getOrCreateJob,
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
 
     const { sessionId } = parsed.data;
     parsedSessionId = sessionId;
-    const isInternal = hasInternalApiKey(req);
+    const isInternal = hasWorkerApiKey(req);
 
     // Kill switch for AI generation
     const aiFlag = await getAiGenerationFlag();
@@ -126,7 +126,7 @@ export async function POST(req: Request) {
 
     // Check spend limits (analysis is cheap but still tracked)
     const analysisCost = 0.001; // ~$0.001 per analysis (conservative estimate)
-    const spendCheck = await checkSpendLimit(analysisCost);
+    const spendCheck = await reserveSpend(analysisCost, "analysis");
     if (!spendCheck.allowed) {
       console.error(`[Analyze] Spend limit exceeded: ${spendCheck.reason}`);
       telemetry.spendLimitBlocked(sessionId, spendCheck.reason);
@@ -193,9 +193,6 @@ export async function POST(req: Request) {
     // Track análisis completado
     const latency = timer.stop();
     await telemetry.analysisCompleted(sessionId, latency, MODEL_ID);
-
-    // Record spend
-    await recordSpend(analysisCost, "analysis");
 
     console.log(`[Analyze] Completed ${sessionId} in ${latency}ms (${retryCount} retries)`);
 

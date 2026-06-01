@@ -18,7 +18,6 @@ interface MobileVoiceAgentTeaserProps {
  * Summary + Roadmap.
  */
 export function MobileVoiceAgentTeaser({
-  shareId,
   className,
 }: MobileVoiceAgentTeaserProps) {
   const scrollToVoiceAgent = useCallback(() => {

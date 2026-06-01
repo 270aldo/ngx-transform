@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createMpPreference, getHybridSkuConfig } from "@/lib/mercadoPago";
-import { getDb } from "@/lib/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
 import { trackEvent } from "@/lib/telemetry";
 import {
   checkRateLimit,
-  getClientIP,
   getRateLimitHeaders,
 } from "@/lib/rateLimit";
+import { isSessionOwnerAuthError, requireSessionOwner } from "@/lib/authServer";
 
 const Body = z.object({
   shareId: z.string().min(1),
@@ -17,18 +16,22 @@ const Body = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    const ip = getClientIP(req);
-    const limit = await checkRateLimit("api:checkout", ip);
+    // 1. Validar body primero — un payload mal formado merece 400 antes de
+    //    cualquier check de ambiente.
+    const parsed = Body.parse(await req.json());
+
+    const { authUser, sessionRef, session } = await requireSessionOwner<{
+      ownerUid?: string;
+      email?: string | null;
+    }>(req, parsed.shareId);
+
+    const limit = await checkRateLimit("api:checkout", authUser.uid);
     if (!limit.success) {
       return NextResponse.json(
         { ok: false, error: "Too many requests" },
         { status: 429, headers: getRateLimitHeaders(limit) }
       );
     }
-
-    // 1. Validar body primero — un payload mal formado merece 400 antes de
-    //    cualquier check de ambiente.
-    const parsed = Body.parse(await req.json());
 
     // 2. Pre-check de credenciales de Mercado Pago. Si falta el access token,
     //    degradamos suave (503) con mensaje user-friendly en lugar de filtrar
@@ -61,16 +64,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Recoger email del lead si existe — ayuda al pre-fill de MP y tracking
-    const db = getDb();
-    const sessionRef = db.collection("sessions").doc(parsed.shareId);
-    const snap = await sessionRef.get();
-    if (!snap.exists) {
-      return NextResponse.json(
-        { ok: false, error: "Session not found" },
-        { status: 404 }
-      );
-    }
-    const email = (snap.data()?.email as string | undefined) || undefined;
+    const email = session.email || undefined;
 
     // Determinar baseUrl absoluto
     const vercelUrl = process.env.VERCEL_URL
@@ -136,6 +130,9 @@ export async function POST(req: NextRequest) {
         { ok: false, error: "Validation failed", details: error.issues },
         { status: 400 }
       );
+    }
+    if (isSessionOwnerAuthError(error)) {
+      return NextResponse.json({ ok: false, error: error.code }, { status: error.status });
     }
     // No filtrar `error.message` al cliente: puede contener detalles internos
     // (env var names, stack traces, llamadas a APIs externas). El detalle

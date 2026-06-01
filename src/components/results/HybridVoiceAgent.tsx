@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RiveOrb } from "@/components/RiveOrb";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 type ConnectionState = "idle" | "connecting" | "connected" | "error";
 type FitClassification =
@@ -76,6 +77,7 @@ async function emitTelemetry(
 }
 
 export function HybridVoiceAgent({ shareId, className }: HybridVoiceAgentProps) {
+  const { user, loading: authLoading, getIdToken } = useAuth();
   const [state, setState] = useState<ConnectionState>("idle");
   const [error, setError] = useState<string | null>(null);
   const [saveTranscript, setSaveTranscript] = useState(false);
@@ -86,6 +88,7 @@ export function HybridVoiceAgent({ shareId, className }: HybridVoiceAgentProps) 
   const dataChannelRef = useRef<RTCDataChannel | null>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const ownerTokenRef = useRef<string | null>(null);
 
   const closeConnection = useCallback(() => {
     dataChannelRef.current?.close();
@@ -94,6 +97,7 @@ export function HybridVoiceAgent({ shareId, className }: HybridVoiceAgentProps) 
     pcRef.current = null;
     localStreamRef.current?.getTracks().forEach((track) => track.stop());
     localStreamRef.current = null;
+    ownerTokenRef.current = null;
     setState("idle");
   }, []);
 
@@ -132,9 +136,14 @@ export function HybridVoiceAgent({ shareId, className }: HybridVoiceAgentProps) 
         });
         // Persist the fit classification + route the lead into the funnel.
         // Fire-and-forget: never block the live conversation on this write.
+        const token = ownerTokenRef.current;
+        if (!token) return;
         void fetch(`/api/sessions/${shareId}/classify`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify({
             classification: parsed,
             consentSummary: saveTranscript,
@@ -152,12 +161,27 @@ export function HybridVoiceAgent({ shareId, className }: HybridVoiceAgentProps) 
     setClassification(null);
     setTranscript([]);
     setState("connecting");
-    await emitTelemetry(shareId, "voice_agent_opened", { saveTranscript });
 
     try {
+      if (authLoading) {
+        throw new Error("Estamos validando tu sesión. Intenta de nuevo en unos segundos.");
+      }
+      if (!user) {
+        throw new Error("Abre tu sesión original para hablar con GENESIS.");
+      }
+      const token = await getIdToken();
+      if (!token) {
+        throw new Error("No se pudo validar tu sesión para iniciar GENESIS.");
+      }
+      ownerTokenRef.current = token;
+      await emitTelemetry(shareId, "voice_agent_opened", { saveTranscript });
+
       const sessionRes = await fetch("/api/realtime/session", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ shareId, saveTranscript }),
       });
       const session = await sessionRes.json();
@@ -390,11 +414,15 @@ export function HybridVoiceAgent({ shareId, className }: HybridVoiceAgentProps) 
               ) : (
                 <button
                   onClick={startConversation}
-                  disabled={state === "connecting"}
+                  disabled={state === "connecting" || authLoading || !user}
                   className="ngx-primary-cta inline-flex min-h-[54px] w-full px-5 py-4 text-sm disabled:cursor-not-allowed disabled:opacity-70"
                 >
                   <Sparkles className="h-4 w-4" />
-                  {state === "connecting" ? "Conectando" : "Hablar con GENESIS"}
+                  {state === "connecting"
+                    ? "Conectando"
+                    : !user && !authLoading
+                      ? "Abre tu sesión original"
+                      : "Hablar con GENESIS"}
                 </button>
               )}
 
