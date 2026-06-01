@@ -95,12 +95,15 @@ export function CyberSlider({
         </div>
       </div>
 
-      <div className="mt-3 relative h-2.5 w-full">
+      {/* Wrapper is 44px tall for a comfortable touch target (a11y); the visual
+          track stays thin (h-2.5) and vertically centered. The range input fills
+          the wrapper, so its hit area is the full 44px. */}
+      <div className="mt-3 relative h-11 w-full">
         {/* Track base */}
-        <div className="absolute inset-0 rounded-full bg-white/[0.06] border border-white/[0.04]" />
+        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-2.5 rounded-full bg-white/[0.06] border border-white/[0.04]" />
         {/* Track fill */}
         <div
-          className="absolute inset-y-0 left-0 rounded-full pointer-events-none"
+          className="absolute top-1/2 -translate-y-1/2 left-0 h-2.5 rounded-full pointer-events-none"
           style={{
             width: `${progress}%`,
             background: trackFill[trackColor],

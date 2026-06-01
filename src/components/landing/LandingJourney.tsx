@@ -134,7 +134,7 @@ export function LandingJourney() {
               De curiosidad a claridad.
             </h2>
           </div>
-          <p className="animate-on-scroll delay-100 max-w-2xl text-base leading-relaxed text-white/60">
+          <p className="animate-on-scroll delay-100 max-w-xl text-base leading-relaxed text-white/60">
             Cuatro pasos, una sola intención: convertir una reacción visual en una lectura útil y un siguiente paso defendible.
           </p>
         </div>
@@ -290,7 +290,7 @@ export function LandingJourney() {
             <h2 className="mt-4 font-display text-[clamp(2.45rem,4.8vw,4.45rem)] font-black uppercase leading-[0.88] tracking-normal text-white">
               La imagen inspira. El sistema transforma. El humano sostiene.
             </h2>
-            <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/62">
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-white/62">
               Transform no promete un resultado. Sirve para abrir una conversación seria: qué señales aparecen, qué estructura tendría sentido durante 12 semanas y qué necesita revisar un humano antes de recomendar HYBRID.
             </p>
 

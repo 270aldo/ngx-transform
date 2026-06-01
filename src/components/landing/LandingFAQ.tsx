@@ -56,7 +56,7 @@ export function LandingFAQ() {
                   className={`grid transition-all duration-200 ${isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
                 >
                   <div className="overflow-hidden">
-                    <p className="max-w-3xl px-5 pb-5 text-sm leading-relaxed text-white/58 md:px-6 md:pb-6 md:text-[0.98rem]">
+                    <p className="max-w-xl px-5 pb-5 text-sm leading-relaxed text-white/58 md:px-6 md:pb-6 md:text-[0.98rem]">
                       {item.answer}
                     </p>
                   </div>
