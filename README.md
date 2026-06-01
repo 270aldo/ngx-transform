@@ -1,4 +1,4 @@
-# NGX Transform — Diagnóstico visual de salud muscular
+# NGX Vision — Diagnóstico visual de salud muscular
 
 Lead magnet Next.js con Tailwind v4, shadcn/ui v4, Firebase y Gemini (texto + imagen), orientado a entregar un diagnóstico visual de salud muscular y dirección de 12 semanas hacia NGX HYBRID.
 

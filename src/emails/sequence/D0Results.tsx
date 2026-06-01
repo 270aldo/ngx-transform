@@ -30,7 +30,7 @@ export default function D0Results({
   const baseUrl =
     process.env.NEXT_PUBLIC_APP_URL ||
     process.env.NEXT_PUBLIC_BASE_URL ||
-    "https://transform.ngxgenesis.com";
+    "https://ngxvision.app";
   const resultsUrl = `${baseUrl}/s/${shareId}`;
   const unsubscribeUrl = buildUnsubscribeUrl(baseUrl, shareId);
   const logoUrl = `${baseUrl}/images/brand/logo.svg`;
@@ -125,7 +125,7 @@ export default function D0Results({
             {/* Footer */}
             <Section className="text-center mt-8">
               <Text className="text-xs text-neutral-600">
-                Este email fue enviado por NGX Transform.
+                Este email fue enviado por NGX Vision.
                 <br />
                 Si no solicitaste esto, puedes ignorar este correo.
                 <br />

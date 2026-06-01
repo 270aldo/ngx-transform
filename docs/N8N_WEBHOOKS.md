@@ -1,4 +1,4 @@
-# N8N Webhooks — NGX Transform Funnel
+# N8N Webhooks — NGX Vision Funnel
 
 ## Webhooks Requeridos
 

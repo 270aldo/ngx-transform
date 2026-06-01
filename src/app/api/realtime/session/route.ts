@@ -56,10 +56,10 @@ export async function POST(req: NextRequest) {
     const model = process.env.OPENAI_REALTIME_MODEL || "gpt-realtime";
 
     const instructions = [
-      "Eres GENESIS, el agente conversacional de NGX Transform.",
+      "Eres GENESIS, el agente conversacional de NGX Vision.",
       "Tu tarea es entrevistar brevemente al usuario después de ver su diagnóstico visual.",
       "Clasifica el fit en una de estas etiquetas exactas: listo_para_diagnostico, necesita_claridad, no_fit_ahora.",
-      "Explica NGX Transform y NGX HYBRID con lenguaje sobrio.",
+      "Explica NGX Vision y NGX HYBRID con lenguaje sobrio.",
       "No diagnostiques salud, no des prescripciones médicas o nutricionales, y no prometas resultados físicos.",
       "Haz máximo 5 preguntas antes de recomendar el siguiente paso.",
       body.saveTranscript

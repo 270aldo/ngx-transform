@@ -1,8 +1,8 @@
-# NGX Transform Release Readiness Implementation Plan
+# NGX Vision Release Readiness Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Convert the GPT 5.5 PRO audit plus local repo evidence into an executable release-readiness backlog for NGX Transform.
+**Goal:** Convert the GPT 5.5 PRO audit plus local repo evidence into an executable release-readiness backlog for NGX Vision.
 
 **Architecture:** Split work into two execution tracks: a production-stabilization track that fixes the core photo-to-analysis-to-image promise, and a visual-polish track that can proceed without touching protected backend/result modules. Do not mix those tracks in the same PR because the blast radius and QA requirements are different.
 
@@ -601,7 +601,7 @@ or a persisted `checkoutIntentId`.
 Production email sender must come from:
 
 ```env
-RESEND_FROM_EMAIL=GENESIS <genesis@ngxgenesis.com>
+RESEND_FROM_EMAIL=GENESIS <genesis@ngxvision.app>
 ```
 
 Do not fall back to `resend.dev` in production.

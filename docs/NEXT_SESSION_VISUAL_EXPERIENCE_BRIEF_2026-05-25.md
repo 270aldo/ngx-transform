@@ -6,7 +6,7 @@ Estado del proyecto: desarrollo. La lista formal de pendientes de producción/le
 
 ## Objetivo de la próxima sesión
 
-Cerrar la experiencia de NGX Transform como lead magnet premium:
+Cerrar la experiencia de NGX Vision como lead magnet premium:
 
 - Debe emocionar al usuario.
 - Debe entregar valor real antes de pedir conversión.
@@ -16,7 +16,7 @@ Cerrar la experiencia de NGX Transform como lead magnet premium:
 
 ## Principio central
 
-NGX Transform no debe sentirse como una app genérica de fitness ni como un simple generador de before/after. Debe sentirse como una experiencia cinematográfica y personalizada que le muestra al usuario:
+NGX Vision no debe sentirse como una app genérica de fitness ni como un simple generador de before/after. Debe sentirse como una experiencia cinematográfica y personalizada que le muestra al usuario:
 
 1. Donde está hoy.
 2. Qué potencial visible puede alcanzar.

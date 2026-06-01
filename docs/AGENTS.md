@@ -1,4 +1,4 @@
-# NGX Transform — GENESIS Architecture (v11.0)
+# NGX Vision — GENESIS Architecture (v11.0)
 
 GENESIS is the sole AI entity visible to the user. Internally, 13 specialized modules power 4 capabilities. Users never see module names — only "GENESIS" and its capabilities.
 

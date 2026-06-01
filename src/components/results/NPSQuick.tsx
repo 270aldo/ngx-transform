@@ -66,8 +66,8 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: "Mi visualización en NGX Transform",
-          text: "Mira mi visualización de potencial en NGX Transform.",
+          title: "Mi visualización en NGX Vision",
+          text: "Mira mi visualización de potencial en NGX Vision.",
           url,
         });
         return;

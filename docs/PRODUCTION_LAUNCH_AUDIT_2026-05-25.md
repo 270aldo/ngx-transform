@@ -2,7 +2,7 @@
 
 ## Alcance
 
-Revision de configuracion productiva para NGX Transform: Firebase, Gemini, Upstash, Resend, Mercado Pago, booking/WhatsApp, legal/privacy, cron, health, CSP, telemetry, monitoreo y variables de Vercel.
+Revision de configuracion productiva para NGX Vision: Firebase, Gemini, Upstash, Resend, Mercado Pago, booking/WhatsApp, legal/privacy, cron, health, CSP, telemetry, monitoreo y variables de Vercel.
 
 No se inventaron datos legales ni comerciales. Todo dato que depende del owner o de revision legal externa queda marcado como `NECESITA_DATO_DEL_OWNER`.
 
@@ -69,7 +69,7 @@ No se inventaron datos legales ni comerciales. Todo dato que depende del owner o
 | Sentry | Config requerida | Medio | `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_DSN`, `SENTRY_AUTH_TOKEN` | DSN/proyecto owner | Configurar alertas: 5xx, webhook MP, AI failures, CSP spikes, spend limiter. |
 | Telemetry Firestore | Listo en codigo | Medio | `FF_TELEMETRY_ENABLED`, `telemetry_events` | Decision analytics | Habilitar en prod. Ya tiene timeout de 5s para no colgar requests. |
 | Vercel env prod | Pendiente | Alto | Vercel dashboard/CLI | Todos los envs prod | Cargar vars por entorno: Preview/Staging/Production. No guardar secretos en repo. |
-| Dominio canonico/OG | Config requerida | Medio | `NEXT_PUBLIC_APP_URL`, DNS/Vercel | Dominio final | Debe ser `https://transform.ngxgenesis.com` o dominio final. Validar OG `/api/og/[shareId]`. |
+| Dominio canonico/OG | Config requerida | Medio | `NEXT_PUBLIC_APP_URL`, DNS/Vercel | Dominio final | Debe ser `https://ngxvision.app` o dominio final. Validar OG `/api/og/[shareId]`. |
 | N8N webhooks | Opcional | Bajo | `N8N_WEBHOOK_BASE_URL`/`N8N_WEBHOOK_URL` | URL owner | Fire-and-forget; no bloquea funnel. Configurar solo si el pipeline comercial existe. |
 | QA real AI | Pendiente | Alto | Staging/prod | Foto y perfil de prueba consentido | Ejecutar upload -> analysis -> m4/m8/m12 -> result -> share settings -> email/brief. |
 

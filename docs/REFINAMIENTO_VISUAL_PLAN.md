@@ -1,4 +1,4 @@
-# NGX Transform — Plan de Refinamiento Visual & UX
+# NGX Vision — Plan de Refinamiento Visual & UX
 **Versión:** v1.0
 **Fecha:** Mayo 2026
 **Owner:** Aldo / NGX
@@ -21,7 +21,7 @@ El gap entre la **visión** que describes (visualizar transformación → ver da
 - **Subutiliza** lo que ya construiste: AgentOrchestration, A2UI widgets, GENESIS chat, plan preview… nada de eso aparece arriba del fold
 
 **La tesis correcta del lead magnet es:**
-> "NGX Transform no es un scan. Es un demo en vivo del sistema operativo de tu cuerpo durante 12 semanas. El scan es solo la primera escena."
+> "NGX Vision no es un scan. Es un demo en vivo del sistema operativo de tu cuerpo durante 12 semanas. El scan es solo la primera escena."
 
 Si esa es la tesis, la landing tiene que **demostrar el sistema**, no describirlo.
 
@@ -86,10 +86,10 @@ Lo que prometes en tu mensaje:
 
 ---
 
-## 2. VISIÓN — Qué debe ser NGX Transform como lead magnet
+## 2. VISIÓN — Qué debe ser NGX Vision como lead magnet
 
 ### Tesis estratégica
-**NGX Transform es un demo jugable del NGX Engine durante 30 minutos.**
+**NGX Vision es un demo jugable del NGX Engine durante 30 minutos.**
 No vende el scan. Vende la experiencia de tener un sistema operativo (IA + coach) trabajando para ti, comprimida en una sesión.
 
 ### Los 5 momentos "wow" del funnel

@@ -2,7 +2,7 @@
 
 ## Current Read
 
-NGX Transform is a launch-candidate web app, not a raw MVP. The committed codebase builds, lints, and tests successfully. The remaining work is mostly production configuration, real end-to-end AI QA, and legal/commercial data.
+NGX Vision is a launch-candidate web app, not a raw MVP. The committed codebase builds, lints, and tests successfully. The remaining work is mostly production configuration, real end-to-end AI QA, and legal/commercial data.
 
 ## Verified Locally
 

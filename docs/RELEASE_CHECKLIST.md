@@ -1,4 +1,4 @@
-# Release Checklist — NGX Transform (v3.2 HYBRID)
+# Release Checklist — NGX Vision (v3.2 HYBRID)
 
 > Auditoria de produccion/legal/comercial vigente: `docs/PRODUCTION_LAUNCH_AUDIT_2026-05-25.md`.
 

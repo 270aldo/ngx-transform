@@ -108,7 +108,7 @@ function getCtaTargets() {
   const whatsappNumber = whatsappRaw.replace(/[^\d]/g, "");
   const whatsappUrl = whatsappNumber
     ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-        "Hola, acabo de ver mi diagnóstico visual en NGX Transform y quiero revisar el siguiente paso."
+        "Hola, acabo de ver mi diagnóstico visual en NGX Vision y quiero revisar el siguiente paso."
       )}`
     : "";
 

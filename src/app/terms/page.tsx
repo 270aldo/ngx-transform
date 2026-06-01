@@ -6,8 +6,8 @@ const OWNER_DATA_PLACEHOLDER = "NECESITA_DATO_DEL_OWNER";
 const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "";
 
 export const metadata: Metadata = {
-  title: "Términos de Servicio | NGX Transform",
-  description: "Condiciones de uso del Servicio NGX Transform.",
+  title: "Términos de Servicio | NGX Vision",
+  description: "Condiciones de uso del Servicio NGX Vision.",
 };
 
 export default function TermsPage() {
@@ -19,14 +19,14 @@ export default function TermsPage() {
     >
       <div className="max-w-3xl mx-auto px-6 py-16 space-y-10">
         <header className="space-y-3">
-          <p className="text-xs tracking-[0.35em] uppercase text-[#6D00FF]">NGX Transform</p>
+          <p className="text-xs tracking-[0.35em] uppercase text-[#6D00FF]">NGX Vision</p>
           <h1 id="terms-title" className="text-3xl font-semibold">Términos de Servicio</h1>
           <p className="text-sm text-neutral-400">Última actualización: {UPDATED_AT}</p>
         </header>
 
         <section className="space-y-3 text-sm text-neutral-300">
           <p>
-            Estos Términos regulan el acceso y uso de NGX Transform (“NGX”, “Servicio”). Al utilizar el Servicio aceptas
+            Estos Términos regulan el acceso y uso de NGX Vision (“NGX”, “Servicio”). Al utilizar el Servicio aceptas
             estos Términos. Si no estás de acuerdo, no utilices el Servicio.
           </p>
         </section>

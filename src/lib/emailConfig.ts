@@ -16,5 +16,5 @@ export function getConfiguredFromEmail(context: string): string | null {
     return null;
   }
 
-  return "NGX Transform <transform@ngxgenesis.com>";
+  return "NGX Vision <genesis@ngxvision.app>";
 }

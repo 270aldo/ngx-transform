@@ -1,5 +1,5 @@
 /**
- * Job Manager para NGX Transform
+ * Job Manager para NGX Vision
  *
  * Proporciona jobs idempotentes y reanudables:
  * - Si un job ya está completado, no se re-ejecuta

@@ -1,5 +1,5 @@
 /**
- * Schema Estricto de Análisis para NGX Transform v2.0
+ * Schema Estricto de Análisis para NGX Vision v2.0
  *
  * Define la estructura exacta del output de Gemini para:
  * - Validación estricta con Zod

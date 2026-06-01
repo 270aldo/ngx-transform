@@ -1,4 +1,4 @@
-# NGX Transform Stabilization Baseline
+# NGX Vision Stabilization Baseline
 
 Date: 2026-05-10
 

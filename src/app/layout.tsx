@@ -36,13 +36,13 @@ const baseUrl =
 const metadataBase = new URL(String(baseUrl).startsWith("http") ? baseUrl : `https://${baseUrl}`);
 
 export const metadata: Metadata = {
-  title: "NGX Transform — Diagnóstico visual de salud muscular",
+  title: "NGX Vision — Diagnóstico visual de salud muscular",
   description: "Sube una foto y recibe una visualización aspiracional, lectura muscular inicial y dirección de 12 semanas hacia HYBRID. No es garantía ni diagnóstico médico.",
   metadataBase,
   openGraph: {
-    title: "NGX Transform — Diagnóstico visual de salud muscular",
+    title: "NGX Vision — Diagnóstico visual de salud muscular",
     description: "Visualización aspiracional, lectura muscular inicial y dirección de 12 semanas hacia HYBRID. No es garantía ni diagnóstico médico.",
-    siteName: "NGX Transform",
+    siteName: "NGX Vision",
     locale: "es_ES",
     type: "website",
     images: [
@@ -50,13 +50,13 @@ export const metadata: Metadata = {
         url: "/og-default.png",
         width: 1200,
         height: 630,
-        alt: "NGX Transform",
+        alt: "NGX Vision",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "NGX Transform — Diagnóstico visual de salud muscular",
+    title: "NGX Vision — Diagnóstico visual de salud muscular",
     description: "Visualización aspiracional, lectura muscular inicial y dirección de 12 semanas hacia HYBRID. No es garantía ni diagnóstico médico.",
     images: ["/og-default.png"],
   },

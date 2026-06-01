@@ -21,7 +21,7 @@ export function ReferralCard({
   const baseUrl =
     process.env.NEXT_PUBLIC_APP_URL ||
     process.env.NEXT_PUBLIC_BASE_URL ||
-    "https://transform.ngxgenesis.com";
+    "https://ngxvision.app";
   const referralLink = `${baseUrl}/?ref=${referralCode}`;
 
   // Track event helper

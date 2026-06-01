@@ -511,7 +511,7 @@ IMPORTANT: Be extremely specific. Vague descriptions like "brown hair" are USELE
  * Generate the system prompt for style_profile creation
  */
 export function getStyleProfileSystemPrompt(): string {
-  return `Analyze this person and the NGX Transform aesthetic to create a STYLE PROFILE.
+  return `Analyze this person and the NGX Vision aesthetic to create a STYLE PROFILE.
 
 Output a JSON object with:
 {

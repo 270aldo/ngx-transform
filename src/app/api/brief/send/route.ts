@@ -255,7 +255,7 @@ export async function POST(req: NextRequest) {
       ? BOTTLENECK_LABELS[bottleneck]
       : undefined;
 
-    const subject = "Tu brief NGX Transform — diagnóstico + roadmap";
+    const subject = "Tu brief NGX Vision — diagnóstico + roadmap";
     const from = getFromEmail();
     if (!from) {
       console.error("[BRIEF_SEND] RESEND_FROM_EMAIL not configured in production");

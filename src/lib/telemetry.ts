@@ -1,5 +1,5 @@
 /**
- * Sistema de Telemetría para NGX Transform
+ * Sistema de Telemetría para NGX Vision
  *
  * Trackea eventos del funnel completo para análisis y optimización.
  * Controlado por FF_TELEMETRY_ENABLED (default: true)

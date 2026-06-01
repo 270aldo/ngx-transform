@@ -23,7 +23,7 @@ export const variants: Record<VariantId, VariantConfig> = {
     theme: themes.general,
     copy: generalCopy,
     meta: {
-      title: "NGX Transform - Diagnóstico visual de salud muscular",
+      title: "NGX Vision - Diagnóstico visual de salud muscular",
       description:
         "Sube una foto y recibe una visualización aspiracional, lectura muscular inicial y dirección de 12 semanas hacia HYBRID.",
     },
@@ -36,7 +36,7 @@ export const variants: Record<VariantId, VariantConfig> = {
     theme: themes.jovenes,
     copy: jovenesCopy,
     meta: {
-      title: "NGX Transform - Diagnóstico visual de salud muscular",
+      title: "NGX Vision - Diagnóstico visual de salud muscular",
       description:
         "Visualiza una dirección posible, entiende tu punto de partida y decide si HYBRID tiene sentido para tus próximas 12 semanas.",
     },
@@ -49,7 +49,7 @@ export const variants: Record<VariantId, VariantConfig> = {
     theme: themes.mayores,
     copy: mayoresCopy,
     meta: {
-      title: "NGX Transform - Dirección de 12 semanas",
+      title: "NGX Vision - Dirección de 12 semanas",
       description:
         "Diagnóstico visual de salud muscular con visualización aspiracional, lectura inicial y ruta de 12 semanas hacia HYBRID.",
     },

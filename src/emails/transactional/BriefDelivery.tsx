@@ -46,7 +46,7 @@ export default function BriefDelivery({
   const baseUrl =
     process.env.NEXT_PUBLIC_APP_URL ||
     process.env.NEXT_PUBLIC_BASE_URL ||
-    "https://transform.ngxgenesis.com";
+    "https://ngxvision.app";
   const resultsUrl = `${baseUrl}/s/${shareId}`;
   const roadmapUrl = `${baseUrl}/s/${shareId}#season-roadmap`;
   const hybridOfferUrl = `${baseUrl}/s/${shareId}#hybrid-offer`;
@@ -63,7 +63,7 @@ export default function BriefDelivery({
   return (
     <Html>
       <Head />
-      <Preview>Tu brief NGX Transform — diagnóstico + roadmap</Preview>
+      <Preview>Tu brief NGX Vision — diagnóstico + roadmap</Preview>
       <Tailwind>
         <Body className="bg-[#0A0A0A] text-neutral-100 font-sans">
           <Container className="mx-auto my-8 max-w-xl">
@@ -75,7 +75,7 @@ export default function BriefDelivery({
                 className="mx-auto mb-3"
               />
               <Text className="text-sm text-neutral-500 m-0">
-                Brief personal · NGX Transform
+                Brief personal · NGX Vision
               </Text>
             </Section>
 
@@ -287,7 +287,7 @@ export default function BriefDelivery({
 
             <Section className="text-center mt-8">
               <Text className="text-xs text-neutral-600">
-                Brief enviado a petición tuya desde NGX Transform.
+                Brief enviado a petición tuya desde NGX Vision.
                 <br />
                 <a
                   href={unsubscribeUrl}

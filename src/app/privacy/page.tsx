@@ -10,9 +10,9 @@ const RESPONSABLE_DOMICILIO =
   process.env.NEXT_PUBLIC_LEGAL_RESPONSIBLE_ADDRESS || OWNER_DATA_PLACEHOLDER;
 
 export const metadata: Metadata = {
-  title: "Aviso de Privacidad | NGX Transform",
+  title: "Aviso de Privacidad | NGX Vision",
   description:
-    "Aviso de privacidad integral de NGX Transform conforme a la LFPDPPP.",
+    "Aviso de privacidad integral de NGX Vision conforme a la LFPDPPP.",
 };
 
 export default function PrivacyPage() {
@@ -35,7 +35,7 @@ export default function PrivacyPage() {
       <div className="max-w-3xl mx-auto px-6 py-16 space-y-10">
         <header className="space-y-3">
           <p className="text-xs tracking-[0.35em] uppercase text-[#6D00FF]">
-            NGX Transform
+            NGX Vision
           </p>
           <h1 id="privacy-title" className="text-3xl font-semibold">
             Aviso de Privacidad Integral
@@ -53,7 +53,7 @@ export default function PrivacyPage() {
           <p className="text-sm text-neutral-300">
             {RESPONSABLE_NOMBRE}, con domicilio en {RESPONSABLE_DOMICILIO},
             es responsable del tratamiento de tus datos personales a través del
-            sitio web y aplicación denominados &quot;NGX Transform&quot;
+            sitio web y aplicación denominados &quot;NGX Vision&quot;
             (en adelante, el &quot;Servicio&quot;).
           </p>
           <p className="text-sm text-neutral-300">

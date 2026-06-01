@@ -3,7 +3,7 @@
 /**
  * HybridOfferV2 — Salida comercial post-resultados (v12)
  *
- * Lead magnet exit: Transform entrega insight y dirige al diagnóstico HYBRID.
+ * Lead magnet exit: NGX Vision entrega insight y dirige al diagnóstico HYBRID.
  * La compra directa queda detrás de feature flag; el CTA primario es agenda.
  *
  * Telemetría granular por camino.
@@ -49,7 +49,7 @@ interface SkuCardData {
 }
 
 const WHATSAPP_TEXT =
-  "Hola, acabo de ver mi diagnóstico visual en NGX Transform y tengo una duda sobre HYBRID.";
+  "Hola, acabo de ver mi diagnóstico visual en NGX Vision y tengo una duda sobre HYBRID.";
 
 const HYBRID_OFFER_WEBHOOK_EVENTS: Partial<Record<string, string>> = {
   calendly_v2_clicked: "hybrid_offer_calendly_click",

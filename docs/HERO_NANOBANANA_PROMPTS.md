@@ -1,4 +1,4 @@
-# NGX Transform Hero — Nano Banana Pro Prompts (Aldo)
+# NGX Vision Hero — Nano Banana Pro Prompts (Aldo)
 **Fecha:** Mayo 2026
 **Source pattern:** `src/lib/promptBuilder.ts` (sistema de producción NGX)
 **Reference image:** Foto de Aldo en bosque (la que ya probaste)
@@ -322,7 +322,7 @@ Quality: 8K photorealistic, ultra-detailed, cinematic. The hero shot of the enti
 
 ---
 
-## Coherencia con el producto NGX Transform actual
+## Coherencia con el producto NGX Vision actual
 
 Estos prompts usan **el mismo framework** que `src/lib/promptBuilder.ts` produce para usuarios reales:
 

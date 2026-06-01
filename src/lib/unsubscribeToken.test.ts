@@ -14,9 +14,9 @@ describe("unsubscribe tokens", () => {
   });
 
   it("builds signed unsubscribe URLs from protocol-less base URLs", () => {
-    const url = new URL(buildUnsubscribeUrl("transform.ngxgenesis.com", "share_1"));
+    const url = new URL(buildUnsubscribeUrl("ngxvision.app", "share_1"));
 
-    expect(url.origin).toBe("https://transform.ngxgenesis.com");
+    expect(url.origin).toBe("https://ngxvision.app");
     expect(url.pathname).toBe("/unsubscribe");
     expect(url.searchParams.get("shareId")).toBe("share_1");
     expect(verifyUnsubscribeToken("share_1", url.searchParams.get("token"))).toBe(true);

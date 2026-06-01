@@ -1,4 +1,4 @@
-# NGX Transform — Hero Cinematic Reveal Pipeline
+# NGX Vision — Hero Cinematic Reveal Pipeline
 **Sub-plan de:** REFINAMIENTO_VISUAL_PLAN.md (Fase 1)
 **Tech stack:** VEO 3.1 + Nano Banana Pro + ffmpeg + Canvas Scroll Engine
 **Skill base:** `cinematic-reveal-studio` (ya instalada)
@@ -58,7 +58,7 @@ La skill genérica usa estados de "android activation" (dormant → ignition →
 
 ### Mapeo NGX
 
-| Frame | Skill original | NGX Transform |
+| Frame | Skill original | NGX Vision |
 |-------|---------------|---------------|
 | K0 — Frame 000 | Dormant (oscuro) | **m0 — HOY**: foto real del talent, gym común, ropa neutra, iluminación honesta, sin filtros. La promesa: "este es el punto de partida real". |
 | K1 — Frame 040 | Ignition (glow inicial) | **m4 — GÉNESIS**: gritty underground gym, definición inicial, postura más confiada, violet rim light al 25%. Overlay de escaneo biométrico empieza a aparecer. |

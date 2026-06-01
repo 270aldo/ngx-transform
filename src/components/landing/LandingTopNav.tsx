@@ -29,7 +29,7 @@ export function LandingTopNav() {
               />
               <div className="leading-none">
                 <span className="font-display text-sm font-black uppercase tracking-[0.14em] text-white">
-                  NGX <span className="text-[#B98CFF]">Transform</span>
+                  NGX <span className="text-[#B98CFF]">Vision</span>
                 </span>
                 <p className="hidden md:block mt-1 font-mono text-[11px] uppercase tracking-[0.18em] text-slate-500">by Genesis</p>
               </div>

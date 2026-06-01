@@ -3,7 +3,7 @@ import { Html, Head, Body, Container, Section, Text, Button, Tailwind, Img } fro
 import { buildUnsubscribeUrl } from "@/lib/unsubscribeToken";
 
 export default function ResultsEmail({ url }: { url: string }) {
-  let origin = "https://transform.ngxgenesis.com";
+  let origin = "https://ngxvision.app";
   let unsubscribeUrl = "";
   try {
     const parsed = new URL(url);

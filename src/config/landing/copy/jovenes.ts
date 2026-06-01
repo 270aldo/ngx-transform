@@ -143,7 +143,7 @@ export const jovenesCopy: VariantCopy = {
   },
 
   footer: {
-    brandName: "NGX Transform",
+    brandName: "NGX Vision",
     status: "GENESIS operativo",
     copyright: "© 2026 NGX. Todos los derechos reservados.",
   },

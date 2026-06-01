@@ -22,7 +22,7 @@ export default function D5Ebook({ name, shareId }: D5EbookProps) {
   const baseUrl =
     process.env.NEXT_PUBLIC_APP_URL ||
     process.env.NEXT_PUBLIC_BASE_URL ||
-    "https://transform.ngxgenesis.com";
+    "https://ngxvision.app";
   const ebookUrl = `${baseUrl}/s/${shareId}/plan`;
   const offerUrl = `${baseUrl}/s/${shareId}?section=offer`;
   const unsubscribeUrl = buildUnsubscribeUrl(baseUrl, shareId);
@@ -78,7 +78,7 @@ export default function D5Ebook({ name, shareId }: D5EbookProps) {
 
             <Section className="text-center mt-8">
               <Text className="text-xs text-neutral-600">
-                NGX Transform
+                NGX Vision
                 <br />
                 <a href={unsubscribeUrl} className="underline text-neutral-400">Darme de baja</a>
               </Text>

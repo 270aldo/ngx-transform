@@ -86,7 +86,7 @@ export function buildShareData(
   const baseUrl =
     process.env.NEXT_PUBLIC_APP_URL ||
     process.env.NEXT_PUBLIC_BASE_URL ||
-    "https://transform.ngxgenesis.com";
+    "https://ngxvision.app";
 
   return {
     shareUrl: `${baseUrl}/s/${shareId}`,
