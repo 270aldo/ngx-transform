@@ -11,7 +11,12 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:auth": "node --test tests/auth.integration.test.mjs",
-    "test:smoke": "node --test tests/smoke.api.test.mjs"
+    "test:smoke": "node --test tests/smoke.api.test.mjs",
+    "test:delete": "node --test tests/delete.integration.test.mjs",
+    "emulators": "firebase emulators:start --only auth,firestore,storage --project demo-ngx",
+    "seed:emulator": "node --env-file=.env.emulator.local scripts/seed-emulator.mjs",
+    "mint:token": "node --env-file=.env.emulator.local scripts/mint-token.mjs",
+    "test:gate:local": "bash scripts/run-local-gate.sh"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

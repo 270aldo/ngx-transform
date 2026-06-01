@@ -2,6 +2,17 @@ import { NextResponse } from "next/server";
 import { getDb } from "@/lib/firebaseAdmin";
 import { deletePath, deletePrefix, getSignedUrl } from "@/lib/storage";
 import { validateDeleteToken } from "@/lib/jobManager";
+import {
+  isSessionOwnerAuthError,
+  requireSessionOwner,
+  type SessionOwnerResult,
+} from "@/lib/authServer";
+
+interface DeleteSessionDocument {
+  ownerUid?: string;
+  photo?: { originalStoragePath?: string };
+  assets?: { images?: Record<string, string> };
+}
 
 export async function GET(_: Request, context: { params: Promise<{ shareId: string }> }) {
   try {
@@ -97,27 +108,34 @@ export async function DELETE(req: Request, context: { params: Promise<{ shareId:
   try {
     const { shareId } = await context.params;
 
-    // Extract deleteToken from header only (no query params)
+    // Legacy deleteToken path is preserved, but owner auth is the primary path.
     const token = req.headers.get("X-Delete-Token") || "";
+    const tokenValid = token ? await validateDeleteToken(shareId, token) : false;
 
-    // Validate token (controlled by FF_DELETE_TOKEN_REQUIRED env var)
-    const isValid = await validateDeleteToken(shareId, token);
-    if (!isValid) {
-      return NextResponse.json(
-        { error: "Invalid or missing delete token" },
-        { status: 403 }
-      );
+    let ownerContext: SessionOwnerResult<DeleteSessionDocument> | null = null;
+
+    if (!tokenValid) {
+      try {
+        ownerContext = await requireSessionOwner<DeleteSessionDocument>(req, shareId);
+      } catch (error) {
+        if (isSessionOwnerAuthError(error)) {
+          return NextResponse.json(
+            { error: token ? "Invalid delete token or owner credentials" : error.code },
+            { status: token ? 403 : error.status }
+          );
+        }
+        throw error;
+      }
     }
 
     const db = getDb();
-    const ref = db.collection("sessions").doc(shareId);
-    const snap = await ref.get();
-    if (!snap.exists) return NextResponse.json({ ok: true });
+    const ref = ownerContext?.sessionRef ?? db.collection("sessions").doc(shareId);
+    const snap = ownerContext ? null : await ref.get();
+    if (!ownerContext && !snap?.exists) return NextResponse.json({ ok: true });
 
-    const data = snap.data() as {
-      photo?: { originalStoragePath?: string };
-      assets?: { images?: Record<string, string> };
-    } | undefined;
+    const data = ownerContext
+      ? ownerContext.session
+      : (snap?.data() as DeleteSessionDocument | undefined);
     const photoPath: string | undefined = data?.photo?.originalStoragePath;
     const images: Record<string, string> | undefined = data?.assets?.images;
 

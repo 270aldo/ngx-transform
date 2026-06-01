@@ -316,7 +316,7 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
       </div>
 
       {/* Web Notification Permission request banner */}
-      {notificationPermission === "default" && (
+      {notificationPermission === "default" && progress >= 75 && !isReady && !isFailed && (
         <div className="z-10 mt-6 w-full max-w-lg px-6">
           <motion.div
             initial={{ opacity: 0, y: 15 }}
@@ -325,9 +325,9 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
           >
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="space-y-1 text-center sm:text-left">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-white">¿Activar notificaciones?</h4>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-white">Aviso opcional</h4>
                 <p className="text-[11px] leading-relaxed text-white/55">
-                  GÉNESIS tarda unos 30-40 segundos en generar tus imágenes. Te notificaremos al instante cuando esté listo.
+                  Si cambias de pestaña, podemos avisarte cuando la proyección esté lista.
                 </p>
               </div>
               <button

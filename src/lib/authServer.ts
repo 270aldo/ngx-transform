@@ -1,10 +1,27 @@
 import { getAuth } from "firebase-admin/auth";
+import type { DocumentData, DocumentReference } from "firebase-admin/firestore";
 import { cookies } from "next/headers";
 import { getAdminApp } from "@/lib/firebaseAdmin";
+import { getDb } from "@/lib/firebaseAdmin";
 
 export interface AuthUser {
   uid: string;
   email?: string;
+}
+
+export interface SessionOwnerResult<T extends { ownerUid?: string } = { ownerUid?: string }> {
+  authUser: AuthUser;
+  sessionRef: DocumentReference<DocumentData>;
+  session: T;
+}
+
+export class SessionOwnerAuthError extends Error {
+  constructor(
+    readonly code: "UNAUTHORIZED" | "SESSION_NOT_FOUND" | "FORBIDDEN" | "SESSION_DATA_MISSING",
+    readonly status: 401 | 403 | 404 | 500
+  ) {
+    super(code);
+  }
 }
 
 const SESSION_COOKIE_NAME = "__session";
@@ -76,4 +93,37 @@ export async function requireAuth(req: Request): Promise<AuthUser> {
     throw new Error("UNAUTHORIZED");
   }
   return user;
+}
+
+export function isSessionOwnerAuthError(error: unknown): error is SessionOwnerAuthError {
+  return error instanceof SessionOwnerAuthError;
+}
+
+export async function requireSessionOwner<
+  T extends { ownerUid?: string } = { ownerUid?: string },
+>(req: Request, shareId: string): Promise<SessionOwnerResult<T>> {
+  let authUser: AuthUser;
+  try {
+    authUser = await requireAuth(req);
+  } catch {
+    throw new SessionOwnerAuthError("UNAUTHORIZED", 401);
+  }
+
+  const db = getDb();
+  const sessionRef = db.collection("sessions").doc(shareId);
+  const snap = await sessionRef.get();
+  if (!snap.exists) {
+    throw new SessionOwnerAuthError("SESSION_NOT_FOUND", 404);
+  }
+
+  const session = snap.data() as T | undefined;
+  if (!session) {
+    throw new SessionOwnerAuthError("SESSION_DATA_MISSING", 500);
+  }
+
+  if (!session.ownerUid || session.ownerUid !== authUser.uid) {
+    throw new SessionOwnerAuthError("FORBIDDEN", 403);
+  }
+
+  return { authUser, sessionRef, session };
 }

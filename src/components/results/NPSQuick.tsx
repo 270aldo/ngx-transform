@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle2, MessageSquareText, Send, Share2 } from "lucide-react";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 interface NPSQuickProps {
   shareId: string;
@@ -17,6 +18,7 @@ const LOW_SCORE_OPTIONS = [
 const SCORE_SCALE = Array.from({ length: 10 }, (_, index) => index + 1);
 
 export function NPSQuick({ shareId }: NPSQuickProps) {
+  const { user, loading: authLoading, getIdToken } = useAuth();
   const [score, setScore] = useState<number | null>(null);
   const [selectedReason, setSelectedReason] = useState<string>("");
   const [comment, setComment] = useState("");
@@ -28,6 +30,7 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
   async function submitFeedback() {
     if (score === null || loading || sent) return false;
     setLoading(true);
+    const token = !authLoading && user ? await getIdToken() : null;
 
     const payload = {
       shareId,
@@ -38,11 +41,16 @@ export function NPSQuick({ shareId }: NPSQuickProps) {
     };
 
     await Promise.allSettled([
-      fetch("/api/feedback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      }),
+      token
+        ? fetch("/api/feedback", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(payload),
+          })
+        : Promise.resolve(),
       fetch("/api/telemetry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -97,6 +97,7 @@ export interface EventPayload {
   cost_estimate?: number;
   error_message?: string;
   metadata?: Record<string, unknown>;
+  trusted?: boolean;
 }
 
 export interface SessionMetrics {
@@ -165,8 +166,10 @@ export async function trackEvent(payload: EventPayload): Promise<void> {
     // Scrub PII from payload before saving
     const safePayload = scrubPII(payload) as EventPayload;
 
+    const trusted = safePayload.trusted !== false;
     const eventDoc = {
       ...safePayload,
+      trusted,
       timestamp: FieldValue.serverTimestamp(),
       environment: process.env.NODE_ENV || "development",
     };
@@ -191,7 +194,9 @@ export async function trackEvent(payload: EventPayload): Promise<void> {
     // Run both writes in parallel; either or both can quietly drop.
     await Promise.all([
       writeWithTimeout(db.collection("telemetry_events").add(eventDoc), "event write"),
-      writeWithTimeout(updateSessionMetrics(safePayload), "metrics update"),
+      trusted
+        ? writeWithTimeout(updateSessionMetrics(safePayload), "metrics update")
+        : Promise.resolve(null),
     ]);
 
     console.log(`[Telemetry] ${payload.event} - ${payload.sessionId}`);

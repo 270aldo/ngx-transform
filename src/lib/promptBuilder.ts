@@ -319,25 +319,6 @@ Mood: ${env.mood}`;
  */
 function buildStyle(context: PromptContext): string {
   const aestheticPreference = context.aestheticPreference || "cinematic";
-  const fallbackColorGrades: Record<string, string> = {
-    cinematic: "cinematic with deep blacks and vibrant highlights",
-    editorial: "high-fashion editorial grade with crisp contrast",
-    street: "urban gritty grade with high contrast and texture",
-    minimal: "clean minimal grade with soft contrast and neutral tones",
-  };
-  const fallbackBackgrounds: Record<string, string> = {
-    cinematic: "professional fitness environment",
-    editorial: "studio backdrop with controlled lighting",
-    street: "urban concrete environment with dramatic light falloff",
-    minimal: "minimal studio setting with clean geometry",
-  };
-  const fallbackWardrobe: Record<string, string> = {
-    cinematic: "premium athletic wear with minimal or no visible branding",
-    editorial: "premium athletic fashion styling with clean silhouettes",
-    street: "athletic streetwear, fitted, performance fabrics",
-    minimal: "simple, clean athletic wear with minimal branding",
-  };
-
   let lighting = "";
   let wardrobe = "";
   let background = "";

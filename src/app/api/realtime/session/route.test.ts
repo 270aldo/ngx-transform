@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { POST } from "./route";
+import { requireSessionOwner } from "@/lib/authServer";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 vi.mock("@/lib/rateLimit", () => ({
   checkRateLimit: vi.fn(async () => ({
@@ -10,6 +12,15 @@ vi.mock("@/lib/rateLimit", () => ({
   })),
   getClientIP: vi.fn(() => "203.0.113.24"),
   getRateLimitHeaders: vi.fn(() => ({})),
+}));
+
+vi.mock("@/lib/authServer", () => ({
+  requireSessionOwner: vi.fn(),
+  isSessionOwnerAuthError: (error: unknown) =>
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    "status" in error,
 }));
 
 function request(body: unknown) {
@@ -25,6 +36,29 @@ describe("realtime session API", () => {
     vi.restoreAllMocks();
     delete process.env.OPENAI_API_KEY;
     delete process.env.OPENAI_REALTIME_MODEL;
+    process.env.FF_HYBRID_VOICE_AGENT = "true";
+    vi.mocked(requireSessionOwner).mockResolvedValue({
+      authUser: { uid: "owner_1", email: "owner@test.com" },
+      sessionRef: {} as never,
+      session: { ownerUid: "owner_1" },
+    });
+  });
+
+  it("blocks anonymous callers before minting an OpenAI secret", async () => {
+    vi.mocked(requireSessionOwner).mockRejectedValueOnce({
+      code: "UNAUTHORIZED",
+      status: 401,
+    });
+    process.env.OPENAI_API_KEY = "sk-test";
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    const res = await POST(request({ shareId: "demo" }) as never);
+    const body = await res.json();
+
+    expect(res.status).toBe(401);
+    expect(body.error).toBe("UNAUTHORIZED");
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("returns a controlled error when OPENAI_API_KEY is missing", async () => {
@@ -53,6 +87,7 @@ describe("realtime session API", () => {
     expect(res.status).toBe(200);
     expect(body.client_secret).toBe("ek_test_secret");
     expect(body.model).toBe("gpt-realtime");
+    expect(checkRateLimit).toHaveBeenCalledWith("api:realtime-session", "owner_1");
     expect(fetchMock).toHaveBeenCalledWith(
       "https://api.openai.com/v1/realtime/client_secrets",
       expect.objectContaining({

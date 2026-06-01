@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getDb } from "@/lib/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
-import { checkRateLimit, getClientIP, getRateLimitHeaders } from "@/lib/rateLimit";
+import { checkRateLimit, getRateLimitHeaders } from "@/lib/rateLimit";
+import { isSessionOwnerAuthError, requireSessionOwner } from "@/lib/authServer";
 
 const FeedbackSchema = z.object({
   shareId: z.string().min(1),
@@ -14,8 +15,10 @@ const FeedbackSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    const clientIP = getClientIP(req);
-    const limit = await checkRateLimit("api:general", clientIP);
+    const payload = FeedbackSchema.parse(await req.json());
+    const { authUser, sessionRef } = await requireSessionOwner(req, payload.shareId);
+
+    const limit = await checkRateLimit("api:feedback", authUser.uid);
     if (!limit.success) {
       return NextResponse.json(
         { ok: false, error: "Too many requests" },
@@ -23,22 +26,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const payload = FeedbackSchema.parse(await req.json());
     const db = getDb();
-    const sessionRef = db.collection("sessions").doc(payload.shareId);
-    const sessionSnap = await sessionRef.get();
-    if (!sessionSnap.exists) {
-      return NextResponse.json(
-        { ok: false, error: "Session not found" },
-        { status: 404 }
-      );
-    }
-
     await db.collection("feedback").add({
       ...payload,
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
-      ip: clientIP,
+      ownerUid: authUser.uid,
     });
 
     await sessionRef.set(
@@ -56,6 +49,9 @@ export async function POST(req: NextRequest) {
         { ok: false, error: "Validation failed", details: error.issues },
         { status: 400 }
       );
+    }
+    if (isSessionOwnerAuthError(error)) {
+      return NextResponse.json({ ok: false, error: error.code }, { status: error.status });
     }
     console.error("[FEEDBACK_ROUTE]", error);
     return NextResponse.json({ ok: false, error: "Internal server error" }, { status: 500 });

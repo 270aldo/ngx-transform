@@ -42,6 +42,12 @@ export interface SpendCheckResult {
   reason?: string;
 }
 
+class SpendLimitExceededError extends Error {
+  constructor(readonly result: SpendCheckResult) {
+    super(result.reason || "Spend limit exceeded");
+  }
+}
+
 // ============================================================================
 // Helper Functions
 // ============================================================================
@@ -140,6 +146,122 @@ export async function checkSpendLimit(estimatedCost: number = 0): Promise<SpendC
       dailyLimit: DAILY_LIMIT_USD,
       hourlyLimit: HOURLY_LIMIT_USD,
       reason: "Error checking limits - allowing request (dev mode)",
+    };
+  }
+}
+
+/**
+ * Atomically reserve spend before an AI provider call.
+ *
+ * This closes the race where many concurrent requests could all pass
+ * checkSpendLimit() before any of them record spend.
+ */
+export async function reserveSpend(
+  estimatedCost: number = 0,
+  operation: string
+): Promise<SpendCheckResult> {
+  if (estimatedCost <= 0) {
+    return checkSpendLimit(0);
+  }
+
+  try {
+    const db = getDb();
+    const dayKey = getDayKey();
+    const hourKey = getHourKey();
+    const dayRef = db.collection(SPEND_COLLECTION).doc(dayKey);
+    const hourRef = db.collection(SPEND_COLLECTION).doc(hourKey);
+
+    return await db.runTransaction(async (tx) => {
+      const [dayDoc, hourDoc] = await Promise.all([
+        tx.get(dayRef),
+        tx.get(hourRef),
+      ]);
+
+      const dailySpend = (dayDoc.data()?.totalSpend as number) || 0;
+      const hourlySpend = (hourDoc.data()?.totalSpend as number) || 0;
+      const nextDailySpend = dailySpend + estimatedCost;
+      const nextHourlySpend = hourlySpend + estimatedCost;
+
+      if (nextDailySpend > DAILY_LIMIT_USD) {
+        throw new SpendLimitExceededError({
+          allowed: false,
+          dailySpend,
+          hourlySpend,
+          dailyLimit: DAILY_LIMIT_USD,
+          hourlyLimit: HOURLY_LIMIT_USD,
+          reason: `Daily spend limit exceeded ($${dailySpend.toFixed(2)}/$${DAILY_LIMIT_USD})`,
+        });
+      }
+
+      if (nextHourlySpend > HOURLY_LIMIT_USD) {
+        throw new SpendLimitExceededError({
+          allowed: false,
+          dailySpend,
+          hourlySpend,
+          dailyLimit: DAILY_LIMIT_USD,
+          hourlyLimit: HOURLY_LIMIT_USD,
+          reason: `Hourly spend limit exceeded ($${hourlySpend.toFixed(2)}/$${HOURLY_LIMIT_USD})`,
+        });
+      }
+
+      const now = FieldValue.serverTimestamp();
+      tx.set(
+        dayRef,
+        {
+          periodKey: dayKey,
+          totalSpend: nextDailySpend,
+          requestCount: ((dayDoc.data()?.requestCount as number) || 0) + 1,
+          lastUpdated: now,
+          lastOperation: operation,
+          reserved: true,
+        },
+        { merge: true }
+      );
+      tx.set(
+        hourRef,
+        {
+          periodKey: hourKey,
+          totalSpend: nextHourlySpend,
+          requestCount: ((hourDoc.data()?.requestCount as number) || 0) + 1,
+          lastUpdated: now,
+          lastOperation: operation,
+          reserved: true,
+        },
+        { merge: true }
+      );
+
+      return {
+        allowed: true,
+        dailySpend: nextDailySpend,
+        hourlySpend: nextHourlySpend,
+        dailyLimit: DAILY_LIMIT_USD,
+        hourlyLimit: HOURLY_LIMIT_USD,
+      };
+    });
+  } catch (error) {
+    if (error instanceof SpendLimitExceededError) {
+      return error.result;
+    }
+
+    console.error("[SpendLimiter] Error reserving spend:", error);
+    if (process.env.NODE_ENV === "production") {
+      return {
+        allowed: false,
+        dailySpend: 0,
+        hourlySpend: 0,
+        dailyLimit: DAILY_LIMIT_USD,
+        hourlyLimit: HOURLY_LIMIT_USD,
+        reason: "Spend limits unavailable - blocking request for cost protection",
+      };
+    }
+
+    return {
+      allowed: true,
+      dailySpend: 0,
+      hourlySpend: 0,
+      dailyLimit: DAILY_LIMIT_USD,
+      hourlyLimit: HOURLY_LIMIT_USD,
+      reason: "Error reserving spend - allowing request (dev mode)",
     };
   }
 }
