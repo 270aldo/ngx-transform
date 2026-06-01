@@ -1,4 +1,4 @@
-# Auditoría UI/UX NGX Transform — 2026-05
+# Auditoría UI/UX NGX Vision — 2026-05
 
 **Branch base:** `feat/hybrid-copy` (HEAD `4cd1b28`)
 **Branch auditoría:** `audit/ui-ux-2026-05` (sin commits, solo reporte + evidencia)
@@ -10,7 +10,7 @@
 
 ## Resumen ejecutivo
 
-NGX Transform tiene un diseño visual genuinamente premium en superficie (Electric Violet `#6D00FF`, BiometricLoader animado, glassmorphism, JetBrains Mono + DM Sans, copy HYBRID-first inteligente). El landing y el wizard transmiten seriedad y privacidad. **Pero el producto está roto en el momento de la verdad: la generación AI falla sistemáticamente y el usuario nunca llega a ver una proyección personalizada real.**
+NGX Vision tiene un diseño visual genuinamente premium en superficie (Electric Violet `#6D00FF`, BiometricLoader animado, glassmorphism, JetBrains Mono + DM Sans, copy HYBRID-first inteligente). El landing y el wizard transmiten seriedad y privacidad. **Pero el producto está roto en el momento de la verdad: la generación AI falla sistemáticamente y el usuario nunca llega a ver una proyección personalizada real.**
 
 **Score global premium vs AI-generic: 6/10**
 - Surface (landing/wizard/plan estático): 8/10 — premium auténtico

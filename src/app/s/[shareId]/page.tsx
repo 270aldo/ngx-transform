@@ -67,7 +67,7 @@ export async function generateMetadata({ params }: { params: Promise<{ shareId: 
   const ogUrl = `${absoluteBase}/api/og/${shareId}`;
 
   return {
-    title: "Mi diagnóstico visual NGX Transform",
+    title: "Mi diagnóstico visual NGX Vision",
     description:
       "Diagnóstico visual de salud muscular y dirección de 12 semanas. Visualización aspiracional, no garantía.",
     openGraph: {
@@ -171,7 +171,7 @@ export default async function Page({
       <div className="min-h-screen bg-transparent text-white">
         <div className="max-w-5xl mx-auto px-6 py-12 space-y-8">
           <div className="space-y-2">
-            <span className="ngx-eyebrow-pill">NGX Transform</span>
+            <span className="ngx-eyebrow-pill">NGX Vision</span>
             <h1 className="ngx-h1 !text-left" style={{ maxWidth: "20ch" }}>Transformación privada</h1>
             <p className="text-sm leading-relaxed text-white/55 max-w-2xl">
               {explicitShareDecision
@@ -266,7 +266,7 @@ export default async function Page({
       {/* Single semantic h1 for the page (a11y/SEO). Milestone titles inside the
           viewer are h2; the page itself had no h1 before. Visually hidden so it
           doesn't disturb the cinematic layout. */}
-      <h1 className="sr-only">Tu diagnóstico visual de salud muscular — NGX Transform</h1>
+      <h1 className="sr-only">Tu diagnóstico visual de salud muscular — NGX Vision</h1>
       <ScrollToSection />
       <TransformationViewer2
         ai={ai}
@@ -324,7 +324,7 @@ function ErrorFallback({
   return (
     <div className="min-h-screen flex items-center justify-center bg-transparent text-white px-6">
       <div className="max-w-lg w-full text-center space-y-6">
-        <span className="ngx-eyebrow-pill mx-auto">NGX Transform</span>
+        <span className="ngx-eyebrow-pill mx-auto">NGX Vision</span>
         <h1 className="ngx-h1 mx-auto !text-center" style={{ maxWidth: "16ch" }}>
           {title[0]}
           <br />

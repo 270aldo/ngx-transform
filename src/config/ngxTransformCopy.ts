@@ -1,5 +1,5 @@
 /**
- * NGX Transform — Copy central de disclaimers y mensajes HYBRID.
+ * NGX Vision — Copy central de disclaimers y mensajes HYBRID.
  *
  * Una sola fuente de verdad para landing, wizard, results, plan, PDF y emails.
  */

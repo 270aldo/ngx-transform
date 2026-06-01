@@ -2,11 +2,11 @@
   - main [ref=e2] [box=0,0,1440,8227]:
     - generic [ref=e3] [box=0,0,1440,8227]:
       - navigation [ref=e6] [box=160,24,1120,66]:
-        - link "N NGX Transform by Genesis" [ref=e7] [cursor=pointer] [box=177,40,175,34]:
+        - link "N NGX Vision by Genesis" [ref=e7] [cursor=pointer] [box=177,40,175,34]:
           - /url: /
           - generic [ref=e9] [box=189,52,8,11]: "N"
           - generic [ref=e10] [box=221,40,131,34]:
-            - generic [ref=e11] [box=221,42,131,17]: NGX Transform
+            - generic [ref=e11] [box=221,42,131,17]: NGX Vision
             - paragraph [ref=e12] [box=221,64,131,10]: by Genesis
         - generic [ref=e13] [box=526,37,379,40]:
           - link "Cómo Funciona" [ref=e14] [cursor=pointer] [box=530,41,121,32]:
@@ -261,7 +261,7 @@
         - generic [ref=e503] [box=160,8130,153,33]:
           - generic [ref=e505] [box=171,8138,9,16]: "N"
           - generic [ref=e506] [box=204,8130,109,33]:
-            - text: NGX Transform
+            - text: NGX Vision
             - paragraph [ref=e507] [box=204,8150,109,13]: GENESIS operativo
         - generic [ref=e508] [box=559,8138,212,16]:
           - link "Privacidad" [ref=e509] [cursor=pointer] [box=559,8138,60,16]:

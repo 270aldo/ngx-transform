@@ -28,7 +28,7 @@ export default function D7Conversion({
   const baseUrl =
     process.env.NEXT_PUBLIC_APP_URL ||
     process.env.NEXT_PUBLIC_BASE_URL ||
-    "https://transform.ngxgenesis.com";
+    "https://ngxvision.app";
   // v12: anclaje directo al bloque HYBRID de diagnostico, no al checkout.
   const offerUrl = `${baseUrl}/s/${shareId}?section=offer#hybrid-offer`;
   const coachUrl =
@@ -122,7 +122,7 @@ export default function D7Conversion({
 
             <Section className="text-center mt-8">
               <Text className="text-xs text-neutral-600">
-                NGX Transform | Funnel HYBRID-only
+                NGX Vision | Funnel HYBRID-only
                 <br />
                 <a href={unsubscribeUrl} className="underline text-neutral-400">Darme de baja</a>
               </Text>

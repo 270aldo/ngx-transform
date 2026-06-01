@@ -1,8 +1,8 @@
-# NGX Transform - Estado Completo y Guía de Desarrollo Elite
+# NGX Vision - Estado Completo y Guía de Desarrollo Elite
 
 ## Resumen Ejecutivo
 
-**NGX Transform** es un MVP completamente funcional que genera proyecciones de transformación física a 12 meses usando IA. El codebase está bien estructurado (~5,600 líneas TypeScript), type-safe con modo estricto, y el build de producción compila exitosamente.
+**NGX Vision** es un MVP completamente funcional que genera proyecciones de transformación física a 12 meses usando IA. El codebase está bien estructurado (~5,600 líneas TypeScript), type-safe con modo estricto, y el build de producción compila exitosamente.
 
 **Estado**: ✅ **MVP Feature-Complete** | ⚠️ **Requiere hardening para producción a escala**
 
@@ -317,7 +317,7 @@ curl http://localhost:3000/api/sessions/[shareId]
 
 ## Veredicto Final
 
-**NGX Transform está listo para un soft launch** con usuarios controlados. Para escalar a miles de usuarios:
+**NGX Vision está listo para un soft launch** con usuarios controlados. Para escalar a miles de usuarios:
 
 1. **Inmediato**: Agregar Sentry + GitHub Actions
 2. **Semana 1**: Implementar testing básico

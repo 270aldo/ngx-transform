@@ -29,7 +29,7 @@ export default function D14Final({
   const baseUrl =
     process.env.NEXT_PUBLIC_APP_URL ||
     process.env.NEXT_PUBLIC_BASE_URL ||
-    "https://transform.ngxgenesis.com";
+    "https://ngxvision.app";
   const offerUrl = `${baseUrl}/s/${shareId}?section=offer`;
   const waitlist = waitlistUrl || process.env.NEXT_PUBLIC_WAITLIST_URL || `${baseUrl}/wizard`;
   const unsubscribeUrl = buildUnsubscribeUrl(baseUrl, shareId);
@@ -83,7 +83,7 @@ export default function D14Final({
 
             <Section className="text-center mt-8">
               <Text className="text-xs text-neutral-600">
-                NGX Transform
+                NGX Vision
                 <br />
                 <a href={unsubscribeUrl} className="underline text-neutral-400">Darme de baja</a>
               </Text>

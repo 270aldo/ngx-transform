@@ -1,4 +1,4 @@
-# NGX Transform — Video Prompts para Flow (Veo 3.1)
+# NGX Vision — Video Prompts para Flow (Veo 3.1)
 
 **Cómo usar:** copia cada bloque "PROMPT" en Google Flow (Veo 3.1). Genera, descarga MP4 (H.264, 1080p+), súbelo a Firebase Storage (o tu CDN) y pega la URL pública en la variable indicada. La CSP del proyecto ya permite `storage.googleapis.com`, `firebasestorage`, YouTube y Vimeo en `media-src`.
 

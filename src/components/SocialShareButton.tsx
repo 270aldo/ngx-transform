@@ -75,7 +75,7 @@ export function SocialShareButton({ shareId, imageUrl }: SocialShareButtonProps)
     ? `${window.location.origin}/s/${shareId}`
     : `/s/${shareId}`;
 
-  const shareText = "Mira mi diagnóstico visual de salud muscular con NGX Transform";
+  const shareText = "Mira mi diagnóstico visual de salud muscular con NGX Vision";
 
   const handleCopy = async () => {
     try {

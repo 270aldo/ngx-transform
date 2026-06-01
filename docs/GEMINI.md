@@ -1,6 +1,6 @@
-# NGX Transform — AI Pipeline
+# NGX Vision — AI Pipeline
 
-Full documentation of the AI pipeline powering NGX Transform: analysis, image generation, quality validation, and plan generation.
+Full documentation of the AI pipeline powering NGX Vision: analysis, image generation, quality validation, and plan generation.
 
 ## Overview
 

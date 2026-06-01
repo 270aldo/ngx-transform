@@ -1,4 +1,4 @@
-# NGX Transform - Lead Magnet Testing Report (Post-Cleanup)
+# NGX Vision - Lead Magnet Testing Report (Post-Cleanup)
 
 **Fecha:** 2026-05-28  
 **Enfoque:** Opciones 2, 3 y 4 solicitadas por el usuario  

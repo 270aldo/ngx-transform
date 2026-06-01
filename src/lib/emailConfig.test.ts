@@ -27,6 +27,6 @@ describe("getConfiguredFromEmail", () => {
     vi.stubEnv("RESEND_FROM_EMAIL", "");
     vi.stubEnv("EMAIL_FROM", "");
 
-    expect(getConfiguredFromEmail("test")).toContain("NGX Transform");
+    expect(getConfiguredFromEmail("test")).toContain("NGX Vision");
   });
 });

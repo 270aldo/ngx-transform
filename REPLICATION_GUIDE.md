@@ -1,4 +1,4 @@
-# Por Qué Es Difícil Replicar el Estilo NGX Transform
+# Por Qué Es Difícil Replicar el Estilo NGX Vision
 
 ## 🚨 EL PROBLEMA PRINCIPAL
 

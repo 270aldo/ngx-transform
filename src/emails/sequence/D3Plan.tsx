@@ -23,7 +23,7 @@ export default function D3Plan({ name, shareId }: D3PlanProps) {
   const baseUrl =
     process.env.NEXT_PUBLIC_APP_URL ||
     process.env.NEXT_PUBLIC_BASE_URL ||
-    "https://transform.ngxgenesis.com";
+    "https://ngxvision.app";
   // v12: el plan AI completo es entregable post-compra. Aquí re-anclamos a la oferta.
   const offerUrl = `${baseUrl}/s/${shareId}?section=offer#hybrid-offer`;
   const resultsUrl = `${baseUrl}/s/${shareId}`;
@@ -99,7 +99,7 @@ export default function D3Plan({ name, shareId }: D3PlanProps) {
 
             <Section className="text-center mt-8">
               <Text className="text-xs text-neutral-600">
-                NGX Transform
+                NGX Vision
                 <br />
                 <a href={unsubscribeUrl} className="underline text-neutral-400">Darme de baja</a>
               </Text>

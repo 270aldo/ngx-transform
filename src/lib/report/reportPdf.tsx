@@ -138,7 +138,7 @@ function StatGrid({ stats }: { stats: ReportStats }) {
 function ReportFooter({ report }: { report: SeasonVisionReport }) {
   return (
     <View style={styles.footer} fixed>
-      <Text>NGX Transform - {report.subject}</Text>
+      <Text>NGX Vision - {report.subject}</Text>
       <Text>{report.shareId}</Text>
     </View>
   );
@@ -182,7 +182,7 @@ export function SeasonReportDocument({ report }: { report: SeasonVisionReport })
       author="NGX"
       subject="Season Vision Report"
       creator="GENESIS"
-      producer="NGX Transform"
+      producer="NGX Vision"
     >
       <Page size="A4" style={styles.page}>
         <View style={styles.section}>

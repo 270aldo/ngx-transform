@@ -97,7 +97,7 @@ export function LandingJourney() {
               No es solo una imagen. Es dirección inicial.
             </h2>
             <p className="mt-5 max-w-sm text-base leading-relaxed text-white/58">
-              Transform convierte tu foto y contexto declarado en una visualización aspiracional, una lectura orientativa y un primer mapa de acción.
+              NGX Vision convierte tu foto y contexto declarado en una visualización aspiracional, una lectura orientativa y un primer mapa de acción.
             </p>
           </div>
 
@@ -291,7 +291,7 @@ export function LandingJourney() {
               La imagen inspira. El sistema transforma. El humano sostiene.
             </h2>
             <p className="mt-6 max-w-xl text-base leading-relaxed text-white/62">
-              Transform no promete un resultado. Sirve para abrir una conversación seria: qué señales aparecen, qué estructura tendría sentido durante 12 semanas y qué necesita revisar un humano antes de recomendar HYBRID.
+              NGX Vision no promete un resultado. Sirve para abrir una conversación seria: qué señales aparecen, qué estructura tendría sentido durante 12 semanas y qué necesita revisar un humano antes de recomendar HYBRID.
             </p>
 
             <div className="mt-8 grid gap-3 sm:grid-cols-3">
@@ -423,10 +423,10 @@ export function LandingJourney() {
                     </a>
                     <Link
                       href="/wizard"
-                      onClick={() => trackCta("landing_video_modal_secondary", "start_diagnostic", "Empezar con Transform")}
+                      onClick={() => trackCta("landing_video_modal_secondary", "start_diagnostic", "Empezar con NGX Vision")}
                       className="ngx-secondary-cta inline-flex min-h-12 px-5 text-xs"
                     >
-                      Empezar con Transform
+                      Empezar con NGX Vision
                     </Link>
                   </div>
                 </div>

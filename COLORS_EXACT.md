@@ -1,4 +1,4 @@
-# Paleta de Colores Exacta - NGX Transform
+# Paleta de Colores Exacta - NGX Vision
 
 ## 🎨 COLORES PRINCIPALES
 
@@ -234,4 +234,4 @@ linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)
 - `bg-red-500` - Botón destructivo
 - `hover:bg-red-400` - Hover destructivo
 
-Este documento contiene TODOS los valores exactos de colores utilizados en la aplicación NGX Transform.
+Este documento contiene TODOS los valores exactos de colores utilizados en la aplicación NGX Vision.

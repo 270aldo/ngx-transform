@@ -1,4 +1,4 @@
-# NGX Transform Hero — VEO 3.1 / Flow Prompts
+# NGX Vision Hero — VEO 3.1 / Flow Prompts
 **Strategy:** Segments (3 clips × 8s) — máximo control de transición
 **Reference frames:** K0, K1, K2, K3 (aprobados)
 **Output esperado:** 3 mp4 de 8s cada uno → concatenados a 1 mp4 de ~24s

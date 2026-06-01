@@ -4,7 +4,7 @@
  * LandingExplainerVideo Component
  *
  * Video explainer section for the landing page.
- * Shows a short video explaining how NGX Transform works.
+ * Shows a short video explaining how NGX Vision works.
  *
  * Features:
  * - HTML5 video with poster image

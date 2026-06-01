@@ -142,13 +142,13 @@ export const mayoresCopy: VariantCopy = {
   },
 
   footer: {
-    brandName: "NGX Transform",
+    brandName: "NGX Vision",
     status: "GENESIS operativo",
     copyright: "© 2026 NGX. Todos los derechos reservados.",
   },
 
   explainerVideo: {
-    title: "Cómo funciona NGX Transform",
+    title: "Cómo funciona NGX Vision",
     subtitle:
       "Una forma sencilla de visualizar dirección, entender contexto y decidir si necesita acompañamiento HYBRID.",
     videoUrl: "",

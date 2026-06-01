@@ -451,7 +451,7 @@ export async function GET(_: Request, context: { params: Promise<{ shareId: stri
             fontFamily: "Inter, 'Helvetica Neue', Arial",
           }}
         >
-          NGX Transform
+          NGX Vision
         </div>
       ),
       { width: WIDTH, height: HEIGHT }

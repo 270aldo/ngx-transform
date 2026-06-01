@@ -126,7 +126,7 @@ export function WizardClosingStep({
               className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-white/5 accent-[var(--ngx-purple)]"
             />
             <span className="text-xs text-white/55 group-hover:text-white/80 transition-colors leading-relaxed">
-              Quiero recibir contenido educativo y novedades de NGX Transform. <span className="text-white/35">(opcional; no afecta la entrega del resultado)</span>
+              Quiero recibir contenido educativo y novedades de NGX Vision. <span className="text-white/35">(opcional; no afecta la entrega del resultado)</span>
             </span>
           </label>
         </div>

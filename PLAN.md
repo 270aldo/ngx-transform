@@ -1,4 +1,4 @@
-# NGX Transform — Plan de Implementación
+# NGX Vision — Plan de Implementación
 
 **Fecha:** 2 de febrero de 2026
 **Branch:** main

@@ -1,7 +1,7 @@
 /**
  * Landing Page Copy — General Variant (Diagnostic Lead Magnet v2)
  *
- * Tesis: NGX Transform no vende una imagen. Vende claridad.
+ * Tesis: NGX Vision no vende una imagen. Vende claridad.
  * La imagen es el gancho. El diagnóstico es el valor. HYBRID es el camino para ejecutar.
  */
 
@@ -308,7 +308,7 @@ export const generalCopy: VariantCopy = {
       {
         question: "¿Sustituye a un médico, nutriólogo o entrenador?",
         answer:
-          "No. NGX Transform es una experiencia educativa y orientativa. Si tienes dolor, lesiones, condiciones médicas o dudas clínicas, consulta a un profesional antes de iniciar cambios intensos de entrenamiento o alimentación.",
+          "No. NGX Vision es una experiencia educativa y orientativa. Si tienes dolor, lesiones, condiciones médicas o dudas clínicas, consulta a un profesional antes de iniciar cambios intensos de entrenamiento o alimentación.",
       },
       {
         question: "¿Qué pasa con mi foto?",
@@ -348,7 +348,7 @@ export const generalCopy: VariantCopy = {
   },
 
   footer: {
-    brandName: "NGX Transform",
+    brandName: "NGX Vision",
     status: "GENESIS operativo",
     copyright: "© 2026 NGX. Todos los derechos reservados.",
   },
@@ -356,7 +356,7 @@ export const generalCopy: VariantCopy = {
   explainerVideo: {
     title: "Por qué construí esto",
     subtitle:
-      "El sistema detrás de NGX Transform, contado por quien lo creó. Sin script ni promesas — solo el porqué.",
+      "El sistema detrás de NGX Vision, contado por quien lo creó. Sin script ni promesas — solo el porqué.",
     videoUrl: "",
     posterUrl: "/images/founder-poster.jpg",
     duration: "Demo",

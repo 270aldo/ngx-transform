@@ -7,13 +7,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Versión:** 11.0 (Genesis Doctrine)
 **Stack:** Next.js 16.0.7 + React 19 + TypeScript + Firebase + Tailwind CSS v4 + Upstash Redis
 
-NGX Transform is a **premium viral lead magnet** that creates realistic 12-month physical transformation projections. Users upload a photo, provide profile data, and receive AI-generated insights with visualized progress images at m0/m4/m8/m12 milestones, plus a personalized 7-day fitness plan.
+NGX Vision is a **premium viral lead magnet** that creates realistic 12-month physical transformation projections. Users upload a photo, provide profile data, and receive AI-generated insights with visualized progress images at m0/m4/m8/m12 milestones, plus a personalized 7-day fitness plan.
 
 **v11.0 Genesis Doctrine**: GENESIS is the **sole AI entity visible to the user**. Internally, 13 specialized modules power 4 capabilities (Entrenamiento, Nutricion, Recuperacion, Habitos). Users never see module names — only "GENESIS" and its capabilities.
 
 ## Business Context
 
-**Strategic Purpose**: NGX Transform is a **viral lead-generation tool** designed to capture users and convert them to NGX's main subscription fitness app.
+**Strategic Purpose**: NGX Vision is a **viral lead-generation tool** designed to capture users and convert them to NGX's main subscription fitness app.
 
 **Growth Strategy**:
 - Free tool with high shareability (transformation results are inherently viral)
