@@ -76,6 +76,11 @@
 ## QA
 - [ ] `pnpm test:auth` (si hay tokens)
 - [ ] `pnpm test:smoke`
+- [ ] P1/P2 release gate con fixtures owner reales documentado y ejecutado (`docs/qa/P1_P2_RELEASE_READINESS_RUNBOOK.md`)
+- [ ] Mock gate MercadoPago: preference owner-only + webhook valido/invalido sin llamadas reales
+- [ ] Public telemetry gate: `/api/telemetry` solo append-only untrusted, sin mutar funnel/CRM/N8N/lead scoring
+- [ ] Visual QA post-countdown en 390x844, 768x1024, 1440x900
+- [ ] Dashboard delete owner-only probado en fixture staging desechable
 - [ ] Smoke manual de wizard y share
 - [ ] Smoke manual de checkout/booking/WhatsApp segun canales activos
 - [ ] Landing y CTAs alineados con auth-before-wizard (`/auth?next=/wizard`)
