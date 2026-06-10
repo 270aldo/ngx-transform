@@ -96,6 +96,12 @@ function getRateLimiters(): Map<string, Ratelimit> | null {
     prefix: "rl:realtime-session",
   }));
 
+  rateLimiters.set("api:genesis-chat", new Ratelimit({
+    redis: redisClient,
+    limiter: Ratelimit.slidingWindow(30, "10 m"), // 30 chat turns per owner per 10 min
+    prefix: "rl:genesis-chat",
+  }));
+
   rateLimiters.set("api:feedback", new Ratelimit({
     redis: redisClient,
     limiter: Ratelimit.slidingWindow(5, "1 h"), // 5 feedback writes per owner per hour
@@ -160,6 +166,7 @@ const IN_MEMORY_LIMITS: Record<string, { max: number; windowMs: number }> = {
   "api:analyze": { max: 10, windowMs: 3600000 },      // 10/hour
   "api:generate-images": { max: 5, windowMs: 3600000 },// 5/hour
   "api:realtime-session": { max: 5, windowMs: 600000 },// 5/10min
+  "api:genesis-chat": { max: 30, windowMs: 600000 },   // 30/10min
   "api:feedback": { max: 5, windowMs: 3600000 },       // 5/hour
   "api:telemetry": { max: 120, windowMs: 60000 },       // 120/min
   "api:csp-report": { max: 30, windowMs: 60000 },       // 30/min
