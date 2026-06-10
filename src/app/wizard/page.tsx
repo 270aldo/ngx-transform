@@ -589,9 +589,13 @@ function WizardPageContent() {
               "No pudimos iniciar el análisis inicial."
             );
             console.error("[Wizard] Analyze bootstrap failed:", message);
+            // Signal the loading screen so it offers retry immediately instead
+            // of polling a stuck "processing" session forever (fix-20).
+            router.replace(`/loading/${sessionId}?analyzeFailed=1`);
           }
         } catch (bootstrapError) {
           console.error("[Wizard] Analyze bootstrap error:", bootstrapError);
+          router.replace(`/loading/${sessionId}?analyzeFailed=1`);
         }
       })();
 
