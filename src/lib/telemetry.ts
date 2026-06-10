@@ -88,7 +88,11 @@ export type FunnelEvent =
   | "voice_agent_cta_clicked"
   // GENESIS text chat (Fase 2)
   | "genesis_text_chat_opened"
-  | "genesis_text_chat_classified";
+  | "genesis_text_chat_classified"
+  // Loading recovery (fix-20)
+  | "loading_stuck_partial"
+  | "generation_trigger_failed"
+  | "loading_timeout";
 
 export interface EventPayload {
   sessionId: string;
