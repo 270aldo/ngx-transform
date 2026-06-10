@@ -7,6 +7,7 @@ import {
   advanceSequence,
   markEmailSent,
   getEmailSubject,
+  hasSentStage,
   type EmailStage,
 } from "@/lib/emailScheduler";
 import { trackEvent } from "@/lib/telemetry";
@@ -132,6 +133,15 @@ export async function POST(req: NextRequest) {
     if (await isEmailSuppressed(email)) {
       return NextResponse.json(
         { success: false, skipped: true, message: "Email suppressed" },
+        { status: 200 }
+      );
+    }
+
+    // Idempotency guard: never re-send a stage that was already sent (e.g.
+    // overlapping cron runs). hasSentStage previously had zero consumers (fix-19).
+    if (sequence && hasSentStage(sequence, validated.template)) {
+      return NextResponse.json(
+        { success: false, skipped: true, message: "Already sent" },
         { status: 200 }
       );
     }
