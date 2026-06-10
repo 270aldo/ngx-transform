@@ -143,7 +143,7 @@ pnpm lint         # ESLint
 | `/api/email/sequence` | POST | Email nurture sequence management |
 | `/api/email/send` | POST | Send specific email template (D0-D7) |
 | `/api/genesis-demo` | GET | SSE streaming for agent orchestration animation (v3.0) |
-| `/api/genesis-chat` | POST | DemoChat responses with A2UI widgets (v3.0) |
+| `/api/genesis-chat` | POST | GENESIS text chat — streaming Gemini over the knowledge base (Fase 2) |
 | `/api/genesis-voice` | POST | Voice agent responses via ElevenLabs (v3.0) |
 | `/api/remarketing` | POST/GET | Remarketing leads (POST: register, GET: admin lookup) |
 | `/api/generate-plan` | GET/POST | PDF plan generation with rate limiting |
