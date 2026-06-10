@@ -42,6 +42,7 @@ export async function GET(_: Request, context: { params: Promise<{ shareId: stri
         shareImages?: boolean;
       };
       ai?: unknown;
+      confirmationEmailSent?: boolean;
       createdAt?: unknown;
     };
 
@@ -92,6 +93,7 @@ export async function GET(_: Request, context: { params: Promise<{ shareId: stri
       assetKeys,
       hasImages: assetKeys.length > 0,
       hasAi: data.ai != null,
+      confirmationEmailSent: Boolean(data.confirmationEmailSent),
       originalUrl,
       profile: publicProfile,
       shareScope,

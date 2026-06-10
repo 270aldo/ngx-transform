@@ -32,4 +32,11 @@ describe("loading recovery wiring (fix-20)", () => {
     expect(loadingSource).toContain("analyzeFailed");
     expect(wizardSource).toContain("analyzeFailed=1");
   });
+
+  it("only promises a confirmation email when one actually sent (fix-19 #74)", () => {
+    expect(loadingSource).toContain("emailSent");
+    expect(loadingSource).toContain(
+      "guarda este enlace para volver a tu resultado",
+    );
+  });
 });

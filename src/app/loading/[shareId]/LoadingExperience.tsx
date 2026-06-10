@@ -66,6 +66,7 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
   const [error, setError] = useState<string | null>(null);
   const [retrying, setRetrying] = useState(false);
   const [timedOut, setTimedOut] = useState(false);
+  const [emailSent, setEmailSent] = useState<boolean | null>(null);
   const startedGenerationRef = useRef(false);
   const mountedAtRef = useRef(0);
   const timedOutEmittedRef = useRef(false);
@@ -205,6 +206,7 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
         setStatus(nextStatus);
         setImageKeys(keys);
         setHasAi(aiPresent);
+        setEmailSent(Boolean(json?.confirmationEmailSent));
         setProgress(PROGRESS_BY_COUNT[Math.min(count, 3)]);
 
         if (
@@ -535,9 +537,11 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
         </AnimatePresence>
       </div>
 
-      {/* Email Safety banner */}
+      {/* Email Safety banner — only claims an email when one actually sent (fix-19 #74) */}
       <p className="z-10 mt-4 text-center text-[11px] leading-relaxed text-white/40 max-w-sm px-6">
-        Puedes cerrar esta pestaña con seguridad. Tu transformación se guarda de forma privada y tu enlace de acceso se ha enviado a tu correo.
+        {emailSent
+          ? "Puedes cerrar esta pestaña con seguridad. Tu transformación se guarda de forma privada y tu enlace de acceso se ha enviado a tu correo."
+          : "Puedes cerrar esta pestaña con seguridad. Tu transformación se guarda de forma privada — guarda este enlace para volver a tu resultado."}
       </p>
 
       {/* "Ver resultados" — only when actually ready, otherwise hidden */}

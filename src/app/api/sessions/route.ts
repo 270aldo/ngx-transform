@@ -197,32 +197,45 @@ export async function POST(req: Request) {
       consentCaptureSource: consents.captureSource,
     });
 
-    // Fire-and-forget email confirmation with share link (with telemetry)
+    // Fire-and-forget email confirmation with share link. Persist whether it
+    // actually sent, so the loading screen never promises an email that was
+    // silently skipped for a missing RESEND_FROM_EMAIL (fix-19 #74).
     (async () => {
+      let sent = false;
       try {
         const key = process.env.RESEND_API_KEY;
-        if (!key) return;
-        const vercelUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null;
-        const baseUrl =
-          process.env.NEXT_PUBLIC_APP_URL ||
-          process.env.NEXT_PUBLIC_BASE_URL ||
-          vercelUrl ||
-          "http://localhost:3000";
-        const url = String(baseUrl).startsWith("http") ? `${baseUrl}/s/${shareId}` : `https://${baseUrl}/s/${shareId}`;
-        const resend = new Resend(key);
-        const from = getConfiguredFromEmail("Sessions");
-        if (!from) {
-          console.warn("[Sessions] RESEND_FROM_EMAIL not configured, skipping preflight email");
-          return;
+        const from = key ? getConfiguredFromEmail("Sessions") : null;
+        if (key && from) {
+          const vercelUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null;
+          const baseUrl =
+            process.env.NEXT_PUBLIC_APP_URL ||
+            process.env.NEXT_PUBLIC_BASE_URL ||
+            vercelUrl ||
+            "http://localhost:3000";
+          const url = String(baseUrl).startsWith("http") ? `${baseUrl}/s/${shareId}` : `https://${baseUrl}/s/${shareId}`;
+          const resend = new Resend(key);
+          await resend.emails.send({
+            from,
+            to: userEmail,
+            subject: "Tus resultados NGX están en proceso",
+            html: `<p>Estamos generando tu proyección. Podrás verla aquí:</p><p><a href="${url}">${url}</a></p><p>Puede tardar unos minutos.</p>`,
+          });
+          sent = true;
+        } else {
+          console.warn(
+            "[Sessions] Email preflight skipped (RESEND_API_KEY/RESEND_FROM_EMAIL missing)"
+          );
         }
-        await resend.emails.send({
-          from,
-          to: userEmail,
-          subject: "Tus resultados NGX están en proceso",
-          html: `<p>Estamos generando tu proyección. Podrás verla aquí:</p><p><a href="${url}">${url}</a></p><p>Puede tardar unos minutos.</p>`,
-        });
       } catch (err) {
         console.error("[Sessions] Resend preflight email failed:", err);
+      }
+      try {
+        await db
+          .collection("sessions")
+          .doc(shareId)
+          .set({ confirmationEmailSent: sent }, { merge: true });
+      } catch (err) {
+        console.error("[Sessions] Failed to persist confirmationEmailSent:", err);
       }
     })();
 
