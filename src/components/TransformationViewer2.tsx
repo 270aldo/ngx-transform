@@ -20,6 +20,7 @@
  */
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
 import type { InsightsResult, TimelineEntry } from "@/types/ai";
@@ -27,12 +28,26 @@ import { CinematicAutoplay } from "./results/CinematicAutoplay";
 import { ChapterView } from "./results/ChapterView";
 // CompareSlider imported but reserved for future use
 // import { CompareSlider } from "./results/CompareSlider";
-import { LetterFromFuture } from "./results/LetterFromFuture";
-import { DramaticReveal } from "./results/DramaticReveal";
+// Below-the-fold / not-first-paint pieces are code-split so the results page's
+// initial JS doesn't carry them (fix-21).
+const LetterFromFuture = dynamic(
+  () => import("./results/LetterFromFuture").then((m) => m.LetterFromFuture),
+  { ssr: false },
+);
+const DramaticReveal = dynamic(
+  () => import("./results/DramaticReveal").then((m) => m.DramaticReveal),
+  {
+    ssr: false,
+    loading: () => <div className="fixed inset-0 z-50 bg-[#050505]" />,
+  },
+);
 import { SocialShareButton } from "./SocialShareButton";
 import { BookingHeaderButton } from "./BookingHeaderButton";
 import { BookingCTA } from "./BookingCTA";
-import { ShareToUnlockModal } from "./viral/ShareToUnlockModal";
+const ShareToUnlockModal = dynamic(
+  () => import("./viral/ShareToUnlockModal").then((m) => m.ShareToUnlockModal),
+  { ssr: false },
+);
 import { SocialCounter } from "./SocialCounter";
 import { AgentBridgeCTA } from "./AgentBridgeCTA";
 import { ReferralCard } from "./ReferralCard";
