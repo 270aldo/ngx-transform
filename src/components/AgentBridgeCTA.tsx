@@ -59,7 +59,7 @@ export function AgentBridgeCTA({
   const bookingUrl =
     process.env.NEXT_PUBLIC_CALENDLY_URL ||
     process.env.NEXT_PUBLIC_BOOKING_URL ||
-    "#";
+    "";
 
   // Track event helper
   const trackEvent = useCallback(
@@ -84,8 +84,13 @@ export function AgentBridgeCTA({
   }, [trackEvent]);
 
   const handleClick = () => {
+    // Don't open a blank tab when no booking URL is configured (fix-22 #75).
+    if (!bookingUrl) {
+      trackEvent("agent_cta_clicked", { noBookingUrl: true });
+      return;
+    }
+    window.open(bookingUrl, "_blank", "noopener,noreferrer");
     trackEvent("agent_cta_clicked");
-    window.open(bookingUrl, "_blank");
   };
 
   return (

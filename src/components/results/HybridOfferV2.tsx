@@ -288,18 +288,24 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
     }
   };
 
-  const onCalendly = async () => {
+  const onCalendly = () => {
     if (!calendlyUrl) return;
-    const token = await getOwnerToken();
-    await emitTelemetry(shareId, "calendly_v2_clicked", undefined, token);
+    // Open synchronously inside the user gesture so iOS Safari doesn't block the
+    // popup after a network await (fix-22). Telemetry is fire-and-forget.
     window.open(calendlyUrl, "_blank", "noopener,noreferrer");
+    void (async () => {
+      const token = await getOwnerToken();
+      await emitTelemetry(shareId, "calendly_v2_clicked", undefined, token);
+    })();
   };
 
-  const onWhatsapp = async () => {
+  const onWhatsapp = () => {
     if (!whatsappUrl) return;
-    const token = await getOwnerToken();
-    await emitTelemetry(shareId, "whatsapp_v2_clicked", undefined, token);
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+    void (async () => {
+      const token = await getOwnerToken();
+      await emitTelemetry(shareId, "whatsapp_v2_clicked", undefined, token);
+    })();
   };
 
   const onEmailBrief = async () => {

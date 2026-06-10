@@ -34,4 +34,15 @@ describe("HybridOfferV2 telemetry compatibility", () => {
     expect(source).toContain('document.getElementById("hybrid-voice-agent")');
     expect(source).toContain("onVoiceAgentFallback");
   });
+
+  it("opens external CTAs synchronously in the gesture, never after an await (fix-22 iOS)", () => {
+    // iOS Safari blocks window.open that runs after a network await. The popup
+    // must fire in the same tick as the click; telemetry is fire-and-forget.
+    expect(source).not.toMatch(/await\s+emitTelemetry\([^)]*\);\s*window\.open/);
+    const opens = source.match(/window\.open\([^)]*\)/g) ?? [];
+    expect(opens.length).toBeGreaterThan(0);
+    for (const call of opens) {
+      expect(call).toContain("noopener");
+    }
+  });
 });
