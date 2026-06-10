@@ -46,15 +46,22 @@ interface CleanupResult {
 // ============================================================================
 
 function validateCronKey(req: Request): boolean {
+  const providedKey =
+    req.headers.get("x-cron-key") ||
+    req.headers.get("authorization")?.replace("Bearer ", "");
+
+  // Vercel Cron injects `Authorization: Bearer ${CRON_SECRET}`.
+  const cronSecret = process.env.CRON_SECRET;
+  if (cronSecret && secureCompare(providedKey, cronSecret)) return true;
+
+  // Existing server-to-server key (manual trigger / external scheduler).
   const cronKey = process.env.CRON_API_KEY;
-  if (!cronKey) {
-    console.error("[Cleanup] CRON_API_KEY not configured");
-    return false;
+  if (cronKey && secureCompare(providedKey, cronKey)) return true;
+
+  if (!cronSecret && !cronKey) {
+    console.error("[Cleanup] Neither CRON_SECRET nor CRON_API_KEY configured");
   }
-
-  const providedKey = req.headers.get("x-cron-key") || req.headers.get("authorization")?.replace("Bearer ", "");
-
-  return secureCompare(providedKey, cronKey);
+  return false;
 }
 
 // ============================================================================
@@ -341,16 +348,9 @@ async function cleanupOldTelemetryEvents(): Promise<number> {
 // Route Handler
 // ============================================================================
 
-export async function POST(req: Request) {
-  // Validate authentication
-  if (!validateCronKey(req)) {
-    console.warn("[Cleanup] Unauthorized cleanup attempt");
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
+async function runAllCleanup() {
   console.log("[Cleanup] Starting cleanup job...");
 
-  // Run cleanup tasks
   const [sessionResult, spendRecordsDeleted, rateLimitsDeleted, telemetryEventsDeleted] = await Promise.all([
     cleanupAbandonedSessions(),
     cleanupOldSpendRecords(),
@@ -368,22 +368,23 @@ export async function POST(req: Request) {
   };
 
   console.log("[Cleanup] Cleanup completed:", response);
-
-  return NextResponse.json(response, {
-    status: sessionResult.success ? 200 : 500,
-  });
+  return response;
 }
 
-// Also support GET for manual testing (still requires auth)
+export async function POST(req: Request) {
+  if (!validateCronKey(req)) {
+    console.warn("[Cleanup] Unauthorized cleanup attempt");
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const response = await runAllCleanup();
+  return NextResponse.json(response, { status: response.success ? 200 : 500 });
+}
+
+// Vercel Cron issues a GET request — run the same cleanup (auth still required).
 export async function GET(req: Request) {
   if (!validateCronKey(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
-  return NextResponse.json({
-    message: "Cleanup endpoint ready",
-    ttlDays: SESSION_TTL_DAYS,
-    batchSize: BATCH_SIZE,
-    usage: "POST /api/cron/cleanup with x-cron-key header",
-  });
+  const response = await runAllCleanup();
+  return NextResponse.json(response, { status: response.success ? 200 : 500 });
 }

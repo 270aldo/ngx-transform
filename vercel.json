@@ -4,5 +4,9 @@
   "installCommand": "pnpm install --frozen-lockfile",
   "env": {
     "NEXT_PUBLIC_APP_URL": "https://ngxvision.app"
-  }
+  },
+  "crons": [
+    { "path": "/api/cron/cleanup", "schedule": "0 8 * * *" },
+    { "path": "/api/email/sequence", "schedule": "*/30 * * * *" }
+  ]
 }

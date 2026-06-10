@@ -154,3 +154,61 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+/**
+ * Cron entry point (fix-19). Vercel Cron issues a GET; process every due
+ * sequence and send its current-stage email via the idempotency-guarded
+ * sender. Auth: CRON_SECRET (Vercel-injected Bearer) or CRON_API_KEY (manual).
+ * Both CRON_SECRET (cron auth) and CRON_API_KEY (internal send auth) must be set
+ * in production for this to actually send.
+ */
+export async function GET(req: NextRequest) {
+  const provided =
+    req.headers.get("authorization")?.replace("Bearer ", "") ||
+    req.headers.get("x-api-key") ||
+    req.headers.get("x-cron-key");
+  const cronSecret = process.env.CRON_SECRET;
+  const cronApiKey = process.env.CRON_API_KEY;
+  const authorized =
+    (!!cronSecret && secureCompare(provided, cronSecret)) ||
+    (!!cronApiKey && secureCompare(provided, cronApiKey));
+  if (!authorized) {
+    if (!cronSecret && !cronApiKey && process.env.NODE_ENV === "production") {
+      console.error("[EMAIL_SEQUENCE] No CRON_SECRET/CRON_API_KEY configured");
+    }
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const due = await getDueSequences();
+  if (due.length === 0) {
+    return NextResponse.json({ ok: true, due: 0, processed: 0 });
+  }
+
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "");
+  if (!baseUrl || !cronApiKey) {
+    console.error(
+      "[EMAIL_SEQUENCE] Missing NEXT_PUBLIC_APP_URL or CRON_API_KEY for cron send",
+    );
+    return NextResponse.json(
+      { ok: false, error: "Not configured to send", due: due.length, processed: 0 },
+      { status: 503 },
+    );
+  }
+
+  let processed = 0;
+  for (const seq of due) {
+    try {
+      const res = await fetch(`${baseUrl}/api/email/send`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Api-Key": cronApiKey },
+        body: JSON.stringify({ shareId: seq.shareId, template: seq.stage }),
+      });
+      if (res.ok) processed++;
+      else console.error("[EMAIL_SEQUENCE] send failed", seq.shareId, res.status);
+    } catch (e) {
+      console.error("[EMAIL_SEQUENCE] send error", seq.shareId, e);
+    }
+  }
+
+  return NextResponse.json({ ok: true, due: due.length, processed });
+}

@@ -101,14 +101,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Rate limiting by IP (Upstash Redis)
-    const clientIP = getClientIP(req);
-    const rateLimitResult = await checkRateLimit("api:email", clientIP);
-    if (!rateLimitResult.success) {
-      return NextResponse.json(
-        { error: "Too many requests. Please wait a moment." },
-        { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
-      );
+    // Rate limit by IP only on the unauthenticated dev path. In production the
+    // CRON_API_KEY check above is the control; throttling the (authenticated)
+    // cron batch by IP would cap the nurture sequence at a few sends/hour and
+    // strand most leads (fix-19).
+    if (!expectedKey) {
+      const clientIP = getClientIP(req);
+      const rateLimitResult = await checkRateLimit("api:email", clientIP);
+      if (!rateLimitResult.success) {
+        return NextResponse.json(
+          { error: "Too many requests. Please wait a moment." },
+          { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+        );
+      }
     }
 
     const body = await req.json();
