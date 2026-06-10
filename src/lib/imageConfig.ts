@@ -193,18 +193,15 @@ export function getIdentityChainConfig(): IdentityChainConfig {
  * Estimate cost for a session's image generation
  */
 export function estimateSessionCost(steps: NanoStep[] = ["m4", "m8", "m12"]): number {
+  // No existe API batch real: todas las imágenes van por :generateContent síncrono
+  // (ver nanobanana.ts), así que el costo es SIEMPRE el estándar. Antes esto asumía
+  // un descuento "batch" ficticio que subestimaba el gasto reservado ~33-50%. Ver fix-14 / #9.
   const config = getImageConfig();
   let totalCost = 0;
 
   for (const step of steps) {
     const stepConfig = config.byStep[step];
-    const pricing = PRICING[stepConfig.imageSize];
-
-    if (stepConfig.processingStrategy === "batch") {
-      totalCost += pricing.batchCost;
-    } else {
-      totalCost += pricing.standardCost;
-    }
+    totalCost += PRICING[stepConfig.imageSize].standardCost;
   }
 
   return totalCost;
@@ -250,4 +247,31 @@ export function getMaxReferences(model: string): { human: number; total: number 
   }
   // Legacy model - single reference only
   return { human: 1, total: 1 };
+}
+
+/**
+ * Build-time guard against the Identity Chain footgun (audit finding #10).
+ *
+ * If FF_IDENTITY_CHAIN is enabled but the resolved image model does not support
+ * chained references, the generate-images route fails closed with a 503 for
+ * EVERY request (src/app/api/generate-images/route.ts), silently bricking image
+ * generation in production. This assertion makes a real production deploy
+ * (Vercel VERCEL_ENV=production) FAIL LOUDLY at build instead, mirroring
+ * assertLegalConfigForProductionDeploy() in legalConfig.ts.
+ *
+ * No-op on local dev and CI (VERCEL_ENV !== "production").
+ */
+export function assertImageConfigForProductionDeploy(): void {
+  if (process.env.VERCEL_ENV !== "production") return;
+  const flags = getFeatureFlags();
+  if (!flags.FF_IDENTITY_CHAIN) return; // chain disabled → any model is valid
+  const model = getImageConfig().default.model;
+  if (!supportsIdentityChain(model)) {
+    throw new Error(
+      `[imageConfig] Cannot deploy to production: FF_IDENTITY_CHAIN is enabled but the ` +
+        `resolved image model "${model}" does not support Identity Chain. Image generation ` +
+        `would return 503 for every request. Fix with one of: set FF_NB_PRO=true (recommended), ` +
+        `set GEMINI_IMAGE_MODEL=${MODELS.GEMINI_3_PRO_IMAGE}, or disable with FF_IDENTITY_CHAIN=false.`
+    );
+  }
 }

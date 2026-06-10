@@ -26,6 +26,11 @@ import type { SessionDocument } from "@/types/ai";
 const MAX_RETRIES = Number(process.env.MAX_ANALYSIS_RETRIES || "3");
 const MODEL_ID = process.env.GEMINI_MODEL || "gemini-flash-latest";
 
+// Bound the function so the catch (which releases the job lock via markJobFailed)
+// always runs before the platform kills it: the analysis timeout (~30s, in
+// gemini.ts) × MAX_RETRIES + backoff stays under this. See fix-16.
+export const maxDuration = 120;
+
 // ============================================================================
 // Route Handler
 // ============================================================================

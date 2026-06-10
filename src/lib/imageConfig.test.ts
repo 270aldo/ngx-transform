@@ -6,7 +6,13 @@
  * any future refactor that breaks model selection fails loudly in CI.
  */
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { MODELS, getImageConfig } from "./imageConfig";
+import {
+  MODELS,
+  PRICING,
+  getImageConfig,
+  estimateSessionCost,
+  assertImageConfigForProductionDeploy,
+} from "./imageConfig";
 
 // ============================================================================
 // Helpers
@@ -150,5 +156,73 @@ describe("resolveImageModel — fallback logic (no GEMINI_IMAGE_MODEL set)", () 
     const config = getImageConfig();
     expect(config.default.model).not.toContain("2.5");
     expect(config.unlock.model).not.toContain("2.5");
+  });
+});
+
+// ============================================================================
+// assertImageConfigForProductionDeploy — Identity Chain footgun guard (#10)
+// ============================================================================
+
+describe("assertImageConfigForProductionDeploy", () => {
+  let saved: Record<string, string | undefined>;
+
+  beforeEach(() => {
+    saved = {
+      VERCEL_ENV: process.env.VERCEL_ENV,
+      FF_IDENTITY_CHAIN: process.env.FF_IDENTITY_CHAIN,
+      FF_NB_PRO: process.env.FF_NB_PRO,
+      GEMINI_IMAGE_MODEL: process.env.GEMINI_IMAGE_MODEL,
+      GEMINI_MODEL: process.env.GEMINI_MODEL,
+    };
+    // Clean model overrides so resolution depends only on FF_NB_PRO.
+    setEnv({ GEMINI_IMAGE_MODEL: undefined, GEMINI_MODEL: undefined });
+  });
+
+  afterEach(() => {
+    setEnv(saved);
+  });
+
+  it("is a no-op outside production even with an invalid combo", () => {
+    setEnv({ VERCEL_ENV: "preview", FF_NB_PRO: "false", FF_IDENTITY_CHAIN: undefined });
+    expect(() => assertImageConfigForProductionDeploy()).not.toThrow();
+  });
+
+  it("throws in production when Identity Chain is on but the model is Flash", () => {
+    // FF_IDENTITY_CHAIN defaults to true (!== "false"); FF_NB_PRO=false → Flash model.
+    setEnv({ VERCEL_ENV: "production", FF_NB_PRO: "false", FF_IDENTITY_CHAIN: undefined });
+    expect(() => assertImageConfigForProductionDeploy()).toThrow(/Identity Chain/i);
+  });
+
+  it("does not throw in production when FF_NB_PRO=true (Pro model supports chain)", () => {
+    setEnv({ VERCEL_ENV: "production", FF_NB_PRO: "true", FF_IDENTITY_CHAIN: undefined });
+    expect(() => assertImageConfigForProductionDeploy()).not.toThrow();
+  });
+
+  it("does not throw in production when Identity Chain is disabled", () => {
+    setEnv({ VERCEL_ENV: "production", FF_NB_PRO: "false", FF_IDENTITY_CHAIN: "false" });
+    expect(() => assertImageConfigForProductionDeploy()).not.toThrow();
+  });
+
+  it("does not throw in production when GEMINI_IMAGE_MODEL is the Pro model", () => {
+    setEnv({
+      VERCEL_ENV: "production",
+      FF_NB_PRO: "false",
+      FF_IDENTITY_CHAIN: undefined,
+      GEMINI_IMAGE_MODEL: MODELS.GEMINI_3_PRO_IMAGE,
+    });
+    expect(() => assertImageConfigForProductionDeploy()).not.toThrow();
+  });
+});
+
+// ============================================================================
+// estimateSessionCost — sin precio "batch" ficticio (#9 / fix-14)
+// ============================================================================
+
+describe("estimateSessionCost", () => {
+  it("usa precio estándar en todos los pasos (sin descuento batch inventado)", () => {
+    const cost = estimateSessionCost(["m4", "m8", "m12"]);
+    // 3 pasos × standardCost (2K). El batch ficticio antes daba ~0.268 (subestimado).
+    expect(cost).toBeCloseTo(3 * PRICING["2K"].standardCost, 5);
+    expect(cost).toBeGreaterThan(0.4);
   });
 });

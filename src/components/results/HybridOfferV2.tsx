@@ -192,8 +192,9 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
     cards.push({
       sku: "monthly",
       label:
-        process.env.NEXT_PUBLIC_HYBRID_LABEL_MONTHLY || "Acceso mensual",
-      priceLabel: monthly ? `${formatMxn(monthly)} / mes` : "Próximamente",
+        process.env.NEXT_PUBLIC_HYBRID_LABEL_MONTHLY ||
+        "Acceso 30 días (pago único)",
+      priceLabel: monthly ? `${formatMxn(monthly)} · pago único` : "Próximamente",
       available: !!monthly,
     });
 
@@ -201,11 +202,11 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
       sku: "quarterly",
       label:
         process.env.NEXT_PUBLIC_HYBRID_LABEL_QUARTERLY ||
-        "12 semanas (cohorte completa)",
+        "12 semanas · cohorte completa (pago único)",
       priceLabel: quarterly ? formatMxn(quarterly) : "Próximamente",
       perMonthLabel:
         quarterly && monthly
-          ? `Equivale a ${formatMxn(Math.round(quarterly / 3))}/mes`
+          ? `Pago único · equivale a ${formatMxn(Math.round(quarterly / 3))}/mes`
           : undefined,
       badge: "MÁS ELEGIDO",
       highlight: true,
@@ -215,11 +216,12 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
     cards.push({
       sku: "annual",
       label:
-        process.env.NEXT_PUBLIC_HYBRID_LABEL_ANNUAL || "Programa anual",
+        process.env.NEXT_PUBLIC_HYBRID_LABEL_ANNUAL ||
+        "Programa de 12 meses (pago único)",
       priceLabel: annual ? formatMxn(annual) : "Próximamente",
       perMonthLabel:
         annual && monthly
-          ? `Equivale a ${formatMxn(Math.round(annual / 12))}/mes`
+          ? `Pago único · equivale a ${formatMxn(Math.round(annual / 12))}/mes`
           : undefined,
       available: !!annual,
     });

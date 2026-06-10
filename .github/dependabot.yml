@@ -1,0 +1,25 @@
+version: 2
+updates:
+  # Dependencias npm (el repo usa pnpm; Dependabot lo soporta y actualiza pnpm-lock.yaml)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
+    # Los majors quedan fuera del grupo: abren PR individual para revisión manual.
+    # Los security updates NO se agrupan ni esperan al lunes: abren PR inmediato
+    # (requiere "Dependabot security updates" activado en GitHub — ver nota del PR).
+
+  # Mantén también las GitHub Actions del CI al día (actions/checkout, pnpm/action-setup, etc.)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"

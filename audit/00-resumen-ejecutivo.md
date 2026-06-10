@@ -1,0 +1,10 @@
+# Resumen ejecutivo — NGX Vision (auditoría jun-2026)
+
+1. **¿Listo para usuarios que pagan? NO.** El lead magnet gratuito está a 2-3 sprints de estar sólido; el cobro NO debe activarse hoy: si alguien paga $2,999–$24,999 MXN, **no recibe nada automáticamente y nadie del equipo se entera** (el webhook solo escribe un campo en la base; no hay email de bienvenida ni alerta — fix-01).
+2. **Lo que te explota primero:** (a) cobrar sin entregar → contracargos en MercadoPago; (b) producción ciega: Sentry está escrito pero nunca se inicializa y no hay alerting — si se cae a las 3am te enteras por un cliente enojado; (c) Next.js 5 parches atrás con CVEs públicos de DoS/bypass (arreglo de 1 hora).
+3. **Vendes "suscripción mensual renovable" pero el código solo cobra una vez**: no existe recurrencia ni vigencia del acceso — tu MRR proyectado está estructuralmente inflado.
+4. **El "viral" del lead magnet viral es fachada:** referidos, share-to-unlock y social pack están desconectados end-to-end (K-factor = 0 por construcción). Hoy creces solo por adquisición directa.
+5. **El usuario que paga puede perder el acceso para siempre:** toda la identidad es anónima y atada al dispositivo; el email de recuperación lleva a un muro; los derechos de borrado (LFPDPPP) son inejecutables en la práctica; las fotos corporales se retienen indefinidamente.
+6. **La base es mejor de lo que parece:** sin IDOR entre usuarios, Firestore deny-all, webhook de pagos con firma e idempotencia, precios server-side, validación zod casi total, 34 archivos de test en CI. La ingeniería de seguridad estructural es de nivel decente — el problema está en operación, fulfillment y cabos sueltos de producto.
+7. **Cifra de la auditoría:** 113 hallazgos verificados adversarialmente (1 🔴 crítico, 32 🟠 altos), todos con evidencia archivo:línea; ~34% de los componentes frontend son código muerto y la documentación describe un producto que ya no existe.
+8. **Plan:** 6 sprints de 1 semana ([04-plan-remediacion.md](04-plan-remediacion.md)); los primeros 2 te dejan en estado "puedo cobrar sin quemarme"; hay ~14 quick wins de <1 día que mueven la aguja ya ([03-quick-wins.md](03-quick-wins.md)).
