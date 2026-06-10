@@ -7,6 +7,7 @@ import { MuscleHealthScore } from "@/components/results/MuscleHealthScore";
 import { TransformationSummary } from "@/components/results/TransformationSummary";
 import { HybridOfferV2 } from "@/components/results/HybridOfferV2";
 import { HybridVoiceAgent } from "@/components/results/HybridVoiceAgent";
+import { GenesisTextChat } from "@/components/results/GenesisTextChat";
 import { MobileVoiceAgentTeaser } from "@/components/results/MobileVoiceAgentTeaser";
 import { SeasonRoadmap } from "@/components/results/SeasonRoadmap";
 import RefreshClient from "./refresh-client";
@@ -19,6 +20,8 @@ import { DEMO_SESSION, DEMO_URLS } from "./demoStub";
 const FF_EXPOSE_ORIGINAL = process.env.FF_EXPOSE_ORIGINAL !== "false";
 const FF_HYBRID_VOICE_AGENT =
   process.env.NEXT_PUBLIC_FF_HYBRID_VOICE_AGENT === "true";
+const FF_HYBRID_TEXT_CHAT =
+  process.env.NEXT_PUBLIC_FF_HYBRID_TEXT_CHAT !== "false";
 
 export const dynamic = "force-dynamic";
 
@@ -298,6 +301,9 @@ export default async function Page({
       />
       {isReady && (
         <SeasonRoadmap />
+      )}
+      {isReady && FF_HYBRID_TEXT_CHAT && (
+        <GenesisTextChat shareId={shareId} />
       )}
       {isReady && FF_HYBRID_VOICE_AGENT && (
         <HybridVoiceAgent shareId={shareId} />

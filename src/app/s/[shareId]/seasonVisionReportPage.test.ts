@@ -16,6 +16,8 @@ describe("share results page lead magnet wiring", () => {
     expect(pageSource).toContain("SeasonRoadmap");
     expect(pageSource).toContain("HybridVoiceAgent");
     expect(pageSource).toContain("NEXT_PUBLIC_FF_HYBRID_VOICE_AGENT");
+    expect(pageSource).toContain("GenesisTextChat");
+    expect(pageSource).toContain("NEXT_PUBLIC_FF_HYBRID_TEXT_CHAT");
     expect(pageSource).toContain("HybridOfferV2");
   });
 
