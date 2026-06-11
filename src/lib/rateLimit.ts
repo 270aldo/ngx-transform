@@ -146,6 +146,12 @@ function getRateLimiters(): Map<string, Ratelimit> | null {
     prefix: "rl:brief",
   }));
 
+  rateLimiters.set("api:claim", new Ratelimit({
+    redis: redisClient,
+    limiter: Ratelimit.slidingWindow(10, "1 h"), // 10 claims per uid per hour
+    prefix: "rl:claim",
+  }));
+
   // General API rate limit (fallback)
   rateLimiters.set("api:general", new Ratelimit({
     redis: redisClient,
@@ -177,6 +183,7 @@ const IN_MEMORY_LIMITS: Record<string, { max: number; windowMs: number }> = {
   "api:unlock": { max: 30, windowMs: 60000 },          // 30/min
   "api:checkout": { max: 10, windowMs: 60000 },        // 10/min
   "api:brief": { max: 3, windowMs: 3600000 },          // 3/hour
+  "api:claim": { max: 10, windowMs: 3600000 },         // 10/hour
   "api:general": { max: 60, windowMs: 60000 },        // 60/min
 };
 

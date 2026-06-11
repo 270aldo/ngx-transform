@@ -151,6 +151,9 @@ export async function POST(req: Request) {
     await ref.set({
       shareId,
       email: userEmail,
+      // Normalized for the email-verified session claim (fix-07). Equality
+      // query auto-indexes; no firestore.indexes.json change needed.
+      emailLower: userEmail.toLowerCase(),
       ownerUid: authUser.uid,
       hybridStatus: "prospect",
       hybridConvertedAt: null,
@@ -228,7 +231,7 @@ export async function POST(req: Request) {
             from,
             to: userEmail,
             subject: "Tus resultados NGX están en proceso",
-            html: `<p>Estamos generando tu proyección. Podrás verla aquí:</p><p><a href="${url}">${url}</a></p><p>Puede tardar unos minutos.</p><p style="font-size:12px;color:#888">¿Quieres eliminar tu sesión y todos tus datos (foto, imágenes generadas y perfil)? Puedes hacerlo cuando quieras desde este enlace: <a href="${deleteUrl}">Eliminar mis datos</a>.</p>`,
+            html: `<p>Estamos generando tu proyección. Podrás verla aquí:</p><p><a href="${url}">${url}</a></p><p>Puede tardar unos minutos.</p><p>¿Cambias de dispositivo? Entra con este mismo correo en <a href="${base}/auth?next=/dashboard">${base}/auth</a> para recuperar tu resultado.</p><p style="font-size:12px;color:#888">¿Quieres eliminar tu sesión y todos tus datos (foto, imágenes generadas y perfil)? Puedes hacerlo cuando quieras desde este enlace: <a href="${deleteUrl}">Eliminar mis datos</a>.</p>`,
           });
           sent = true;
         } else {
