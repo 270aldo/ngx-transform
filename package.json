@@ -28,7 +28,7 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tabs": "^1.0.0",
     "@radix-ui/react-tooltip": "^1.0.0",
-    "@react-email/components": "^0.5.3",
+    "@react-email/components": "^1.0.12",
     "@react-pdf/renderer": "^4.3.1",
     "@rive-app/react-canvas": "^4.28.3",
     "@sentry/nextjs": "^10.51.0",
