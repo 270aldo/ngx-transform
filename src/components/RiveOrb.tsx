@@ -74,9 +74,12 @@ export function RiveOrb({
   className,
   children,
 }: RiveOrbProps) {
-  // navigator.connection / innerWidth are client-only; decide after mount.
+  // navigator.connection / innerWidth are client-only, so we can't read them in
+  // the initial (SSR/hydration) state — detect after mount. SSR renders the
+  // static ring; fast/desktop clients upgrade to the animated orb.
   const [animate, setAnimate] = useState(false);
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- post-mount client-only detection
     setAnimate(shouldAnimateOrb());
   }, []);
 
