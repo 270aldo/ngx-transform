@@ -14,9 +14,10 @@
 
 import { NextResponse } from "next/server";
 import { secureCompare } from "@/lib/crypto";
-import { getDb } from "@/lib/firebaseAdmin";
+import { getDb, getBucket } from "@/lib/firebaseAdmin";
 import { Timestamp } from "firebase-admin/firestore";
 import { deletePath, deletePrefix } from "@/lib/storage";
+import { purgeSessionLinkedData } from "@/lib/sessionPurge";
 
 export const runtime = "nodejs";
 export const maxDuration = 60; // 1 minute max for cleanup
@@ -26,6 +27,15 @@ export const maxDuration = 60; // 1 minute max for cleanup
 // ============================================================================
 
 const SESSION_TTL_DAYS = Number(process.env.SESSION_TTL_DAYS || "30");
+// Completed/ready sessions hold a body photo + health data; expire them after
+// prolonged inactivity instead of keeping them forever (fix-10 #23).
+const COMPLETED_SESSION_TTL_DAYS = Number(
+  process.env.COMPLETED_SESSION_TTL_DAYS || "365"
+);
+// Grace period for photos uploaded to uploads/ before a session was created.
+const UPLOADS_ORPHAN_TTL_HOURS = Number(
+  process.env.UPLOADS_ORPHAN_TTL_HOURS || "48"
+);
 const BATCH_SIZE = 100; // Firestore batch limit is 500, but we use smaller batches
 
 // ============================================================================
@@ -211,42 +221,9 @@ async function cleanupRelatedData(
   db: FirebaseFirestore.Firestore,
   sessionIds: string[]
 ): Promise<void> {
-  const CHUNK_SIZE = 10; // Firestore 'in' query max
-
-  try {
-    for (let i = 0; i < sessionIds.length; i += CHUNK_SIZE) {
-      const chunk = sessionIds.slice(i, i + CHUNK_SIZE);
-
-      // Clean up job records
-      const jobsSnapshot = await db
-        .collection("jobs")
-        .where("sessionId", "in", chunk)
-        .get();
-
-      if (!jobsSnapshot.empty) {
-        const batch = db.batch();
-        jobsSnapshot.docs.forEach((doc) => batch.delete(doc.ref));
-        await batch.commit();
-        console.log(`[Cleanup] Deleted ${jobsSnapshot.size} job records (chunk ${i / CHUNK_SIZE + 1})`);
-      }
-
-      // Clean up session metrics
-      const metricsSnapshot = await db
-        .collection("session_metrics")
-        .where("sessionId", "in", chunk)
-        .get();
-
-      if (!metricsSnapshot.empty) {
-        const batch = db.batch();
-        metricsSnapshot.docs.forEach((doc) => batch.delete(doc.ref));
-        await batch.commit();
-        console.log(`[Cleanup] Deleted ${metricsSnapshot.size} metrics records (chunk ${i / CHUNK_SIZE + 1})`);
-      }
-    }
-  } catch (error) {
-    // Don't fail the main cleanup if related data cleanup fails
-    console.error("[Cleanup] Error cleaning related data:", error);
-  }
+  // Delegate to the shared purge so abandoned sessions also drop their report,
+  // report PDF, and email sequence — not just jobs + metrics (fix-10).
+  await purgeSessionLinkedData(db, sessionIds);
 }
 
 /**
@@ -344,6 +321,128 @@ async function cleanupOldTelemetryEvents(): Promise<number> {
   }
 }
 
+/**
+ * TTL for completed/ready sessions: delete those inactive past
+ * COMPLETED_SESSION_TTL_DAYS (fix-10 #23). One bounded batch per run — daily
+ * runs converge — which avoids paginate-while-delete subtleties. Legacy docs
+ * without `lastActivityAt` simply don't match the range query.
+ */
+async function cleanupExpiredCompletedSessions(): Promise<CleanupResult> {
+  const start = Date.now();
+  let deletedCount = 0;
+  try {
+    const db = getDb();
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - COMPLETED_SESSION_TTL_DAYS);
+    const cutoffTimestamp = Timestamp.fromDate(cutoffDate);
+
+    const snapshot = await db
+      .collection("sessions")
+      .where("status", "in", ["ready", "completed"])
+      .where("lastActivityAt", "<", cutoffTimestamp)
+      .orderBy("lastActivityAt")
+      .limit(BATCH_SIZE)
+      .get();
+
+    if (snapshot.empty) {
+      return {
+        success: true,
+        deletedCount: 0,
+        skippedCount: 0,
+        errorCount: 0,
+        duration_ms: Date.now() - start,
+        message: "No expired completed sessions",
+      };
+    }
+
+    const batch = db.batch();
+    const sessionsToDelete: string[] = [];
+    const storageDeletePromises: Promise<unknown>[] = [];
+
+    for (const doc of snapshot.docs) {
+      const data = doc.data();
+      sessionsToDelete.push(doc.id);
+      batch.delete(doc.ref);
+      if (data.photo?.originalStoragePath) {
+        storageDeletePromises.push(deletePath(data.photo.originalStoragePath));
+      }
+      if (data.assets?.images) {
+        for (const path of Object.values(data.assets.images)) {
+          if (typeof path === "string") {
+            storageDeletePromises.push(deletePath(path));
+          }
+        }
+      }
+      storageDeletePromises.push(deletePrefix(`sessions/${doc.id}/`));
+    }
+
+    await Promise.allSettled(storageDeletePromises);
+    await batch.commit();
+    deletedCount = sessionsToDelete.length;
+    await purgeSessionLinkedData(db, sessionsToDelete);
+
+    console.log(`[Cleanup] Deleted ${deletedCount} expired completed sessions`);
+    return {
+      success: true,
+      deletedCount,
+      skippedCount: 0,
+      errorCount: 0,
+      duration_ms: Date.now() - start,
+      message: `Cleaned up ${deletedCount} expired completed sessions`,
+    };
+  } catch (error) {
+    console.error("[Cleanup] Error cleaning completed sessions:", error);
+    return {
+      success: false,
+      deletedCount,
+      skippedCount: 0,
+      errorCount: 1,
+      duration_ms: Date.now() - start,
+      message: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+/**
+ * Sweep photos uploaded to uploads/ that never got a session (wizard abandoned
+ * or session creation failed), older than UPLOADS_ORPHAN_TTL_HOURS (fix-10 #23).
+ */
+async function cleanupOrphanUploads(): Promise<number> {
+  try {
+    const db = getDb();
+    const cutoff = Date.now() - UPLOADS_ORPHAN_TTL_HOURS * 3_600_000;
+    const [files] = await getBucket().getFiles({
+      prefix: "uploads/",
+      maxResults: 500,
+      autoPaginate: false,
+    });
+
+    const toDelete: typeof files = [];
+    for (const file of files) {
+      const created = new Date(String(file.metadata?.timeCreated)).getTime();
+      if (!created || created >= cutoff) continue; // too new / unknown age
+      const ref = await db
+        .collection("sessions")
+        .where("photo.originalStoragePath", "==", file.name)
+        .limit(1)
+        .get();
+      if (!ref.empty) continue; // still referenced by a session
+      toDelete.push(file);
+      if (toDelete.length >= 200) break; // defensive cap per run
+    }
+
+    const results = await Promise.allSettled(
+      toDelete.map((file) => file.delete({ ignoreNotFound: true }))
+    );
+    const deleted = results.filter((r) => r.status === "fulfilled").length;
+    if (deleted > 0) console.log(`[Cleanup] Deleted ${deleted} orphan uploads`);
+    return deleted;
+  } catch (error) {
+    console.error("[Cleanup] Error cleaning orphan uploads:", error);
+    return 0;
+  }
+}
+
 // ============================================================================
 // Route Handler
 // ============================================================================
@@ -351,8 +450,17 @@ async function cleanupOldTelemetryEvents(): Promise<number> {
 async function runAllCleanup() {
   console.log("[Cleanup] Starting cleanup job...");
 
-  const [sessionResult, spendRecordsDeleted, rateLimitsDeleted, telemetryEventsDeleted] = await Promise.all([
+  const [
+    sessionResult,
+    completedSessions,
+    orphanUploadsDeleted,
+    spendRecordsDeleted,
+    rateLimitsDeleted,
+    telemetryEventsDeleted,
+  ] = await Promise.all([
     cleanupAbandonedSessions(),
+    cleanupExpiredCompletedSessions(),
+    cleanupOrphanUploads(),
     cleanupOldSpendRecords(),
     cleanupOldRateLimits(),
     cleanupOldTelemetryEvents(),
@@ -360,10 +468,13 @@ async function runAllCleanup() {
 
   const response = {
     ...sessionResult,
+    completedSessions,
+    orphanUploadsDeleted,
     spendRecordsDeleted,
     rateLimitsDeleted,
     telemetryEventsDeleted,
     ttlDays: SESSION_TTL_DAYS,
+    completedTtlDays: COMPLETED_SESSION_TTL_DAYS,
     timestamp: new Date().toISOString(),
   };
 
