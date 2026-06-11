@@ -7,9 +7,11 @@ import {
   requireSessionOwner,
   type SessionOwnerResult,
 } from "@/lib/authServer";
+import { purgeSessionLinkedData, purgeLeadRecords } from "@/lib/sessionPurge";
 
 interface DeleteSessionDocument {
   ownerUid?: string;
+  email?: string;
   photo?: { originalStoragePath?: string };
   assets?: { images?: Record<string, string> };
 }
@@ -150,6 +152,11 @@ export async function DELETE(req: Request, context: { params: Promise<{ shareId:
 
     // Optionally cleanup session folder
     await deletePrefix(`sessions/${shareId}/`);
+
+    // Purge derived artifacts (report doc + PDF, email sequence, jobs, metrics)
+    // and — this is a user cancellation — the lead/marketing records (fix-10).
+    await purgeSessionLinkedData(db, [shareId]);
+    await purgeLeadRecords(db, data?.email);
 
     await ref.delete();
     return NextResponse.json({ ok: true });
