@@ -25,8 +25,9 @@ import { cookies } from "next/headers";
 import { getAuth } from "firebase-admin/auth";
 import { getAdminApp } from "@/lib/firebaseAdmin";
 
-// 5 days — Firebase Admin SDK supports up to 14 days. 5 days balances UX vs revocation.
-const SESSION_DURATION_MS = 5 * 24 * 60 * 60 * 1000;
+// 14 days — Firebase Admin SDK max. Longer-lived cookie keeps the owner anchored
+// across more return visits before ITP/anon-credential purge bites (fix-08 #1009).
+const SESSION_DURATION_MS = 14 * 24 * 60 * 60 * 1000;
 const COOKIE_NAME = "__session";
 
 export async function POST(req: Request) {

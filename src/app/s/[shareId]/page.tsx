@@ -8,6 +8,7 @@ import { TransformationSummary } from "@/components/results/TransformationSummar
 import { HybridOfferV2 } from "@/components/results/HybridOfferV2";
 import { HybridVoiceAgent } from "@/components/results/HybridVoiceAgent";
 import { GenesisTextChat } from "@/components/results/GenesisTextChat";
+import { AccessClaim } from "./AccessClaim";
 import { MobileVoiceAgentTeaser } from "@/components/results/MobileVoiceAgentTeaser";
 import { SeasonRoadmap } from "@/components/results/SeasonRoadmap";
 import RefreshClient from "./refresh-client";
@@ -115,10 +116,10 @@ export default async function Page({
   searchParams,
 }: {
   params: Promise<{ shareId: string }>;
-  searchParams: Promise<{ demo?: string }>;
+  searchParams: Promise<{ demo?: string; access?: string }>;
 }) {
   const { shareId } = await params;
-  const { demo } = await searchParams;
+  const { demo, access } = await searchParams;
 
   // Dev-only bypass: ?demo=1 returns a stub "ready" session with mocked
   // AI insights + image URLs so we can iterate visually on the Results
@@ -266,6 +267,11 @@ export default async function Page({
 
   return (
     <>
+      {/* Returning lead from an email link on a new device: re-anchor ownership
+          via the signed ?access= token, then refresh into the owner view (fix-08). */}
+      {access && !isOwner && (
+        <AccessClaim shareId={shareId} access={access} />
+      )}
       {/* Single semantic h1 for the page (a11y/SEO). Milestone titles inside the
           viewer are h2; the page itself had no h1 before. Visually hidden so it
           doesn't disturb the cinematic layout. */}

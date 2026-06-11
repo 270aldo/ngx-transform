@@ -15,6 +15,7 @@ import {
 import { requireAuth } from "@/lib/authServer";
 import { sendN8NWebhook } from "@/lib/n8nWebhook";
 import { getConfiguredFromEmail } from "@/lib/emailConfig";
+import { generateAccessToken } from "@/lib/accessToken";
 
 /**
  * Genera un token seguro para acciones destructivas
@@ -213,7 +214,12 @@ export async function POST(req: Request) {
             vercelUrl ||
             "http://localhost:3000";
           const base = String(baseUrl).startsWith("http") ? baseUrl : `https://${baseUrl}`;
-          const url = `${base}/s/${shareId}`;
+          // ?access= lets a returning lead on a new device re-anchor ownership
+          // (fix-08). Empty when no secret is configured (then just the bare URL).
+          const accessToken = generateAccessToken(shareId);
+          const url = accessToken
+            ? `${base}/s/${shareId}?access=${accessToken}`
+            : `${base}/s/${shareId}`;
           // ARCO self-service deletion link, delivered to the data subject's
           // inbox (the channel that proves mailbox possession) — fix-09.
           const deleteUrl = `${base}/delete?shareId=${shareId}&token=${encodeURIComponent(deleteToken)}`;
