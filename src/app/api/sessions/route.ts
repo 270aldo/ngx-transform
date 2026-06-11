@@ -212,13 +212,17 @@ export async function POST(req: Request) {
             process.env.NEXT_PUBLIC_BASE_URL ||
             vercelUrl ||
             "http://localhost:3000";
-          const url = String(baseUrl).startsWith("http") ? `${baseUrl}/s/${shareId}` : `https://${baseUrl}/s/${shareId}`;
+          const base = String(baseUrl).startsWith("http") ? baseUrl : `https://${baseUrl}`;
+          const url = `${base}/s/${shareId}`;
+          // ARCO self-service deletion link, delivered to the data subject's
+          // inbox (the channel that proves mailbox possession) — fix-09.
+          const deleteUrl = `${base}/delete?shareId=${shareId}&token=${encodeURIComponent(deleteToken)}`;
           const resend = new Resend(key);
           await resend.emails.send({
             from,
             to: userEmail,
             subject: "Tus resultados NGX están en proceso",
-            html: `<p>Estamos generando tu proyección. Podrás verla aquí:</p><p><a href="${url}">${url}</a></p><p>Puede tardar unos minutos.</p>`,
+            html: `<p>Estamos generando tu proyección. Podrás verla aquí:</p><p><a href="${url}">${url}</a></p><p>Puede tardar unos minutos.</p><p style="font-size:12px;color:#888">¿Quieres eliminar tu sesión y todos tus datos (foto, imágenes generadas y perfil)? Puedes hacerlo cuando quieras desde este enlace: <a href="${deleteUrl}">Eliminar mis datos</a>.</p>`,
           });
           sent = true;
         } else {
