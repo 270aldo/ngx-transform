@@ -13,12 +13,15 @@ import {
 import { cn } from "@/lib/utils";
 import { RiveOrb } from "@/components/RiveOrb";
 import { useAuth } from "@/components/auth/AuthProvider";
+import {
+  parseClassification,
+  CLASSIFICATION_LABELS,
+  CTA_BY_CLASSIFICATION,
+  type FitClassification,
+  type RouteIntent,
+} from "@/lib/genesis/leadClassification";
 
 type ConnectionState = "idle" | "connecting" | "connected" | "error";
-type FitClassification =
-  | "listo_para_diagnostico"
-  | "necesita_claridad"
-  | "no_fit_ahora";
 
 interface HybridVoiceAgentProps {
   shareId: string;
@@ -26,34 +29,6 @@ interface HybridVoiceAgentProps {
 }
 
 const REALTIME_SDP_URL = "https://api.openai.com/v1/realtime/calls";
-const CLASSIFICATION_LABELS: Record<FitClassification, string> = {
-  listo_para_diagnostico: "Listo para diagnóstico",
-  necesita_claridad: "Necesita claridad",
-  no_fit_ahora: "No fit por ahora",
-};
-
-function parseClassification(text: string): FitClassification | null {
-  if (text.includes("listo_para_diagnostico")) return "listo_para_diagnostico";
-  if (text.includes("necesita_claridad")) return "necesita_claridad";
-  if (text.includes("no_fit_ahora")) return "no_fit_ahora";
-  return null;
-}
-
-/**
- * The segmented next step per fit classification. This is the funnel routing:
- * - listo  → NGX HYBRID (book a human diagnosis call)
- * - claridad → NGX ASCEND / the offer section (self-serve path)
- * - no fit → soft exit (the email nurture already has them)
- */
-type RouteIntent = "hybrid" | "ascend" | "nurture";
-const CTA_BY_CLASSIFICATION: Record<
-  FitClassification,
-  { intent: RouteIntent; label: string }
-> = {
-  listo_para_diagnostico: { intent: "hybrid", label: "Agendar diagnóstico HYBRID" },
-  necesita_claridad: { intent: "ascend", label: "Ver opciones y siguiente paso" },
-  no_fit_ahora: { intent: "nurture", label: "Recibir mi brief por correo" },
-};
 
 async function emitTelemetry(
   shareId: string,

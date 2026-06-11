@@ -15,6 +15,7 @@ import {
 import { requireAuth } from "@/lib/authServer";
 import { sendN8NWebhook } from "@/lib/n8nWebhook";
 import { getConfiguredFromEmail } from "@/lib/emailConfig";
+import { generateAccessToken } from "@/lib/accessToken";
 
 /**
  * Genera un token seguro para acciones destructivas
@@ -150,6 +151,9 @@ export async function POST(req: Request) {
     await ref.set({
       shareId,
       email: userEmail,
+      // Normalized for the email-verified session claim (fix-07). Equality
+      // query auto-indexes; no firestore.indexes.json change needed.
+      emailLower: userEmail.toLowerCase(),
       ownerUid: authUser.uid,
       hybridStatus: "prospect",
       hybridConvertedAt: null,
@@ -197,32 +201,54 @@ export async function POST(req: Request) {
       consentCaptureSource: consents.captureSource,
     });
 
-    // Fire-and-forget email confirmation with share link (with telemetry)
+    // Fire-and-forget email confirmation with share link. Persist whether it
+    // actually sent, so the loading screen never promises an email that was
+    // silently skipped for a missing RESEND_FROM_EMAIL (fix-19 #74).
     (async () => {
+      let sent = false;
       try {
         const key = process.env.RESEND_API_KEY;
-        if (!key) return;
-        const vercelUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null;
-        const baseUrl =
-          process.env.NEXT_PUBLIC_APP_URL ||
-          process.env.NEXT_PUBLIC_BASE_URL ||
-          vercelUrl ||
-          "http://localhost:3000";
-        const url = String(baseUrl).startsWith("http") ? `${baseUrl}/s/${shareId}` : `https://${baseUrl}/s/${shareId}`;
-        const resend = new Resend(key);
-        const from = getConfiguredFromEmail("Sessions");
-        if (!from) {
-          console.warn("[Sessions] RESEND_FROM_EMAIL not configured, skipping preflight email");
-          return;
+        const from = key ? getConfiguredFromEmail("Sessions") : null;
+        if (key && from) {
+          const vercelUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null;
+          const baseUrl =
+            process.env.NEXT_PUBLIC_APP_URL ||
+            process.env.NEXT_PUBLIC_BASE_URL ||
+            vercelUrl ||
+            "http://localhost:3000";
+          const base = String(baseUrl).startsWith("http") ? baseUrl : `https://${baseUrl}`;
+          // ?access= lets a returning lead on a new device re-anchor ownership
+          // (fix-08). Empty when no secret is configured (then just the bare URL).
+          const accessToken = generateAccessToken(shareId);
+          const url = accessToken
+            ? `${base}/s/${shareId}?access=${accessToken}`
+            : `${base}/s/${shareId}`;
+          // ARCO self-service deletion link, delivered to the data subject's
+          // inbox (the channel that proves mailbox possession) — fix-09.
+          const deleteUrl = `${base}/delete?shareId=${shareId}&token=${encodeURIComponent(deleteToken)}`;
+          const resend = new Resend(key);
+          await resend.emails.send({
+            from,
+            to: userEmail,
+            subject: "Tus resultados NGX están en proceso",
+            html: `<p>Estamos generando tu proyección. Podrás verla aquí:</p><p><a href="${url}">${url}</a></p><p>Puede tardar unos minutos.</p><p>¿Cambias de dispositivo? Entra con este mismo correo en <a href="${base}/auth?next=/dashboard">${base}/auth</a> para recuperar tu resultado.</p><p style="font-size:12px;color:#888">¿Quieres eliminar tu sesión y todos tus datos (foto, imágenes generadas y perfil)? Puedes hacerlo cuando quieras desde este enlace: <a href="${deleteUrl}">Eliminar mis datos</a>.</p>`,
+          });
+          sent = true;
+        } else {
+          console.warn(
+            "[Sessions] Email preflight skipped (RESEND_API_KEY/RESEND_FROM_EMAIL missing)"
+          );
         }
-        await resend.emails.send({
-          from,
-          to: userEmail,
-          subject: "Tus resultados NGX están en proceso",
-          html: `<p>Estamos generando tu proyección. Podrás verla aquí:</p><p><a href="${url}">${url}</a></p><p>Puede tardar unos minutos.</p>`,
-        });
       } catch (err) {
         console.error("[Sessions] Resend preflight email failed:", err);
+      }
+      try {
+        await db
+          .collection("sessions")
+          .doc(shareId)
+          .set({ confirmationEmailSent: sent }, { merge: true });
+      } catch (err) {
+        console.error("[Sessions] Failed to persist confirmationEmailSent:", err);
       }
     })();
 

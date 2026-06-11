@@ -192,8 +192,9 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
     cards.push({
       sku: "monthly",
       label:
-        process.env.NEXT_PUBLIC_HYBRID_LABEL_MONTHLY || "Acceso mensual",
-      priceLabel: monthly ? `${formatMxn(monthly)} / mes` : "Próximamente",
+        process.env.NEXT_PUBLIC_HYBRID_LABEL_MONTHLY ||
+        "Acceso 30 días (pago único)",
+      priceLabel: monthly ? `${formatMxn(monthly)} · pago único` : "Próximamente",
       available: !!monthly,
     });
 
@@ -201,11 +202,11 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
       sku: "quarterly",
       label:
         process.env.NEXT_PUBLIC_HYBRID_LABEL_QUARTERLY ||
-        "12 semanas (cohorte completa)",
+        "12 semanas · cohorte completa (pago único)",
       priceLabel: quarterly ? formatMxn(quarterly) : "Próximamente",
       perMonthLabel:
         quarterly && monthly
-          ? `Equivale a ${formatMxn(Math.round(quarterly / 3))}/mes`
+          ? `Pago único · equivale a ${formatMxn(Math.round(quarterly / 3))}/mes`
           : undefined,
       badge: "MÁS ELEGIDO",
       highlight: true,
@@ -215,11 +216,12 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
     cards.push({
       sku: "annual",
       label:
-        process.env.NEXT_PUBLIC_HYBRID_LABEL_ANNUAL || "Programa anual",
+        process.env.NEXT_PUBLIC_HYBRID_LABEL_ANNUAL ||
+        "Programa de 12 meses (pago único)",
       priceLabel: annual ? formatMxn(annual) : "Próximamente",
       perMonthLabel:
         annual && monthly
-          ? `Equivale a ${formatMxn(Math.round(annual / 12))}/mes`
+          ? `Pago único · equivale a ${formatMxn(Math.round(annual / 12))}/mes`
           : undefined,
       available: !!annual,
     });
@@ -286,18 +288,24 @@ export function HybridOfferV2({ shareId, cohorteInfo }: HybridOfferV2Props) {
     }
   };
 
-  const onCalendly = async () => {
+  const onCalendly = () => {
     if (!calendlyUrl) return;
-    const token = await getOwnerToken();
-    await emitTelemetry(shareId, "calendly_v2_clicked", undefined, token);
+    // Open synchronously inside the user gesture so iOS Safari doesn't block the
+    // popup after a network await (fix-22). Telemetry is fire-and-forget.
     window.open(calendlyUrl, "_blank", "noopener,noreferrer");
+    void (async () => {
+      const token = await getOwnerToken();
+      await emitTelemetry(shareId, "calendly_v2_clicked", undefined, token);
+    })();
   };
 
-  const onWhatsapp = async () => {
+  const onWhatsapp = () => {
     if (!whatsappUrl) return;
-    const token = await getOwnerToken();
-    await emitTelemetry(shareId, "whatsapp_v2_clicked", undefined, token);
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+    void (async () => {
+      const token = await getOwnerToken();
+      await emitTelemetry(shareId, "whatsapp_v2_clicked", undefined, token);
+    })();
   };
 
   const onEmailBrief = async () => {

@@ -12,9 +12,10 @@
  * - m8 refs: [original, styleRef, m4]
  * - m12 refs: [original, styleRef, m8]
  */
-// TODO: [P1] Investigar fallo en generación de imágenes Identity Chain.
-// Posible causa: configuración de API key o límites de rate en Gemini 2.5 Flash.
-// Ver: src/lib/nanobanana.ts y src/app/api/generate-images/route.ts
+// NOTE: Identity Chain requiere gemini-3-pro-image-preview (FF_NB_PRO=true).
+// Un deploy con FF_IDENTITY_CHAIN activo + un modelo Flash ahora falla en build
+// vía assertImageConfigForProductionDeploy() (src/lib/imageConfig.ts); en runtime
+// el route falla closed con 503 antes de gastar presupuesto de generación.
 
 import {
   getImageConfig,
@@ -296,13 +297,28 @@ export async function generateTransformedImage(
     imageSize: stepConfig.imageSize,
   });
 
-  // Make API request
+  // Make API request, bounded by a timeout so a hung provider doesn't freeze
+  // the job (see fix-16). On abort we throw a typed error so withRetry counts it.
   console.log("🍌 Sending request to Gemini...");
-  const resp = await fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+  const imageTimeoutMs = Number(process.env.GEMINI_IMAGE_TIMEOUT_MS || "90000");
+  const imageController = new AbortController();
+  const imageTimeoutId = setTimeout(() => imageController.abort(), imageTimeoutMs);
+  let resp: Response;
+  try {
+    resp = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal: imageController.signal,
+    });
+  } catch (err) {
+    if (imageController.signal.aborted) {
+      throw new Error("gemini_image_timeout");
+    }
+    throw err;
+  } finally {
+    clearTimeout(imageTimeoutId);
+  }
 
   if (!resp.ok) {
     const errTxt = await resp.text().catch(() => "");

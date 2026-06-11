@@ -8,7 +8,8 @@
  * - letter_from_future: Motivational message from m12 self
  */
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
+import { withTimeout } from "./utils";
 import {
   InsightsResultZ,
   type InsightsResult,
@@ -312,8 +313,7 @@ export async function generateInsightsV2(
   if (!apiKey) throw new Error("Missing GEMINI_API_KEY");
 
   const modelName = process.env.GEMINI_MODEL || "gemini-flash-latest";
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: modelName });
+  const ai = new GoogleGenAI({ apiKey });
 
   const { mimeType, data } = await fetchImageAsInlineData(params.imageUrl);
   const systemPrompt = getV2SystemPrompt(params.profile);
@@ -321,24 +321,30 @@ export async function generateInsightsV2(
 
   console.log("[Gemini V2] Generating analysis...");
 
-  const result = await model.generateContent({
-    contents: [
-      {
-        role: "user",
-        parts: [
-          { text: systemPrompt },
-          { text: userContext },
-          { inlineData: { mimeType, data } },
-        ],
+  const analysisTimeoutMs = Number(process.env.GEMINI_ANALYSIS_TIMEOUT_MS || "30000");
+  const result = await withTimeout(
+    ai.models.generateContent({
+      model: modelName,
+      contents: [
+        {
+          role: "user",
+          parts: [
+            { text: systemPrompt },
+            { text: userContext },
+            { inlineData: { mimeType, data } },
+          ],
+        },
+      ],
+      config: {
+        responseMimeType: "application/json",
+        temperature: 0.7,
       },
-    ],
-    generationConfig: {
-      responseMimeType: "application/json",
-      temperature: 0.7,
-    },
-  });
+    }),
+    analysisTimeoutMs,
+    "gemini_analysis"
+  );
 
-  let text = cleanJsonResponse(result.response.text());
+  let text = cleanJsonResponse(result.text ?? "");
 
   // Try to parse and validate
   let parsed: unknown;
@@ -391,20 +397,22 @@ export async function generateInsightsFromImage(
   if (!apiKey) throw new Error("Missing GEMINI_API_KEY");
 
   const modelName = process.env.GEMINI_MODEL || "gemini-flash-latest";
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: modelName });
+  const ai = new GoogleGenAI({ apiKey });
 
   const { mimeType, data } = await fetchImageAsInlineData(params.imageUrl);
   const systemPrompt = getV1SystemPrompt(params.profile);
   const userContext = `Perfil: ${JSON.stringify(params.profile)} `;
 
-  const result = await model.generateContent([
-    { text: systemPrompt },
-    { text: userContext },
-    { inlineData: { mimeType, data } },
-  ]);
+  const result = await ai.models.generateContent({
+    model: modelName,
+    contents: [
+      { text: systemPrompt },
+      { text: userContext },
+      { inlineData: { mimeType, data } },
+    ],
+  });
 
-  const text = cleanJsonResponse(result.response.text());
+  const text = cleanJsonResponse(result.text ?? "");
 
   const parsed = InsightsResultZ.safeParse(JSON.parse(text));
   if (!parsed.success) {

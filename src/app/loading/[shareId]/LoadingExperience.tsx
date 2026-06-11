@@ -8,6 +8,7 @@ import { Logo } from "@/components/ui/Logo";
 import { RiveOrb } from "@/components/RiveOrb";
 import { LoadingStepper } from "@/components/LoadingStepper";
 import { getSeasonMilestoneLabel } from "@/lib/seasonMilestones";
+import { nextLoadingAction, LOADING_TIMEOUT_MS } from "./loadingState";
 
 const TIPS = [
   "La salud muscular es uno de los predictores clave de longevidad.",
@@ -34,6 +35,26 @@ const CONSOLE_LOGS = [
   { time: "00:32", text: "Proyección completada con éxito. Listo para revelar.", triggeredBy: "ready" }
 ];
 
+async function emitLoadingTelemetry(
+  shareId: string,
+  event:
+    | "loading_stuck_partial"
+    | "generation_trigger_failed"
+    | "loading_timeout",
+  metadata?: Record<string, unknown>,
+) {
+  await fetch("/api/telemetry", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      sessionId: shareId,
+      shareId,
+      event,
+      metadata: { ...metadata, location: "loading_experience" },
+    }),
+  }).catch(() => {});
+}
+
 export function LoadingExperience({ shareId }: { shareId: string }) {
   const router = useRouter();
   const { loading: authLoading, getIdToken } = useAuth();
@@ -44,7 +65,12 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
   const [progress, setProgress] = useState(12);
   const [error, setError] = useState<string | null>(null);
   const [retrying, setRetrying] = useState(false);
+  const [timedOut, setTimedOut] = useState(false);
+  const [emailSent, setEmailSent] = useState<boolean | null>(null);
   const startedGenerationRef = useRef(false);
+  const mountedAtRef = useRef(0);
+  const timedOutEmittedRef = useRef(false);
+  const partialEmittedRef = useRef(false);
 
   const [notificationPermission, setNotificationPermission] = useState<string>(() => {
     if (typeof window !== "undefined" && "Notification" in window) {
@@ -159,6 +185,10 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
       };
     }
 
+    // Seal the mount time inside the effect (not during render — purity) so the
+    // timeout clock survives dep-driven effect re-runs.
+    if (mountedAtRef.current === 0) mountedAtRef.current = Date.now();
+
     let mounted = true;
 
     const poll = async () => {
@@ -176,6 +206,7 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
         setStatus(nextStatus);
         setImageKeys(keys);
         setHasAi(aiPresent);
+        setEmailSent(Boolean(json?.confirmationEmailSent));
         setProgress(PROGRESS_BY_COUNT[Math.min(count, 3)]);
 
         if (
@@ -206,25 +237,78 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
               });
 
               if (!genRes.ok) {
-                const errData = await genRes.json();
-                console.error("[Loading] Generation trigger failed:", errData.error);
-                if (errData.error === "Unauthorized") {
-                  setError("Error de autenticación. Redirigiendo...");
-                } else if (errData.error === "AI generation is temporarily disabled") {
-                  setError("La generación está pausada temporalmente. Intenta más tarde.");
-                }
+                const errData = await genRes.json().catch(() => ({}));
+                const code =
+                  typeof errData?.error === "string" ? errData.error : "unknown";
+                console.error(
+                  "[Loading] Generation trigger failed:",
+                  code,
+                  genRes.status,
+                );
+                // ALWAYS surface the failure so the retry button appears. We do
+                // NOT reset startedGenerationRef here on purpose: otherwise the
+                // 3s poll would re-fire generation against the rate/spend limit.
+                // The retry button re-bootstraps via /api/analyze instead.
+                setError(
+                  code === "AI generation is temporarily disabled"
+                    ? "La generación está pausada temporalmente. Intenta más tarde."
+                    : "No pudimos iniciar la generación. Toca «Reintentar generación».",
+                );
+                void emitLoadingTelemetry(shareId, "generation_trigger_failed", {
+                  code,
+                  httpStatus: genRes.status,
+                });
               }
             } catch (err) {
               console.error("[Loading] Error triggering generation:", err);
+              setError(
+                "No pudimos iniciar la generación. Toca «Reintentar generación».",
+              );
+              void emitLoadingTelemetry(shareId, "generation_trigger_failed", {
+                code: "network_error",
+              });
             }
           })();
         }
 
-        if (nextStatus === "failed") {
+        // Surface an analyze bootstrap failure passed from the wizard
+        // (?analyzeFailed=1) right away, instead of waiting for the timeout.
+        const analyzeFailed =
+          typeof window !== "undefined" &&
+          new URLSearchParams(window.location.search).get("analyzeFailed") ===
+            "1";
+        if (analyzeFailed && nextStatus === "processing" && !aiPresent) {
+          setError(
+            "No pudimos iniciar tu análisis. Toca «Reintentar generación» para reanudar.",
+          );
+        }
+
+        const action = nextLoadingAction({
+          status: nextStatus,
+          imageCount: count,
+          elapsedMs: Date.now() - mountedAtRef.current,
+          timeoutMs: LOADING_TIMEOUT_MS,
+        });
+
+        if (action === "failed") {
           setError("No pudimos completar la generación. Intenta nuevamente.");
         }
 
-        if (nextStatus === "ready" || count >= 3) {
+        if (action === "recover" && !timedOutEmittedRef.current) {
+          timedOutEmittedRef.current = true;
+          setTimedOut(true);
+          void emitLoadingTelemetry(shareId, "loading_timeout", {
+            imageCount: count,
+          });
+        }
+
+        if (action === "redirect") {
+          if (nextStatus === "partial" && !partialEmittedRef.current) {
+            partialEmittedRef.current = true;
+            void emitLoadingTelemetry(shareId, "loading_stuck_partial", {
+              imageCount: count,
+            });
+          }
           if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
             try {
               new Notification("¡Tu transformación está lista! ⚡", {
@@ -250,6 +334,41 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
       clearInterval(id);
     };
   }, [shareId, router, authLoading, getIdToken, isDemo]);
+
+  const handleRetry = async () => {
+    if (retrying) return;
+    setRetrying(true);
+    setError(null);
+    try {
+      const token = await getIdToken();
+      if (!token) {
+        setError("Error de autenticación. Recarga la página.");
+        setRetrying(false);
+        return;
+      }
+      // Reset the loading clock + state so the recovery block hides and the
+      // poll can re-trigger generation after analysis is persisted again.
+      startedGenerationRef.current = false;
+      setTimedOut(false);
+      timedOutEmittedRef.current = false;
+      mountedAtRef.current = Date.now();
+      await fetch("/api/analyze", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ sessionId: shareId }),
+      });
+      // Polling will trigger image generation after the analysis is persisted
+      // and hasAi=true. This avoids racing with /api/analyze.
+    } catch (e) {
+      setError("No pudimos reintentar. Intenta de nuevo en unos segundos.");
+      console.error("[Loading] Retry failed:", e);
+    } finally {
+      setRetrying(false);
+    }
+  };
 
   return (
     <div
@@ -353,35 +472,7 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
         <div className="z-10 mt-6 flex flex-col items-center gap-3 px-6 text-center">
           <p className="text-xs text-[var(--ngx-error)]">{error}</p>
           <button
-            onClick={async () => {
-              if (retrying) return;
-              setRetrying(true);
-              setError(null);
-              try {
-                const token = await getIdToken();
-                if (!token) {
-                  setError("Error de autenticación. Recarga la página.");
-                  setRetrying(false);
-                  return;
-                }
-                startedGenerationRef.current = false;
-                await fetch("/api/analyze", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                  },
-                  body: JSON.stringify({ sessionId: shareId }),
-                });
-                // Polling will trigger image generation after the analysis is
-                // persisted and hasAi=true. This avoids racing with /api/analyze.
-              } catch (e) {
-                setError("No pudimos reintentar. Intenta de nuevo en unos segundos.");
-                console.error("[Loading] Retry failed:", e);
-              } finally {
-                setRetrying(false);
-              }
-            }}
+            onClick={handleRetry}
             disabled={retrying}
             className="rounded-full px-5 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0"
             style={{
@@ -391,6 +482,38 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
           >
             {retrying ? "Reintentando..." : "Reintentar generación"}
           </button>
+        </div>
+      )}
+
+      {/* Timeout recovery — never leave the user stuck (fix-20) */}
+      {timedOut && !isReady && !isFailed && (
+        <div className="z-10 mt-6 flex max-w-md flex-col items-center gap-3 px-6 text-center">
+          <p className="text-sm font-semibold text-white">
+            Esto está tardando más de lo normal.
+          </p>
+          <p className="text-xs leading-relaxed text-white/55">
+            Tu proyección sigue procesándose. Puedes reintentar o entrar a ver lo
+            que ya esté listo — guardamos tu enlace de acceso en tu correo.
+          </p>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <button
+              onClick={handleRetry}
+              disabled={retrying}
+              className="rounded-full px-5 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                backgroundColor: "var(--ngx-purple)",
+                boxShadow: "var(--ngx-glow-primary-soft)",
+              }}
+            >
+              {retrying ? "Reintentando..." : "Reintentar"}
+            </button>
+            <button
+              onClick={() => router.replace(`/s/${shareId}`)}
+              className="rounded-full border border-white/15 px-5 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white/85 transition-all duration-150 hover:bg-white/[0.06] active:scale-[0.97]"
+            >
+              Ver mi resultado
+            </button>
+          </div>
         </div>
       )}
 
@@ -414,9 +537,11 @@ export function LoadingExperience({ shareId }: { shareId: string }) {
         </AnimatePresence>
       </div>
 
-      {/* Email Safety banner */}
+      {/* Email Safety banner — only claims an email when one actually sent (fix-19 #74) */}
       <p className="z-10 mt-4 text-center text-[11px] leading-relaxed text-white/40 max-w-sm px-6">
-        Puedes cerrar esta pestaña con seguridad. Tu transformación se guarda de forma privada y tu enlace de acceso se ha enviado a tu correo.
+        {emailSent
+          ? "Puedes cerrar esta pestaña con seguridad. Tu transformación se guarda de forma privada y tu enlace de acceso se ha enviado a tu correo."
+          : "Puedes cerrar esta pestaña con seguridad. Tu transformación se guarda de forma privada — guarda este enlace para volver a tu resultado."}
       </p>
 
       {/* "Ver resultados" — only when actually ready, otherwise hidden */}

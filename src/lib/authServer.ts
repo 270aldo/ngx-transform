@@ -7,6 +7,7 @@ import { getDb } from "@/lib/firebaseAdmin";
 export interface AuthUser {
   uid: string;
   email?: string;
+  emailVerified?: boolean;
 }
 
 export interface SessionOwnerResult<T extends { ownerUid?: string } = { ownerUid?: string }> {
@@ -38,7 +39,11 @@ export async function getAuthUser(req: Request): Promise<AuthUser | null> {
 
   try {
     const decoded = await getAuth(getAdminApp()).verifyIdToken(token);
-    return { uid: decoded.uid, email: decoded.email };
+    return {
+      uid: decoded.uid,
+      email: decoded.email,
+      emailVerified: decoded.email_verified === true,
+    };
   } catch (error) {
     console.warn("[Auth] Invalid token", error);
     return null;
@@ -68,7 +73,11 @@ export async function getAuthUserFromCookie(
       session,
       options.checkRevoked ?? false
     );
-    return { uid: decoded.uid, email: decoded.email };
+    return {
+      uid: decoded.uid,
+      email: decoded.email,
+      emailVerified: decoded.email_verified === true,
+    };
   } catch (error) {
     // Expired / revoked / invalid signature — silent fallback to anonymous
     if (process.env.NODE_ENV !== "production") {

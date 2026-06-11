@@ -52,18 +52,21 @@ async function fetchWithTimeout(
 }
 
 const DEFAULT_LABELS: Record<HybridSku, string> = {
-  monthly: "Acceso mensual",
-  quarterly: "12 semanas (cohorte completa)",
-  annual: "Programa anual",
+  monthly: "Acceso 30 días (pago único)",
+  quarterly: "12 semanas · cohorte completa (pago único)",
+  annual: "Programa de 12 meses (pago único)",
 };
 
+// Checkout Pro = PAGO ÚNICO. No hay recurrencia implementada, así que las
+// descripciones (que aparecen en el comprobante de MercadoPago) NO deben prometer
+// renovación/cargos continuos. Recurrencia real (/preapproval) sería fase 2. Ver fix-05.
 const DEFAULT_DESCRIPTIONS: Record<HybridSku, string> = {
   monthly:
-    "NGX HYBRID — Acceso mensual al sistema GENESIS + coach humano. Renovable.",
+    "NGX HYBRID — Acceso por 30 días al sistema GENESIS + coach humano. Pago único; no genera cargos recurrentes.",
   quarterly:
-    "NGX HYBRID — Cohorte de 12 semanas con sistema GENESIS, coach humano y checkpoints semanales.",
+    "NGX HYBRID — Cohorte de 12 semanas con sistema GENESIS, coach humano y checkpoints semanales. Pago único; no genera cargos recurrentes.",
   annual:
-    "NGX HYBRID — Programa anual completo con sistema GENESIS, coach humano y seguimiento de adherencia continuo.",
+    "NGX HYBRID — Programa de 12 meses con sistema GENESIS, coach humano y seguimiento de adherencia durante el periodo. Pago único; no genera cargos recurrentes.",
 };
 
 /**

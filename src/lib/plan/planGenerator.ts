@@ -5,8 +5,9 @@
  * Falls back to template-based generation if AI fails
  */
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import { z } from "zod";
+import { withTimeout } from "../utils";
 import type {
   SevenDayPlan,
   DayPlan,
@@ -225,20 +226,25 @@ export async function generatePlan(
   }
 
   try {
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const gemini = genAI.getGenerativeModel({ model });
+    const ai = new GoogleGenAI({ apiKey });
 
     const prompt = buildPlanPrompt(profile, insightsText);
 
-    const result = await gemini.generateContent({
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 4096,
-      },
-    });
+    const planTimeoutMs = Number(process.env.PLAN_GENERATION_TIMEOUT_MS || "30000");
+    const result = await withTimeout(
+      ai.models.generateContent({
+        model,
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        config: {
+          temperature: 0.7,
+          maxOutputTokens: 4096,
+        },
+      }),
+      planTimeoutMs,
+      "plan_generation"
+    );
 
-    const responseText = result.response.text();
+    const responseText = result.text ?? "";
 
     // Clean up response (remove markdown if present)
     let jsonText = responseText.trim();

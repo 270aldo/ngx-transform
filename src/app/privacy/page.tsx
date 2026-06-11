@@ -207,6 +207,13 @@ export default function PrivacyPage() {
             tratamiento de tus datos personales (derechos ARCO), así como a
             revocar tu consentimiento en cualquier momento.
           </p>
+          <p className="text-sm text-neutral-300">
+            Vía self-service: cada correo de confirmación de tu sesión incluye un
+            enlace directo para eliminar tu foto, imágenes generadas y perfil. Si
+            ya no tienes ese correo, puedes solicitar el reenvío del enlace al
+            correo asociado a tu sesión desde la página de eliminación. Esta vía
+            no sustituye el procedimiento formal LFPDPPP descrito abajo.
+          </p>
 
           <h3 className="text-base font-medium text-neutral-200">
             Procedimiento

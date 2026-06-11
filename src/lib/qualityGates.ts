@@ -36,6 +36,7 @@ export interface QualityIssue {
 export type QualityIssueType =
   | "no_image_data"
   | "image_too_small"
+  | "image_too_large"
   | "blocked_by_safety"
   | "generation_failed"
   | "api_error"
@@ -118,7 +119,7 @@ export function validateImageBasics(
   // Check 3: File size is reasonable
   if (buffer.length > MAX_SIZE_BYTES) {
     issues.push({
-      type: "image_too_small",
+      type: "image_too_large",
       severity: "warning",
       message: "Image file is unusually large",
     });

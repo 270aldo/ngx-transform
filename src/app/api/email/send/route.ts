@@ -7,6 +7,7 @@ import {
   advanceSequence,
   markEmailSent,
   getEmailSubject,
+  hasSentStage,
   type EmailStage,
 } from "@/lib/emailScheduler";
 import { trackEvent } from "@/lib/telemetry";
@@ -100,14 +101,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Rate limiting by IP (Upstash Redis)
-    const clientIP = getClientIP(req);
-    const rateLimitResult = await checkRateLimit("api:email", clientIP);
-    if (!rateLimitResult.success) {
-      return NextResponse.json(
-        { error: "Too many requests. Please wait a moment." },
-        { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
-      );
+    // Rate limit by IP only on the unauthenticated dev path. In production the
+    // CRON_API_KEY check above is the control; throttling the (authenticated)
+    // cron batch by IP would cap the nurture sequence at a few sends/hour and
+    // strand most leads (fix-19).
+    if (!expectedKey) {
+      const clientIP = getClientIP(req);
+      const rateLimitResult = await checkRateLimit("api:email", clientIP);
+      if (!rateLimitResult.success) {
+        return NextResponse.json(
+          { error: "Too many requests. Please wait a moment." },
+          { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+        );
+      }
     }
 
     const body = await req.json();
@@ -132,6 +138,15 @@ export async function POST(req: NextRequest) {
     if (await isEmailSuppressed(email)) {
       return NextResponse.json(
         { success: false, skipped: true, message: "Email suppressed" },
+        { status: 200 }
+      );
+    }
+
+    // Idempotency guard: never re-send a stage that was already sent (e.g.
+    // overlapping cron runs). hasSentStage previously had zero consumers (fix-19).
+    if (sequence && hasSentStage(sequence, validated.template)) {
+      return NextResponse.json(
+        { success: false, skipped: true, message: "Already sent" },
         { status: 200 }
       );
     }

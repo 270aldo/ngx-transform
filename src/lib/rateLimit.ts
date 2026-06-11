@@ -96,6 +96,12 @@ function getRateLimiters(): Map<string, Ratelimit> | null {
     prefix: "rl:realtime-session",
   }));
 
+  rateLimiters.set("api:genesis-chat", new Ratelimit({
+    redis: redisClient,
+    limiter: Ratelimit.slidingWindow(30, "10 m"), // 30 chat turns per owner per 10 min
+    prefix: "rl:genesis-chat",
+  }));
+
   rateLimiters.set("api:feedback", new Ratelimit({
     redis: redisClient,
     limiter: Ratelimit.slidingWindow(5, "1 h"), // 5 feedback writes per owner per hour
@@ -140,6 +146,12 @@ function getRateLimiters(): Map<string, Ratelimit> | null {
     prefix: "rl:brief",
   }));
 
+  rateLimiters.set("api:claim", new Ratelimit({
+    redis: redisClient,
+    limiter: Ratelimit.slidingWindow(10, "1 h"), // 10 claims per uid per hour
+    prefix: "rl:claim",
+  }));
+
   // General API rate limit (fallback)
   rateLimiters.set("api:general", new Ratelimit({
     redis: redisClient,
@@ -160,6 +172,7 @@ const IN_MEMORY_LIMITS: Record<string, { max: number; windowMs: number }> = {
   "api:analyze": { max: 10, windowMs: 3600000 },      // 10/hour
   "api:generate-images": { max: 5, windowMs: 3600000 },// 5/hour
   "api:realtime-session": { max: 5, windowMs: 600000 },// 5/10min
+  "api:genesis-chat": { max: 30, windowMs: 600000 },   // 30/10min
   "api:feedback": { max: 5, windowMs: 3600000 },       // 5/hour
   "api:telemetry": { max: 120, windowMs: 60000 },       // 120/min
   "api:csp-report": { max: 30, windowMs: 60000 },       // 30/min
@@ -170,6 +183,7 @@ const IN_MEMORY_LIMITS: Record<string, { max: number; windowMs: number }> = {
   "api:unlock": { max: 30, windowMs: 60000 },          // 30/min
   "api:checkout": { max: 10, windowMs: 60000 },        // 10/min
   "api:brief": { max: 3, windowMs: 3600000 },          // 3/hour
+  "api:claim": { max: 10, windowMs: 3600000 },         // 10/hour
   "api:general": { max: 60, windowMs: 60000 },        // 60/min
 };
 

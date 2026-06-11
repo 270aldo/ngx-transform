@@ -170,6 +170,13 @@ export const TelemetryEventSchema = z.object({
     "voice_agent_connected",
     "voice_agent_classified",
     "voice_agent_cta_clicked",
+    // GENESIS text chat (Fase 2)
+    "genesis_text_chat_opened",
+    "genesis_text_chat_classified",
+    // Loading recovery (fix-20)
+    "loading_stuck_partial",
+    "generation_trigger_failed",
+    "loading_timeout",
   ]),
   stage: z.string().optional(),
   model_id: z.string().optional(),

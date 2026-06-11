@@ -1,12 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useRive, Layout, Fit, Alignment, RuntimeLoader } from "@rive-app/react-canvas";
+import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { cn } from "@/lib/utils";
-
-// Self-host Rive's WASM so we don't depend on external CDNs (CSP-friendly,
-// also avoids latency hits from jsdelivr/unpkg).
-RuntimeLoader.setWasmUrl("/rive.wasm");
 
 interface RiveOrbProps {
   /** Max pixel size on desktop. Scales down on mobile via clamp(). */
@@ -20,11 +16,56 @@ interface RiveOrbProps {
   children?: React.ReactNode;
 }
 
+/** Zero-weight static ring — the orb's resting/fallback state. */
+function StaticOrbRing() {
+  return (
+    <div className="relative z-10 flex h-full w-full items-center justify-center">
+      <div
+        className="h-[70%] w-[70%] rounded-full"
+        style={{
+          border: "2px solid rgba(109,0,255,0.45)",
+          boxShadow:
+            "0 0 60px rgba(109,0,255,0.35), inset 0 0 40px rgba(109,0,255,0.20)",
+        }}
+      />
+    </div>
+  );
+}
+
+// The Rive runtime (@rive-app/react-canvas) + the 8.9MB orb.riv + 1.8MB
+// rive.wasm live in a separate async chunk, loaded only when we choose to
+// animate. The static ring shows while it loads and on the static path (fix-21).
+const RiveOrbAnimated = dynamic(
+  () => import("./RiveOrbAnimated").then((m) => m.RiveOrbAnimated),
+  { ssr: false, loading: () => <StaticOrbRing /> },
+);
+
 /**
- * GENESIS orb — Rive-powered ambient animation rendered above a soft purple halo.
- * The wrapper applies mix-blend-mode + circular clip so the artboard's dark
- * background fades into the page bg cleanly. Falls back to a static ring if
- * the .riv asset fails to load.
+ * Decide whether to fetch the (heavy) animated orb. Phones, Data Saver, and
+ * sub-4G links get the zero-weight static ring instead of ~11MB on the very
+ * screen where we ask the user to wait.
+ */
+function shouldAnimateOrb(): boolean {
+  if (typeof navigator === "undefined") return false;
+  const conn = (
+    navigator as Navigator & {
+      connection?: { effectiveType?: string; saveData?: boolean };
+    }
+  ).connection;
+  if (conn) {
+    if (conn.saveData) return false;
+    if (conn.effectiveType && conn.effectiveType !== "4g") return false;
+    return true;
+  }
+  // No Network Information API (e.g. Safari/iOS): conservative — only animate on
+  // desktop-width viewports; phones keep the static ring.
+  return typeof window !== "undefined" && window.innerWidth >= 768;
+}
+
+/**
+ * GENESIS orb — ambient animation above a soft purple halo. Loads the Rive
+ * runtime + assets only on fast/desktop clients; otherwise renders a static
+ * ring of identical footprint. Public API (props) is unchanged.
  */
 export function RiveOrb({
   size = 280,
@@ -33,47 +74,17 @@ export function RiveOrb({
   className,
   children,
 }: RiveOrbProps) {
-  const [hasError, setHasError] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const riveWrapperRef = useRef<HTMLDivElement>(null);
-  const [renderedSize, setRenderedSize] = useState(size);
-
-  const { rive, RiveComponent } = useRive({
-    src: "/orb.riv",
-    autoplay: true,
-    layout: new Layout({
-      fit: Fit.Contain,
-      alignment: Alignment.Center,
-    }),
-    onLoadError: () => setHasError(true),
-  });
-
-  // Track the rendered container size so the Rive canvas matches.
+  // navigator.connection / innerWidth are client-only, so we can't read them in
+  // the initial (SSR/hydration) state — detect after mount. SSR renders the
+  // static ring; fast/desktop clients upgrade to the animated orb.
+  const [animate, setAnimate] = useState(false);
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const observer = new ResizeObserver(([entry]) => {
-      const w = Math.round(entry.contentRect.width);
-      if (w > 0) setRenderedSize(w);
-    });
-    observer.observe(el);
-    return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- post-mount client-only detection
+    setAnimate(shouldAnimateOrb());
   }, []);
-
-  // Rive's runtime sets the canvas inline style to width:0/height:0; manually
-  // size it to match the container, then resize the drawing surface so the
-  // animation actually renders at the expected pixel dimensions (with DPR).
-  useEffect(() => {
-    const canvas = riveWrapperRef.current?.querySelector("canvas");
-    if (!canvas) return;
-    canvas.style.width = `${renderedSize}px`;
-    canvas.style.height = `${renderedSize}px`;
-    if (rive) rive.resizeDrawingSurfaceToCanvas();
-  }, [rive, renderedSize]);
 
   return (
     <div
-      ref={containerRef}
       className={cn("relative flex-shrink-0", className)}
       style={{
         width: `clamp(${minSize}px, ${fluid}, ${size}px)`,
@@ -84,40 +95,13 @@ export function RiveOrb({
       {/* Soft halo behind the orb */}
       <div
         className="pointer-events-none absolute inset-[-15%] rounded-full blur-[80px]"
-        style={{ background: "radial-gradient(closest-side, rgba(109,0,255,0.55), rgba(109,0,255,0.18) 55%, transparent 80%)" }}
+        style={{
+          background:
+            "radial-gradient(closest-side, rgba(109,0,255,0.55), rgba(109,0,255,0.18) 55%, transparent 80%)",
+        }}
       />
 
-      {/* Rive orb — radial mask fades the artboard's dark edges into
-          transparent so the orb floats without a visible canvas circle.
-          Plus-lighter blend additionally suppresses any residual dark.
-          Style on the wrapper because Rive's runtime overrides the
-          <canvas> inline style. */}
-      {!hasError ? (
-        <div
-          ref={riveWrapperRef}
-          className="relative z-10 h-full w-full"
-          style={{
-            mixBlendMode: "plus-lighter",
-            maskImage:
-              "radial-gradient(circle at 50% 50%, black 0%, black 38%, transparent 62%)",
-            WebkitMaskImage:
-              "radial-gradient(circle at 50% 50%, black 0%, black 38%, transparent 62%)",
-          }}
-        >
-          <RiveComponent />
-        </div>
-      ) : (
-        // Fallback: static ring + pulse if .riv fails to load
-        <div className="relative z-10 flex h-full w-full items-center justify-center">
-          <div
-            className="h-[70%] w-[70%] rounded-full"
-            style={{
-              border: "2px solid rgba(109,0,255,0.45)",
-              boxShadow: "0 0 60px rgba(109,0,255,0.35), inset 0 0 40px rgba(109,0,255,0.20)",
-            }}
-          />
-        </div>
-      )}
+      {animate ? <RiveOrbAnimated size={size} /> : <StaticOrbRing />}
 
       {/* Optional centered overlay (e.g. percentage) */}
       {children ? (

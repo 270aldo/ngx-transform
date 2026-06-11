@@ -1,0 +1,24 @@
+# Quick wins — arreglos de <1 día que mueven la aguja
+
+> Ordenados por (impacto ÷ esfuerzo). Los que tienen `fix-NN` tienen prompt autocontenido en [fixes/](fixes/); los demás son tan pequeños que el hallazgo en [02-hallazgos.md](02-hallazgos.md) basta.
+
+| # | Quick win | Por qué mueve la aguja | Hallazgo / Fix |
+|---|---|---|---|
+| 1 | **Subir Next.js a 16.2.9** (`pnpm up next eslint-config-next` + suite) | Cierra 13 advisories públicos (6 high: DoS, bypass del middleware, SSRF) con un cambio de versión; también elimina la mayoría de los 17 hits de `pnpm audit` | #92 / fix-12 |
+| 2 | **Activar Sentry de verdad**: crear `instrumentation.ts` + `instrumentation-client.ts` que importen los configs ya escritos, poner el DSN en Vercel y un monitor de uptime gratuito (UptimeRobot) | Pasas de "me entero por un cliente enojado" a "me llega alerta en 2 min"; el código de Sentry ya está escrito y con scrub de PII — solo está desconectado | #82 / fix-11 |
+| 3 | **Agendar los crons en `vercel.json`** (`crons: [{path: /api/cron/cleanup...}, {path: /api/email/sequence...}]` con CRON_API_KEY) | Sin esto: las fotos corporales se acumulan para siempre (riesgo LFPDPPP) y la secuencia de emails de conversión posiblemente nunca se envía | #22, #32 / fix-10, fix-19 |
+| 4 | **Tratar `partial` en la pantalla de carga** (redirigir a `/s/[shareId]`, que ya soporta sesiones parciales) + timeout máximo de polling con botón de retry | Cada fallo parcial de Gemini hoy = lead atrapado en 75% para siempre con ~$0.40 de IA ya pagados; el backend reanudable ya existe, solo el cliente no lo usa | #11, #72 / fix-20 |
+| 5 | **Arreglar `window.open` tras awaits en HybridOfferV2** (abrir síncrono, telemetría fire-and-forget) | El CTA principal de venta deja de parecer un botón roto en iPhone — el dispositivo dominante del tráfico viral | #64 / fix-22 |
+| 6 | **Validar al arranque la combinación FF_IDENTITY_CHAIN/modelo** (fail-fast tipo legalConfig) o degradar a generación sin chain | Elimina el footgun donde una env var mal puesta en Vercel responde 503 al 100% de las generaciones | #10 / fix-15 |
+| 7 | **AbortController/timeout en todas las llamadas a Gemini** (60-90s imagen, 30s análisis) + `maxDuration` en /api/analyze | Un cuelgue del proveedor deja de congelar al usuario 10+ minutos en su primera impresión | #12 / fix-16 |
+| 8 | **Capturar los 3 datos legales** (razón social, domicilio, email de soporte) y ponerlos en Vercel | Es bloqueador de deploy por diseño (el build de producción falla sin ellos) y es la base legal del consentimiento LFPDPPP; es papeleo, no código | #20 |
+| 9 | **Quitar "Renovable." y "$X / mes"** del item de MP y de la oferta; etiquetar "Acceso por 1 mes — pago único" | Mientras no exista recurrencia real, cada venta "mensual" con ese copy es un reclamo PROFECO/contracargo en potencia | #1013 / fix-05 |
+| 10 | **Plan pago de Upstash + sacar /api/telemetry del rate limit por Redis** (usar limiter en memoria para ese endpoint no crítico) | Evita que el producto entero se apague (fail-closed) a ~400-700 usuarios en tu primer día viral; costo: centavos | #85 / fix-23 |
+| 11 | **`error.tsx` + `not-found.tsx` globales y `loading.tsx` en /s/[shareId] y /dashboard** (reutilizando el ErrorFallback con marca que ya existe) | La cara viral del producto deja de mostrar errores técnicos de Next sin logo cuando algo truena; 4 archivos | #65 |
+| 12 | **Configurar RESEND_FROM_EMAIL en todos los entornos** y condicionar el texto "tu enlace se envió a tu correo" al envío real | En la config local verificada, ese email NUNCA se envía mientras la UI jura que sí: usuarios cierran la pestaña y pierden su único enlace | #74 / fix-19 |
+| 13 | **Quitar la escasez/prueba social fabricada** (cupos 18/20 de env vars, contadores sembrados +8,547) o conectarla a datos reales | Si se hace público que los cupos y contadores son de mentira, el daño reputacional supera cualquier lift de conversión; además es terreno PROFECO | #7 |
+| 14 | **Subir entropía del shareId** a `randomBytes(16).toString('base64url')` para sesiones nuevas | La única barrera de las fotos compartidas pasa de 48 a 128+ bits; cambio de una línea, compatible con IDs viejos | #42 |
+| 15 | **Borrar copy de developers en la zona de compra** ("Flag activo", "Visible solo cuando el equipo habilite...") | Texto interno visible en el momento exacto de pedir dinero | #76 |
+| 16 | **Macros con peso real**: añadir `weightKg` a ProfileSummary y usarlo en NUTRITION_BY_GOAL (hoy 70kg fijo) | Recomendaciones nutricionales objetivamente incorrectas en un producto de salud (un usuario de 110kg recibe macros de 70kg) | #31 / fix-18 |
+
+**Total estimado: ~10-12 días-persona repartibles en 2 semanas de calendario.** Los items 1-3 son los de mayor retorno absoluto: una hora cada uno y eliminan los tres modos de falla más caros (sitio tumbable, producción ciega, datos acumulándose ilegalmente).

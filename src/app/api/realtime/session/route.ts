@@ -5,6 +5,7 @@ import {
   getRateLimitHeaders,
 } from "@/lib/rateLimit";
 import { isSessionOwnerAuthError, requireSessionOwner } from "@/lib/authServer";
+import { buildGenesisSystemPrompt } from "@/config/genesis/knowledge/prompt";
 
 const RealtimeSessionRequestSchema = z.object({
   shareId: z.string().min(1).max(120),
@@ -66,20 +67,13 @@ export async function POST(req: NextRequest) {
 
     const model = process.env.OPENAI_REALTIME_MODEL || "gpt-realtime";
 
-    const instructions = [
-      "Eres GENESIS, el agente conversacional de NGX Vision.",
-      "Tu tarea es entrevistar brevemente al usuario después de ver su diagnóstico visual.",
-      "Clasifica el fit en una de estas etiquetas exactas: listo_para_diagnostico, necesita_claridad, no_fit_ahora.",
-      "Explica NGX Vision y NGX HYBRID con lenguaje sobrio.",
-      "No diagnostiques salud, no des prescripciones médicas o nutricionales, y no prometas resultados físicos.",
-      "Haz máximo 5 preguntas antes de recomendar el siguiente paso.",
-      body.saveTranscript
-        ? "El usuario consintió guardar un resumen; al final resume intención, fricción y clasificación."
-        : "No guardes ni pidas datos sensibles; el transcript es solo para esta sesión del navegador.",
-      body.shareId ? `Contexto de sesión: ${body.shareId}.` : "",
-    ]
-      .filter(Boolean)
-      .join(" ");
+    // System prompt canónico desde la knowledge base (fuente única en
+    // src/config/genesis/knowledge). Antes era un prompt genérico inline.
+    const instructions = buildGenesisSystemPrompt({
+      channel: "voice",
+      shareId: body.shareId,
+      saveTranscript: body.saveTranscript,
+    });
 
     const openaiRes = await fetch(OPENAI_REALTIME_CLIENT_SECRET_URL, {
       method: "POST",

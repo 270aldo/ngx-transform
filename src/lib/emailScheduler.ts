@@ -109,35 +109,40 @@ export async function advanceSequence(shareId: string): Promise<EmailStage | nul
   const db = getDb();
   const sequenceRef = db.collection("email_sequences").doc(shareId);
 
-  const doc = await sequenceRef.get();
-  if (!doc.exists) return null;
+  // Transactional read-modify-write so two overlapping cron runs can't double
+  // advance or skip a stage (fix-19). The 2nd run reads the already-advanced
+  // doc and computes from there instead of racing the 1st run's write.
+  return db.runTransaction(async (tx) => {
+    const doc = await tx.get(sequenceRef);
+    if (!doc.exists) return null;
 
-  const sequence = doc.data() as EmailSequence;
-  const nextStage = NEXT_STAGE[sequence.stage];
+    const sequence = doc.data() as EmailSequence;
+    const nextStage = NEXT_STAGE[sequence.stage];
 
-  if (!nextStage) {
-    // Sequence complete
-    await sequenceRef.update({
-      status: "completed",
-      nextSend: null,
+    if (!nextStage) {
+      // Sequence complete
+      tx.update(sequenceRef, {
+        status: "completed",
+        nextSend: null,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+      return null;
+    }
+
+    // Calculate next send time using interval from current stage
+    const delayDays = STAGE_INTERVAL_TO_NEXT[sequence.stage];
+    const nextSend = new Date();
+    nextSend.setDate(nextSend.getDate() + delayDays);
+
+    tx.update(sequenceRef, {
+      stage: nextStage,
+      sentEmails: FieldValue.arrayUnion(sequence.stage),
+      nextSend,
       updatedAt: FieldValue.serverTimestamp(),
     });
-    return null;
-  }
 
-  // Calculate next send time using interval from current stage
-  const delayDays = STAGE_INTERVAL_TO_NEXT[sequence.stage];
-  const nextSend = new Date();
-  nextSend.setDate(nextSend.getDate() + delayDays);
-
-  await sequenceRef.update({
-    stage: nextStage,
-    sentEmails: FieldValue.arrayUnion(sequence.stage),
-    nextSend,
-    updatedAt: FieldValue.serverTimestamp(),
+    return nextStage;
   });
-
-  return nextStage;
 }
 
 /**
