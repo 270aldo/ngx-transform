@@ -12,7 +12,7 @@ jobs:
     timeout-minutes: 15
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       # pnpm version comes from package.json "packageManager" (pnpm@10.28.2).
       # Do not also set `version` here — action-setup@v4 errors on the conflict.
