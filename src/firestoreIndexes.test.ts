@@ -22,6 +22,7 @@ describe("Firestore production indexes", () => {
   it("covers launch-critical composite queries", () => {
     expect(hasIndex(config.indexes, "sessions", ["ownerUid", "createdAt"])).toBe(true);
     expect(hasIndex(config.indexes, "sessions", ["status", "createdAt"])).toBe(true);
+    expect(hasIndex(config.indexes, "sessions", ["status", "lastActivityAt"])).toBe(true);
     expect(hasIndex(config.indexes, "email_sequences", ["status", "nextSend"])).toBe(true);
     expect(hasIndex(config.indexes, "jobs", ["status", "updatedAt"])).toBe(true);
     expect(hasIndex(config.indexes, "referrals", ["inviteeId", "completedAt"])).toBe(true);
